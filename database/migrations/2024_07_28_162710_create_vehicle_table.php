@@ -10,16 +10,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicles', function (Blueprint $table) {
-            $table->string('VehicleID')->primary();
-            $table->enum('Availability', ['Available', 'Not Available']);
+        Schema::create('vehicle', function (Blueprint $table) {
+            $table->string('VehicleID', 3)->primary();
             $table->string('VehicleType');
-            $table->string('PlateNo');
+            $table->enum('Availability', ['Available', 'Not Available']);
+            $table->string('PlateNo', 8);
             $table->integer('Capacity');
             $table->timestamps();
         });
 
-        Schema::create('drivers', function (Blueprint $table) {
+        Schema::create('driver', function (Blueprint $table) {
             $table->string('DriverID', 8)->primary();
             $table->string('DriverName', 50);
             $table->string('DriverEmail', 30);
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('vehicle_requests', function (Blueprint $table) {
+        Schema::create('vehicle_request', function (Blueprint $table) {
             $table->string('VRequestID', 10)->primary();
             $table->string('DriverID', 9);
             $table->string('VehicleID', 3);
@@ -44,7 +44,7 @@ return new class extends Migration
             // Adding foreign keys
             $table->foreign('DriverID')->references('DriverID')->on('drivers');
             $table->foreign('VehicleID')->references('VehicleID')->on('vehicles');
-            $table->foreign('BasInID')->references('id')->on('some_table_name');
+            $table->foreign('BasInID')->references('BasInID')->on('basic_information');
         });
     }
 
@@ -53,8 +53,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicle_requests');
-        Schema::dropIfExists('drivers');
-        Schema::dropIfExists('vehicles');
+        Schema::dropIfExists('vehicle_request');
+        Schema::dropIfExists('driver');
+        Schema::dropIfExists('vehicle');
     }
 };

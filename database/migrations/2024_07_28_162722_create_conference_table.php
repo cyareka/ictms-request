@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('conference_rooms', function (Blueprint $table) {
-            $table->string('CRoomID', 4)->primary();
+            $table->string('CRoomID', 3)->primary();
             $table->enum('Availability', ['Available', 'Not Available']);
-            $table->enum('CRoomName', ['Magiting', 'Maagap']);
+            $table->string('CRoomName', 50);
             $table->string('Location', 50);
             $table->integer('Capacity')->unsigned();
             $table->timestamps();
         });
 
         Schema::create('conference_room_requests', function (Blueprint $table) {
-            $table->string('CRequestID')->primary();
+            $table->string('CRequestID', 10)->primary();
             $table->string('BasInID');
             $table->string('CRoomID');
             $table->string('EquipID')->nullable();
@@ -38,7 +38,7 @@ return new class extends Migration
             // Foreign keys
             $table->foreign('CRoomID')->references('CRoomID')->on('conference_rooms')->onDelete('cascade');
             $table->foreign('EquipID')->references('EquipID')->on('equipment')->onDelete('set null');
-            $table->foreign('BasInID')->references('id')->on('some_table_name');
+            $table->foreign('BasInID')->references('id')->on('basic_information');
         });
     }
 

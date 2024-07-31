@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\VehicleRequest;
 
+// ...
+
 
 class VehicleRequestController extends Controller
 {
@@ -29,9 +31,9 @@ class VehicleRequestController extends Controller
             'RequesterEmail' => 'required|email|max:50',
             'contact_no' => 'required|string|max:13',
             'ReceivedDate' => 'required|date',
-            'ip_address' => 'required|ip',
+            // 'ip_address' => 'required|ip',
             'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256', // example: 31.46MB in kilobytes
-            'received_by' => 'required|string|max:50',
+            // 'received_by' => 'required|string|max:50',
         ]);
 
         // Handle file upload
