@@ -24,4 +24,11 @@ class ConferenceRequest extends Model
         'EventStatus',
         'signature_path',
     ];
+
+     protected $casts = [
+        'date_start' => 'array',
+        'date_end' => 'array',
+        'time_start' => 'array',
+        'time_end' => 'array',
+    ];
 }
