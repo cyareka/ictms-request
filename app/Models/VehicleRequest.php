@@ -32,5 +32,6 @@ class ConferenceRequest extends Model
         'date_start' => 'array',
         'date_end' => 'array',
         'time_start' => 'array',
+        'time_end' => 'array',
     ];
 }
