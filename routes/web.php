@@ -18,6 +18,7 @@ Route::middleware([
     Route::get('/CalendarView', function () {
         return view('CalendarView');
     })->name('CalendarView');
+
     Route::get('/Logs', function () {
         return view('Logs');
     })->name('Logs');
@@ -33,24 +34,31 @@ Route::middleware([
     Route::get('/VehicleLogs', function () {
         return view('VehicleLogs');
     })->name('VehicleLogs');
+
     Route::get('/VehiclecalendarView', function () {
         return view('VehiclecalendarView');
     })->name('VehiclecalendarView');
+
     Route::get('/VehicleLogs', function () {
         return view('VehicleLogs');
     })->name('VehicleLogs');
+
     Route::get('/ConferencedetailEdit', function () {
         return view('ConferencedetailEdit');
     })->name('ConferencedetailEdit');
+
     Route::get('/VehicledetailEdit', function () {
         return view('VehicledetailEdit');
     })->name('VehicledetailEdit');
+
     Route::get('/VehicleDownload', function () {
         return view('VehicleDownload');
     })->name('VehicleDownload');
+
     Route::get('/ConferencelogDetail', function () {
         return view('ConferencelogDetail');
     })->name('ConferencelogDetail');
+
     Route::get('/VehiclelogDetail', function () {
         return view('VehiclelogDetail');
     })->name('VehiclelogDetail');
