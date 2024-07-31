@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vehicle Request Form</title>
   <style>
+   <style>
     body {
       font-family: sans-serif;
     }
@@ -173,6 +174,7 @@
       margin-left: 5px;
     }
   </style>
+  </style>
 </head>
 <body>
 <div class="form-container">
@@ -180,87 +182,90 @@
   <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use. 
     Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
   <div class="form-body">
-    <div class="input-group">
-      <div class="input-field">
-        <label>Requesting Office/Unit</label>
-        <input type="text" />
-      </div>
-      <div class="input-field">
-        <label>Purpose of Trip</label>
-        <input type="text" />
-      </div>
-    </div>
-    <div id="passenger-container">
-      <div class="input-group passenger-group">
+    <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
+      @csrf
+      <div class="input-group">
         <div class="input-field">
-          <label>Name of Passenger</label>
-          <select>
-            <option disabled selected>Select a passenger</option>
-            <option>Rea May Manlunas</option>
-            <option>Sheardeeh Zurrielle Fernandez</option>
-            <option>Inalyn Kim Tamayo</option>
-            <option>Beverly Consolacion</option>
-            <option>Ryu Colita</option>
-            <option>Justin Misajon</option>
-            <option>Elmer John Catalan</option>
-          </select>
-        </div>
-        <div class="button-container">
-          <button class="add-passenger-btn" type="button" onclick="addPassenger()">+</button>
-        </div>
-      </div>
-    </div>
-    <div id="date-time-container">
-      <div class="input-group datetime-group">
-        <div class="input-field">
-          <label>Date Start</label>
-          <input type="date" />
+          <label>Requesting Office/Unit</label>
+          <input type="text" name="requesting_office" required/>
         </div>
         <div class="input-field">
-          <label>Date End</label>
-          <input type="date" />
-        </div>
-        <div class="input-field">
-          <label>Time Start</label>
-          <input type="time" />
-        </div>
-        <div class="button-container">
-          <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
+          <label>Purpose of Trip</label>
+          <input type="text" name="purpose" required/>
         </div>
       </div>
-    </div>
-    <div class="input-group">
-      <div class="input-field">
-        <label>Place of Travel</label>
-        <input type="text" />
-      </div>
-      <div class="input-field">
-        <label>Requested by</label>
-        <input type="text" />
-      </div>
-    </div>
-    <div class="input-group">
-      <div class="input-field">
-        <label>Email of Requester</label>
-        <input type="email" />
-      </div>
-      <div class="input-field">
-        <label>Contact No.</label>
-        <input type="text" />
-      </div>
-    </div>
-    <div class="input-group">
-      <div class="input-field">
-        <label for="e-signature">E-Signature:</label>
-        <div class="file-upload">
-          <input type="file" id="e-signature" style="display: none;" />
-          <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-            Click to upload e-sign.<br />Maximum file size: 31.46MB
+      <div id="passenger-container">
+        <div class="input-group passenger-group">
+          <div class="input-field">
+            <label>Name of Passenger</label>
+            <select name="passengers[]">
+              <option disabled selected>Select a passenger</option>
+              <option>Rea May Manlunas</option>
+              <option>Sheardeeh Zurrielle Fernandez</option>
+              <option>Inalyn Kim Tamayo</option>
+              <option>Beverly Consolacion</option>
+              <option>Ryu Colita</option>
+              <option>Justin Misajon</option>
+              <option>Elmer John Catalan</option>
+            </select>
+          </div>
+          <div class="button-container">
+            <button class="add-passenger-btn" type="button" onclick="addPassenger()">+</button>
           </div>
         </div>
       </div>
-    </div>
-    <button class="submit-button" type="button" onclick="submitForm()">Submit</button>
+      <div id="date-time-container">
+        <div class="input-group datetime-group">
+          <div class="input-field">
+            <label>Date Start</label>
+            <input type="date" name="date_start[]" required/>
+          </div>
+          <div class="input-field">
+            <label>Date End</label>
+            <input type="date" name="date_end[]" required/>
+          </div>
+          <div class="input-field">
+            <label>Time Start</label>
+            <input type="time" name="time_start[]" required/>
+          </div>
+          <div class="button-container">
+            <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-field">
+          <label>Place of Travel</label>
+          <input type="text" name="place_of_travel" required/>
+        </div>
+        <div class="input-field">
+          <label>Requested by</label>
+          <input type="text" name="requested_by" required/>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-field">
+          <label>Email of Requester</label>
+          <input type="email" name="email" required/>
+        </div>
+        <div class="input-field">
+          <label>Contact No.</label>
+          <input type="text" name="contact_no" required/>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="input-field">
+          <label for="e-signature">E-Signature:</label>
+          <div class="file-upload">
+            <input type="file" id="e-signature" name="e_signature" style="display: none;" required/>
+            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
+              Click to upload e-sign.<br />Maximum file size: 31.46MB
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="submit-button" type="submit">Submit</button>
+    </form>
   </div>
 </div>
 
@@ -294,15 +299,15 @@
     newDateTimeField.innerHTML = `
       <div class="input-field">
         <label>Date Start</label>
-        <input type="date" />
+        <input type="date" name="date_start[]" required/>
       </div>
       <div class="input-field">
         <label>Date End</label>
-        <input type="date" />
+        <input type="date" name="date_end[]" required/>
       </div>
       <div class="input-field">
         <label>Time Start</label>
-        <input type="time" />
+        <input type="time" name="time_start[]" required/>
       </div>
       <div class="button-container">
         <button class="remove-datetime-btn" type="button" onclick="removeDateTime(this)">-</button>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Conference Room Request Form</title>
-<style>
+  <style>
     body {
         font-family: sans-serif;
     }
@@ -166,8 +166,7 @@
         margin-bottom: 8px;
     }
 </style>
-
-<script>
+  <script>
     function addRow() {
         let rowGroupContainer = document.querySelector('.row-group-container');
         let newRowGroup = document.createElement('div');
@@ -176,78 +175,33 @@
             <div class="row">
                 <div class="inline-field">
                     <label for="dateStart">Date Start</label>
-                    <input type="date" id="dateStart" name="dateStart">
+                    <input type="date" id="dateStart" name="dateStart[]">
                 </div>
                 <div class="inline-field" style="display: flex; align-items: center;">
                     <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                    <input type="date" id="dateEnd" name="dateEnd">
+                    <input type="date" id="dateEnd" name="dateEnd[]">
                 </div>
             </div>
             <div class="row">
                 <div class="inline-field">
                     <label for="timeStart">Time Start</label>
-                    <input type="time" id="timeStart" name="timeStart">
+                    <input type="time" id="timeStart" name="timeStart[]">
                 </div>
                 <div class="inline-field">
                     <label for="timeEnd">Time End</label>
-                    <input type="time" id="timeEnd" name="timeEnd">
+                    <input type="time" id="timeEnd" name="timeEnd[]">
                 </div>
             </div>
             <div class="remove-container">
                 <button class="remove-btn" onclick="removeRow(this)">-</button>
             </div>
         `;
-
         rowGroupContainer.appendChild(newRowGroup);
     }
 
     function removeRow(button) {
         let container = button.closest('.row-group');
         container.remove();
-    }
-
-    function submitForm() {
-        let inputFields = document.querySelectorAll('input');
-        inputFields.forEach((field) => {
-            field.value = '';
-        });
-
-        let rowGroupContainer = document.querySelector('.row-group-container');
-        rowGroupContainer.innerHTML = `
-            <div class="row-group">
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="dateStart">Date Start</label>
-                        <input type="date" id="dateStart" name="dateStart">
-                    </div>
-                    <div class="inline-field" style="display: flex; align-items: center;">
-                        <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                        <input type="date" id="dateEnd" name="dateEnd">
-                        <div class="button-container">
-                            <button class="add-btn" onclick="addRow()">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="timeStart">Time Start</label>
-                        <input type="time" id="timeStart" name="timeStart">
-                    </div>
-                    <div class="inline-field">
-                        <label for="timeEnd">Time End</label>
-                        <input type="time" id="timeEnd" name="timeEnd">
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.getElementById('signature-preview').style.display = 'none';
-        document.querySelector('.e-signature-text').style.display = 'block'; // Show the upload text again
-        document.getElementById('e-signature').value = ''; // Reset the e-signature field
-
-        document.getElementById('conferenceRoom').selectedIndex = 0; 
-
-        alert('Your request has been successfully submitted to our servers. Make sure to keep track of your event in the calendar view.');
     }
 
     function previewSignature(event) {
@@ -266,117 +220,112 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-</script>
-
+  </script>
 </head>
 <body>
-
-<div class="container">
+  <div class="container">
     <h1>Request For Use of Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
-
-    <div class="row">
+    <form action="/conference-room/request" method="POST" enctype="multipart/form-data">
+      @csrf
+      <div class="row">
         <div class="inline-field">
-            <label for="officeName">Name of Requesting Office</label>
-            <select id="officeName" name="officeName">
-                <option disabled selected>Select Office</option>
-                <option>Office of the Regional Director</option>
-                <option>Administrative Division</option>
-                <option>Finance Division</option>
-                <option>Planning Division</option>
-                <option>Technical Division</option>
-            </select>
+          <label for="officeName">Name of Requesting Office</label>
+          <select id="officeName" name="officeName">
+            <option disabled selected>Select Office</option>
+            <option>Office of the Regional Director</option>
+            <option>Administrative Division</option>
+            <option>Finance Division</option>
+            <option>Planning Division</option>
+            <option>Technical Division</option>
+          </select>
         </div>
-        <div class="inline-field ">
-            <label for="purpose">Purpose</label>
-            <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose">
+        <div class="inline-field">
+          <label for="purpose">Purpose</label>
+          <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose">
         </div>
-    </div>
-
-    <div class="row-group-container">
+      </div>
+      <div class="row-group-container">
         <div class="row-group">
-            <div class="row">
-                <div class="inline-field">
-                    <label for="dateStart">Date Start</label>
-                    <input type="date" id="dateStart" name="dateStart">
-                </div>
-                <div class="inline-field" style="display: flex; align-items: center;">
-                    <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                    <input type="date" id="dateEnd" name="dateEnd">
-                    <div class="button-container">
-                        <button class="add-btn" onclick="addRow()">+</button>
-                    </div>
-                </div>
+          <div class="row">
+            <div class="inline-field">
+              <label for="dateStart">Date Start</label>
+              <input type="date" id="dateStart" name="dateStart[]">
             </div>
-            <div class="row">
-                <div class="inline-field">
-                    <label for="timeStart">Time Start</label>
-                    <input type="time" id="timeStart" name="timeStart">
-                </div>
-                <div class="inline-field">
-                    <label for="timeEnd">Time End</label>
-                    <input type="time" id="timeEnd" name="timeEnd">
-                </div>
+            <div class="inline-field" style="display: flex; align-items: center;">
+              <label for="dateEnd" style="margin-right: 10px;">Date End</label>
+              <input type="date" id="dateEnd" name="dateEnd[]">
+              <div class="button-container">
+                <button class="add-btn" type="button" onclick="addRow()">+</button>
+              </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="inline-field">
-            <label for="persons">No. of Persons</label>
-            <input class="small-input" type="text" id="persons" name="persons" placeholder="Enter">
-        </div>
-        <div class="inline-field">
-            <label for="focalPerson">Focal Person</label>
-            <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person">
-        </div>
-    </div>
-
-    <div class="row-multiple">
-        <div class="inline-field" style=" width: 8em;">
-            <label for="tables">Tables</label>
-            <input type="text" id="tables" name="tables" placeholder="Enter">
-        </div>
-        <div class="inline-field" style=" width: 8em;">
-            <label for="chairs">Chairs</label>
-            <input type="text" id="chairs" name="chairs" placeholder="Enter">
-        </div>
-        <div class="inline-field" >
-            <label for="otherFacilities">Other Facilities</label>
-            <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="inline-field">
-            <label for="conferenceRoom">Select Conference Room</label>
-            <select id="conferenceRoom" name="conferenceRoom">
-                <option disabled selected>Select Room</option>
-                <option>MAAGAP</option>
-                <option>MAGITING</option>
-            </select>
-        </div>
-        <div class="inline-field">
-            <label for="requesterName">Name of Requester</label>
-            <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester">
-        </div>
-    </div>
-    <div class="row">
-        <div class="inline-field">
-            <label for="e-signature">E-Signature</label>
-            <div class="file-upload">
-                <input type="file" id="e-signature" style="display: none;" onchange="previewSignature(event)">
-                <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                    Click to upload e-sign.<br>Maximum file size: 31.46MB
-                </div>
-                <img id="signature-preview" alt="Signature Preview">
+          </div>
+          <div class="row">
+            <div class="inline-field">
+              <label for="timeStart">Time Start</label>
+              <input type="time" id="timeStart" name="timeStart[]">
             </div>
+            <div class="inline-field">
+              <label for="timeEnd">Time End</label>
+              <input type="time" id="timeEnd" name="timeEnd[]">
+            </div>
+          </div>
         </div>
-    </div>
-
-    <div class="form-footer">
-        <button class="submit-btn" type="button" onclick="submitForm()">Submit</button>
-    </div>
-</div>
+      </div>
+      <div class="row">
+        <div class="inline-field">
+          <label for="persons">No. of Persons</label>
+          <input class="small-input" type="text" id="persons" name="persons" placeholder="Enter">
+        </div>
+        <div class="inline-field">
+          <label for="focalPerson">Focal Person</label>
+          <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person">
+        </div>
+      </div>
+      <div class="row-multiple">
+        <div class="inline-field" style="width: 8em;">
+          <label for="tables">Tables</label>
+          <input type="text" id="tables" name="tables" placeholder="Enter">
+        </div>
+        <div class="inline-field" style="width: 8em;">
+          <label for="chairs">Chairs</label>
+          <input type="text" id="chairs" name="chairs" placeholder="Enter">
+        </div>
+        <div class="inline-field">
+          <label for="otherFacilities">Other Facilities</label>
+          <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others">
+        </div>
+      </div>
+      <div class="row">
+        <div class="inline-field">
+          <label for="conferenceRoom">Select Conference Room</label>
+          <select id="conferenceRoom" name="conferenceRoom">
+            <option disabled selected>Select Room</option>
+            <option>MAAGAP</option>
+            <option>MAGITING</option>
+          </select>
+        </div>
+        <div class="inline-field">
+          <label for="requesterName">Name of Requester</label>
+          <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester">
+        </div>
+      </div>
+      <div class="row">
+        <div class="inline-field">
+          <label for="e-signature">E-Signature</label>
+          <div class="file-upload">
+            <input type="file" id="e-signature" name="e-signature" style="display: none;" onchange="previewSignature(event)">
+            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
+              Click to upload e-sign.<br>Maximum file size: 31.46MB
+            </div>
+            <img id="signature-preview" alt="Signature Preview">
+          </div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button class="submit-btn" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
 </body>
 </html>

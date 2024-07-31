@@ -71,3 +71,6 @@ Route::get('/user-conference', function () {
 Route::get('/user-vehicle', function () {
     return view('user-vehicle');
 })->name('user-vehicle');
+
+Route::post('/conference-room/request', [ConferenceController::class, 'store']);
+Route::post('/vehicle-request', [VehicleController::class, 'store']);
