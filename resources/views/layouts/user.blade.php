@@ -103,14 +103,14 @@
                         <div class="dropdown">
                         <button class="dropbtn"><i class="fa-solid fa-calendar-day"></i> Calendar View <i class="fa-solid fa-chevron-down"></i></button>
                             <div class="dropdown-content">
-                                <a href="#">Conference Room</a>
-                                <a href="#">Vehicle</a>
+                                <a href="{{ route('VehiclecalendarView') }}">Conference Room</a>
+                                <a href="{{ route('VehiclecalendarView') }}">Vehicle</a>
                             </div>
                         </div>
                         <div class="dropdown">
                         <button class="dropbtn"><i class="fa-solid fa-file-alt"></i> Request Forms <i class="fa-solid fa-chevron-down"></i></button>                            <div class="dropdown-content">
-                                <a href="#">Conference Room</a>
-                                <a href="#">Vehicle</a>
+                                <a href="{{ route('user-conference') }}">Conference Room</a>
+                                <a href="{{ route('user-vehicle') }}">Vehicle</a>
                             </div>
                         </div>
                     </div>
