@@ -15,7 +15,7 @@ class VehicleRequestController extends Controller
         return view('vehicle-request.create');
     }
 
-    public function store(Request $request)
+    public function submitVForm(Request $request)
     {
         $validated = $request->validate([
             'RequestingOffice' => 'required|string|max:50',
@@ -35,11 +35,6 @@ class VehicleRequestController extends Controller
             'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256', // example: 31.46MB in kilobytes
             // 'received_by' => 'required|string|max:50',
         ]);
-
-        // Handle file upload
-        if ($request->hasFile('RequesterSignature')) {
-            $validated['RequesterSignature'] = $request->file('RequesterSignature')->store('RequesterSignature');
-        }
 
         VehicleRequest::create($validated);
 

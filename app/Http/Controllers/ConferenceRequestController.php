@@ -12,26 +12,9 @@ class ConferenceController extends Controller
         return view('components.conference-form');
     }
 
-    public function submitForm(Request $request)
+    public function submitCForm(Request $request)
     {
-        $request->validate([
-            'CRequestID' => 'required|string|max:12',
-            'ReceivedDate' => 'required|date',
-            'RequestingOffice' => 'required|string|max:50',
-            'Purpose' => 'required|string|max:255',
-            'date_start' => 'required|date',
-            'date_end' => 'required|date',
-            'time_start' => 'required|date_format:H:i',
-            'time_end' => 'required|date_format:H:i',
-            'npersons' => 'required|integer',
-            'focalPerson' => 'required|string|max:50',
-            'tables' => 'nullable|integer',
-            'chairs' => 'nullable|integer',
-            'otherFacilities' => 'nullable|string|max:50',
-            'CRoomName' => 'required|string',
-            'RequesterName' => 'required|string|max:50',
-            'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:31456',
-        ]);
+        $request->validateCForm($request);
 
         $conferenceRequest = new ConferenceRequest();
         $conferenceRequest->CRequestID = $request->controlNo;
@@ -58,5 +41,27 @@ class ConferenceController extends Controller
         $conferenceRequest->save();
 
         return redirect()->route('conference.showForm')->with('success', 'Form submitted successfully!');
+    }
+
+    public function validateCForm(Request $request)
+    {
+        return $request->validate([
+            'CRequestID' => 'required|string|max:10',
+            'ReceivedDate' => 'required|date',
+            'RequestingOffice' => 'required|string|max:50',
+            'Purpose' => 'required|string|max:255',
+            'date_start' => 'required|date',
+            'date_end' => 'required|date',
+            'time_start' => 'required|date_format:H:i',
+            'time_end' => 'required|date_format:H:i',
+            'npersons' => 'required|integer',
+            'focalPerson' => 'required|string|max:50',
+            'tables' => 'nullable|integer',
+            'chairs' => 'nullable|integer',
+            'otherFacilities' => 'nullable|string|max:50',
+            'CRoomName' => 'required|string',
+            'RequesterName' => 'required|string|max:50',
+            'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:31456',
+        ]);
     }
 }
