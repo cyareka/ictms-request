@@ -21,9 +21,11 @@
                     top: 0;
                     right: 0;
                     width: 100%;
-                    background-color: #f2f2f2;
+                    background-color: #ffffff;
                     padding: 10px;
                     text-align: right;
+                    border-bottom-left-radius: 15px;
+                    border-bottom-right-radius: 15px;
                 }
                 .nav {
                     display: flex;
@@ -31,6 +33,8 @@
                 }
                 .logo {
                     margin-right: auto;
+                    margin-left: 20px;
+                    margin-top: 8px;
                 }
                 .dropdown {
                     position: relative;
@@ -62,7 +66,7 @@
                 }
                 .dropbtn {
                     background-color:transparent;
-                    color: #fffff; 
+                    color: #747487; 
                     padding: 10px;
                     font-size: 16px;
                     border: none;
@@ -80,6 +84,9 @@
                 .dropdown + .dropdown {
                     margin-left: 10px;
                 }
+                .dropbtn i.fa-caret-down {
+                    transform: scale(0.5, 1);
+                }
             </style>
             <!-- Import Font Awesome for icons -->
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
@@ -88,18 +95,20 @@
                 <div class="header">
                     <div class="nav">
                         <div class="logo">
-                            <x-authentication-card-logo />
+                        <a href="/">
+                            <img width="200" src="{{asset('/logo/logo.jpg')}}">
+                            </a>
+
                         </div>
                         <div class="dropdown">
-                            <button class="dropbtn"><i class="fa-solid fa-calendar-day"></i> Calendar View</button>
+                        <button class="dropbtn"><i class="fa-solid fa-calendar-day"></i> Calendar View <i class="fa-solid fa-chevron-down"></i></button>
                             <div class="dropdown-content">
                                 <a href="#">Conference Room</a>
                                 <a href="#">Vehicle</a>
                             </div>
                         </div>
                         <div class="dropdown">
-                            <button class="dropbtn"><i class="fa-solid fa-file-alt"></i> Request Forms</button>
-                            <div class="dropdown-content">
+                        <button class="dropbtn"><i class="fa-solid fa-file-alt"></i> Request Forms <i class="fa-solid fa-chevron-down"></i></button>                            <div class="dropdown-content">
                                 <a href="#">Conference Room</a>
                                 <a href="#">Vehicle</a>
                             </div>
