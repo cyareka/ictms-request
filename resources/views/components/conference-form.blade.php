@@ -286,7 +286,7 @@
             </div>
             <div class="inline-field">
               <label for="timeEnd">Time End</label>
-              <input type="time" id="timeEnd" name="timeEnd[]"  required>
+              <input type="time" id="timeEnd" name="timeEnd[]" required>
             </div>
           </div>
         </div>
