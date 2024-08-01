@@ -75,8 +75,8 @@
                <td><span class="pending">Pending</span></td>
                <td>Ongoing</td>
                <td>
-                  <i class="bi bi-pencil" id="actions"></i>
-                  <i class="bi bi-download" id="actions"></i>
+                  <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
+                  <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
                </td>
             </tr>
             <tr>
@@ -91,8 +91,8 @@
                <td><span class="pending">Pending</span></td>
                <td>Ongoing</td>
                <td>
-                  <i class="bi bi-pencil" id="actions"></i>
-                  <i class="bi bi-download" id="actions"></i>
+                  <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
+                  <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
                </td>
             </tr>
             <tr>
@@ -107,8 +107,8 @@
                <td><span class="pending">Pending</span></td>
                <td>Ongoing</td>
                <td>
-                  <i class="bi bi-pencil" id="actions"></i>
-                  <i class="bi bi-download" id="actions"></i>
+                  <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
+                  <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
                </td>
             </tr>
             <tr>
@@ -123,8 +123,8 @@
                <td><span class="pending">Pending</span></td>
                <td>Ongoing</td>
                <td>
-                  <i class="bi bi-pencil" id="actions"></i>
-                  <i class="bi bi-download" id="actions"></i>
+                  <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
+                  <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
                </td>
             </tr>
             <tr>
@@ -139,8 +139,8 @@
                <td><span class="pending">Pending</span></td>
                <td>Ongoing</td>
                <td>
-                  <i class="bi bi-pencil" id="actions"></i>
-                  <i class="bi bi-download" id="actions"></i>
+                  <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
+                  <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
                </td>
             </tr>
          </tbody>

@@ -24,17 +24,17 @@
                     background-color: #ffffff;
                     padding: 10px;
                     text-align: right;
-                    border-bottom-left-radius: 15px;
-                    border-bottom-right-radius: 15px;
                 }
                 .nav {
                     display: flex;
                     align-items: center;
+                    border-bottom: 2px solid #EEEEF1;
                 }
                 .logo {
                     margin-right: auto;
                     margin-left: 20px;
-                    margin-top: 8px;
+                    margin-top: 5px;
+                    margin-bottom: 15px;
                 }
                 .dropdown {
                     position: relative;
