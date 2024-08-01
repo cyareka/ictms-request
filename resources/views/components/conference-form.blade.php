@@ -15,8 +15,8 @@
         border-radius: 15px;
         margin: 5em auto 0;
         margin-bottom: 3em;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); 
-        background-color: #f9f9f9;            
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
     }
     h1 {
         font-size: 30px;
@@ -138,7 +138,7 @@
     .inline-field input,
     .inline-field select {
         width: 70%;
-    } 
+    }
     .form-footer {
         display: flex;
         justify-content: center;
@@ -223,6 +223,25 @@
   </script>
 </head>
 <body>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
   <div class="container">
     <h1>Request For Use of Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>

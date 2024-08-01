@@ -8,7 +8,7 @@ use App\Models\VehicleRequest;
 // ...
 
 
-class VehicleRequestController extends Controller
+class VehicleController extends Controller
 {
     public function create()
     {
@@ -36,7 +36,8 @@ class VehicleRequestController extends Controller
             // 'received_by' => 'required|string|max:50',
         ]);
 
-        VehicleRequest::create($validated);
+        // $vehicleController = new VehicleController();
+        // $vehicleController->create($validated);
 
         return redirect()->route('vehicle-request.create')->with('success', 'Form submitted successfully!');
     }

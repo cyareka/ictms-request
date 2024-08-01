@@ -24,20 +24,17 @@ return new class extends Migration
             $table->string('CRequestID', 10)->primary();
             $table->string('BasInID');
             $table->string('CRoomID');
-            $table->string('EquipID')->nullable();
-            $table->string('Purpose');
             $table->integer('npersons');
             $table->string('focalPerson');
             $table->integer('tables');
             $table->integer('chairs');
-            $table->string('otherFacilities');
+            $table->string('otherFacilities')->nullable();
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved']);
             $table->enum('EventStatus', ['Cancelled', 'Finished'])->nullable();
             $table->timestamps();
 
             // Foreign keys
             $table->foreign('CRoomID')->references('CRoomID')->on('conference_rooms')->onDelete('cascade');
-            $table->foreign('EquipID')->references('EquipID')->on('equipment')->onDelete('set null');
             $table->foreign('BasInID')->references('id')->on('basic_information');
         });
     }
@@ -48,7 +45,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('conference_room_requests');
-        Schema::dropIfExists('equipment');
         Schema::dropIfExists('conference_rooms');
     }
 };
