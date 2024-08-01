@@ -12,6 +12,7 @@ class ConferenceController extends Controller
         return view('components.conference-form');
     }
 
+    // TODO: Reference array as script to display as header('error' / 'success')
     public function submitCForm(Request $request)
     {
         $validator = \Validator::make($request->all(), [

@@ -42,8 +42,8 @@ return new class extends Migration
             $table->timestamps();
 
             // Adding foreign keys
-            $table->foreign('DriverID')->references('DriverID')->on('drivers');
-            $table->foreign('VehicleID')->references('VehicleID')->on('vehicles');
+            $table->foreign('DriverID')->references('DriverID')->on('driver');
+            $table->foreign('VehicleID')->references('VehicleID')->on('vehicle');
             $table->foreign('BasInID')->references('BasInID')->on('basic_information');
         });
     }

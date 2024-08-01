@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('conference_rooms', function (Blueprint $table) {
             $table->string('CRoomID', 3)->primary();
-            $table->enum('Availability', ['Available', 'Not Available']);
+            $table->enum('Availability', ['Available', 'Not Available'])->default('Available');
             $table->string('CRoomName', 50);
             $table->string('Location', 50);
             $table->integer('Capacity')->unsigned();
