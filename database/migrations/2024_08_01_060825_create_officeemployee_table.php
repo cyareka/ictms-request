@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('offices', function (Blueprint $table) {
             $table->string('OfficeID', 10)->primary();
             $table->string('OfficeName', 50);
+            $table->string('OfficeLocation', 30);
             $table->timestamps();
         });
 
@@ -36,5 +37,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('offices');
+        Schema::dropIfExists('employees');
     }
 };
