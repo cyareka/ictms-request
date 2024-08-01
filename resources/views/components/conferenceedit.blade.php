@@ -273,7 +273,7 @@
         </div>
         <div class="inline-field">
             <label for="requesterName">Name of Requester</label>
-            <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester">
+            <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester" >
         </div>
     </div>
     <div class="row">
@@ -336,6 +336,9 @@
                 <div class="inline-field">
                     <label for="dateEnd">Date End</label>
                     <input type="date" id="dateEnd" name="dateEnd">
+                     <div class="remove-container">
+                <button class="remove-btn" onclick="removeRow(this)">-</button>
+            </div>
                 </div>
             </div>
             <div class="row">
@@ -347,9 +350,6 @@
                     <label for="timeEnd">Time End</label>
                     <input type="time" id="timeEnd" name="timeEnd">
                 </div>
-            </div>
-            <div class="remove-container">
-                <button class="remove-btn" onclick="removeRow(this)">-</button>
             </div>
         `;
 
