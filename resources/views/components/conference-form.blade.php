@@ -254,11 +254,9 @@
                 <label for="officeName">Name of Requesting Office</label>
                 <select id="officeName" name="officeName">
                     <option disabled selected>Select Office</option>
-                    <option>Office of the Regional Director</option>
-                    <option>Administrative Division</option>
-                    <option>Finance Division</option>
-                    <option>Planning Division</option>
-                    <option>Technical Division</option>
+                    @foreach(App\Models\Office::all() as $office)
+                        <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="inline-field">
@@ -324,8 +322,9 @@
                 <label for="conferenceRoom">Select Conference Room</label>
                 <select id="conferenceRoom" name="conferenceRoom">
                     <option disabled selected>Select Room</option>
-                    <option>MAAGAP</option>
-                    <option>MAGITING</option>
+                    @foreach(App\Models\ConferenceRoom::all() as $room)
+                        <option value="{{ $room->CRoomID }}">{{ $room->CRoomName }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="inline-field">
