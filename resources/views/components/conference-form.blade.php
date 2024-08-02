@@ -216,27 +216,33 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+        function showError(message) {
+            alert(message);
+        }
+        function showSuccess(message) {
+            alert(message);
+        }
     </script>
 </head>
 <body>
 @if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-@if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
+    <script>
+        showError("{{ session('success') }}");
+    </script>
 @endif
 @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+    <script>
+        let errorMessages = '';
+        @foreach ($errors->all() as $error)
+            errorMessages += '{{ $error }}\n';
+        @endforeach
+        showError(errorMessages);
+    </script>
+@endif
+@if(session('error'))
+    <script>
+        showError("{{ session('error') }}");
+    </script>
 @endif
 <div class="container">
     <h1>Request For Use of Conference Room</h1>
