@@ -72,7 +72,7 @@ class ConferenceController extends Controller
             ]);
 
             if ($request->hasFile('RequesterSignature')) {
-                $filePath = $request->file('RequesterSignature')->store('signatures', 'public');
+                $filePath = $request->file('RequesterSignature')->store('uploads/signatures', 'public');
                 $conferenceRequest->RequesterSignature = $filePath;
             }
 

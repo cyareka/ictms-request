@@ -20,6 +20,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        // remove BasInID and add OfficeID as well as Purpose - DateEnd from basic_information table
         Schema::create('conference_room_requests', function (Blueprint $table) {
             $table->string('CRequestID', 10)->primary();
             $table->string('BasInID');
