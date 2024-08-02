@@ -16,18 +16,17 @@ class ConferenceRequest extends Model
     public mixed $RequesterSignature;
     protected $fillable = [
         'CRequestID',
-        'BasInID',
-        'CRoomID',
-        'EquipID',
+        'OfficeID',
         'Purpose',
         'npersons',
         'focalPerson',
         'tables',
         'chairs',
         'otherFacilities',
+        'CRoomID',
         'FormStatus',
         'EventStatus',
-        'signature_path',
+        'RequesterSignature',
     ];
 
      protected $casts = [

@@ -227,7 +227,7 @@
 <body>
 @if (session('success'))
     <script>
-        showError("{{ session('success') }}");
+        showSuccess("{{ session('success') }}");
     </script>
 @endif
 @if ($errors->any())
@@ -296,7 +296,7 @@
         <div class="row">
             <div class="inline-field">
                 <label for="persons">No. of Persons</label>
-                <input class="small-input" type="text" id="persons" name="persons" placeholder="Enter"  required>
+                <input class="small-input" type="text" id="npersons" name="npersons" placeholder="Enter"  required>
             </div>
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
@@ -334,10 +334,10 @@
         </div>
         <div class="row">
             <div class="inline-field">
-                <label for="e-signature">E-Signature</label>
+                <label for="RequesterSignature">E-Signature</label>
                 <div class="file-upload">
-                    <input type="file" id="e-signature" name="e-signature" style="display: none;" onchange="previewSignature(event)"  required>
-                    <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
+                    <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;" onchange="previewSignature(event)"  required>
+                    <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
                         Click to upload e-sign.<br>Maximum file size: 31.46MB
                     </div>
                     <img id="signature-preview" alt="Signature Preview">

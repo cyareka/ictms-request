@@ -23,20 +23,28 @@ return new class extends Migration
         // remove BasInID and add OfficeID as well as Purpose - DateEnd from basic_information table
         Schema::create('conference_room_requests', function (Blueprint $table) {
             $table->string('CRequestID', 10)->primary();
-            $table->string('BasInID');
-            $table->string('CRoomID');
+            $table->string('OfficeID');
+            $table->string('Purpose', 100);
+            $table->string('date_start', 10);
+            $table->string('date_end', 10);
+            $table->string('time_start', 9);
+            $table->string('time_end', 9);
             $table->integer('npersons');
             $table->string('focalPerson');
             $table->integer('tables');
             $table->integer('chairs');
             $table->string('otherFacilities')->nullable();
-            $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved']);
-            $table->enum('EventStatus', ['Cancelled', 'Finished'])->nullable();
+            $table->string('CRoomID');
+            $table->string('RequesterName');
+            $table->string('RequesterSignature');
+            $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
+            $table->enum('EventStatus', ['Cancelled', 'Finished'])->default('');
             $table->timestamps();
 
             // Foreign keys
             $table->foreign('CRoomID')->references('CRoomID')->on('conference_rooms')->onDelete('cascade');
-            $table->foreign('BasInID')->references('id')->on('basic_information');
+            $table->foreign('OfficeID')->references('OfficeID')->on('offices')->onDelete('cascade');
+
         });
     }
 
