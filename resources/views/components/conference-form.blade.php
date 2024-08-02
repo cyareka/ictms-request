@@ -167,37 +167,38 @@
     }
 </style>
   <script>
-    function addRow() {
-        let rowGroupContainer = document.querySelector('.row-group-container');
-        let newRowGroup = document.createElement('div');
-        newRowGroup.className = 'row-group';
-        newRowGroup.innerHTML = `
-            <div class="row">
-                <div class="inline-field">
-                    <label for="dateStart">Date Start</label>
-                    <input type="date" id="dateStart" name="dateStart[]">
-                </div>
-                <div class="inline-field" style="display: flex; align-items: center;">
-                    <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                    <input type="date" id="dateEnd" name="dateEnd[]">
-                    <div class="remove-container">
-                <button class="remove-btn" onclick="removeRow(this)">-</button>
+function addRow() {
+    let rowGroupContainer = document.querySelector('.row-group-container');
+    let newRowGroup = document.createElement('div');
+    newRowGroup.className = 'row-group';
+    let today = new Date().toISOString().slice(0, 10); // get current date in YYYY-MM-DD format
+    newRowGroup.innerHTML = `
+        <div class="row">
+            <div class="inline-field">
+                <label for="dateStart">Date Start</label>
+                <input type="date" id="dateStart" name="dateStart[]" value="${today}" required>
             </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="inline-field">
-                    <label for="timeStart">Time Start</label>
-                    <input type="time" id="timeStart" name="timeStart[]">
-                </div>
-                <div class="inline-field">
-                    <label for="timeEnd">Time End</label>
-                    <input type="time" id="timeEnd" name="timeEnd[]">
+            <div class="inline-field" style="display: flex; align-items: center;">
+                <label for="dateEnd" style="margin-right: 10px;">Date End</label>
+                <input type="date" id="dateEnd" name="dateEnd[]" value="${today}" required>
+                <div class="remove-container">
+                    <button class="remove-btn" onclick="removeRow(this)">-</button>
                 </div>
             </div>
-        `;
-        rowGroupContainer.appendChild(newRowGroup);
-    }
+        </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="timeStart">Time Start</label>
+                <input type="time" id="timeStart" name="timeStart[]" required>
+            </div>
+            <div class="inline-field">
+                <label for="timeEnd">Time End</label>
+                <input type="time" id="timeEnd" name="timeEnd[]" required>
+            </div>
+        </div>
+    `;
+    rowGroupContainer.appendChild(newRowGroup);
+}
 
     function removeRow(button) {
         let container = button.closest('.row-group');
@@ -222,8 +223,9 @@
     }
   </script>
 </head>
+
 <body>
-    @if (session('success'))
+     @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
@@ -348,5 +350,76 @@
       </div>
     </form>
   </div>
+
+  <script>
+    function addRow() {
+        let rowGroupContainer = document.querySelector('.row-group-container');
+        let newRowGroup = document.createElement('div');
+        newRowGroup.className = 'row-group';
+        let today = new Date().toISOString().slice(0, 10); // get current date in YYYY-MM-DD format
+        newRowGroup.innerHTML = `
+            <div class="row">
+                <div class="inline-field">
+                    <label for="dateStart">Date Start</label>
+                    <input type="date" id="dateStart" name="dateStart[]" value="${today}" required>
+                </div>
+                <div class="inline-field" style="display: flex; align-items: center;">
+                    <label for="dateEnd" style="margin-right: 10px;">Date End</label>
+                    <input type="date" id="dateEnd" name="dateEnd[]" value="${today}" required>
+                    <div class="remove-container">
+                        <button class="remove-btn" onclick="removeRow(this)">-</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="inline-field">
+                    <label for="timeStart">Time Start</label>
+                    <input type="time" id="timeStart" name="timeStart[]" required>
+                </div>
+                <div class="inline-field">
+                    <label for="timeEnd">Time End</label>
+                    <input type="time" id="timeEnd" name="timeEnd[]" required>
+                </div>
+            </div>
+        `;
+        rowGroupContainer.appendChild(newRowGroup);
+    }
+
+    function removeRow(button) {
+        let container = button.closest('.row-group');
+        container.remove();
+    }
+
+    function previewSignature(event) {
+        const input = event.target;
+        const preview = document.getElementById('signature-preview');
+        const reader = new FileReader();
+        const uploadText = document.querySelector('.e-signature-text');
+
+        reader.onload = function() {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+            uploadText.style.display = 'none'; // Hide the upload text
+        };
+
+        if (input.files && input.files[0]) {
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Place the validation script here
+    document.querySelector('form').addEventListener('submit', function(event) {
+        let datesValid = true;
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+            if (!input.value) {
+                datesValid = false;
+            }
+        });
+        if (!datesValid) {
+            event.preventDefault();
+            alert('Please fill in all date fields.');
+        }
+    });
+  </script>
 </body>
 </html>
