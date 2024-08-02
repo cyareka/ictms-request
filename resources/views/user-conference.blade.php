@@ -4,6 +4,7 @@
 <html>
 <head>
     <title>Conference Form</title>
+    <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
 </head>
 
 <body>
