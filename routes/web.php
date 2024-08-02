@@ -71,6 +71,15 @@ Route::get('/user-conference', function () {
 Route::get('/user-vehicle', function () {
     return view('user-vehicle');
 })->name('user-vehicle');
+Route::get('/UserconCalendar', function () {
+    return view('UserconCalendar');
+})->name('UserconCalendar');
+Route::get('/UservehiCalendar', function () {
+    return view('UservehiCalendar');
+})->name('UservehiCalendar');
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
 
 Route::post('/conference-room/request', [ConferenceController::class, 'submitCForm']);
 

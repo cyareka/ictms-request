@@ -4,6 +4,7 @@
 <html>
 <head>
     <title>Vehicle Form</title>
+    <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
 </head>
 <body>
     <x-user-layout>
@@ -14,7 +15,7 @@
         </x-slot>
 
         <div class="py-12">
-            <!-- <div class="max-w-7xl mx-auto sm:px-6 lg:px-8"> -->
+            <div>
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <x-vehicle-form/>
                 </div>
