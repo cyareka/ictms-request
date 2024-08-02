@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('date_end', 10);
             $table->string('time_start', 4);
             $table->string('time_end', 4);
-            $table->date('ReceivedDate');
             $table->timestamps();
 
             // Foreign keys

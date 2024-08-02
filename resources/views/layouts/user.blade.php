@@ -16,83 +16,102 @@
 
             <!-- Styles -->
             <style>
-                .header {
-                    position: fixed;
-                    top: 0;
-                    right: 0;
-                    width: 100%;
-                    background-color: #ffffff;
-                    padding: 10px;
-                    text-align: right;
-                }
-                .nav {
-                    display: flex;
-                    align-items: center;
-                    border-bottom: 2px solid #EEEEF1;
-                }
-                .logo {
-                    margin-right: auto;
-                    margin-left: 20px;
-                    margin-top: 5px;
-                    margin-bottom: 15px;
-                }
-                .dropdown {
-                    position: relative;
-                    display: inline-block;
-                    margin-right: 10px;
-                }
-                .dropdown-content {
-                    display: none;
-                    position: absolute;
-                    background-color: #ffff;
-                    min-width: 160px;
-                    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-                    z-index: 1;
-                }
-                .dropdown-content a {
-                    color: black;
-                    padding: 12px 16px;
-                    text-decoration: none;
-                    display: block;
-                }
-                .dropdown-content a:hover {
-                    background-color: #f1f1f1;
-                }
-                .dropdown:hover .dropdown-content {
-                    display: block;
-                }
-                .dropdown:hover .dropbtn {
-                    background-color: transparent;
-                }
-                .dropbtn {
-                    background-color:transparent;
-                    color: #747487; 
-                    padding: 10px;
-                    font-size: 16px;
-                    border: none;
-                    cursor: pointer;
-                    border-radius: 25px;
-                }
+                .head {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: right;
+            z-index: 200; /* Ensures header is on top */
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #EEEEF1;
+        }
+        .logo {
+            margin-right: auto;
+            margin-left: 20px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffff;
+            min-width: 160px;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            z-index: 101;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown:hover .dropbtn {
+            background-color: transparent;
+        }
+        .dropbtn {
+            background-color:transparent;
+            color: #747487; 
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+        }
 
-                .dropbtn i {
-                    color: #fffff;
-                }
-                .dropbtn:hover {
-                    background-color: transparent;
-                }
-                /* Add some space between dropdown buttons */
-                .dropdown + .dropdown {
-                    margin-left: 10px;
-                }
-                .dropbtn i.fa-caret-down {
-                    transform: scale(0.5, 1);
-                }
+        .dropbtn i {
+            color: #fffff;
+        }
+        .dropbtn:hover {
+            background-color: transparent;
+        }
+        /* Add some space between dropdown buttons */
+        .dropdown + .dropdown {
+            margin-left: 10px;
+        }
+        .dropbtn i.fa-caret-down {
+            transform: scale(0.5, 1);
+        }
+        .back-button {
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .back-label {
+            color: #747487;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px;
+            display: inline-block;
+        }
+        span{
+            margin-right: 5px;
+        }
             </style>
             <!-- Import Font Awesome for icons -->
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
     </head>
             <body style="background-image: linear-gradient(to bottom, #02225d,#677a9e)">
-                <div class="header">
+                <div class="head">
                     <div class="nav">
                         <div class="logo">
                         <a href="/">
@@ -103,8 +122,8 @@
                         <div class="dropdown">
                         <button class="dropbtn"><i class="fa-solid fa-calendar-day"></i> Calendar View <i class="fa-solid fa-chevron-down"></i></button>
                             <div class="dropdown-content">
-                                <a href="{{ route('VehiclecalendarView') }}">Conference Room</a>
-                                <a href="{{ route('VehiclecalendarView') }}">Vehicle</a>
+                            <a href="{{ route('UserconCalendar') }}">Conference Room</a>
+                            <a href="{{ route('UservehiCalendar') }}">Vehicle</a>
                             </div>
                         </div>
                         <div class="dropdown">
@@ -113,6 +132,11 @@
                                 <a href="{{ route('user-vehicle') }}">Vehicle</a>
                             </div>
                         </div>
+                        <div class="back-button">
+                        <a href="{{ route('welcome') }}" class="back-label">
+                            <span>Back </span> <i class="fa-solid fa-arrow-right" style=" margin-right: 15px;"></i>
+                        </a>
+                    </div>
                     </div>
                 </div>
 
@@ -123,3 +147,4 @@
                 @livewireScripts
             </body>
 </html>
+

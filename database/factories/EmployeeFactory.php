@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ConferenceRoom;
 use App\Models\Employee;
 use App\Models\Office;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,17 +18,26 @@ class EmployeeFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    public function generateUniqueID(): string
+    {
+        $idGenerator = new IDGenerator();
+        do {
+            $generatedID = $idGenerator->generateID_10();
+        } while (Employee::query()->where('EmployeeID', $generatedID)->exists());
+
+        return $generatedID;
+    }
 
     public function definition(): array
     {
-        $idGenerator = new IDGenerator();
-        $office = Office::factory()->create();
+        $generatedID = $this->generateUniqueID();
+        $officeID = Office::query()->inRandomOrder()->value('OfficeID');
 
         return [
-            'EmployeeID' => $idGenerator->generateID_10(),
+            'EmployeeID' => $generatedID,
             'EmployeeEmail' => fake()->unique()->userName() . '@dswd.gov.ph',
             'EmployeeName' => fake()->name(),
-            'OfficeID' => $office->OfficeID,
+            'OfficeID' => $officeID,
             'EmployeeSignature' => $this->faker->imageUrl($width = 640, $height = 480, 'cats'),
         ];
     }
