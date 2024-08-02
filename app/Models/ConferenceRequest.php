@@ -9,6 +9,11 @@ class ConferenceRequest extends Model
 {
     use HasFactory;
 
+
+    /**
+     * @var false|mixed|string
+     */
+    public mixed $RequesterSignature;
     protected $fillable = [
         'CRequestID',
         'BasInID',
