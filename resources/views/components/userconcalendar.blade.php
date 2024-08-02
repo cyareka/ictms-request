@@ -7,8 +7,8 @@
       <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
       <!-- Fonts -->
       <link rel="preconnect" href="https://fonts.bunny.net">
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
       <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
       <!-- Styles -->
       <style>
          *, *:before, *:after {
@@ -28,22 +28,20 @@
          -moz-user-select: none;
          -ms-user-select: none;
          user-select: none;
-         margin-top: 50px;
+         margin-top: 60px;
          }
-         
          #calendar {
          -webkit-transform: translate3d(0, 0, 0);
          -moz-transform: translate3d(0, 0, 0);
          transform: translate3d(0, 0, 0);
-         width: 900px;
+         width: 1200px;
          margin: 0 auto;
-         height: 800px;
+         height: 700px;
          overflow: hidden;
          background-color: white;
-         margin-bottom: -30px;
          }
          .header {
-         height: 40px;
+         height: 50px;
          width: 1200px;
          background: rgba(230, 230, 230, 1);
          text-align: center;
@@ -262,20 +260,6 @@
          top: 12px;
          left: 14px;
          }
-         .buttons{
-         display:flex;
-         justify-content:right;
-         margin-top:20px;
-         margin-bottom:10px;
-         }
-         .applybtn , .cancelbtn {
-         background-color: #354e7d;
-         color:white;
-         border-radius:20px;
-         padding:5px;
-         margin: 0 10px 10px 0;
-         width: 90px;
-         }
          .entry.blue:after { background: rgba(56, 128, 168, 1); }
          .entry.yellow:after { background: rgba(249, 233, 0, 1); }
          /* Animations are cool!  */
@@ -376,40 +360,100 @@
          width: 81.5px;
          }
          }
-         
-                  
+         a:hover {
+         text-decoration: none;
+         }
+         .requests {
+         padding: 0px 50px;
+         position: relative;
+         z-index: 2; /* Ensure this content is above the footer */
+         }
+         .filter {
+         display: flex;
+         justify-content: space-between;
+         }
+         .tableactions i {
+         display: inline-block;
+         margin-right: 10px;
+         font-size: 20px;
+         }
+
+         .calbtn {
+         color:black;
+         font-size: 16px;
+         border: none;
+         cursor: pointer;
+         }
+         .dropdown-calendar {
+         position: relative;
+         display: inline-block;
+         z-index: 1000; /* Ensure dropdown is on top of the table */
+         }
+         .dropdown-calendar-content {
+         display: none;
+         position: absolute;
+         right: 0;
+         /* background-color: #f9f9f9; */
+         min-width: 260px;
+         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+         z-index: 1000; /* Ensure dropdown content is on top */
+         }
+         .dropdown-calendar-content p{
+         padding-top:10px;
+         padding-left:10px;
+         color:black;
+         font-weight:bold;
+         font-size:18px;
+         }
+         #margincheck{
+         margin-bottom:10px;
+         }
+         #filterlabel{
+         margin-bottom:10px;
+         }
+         .dropdown-calendar-content a {
+         color: black;
+         padding: 10px 16px;
+         text-decoration: none;
+         display: block;
+         }
+         .dropdown-calendar-content a:hover {
+         background-color: #f1f1f1;
+         }
+         .dropdown-calendar:hover .dropdown-calendar-content {
+         display: block;
+         }
+         .buttons{
+         display:flex;
+         justify-content:right;
+         margin-top:20px;
+         margin-bottom:10px;
+         }
+         .applybtn , .cancelbtn {
+         background-color: #354e7d;
+         color:white;
+         border-radius:20px;
+         padding:5px;
+         margin: 0 10px 10px 0;
+         width: 90px;
+         }
+         @media screen and (max-width: 484px) {
+         .form {
+         width:160px;
+         }
+         }
       </style>
    </head>
    <body>
-   <div class="requests">
-  <div class="filter">
-    <div class="tableactions">
-      <div id="divide" style="display: flex; ">
-        <div id="calendar" style="width: 35000%; margin-left: 20px;" ></div>
-        <div class="dropdown" style="margin-left: 20px;"> 
-          <button class="dropbtn" style="margin-bottom:-20em;"><i class="bi bi-filter" style="margin: 0 10em 0 0;  font-size: 24px; font-weight: bold;  "></i></button>
-          <div class="dropdown-content">
+      <div class="requests">
+      <div class="filter">
+         <div class="tableactions">
+            <div id="divide">
+               <div class="dropdown-calendar" style="float:right;">
+                  <button class="calbtn"><i class="bi bi-filter"></i></button>
+                  <div class="dropdown-calendar-content">
                      <p id="filterlabel">Filter By</p>
-                    
                      <hr>
-                     <p>Conference Room</p>
-                    
-                     <a>
-                        <div class="form-check">
-                           <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                           <label class="form-check-label" for="flexRadioDefault1">
-                           MAAGAP Conference
-                           </label>
-                        </div>
-                     </a>
-                     <a>
-                        <div class="form-check">
-                           <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                           <label class="form-check-label" for="flexRadioDefault1">
-                           MAGITING Conference
-                           </label>
-                        </div>
-                     </a>
                      <p>Status</p>
                      <a>
                         <div class="form-check">
