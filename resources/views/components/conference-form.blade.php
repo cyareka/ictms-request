@@ -265,31 +265,33 @@
         </div>
       </div>
       <div class="row-group-container">
-        <div class="row-group">
-          <div class="row">
+      @foreach (old('dateStart', [date('Y-m-d')]) as $index => $dateStart)
+    <div class="row-group">
+        <div class="row">
             <div class="inline-field">
-              <label for="dateStart">Date Start</label>
-              <input type="date" id="dateStart" name="dateStart[]"  required>
+                <label for="dateStart">Date Start</label>
+                <input type="date" id="dateStart" name="dateStart[]" value="{{ $dateStart }}" required>
             </div>
             <div class="inline-field" style="display: flex; align-items: center;">
-              <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-              <input type="date" id="dateEnd" name="dateEnd[]"  required>
-              <div class="button-container">
-                <button class="add-btn" type="button" onclick="addRow()">+</button>
-              </div>
+                <label for="dateEnd" style="margin-right: 10px;">Date End</label>
+                <input type="date" id="dateEnd" name="dateEnd[]" value="{{ old('dateEnd.' . $index, date('Y-m-d')) }}" required>
+                <div class="button-container">
+                    <button class="add-btn" type="button" onclick="addRow()">+</button>
+                </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="inline-field">
-              <label for="timeStart">Time Start</label>
-              <input type="time" id="timeStart" name="timeStart[]"  required>
-            </div>
-            <div class="inline-field">
-              <label for="timeEnd">Time End</label>
-              <input type="time" id="timeEnd" name="timeEnd[]" required>
-            </div>
-          </div>
         </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="timeStart">Time Start</label>
+                <input type="time" id="timeStart" name="timeStart[]" value="{{ old('timeStart.' . $index) }}" required>
+            </div>
+            <div class="inline-field">
+                <label for="timeEnd">Time End</label>
+                <input type="time" id="timeEnd" name="timeEnd[]" value="{{ old('timeEnd.' . $index) }}" required>
+            </div>
+        </div>
+    </div>
+@endforeach
       </div>
       <div class="row">
         <div class="inline-field">
