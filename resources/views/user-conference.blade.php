@@ -19,7 +19,6 @@
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                     <x-conference-form/>
                 </div>
-            </div>
         </div>
     </x-user-layout>
 </body>
