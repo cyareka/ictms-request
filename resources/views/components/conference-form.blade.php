@@ -15,8 +15,8 @@
         border-radius: 15px;
         margin: 5em auto 0;
         margin-bottom: 3em;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); 
-        background-color: #f9f9f9;            
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
     }
     h1 {
         font-size: 30px;
@@ -77,11 +77,6 @@
         gap: 15px;
         position: relative;
     }
-    .remove-container {
-        position: absolute;
-        top: 0;
-        right: 0;
-    }
     .button-container {
         display: flex;
         align-items: center;
@@ -89,27 +84,26 @@
         margin-bottom: 8px;
     }
     .add-btn {
-        background-color: #0056b3;
-        color: white;
-        padding: 3px 8px;
-        border: none;
-        border-radius: 50px;
-        cursor: pointer;
-        font-size: 20px;
-        margin-left: 5px;
+      background-color: #0056b3;
+      color: white;
+      padding: 3px 8px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
     }
     .add-btn:hover {
         background-color: #003d80;
     }
     .remove-btn {
-        background-color: #ff4d4d;
-        color: white;
-        padding: 5px 10px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 20px;
-        margin-left: 5px;
+      background-color: #ff4d4d;
+      color: white;
+      padding: 3px 8px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 5px;
     }
     .remove-btn:hover {
         background-color: #cc0000;
@@ -138,7 +132,7 @@
     .inline-field input,
     .inline-field select {
         width: 70%;
-    } 
+    }
     .form-footer {
         display: flex;
         justify-content: center;
@@ -165,6 +159,12 @@
         gap: 15px;
         margin-bottom: 8px;
     }
+    .inline-field label::after {
+      content: "*";
+      color: red;
+      right: -15px;
+      top: 0;
+    }
 </style>
   <script>
     function addRow() {
@@ -180,6 +180,9 @@
                 <div class="inline-field" style="display: flex; align-items: center;">
                     <label for="dateEnd" style="margin-right: 10px;">Date End</label>
                     <input type="date" id="dateEnd" name="dateEnd[]">
+                    <div class="remove-container">
+                <button class="remove-btn" onclick="removeRow(this)">-</button>
+            </div>
                 </div>
             </div>
             <div class="row">
@@ -191,9 +194,6 @@
                     <label for="timeEnd">Time End</label>
                     <input type="time" id="timeEnd" name="timeEnd[]">
                 </div>
-            </div>
-            <div class="remove-container">
-                <button class="remove-btn" onclick="removeRow(this)">-</button>
             </div>
         `;
         rowGroupContainer.appendChild(newRowGroup);
@@ -223,6 +223,25 @@
   </script>
 </head>
 <body>
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
   <div class="container">
     <h1>Request For Use of Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
@@ -242,7 +261,7 @@
         </div>
         <div class="inline-field">
           <label for="purpose">Purpose</label>
-          <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose">
+          <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose"  required>
         </div>
       </div>
       <div class="row-group-container">
@@ -250,11 +269,11 @@
           <div class="row">
             <div class="inline-field">
               <label for="dateStart">Date Start</label>
-              <input type="date" id="dateStart" name="dateStart[]">
+              <input type="date" id="dateStart" name="dateStart[]"  required>
             </div>
             <div class="inline-field" style="display: flex; align-items: center;">
               <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-              <input type="date" id="dateEnd" name="dateEnd[]">
+              <input type="date" id="dateEnd" name="dateEnd[]"  required>
               <div class="button-container">
                 <button class="add-btn" type="button" onclick="addRow()">+</button>
               </div>
@@ -263,11 +282,11 @@
           <div class="row">
             <div class="inline-field">
               <label for="timeStart">Time Start</label>
-              <input type="time" id="timeStart" name="timeStart[]">
+              <input type="time" id="timeStart" name="timeStart[]"  required>
             </div>
             <div class="inline-field">
               <label for="timeEnd">Time End</label>
-              <input type="time" id="timeEnd" name="timeEnd[]">
+              <input type="time" id="timeEnd" name="timeEnd[]" required>
             </div>
           </div>
         </div>
@@ -275,21 +294,21 @@
       <div class="row">
         <div class="inline-field">
           <label for="persons">No. of Persons</label>
-          <input class="small-input" type="text" id="persons" name="persons" placeholder="Enter">
+          <input class="small-input" type="text" id="persons" name="persons" placeholder="Enter"  required>
         </div>
         <div class="inline-field">
           <label for="focalPerson">Focal Person</label>
-          <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person">
+          <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person"  required>
         </div>
       </div>
       <div class="row-multiple">
         <div class="inline-field" style="width: 8em;">
           <label for="tables">Tables</label>
-          <input type="text" id="tables" name="tables" placeholder="Enter">
+          <input type="text" id="tables" name="tables" placeholder="Enter"  required>
         </div>
         <div class="inline-field" style="width: 8em;">
           <label for="chairs">Chairs</label>
-          <input type="text" id="chairs" name="chairs" placeholder="Enter">
+          <input type="text" id="chairs" name="chairs" placeholder="Enter"  required>
         </div>
         <div class="inline-field">
           <label for="otherFacilities">Other Facilities</label>
@@ -307,14 +326,14 @@
         </div>
         <div class="inline-field">
           <label for="requesterName">Name of Requester</label>
-          <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester">
+          <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
         </div>
       </div>
       <div class="row">
         <div class="inline-field">
           <label for="e-signature">E-Signature</label>
           <div class="file-upload">
-            <input type="file" id="e-signature" name="e-signature" style="display: none;" onchange="previewSignature(event)">
+            <input type="file" id="e-signature" name="e-signature" style="display: none;" onchange="previewSignature(event)"  required>
             <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
               Click to upload e-sign.<br>Maximum file size: 31.46MB
             </div>

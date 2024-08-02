@@ -8,14 +8,14 @@ use App\Models\VehicleRequest;
 // ...
 
 
-class VehicleRequestController extends Controller
+class VehicleController extends Controller
 {
     public function create()
     {
         return view('vehicle-request.create');
     }
 
-    public function submitVForm(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'RequestingOffice' => 'required|string|max:50',
@@ -25,9 +25,8 @@ class VehicleRequestController extends Controller
             'date_start' => 'required|date',
             'date_end' => 'required|date|after_or_equal:date_start',
             'time_start' => 'required',
-            'time_end' => 'required|after_or_equal:time_start',
             'Location' => 'required|string|max:50',
-            'requested_by' => 'required|string|max:50',
+            //'requested_by' => 'required|string|max:50',
             'RequesterEmail' => 'required|email|max:50',
             'contact_no' => 'required|string|max:13',
             'ReceivedDate' => 'required|date',
@@ -36,7 +35,8 @@ class VehicleRequestController extends Controller
             // 'received_by' => 'required|string|max:50',
         ]);
 
-        VehicleRequest::create($validated);
+        // $vehicleController = new VehicleController();
+        $vehicleController->create($validated);
 
         return redirect()->route('vehicle-request.create')->with('success', 'Form submitted successfully!');
     }

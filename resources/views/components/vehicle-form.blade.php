@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vehicle Request Form</title>
   <style>
-   <style>
     body {
       font-family: sans-serif;
     }
     .form-container {
-      width: 60em;
-      padding: 30px;
+      width: 65em;
+      padding: 35px;
       border: 1px solid #ddd;
       border-radius: 15px;
       margin: 5em auto;
@@ -49,6 +48,13 @@
     .input-field label {
       margin-right: 10px;
       width: 150px;
+      position: relative;
+    }
+    .input-field label::after {
+      content: "*";
+      color: red;
+      right: -15px;
+      top: 0;
     }
     .input-field input,
     .input-field select {
@@ -59,67 +65,55 @@
       width: calc(100% - 160px);
       box-sizing: border-box;
     }
-    .submit-button {
-      background-color: #4c1d95;
-      color: #fff;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      align-self: center;
-      margin-top: 20px;
-      margin-bottom: 10px;
-    }
-    .submit-button:hover {
-      background-color: #3c1b75;
-    }
-    .file-upload {
-      display: inline-block;
-      flex-direction: column;
-      align-items: center;
-      padding: 16px;
-      border: 2px dashed #5b21b6;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-bottom: 16px;
-      text-align: center;
-      width: calc(100% - 160px);
-      box-sizing: border-box;
-    }
     .button-container {
       display: flex;
       align-items: center;
     }
-    .add-passenger-btn,
-    .remove-passenger-btn {
-      background-color: #747487;
+    .add-passenger-btn {
+      background-color: #0056b3;
       color: white;
-      padding: 5px 10px;
+      padding: 3px 8px;
       border: none;
       border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 5px;
+    }
+    .remove-passenger-btn{
+      background-color: #ff4d4d;
+      color: white;
+      padding: 3px 8px;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 14px;
       margin-left: 5px;
     }
     .add-passenger-btn:hover,
-    .remove-passenger-btn:hover {
-      background-color: #3e8e41;
+    .add-datetime-btn:hover {
+        background-color: #003d80;
     }
-    .add-datetime-btn,
-    .remove-datetime-btn {
-      background-color: #747487;
+    .remove-passenger-btn:hover,
+    .remove-datetime-btn:hover {
+      background-color: #cc0000;
+    }
+    .add-datetime-btn {
+      background-color: #0056b3;
       color: white;
-      padding: 5px 10px;
-      border: none;
+      padding: 3px 8px;
       border-radius: 5px;
       cursor: pointer;
       font-size: 14px;
-      margin-left: 5px;
-      margin-bottom: 15px;
+      margin: 15px 0 15px 5px;
     }
-    .add-datetime-btn:hover,
-    .remove-datetime-btn:hover {
-      background-color: #3e8e41;
+    .remove-datetime-btn{
+      background-color: #ff4d4d;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 15px 0 15px 5px;
     }
     .inline-group {
       display: flex;
@@ -127,38 +121,25 @@
       width: 100%;
       justify-content: space-between;
     }
-    .passenger-group .input-field {
-      display: flex;
-      align-items: center;
-      width: 50%;
-    }
-    .passenger-group .button-container {
-      margin-left: 10px;
-    }
-    .passenger-group .date-field {
-      width: 20%;
-      display: flex;
-      align-items: center;
-    }
-    .passenger-group .date-field label {
-      width: auto;
-    }
-    .passenger-group .date-field input {
-      width: calc(100% - 50px);
-    }
+
     #passenger-container {
-      max-height: 200px;
+      width: 46%;
+      max-height: 80px;
       overflow-y: auto;
-      padding: 5px;
+      overflow-x: hidden;
       border-radius: 10px;
-      margin-bottom: 20px;
+      margin-left: auto;
+    }
+
+    #passenger-container .passenger-field {
+      width: 100%;
+      margin-left: 8em;
     }
     #date-time-container {
-      max-height: 200px;
+      max-height: 150px;
       overflow-y: auto;
       padding: 5px;
       border-radius: 10px;
-      margin-bottom: 20px;
     }
     .datetime-group {
       display: flex;
@@ -166,14 +147,43 @@
       width: 100%;
     }
     .datetime-group .input-field {
-      width: 30%;
+      width: 32%;
     }
     .datetime-group .button-container {
       display: flex;
       align-items: center;
       margin-left: 5px;
     }
-  </style>
+    .form-footer {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .submit-btn {
+      background-color: #65558F;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #signature-preview {
+      margin-top: 15px;
+      max-width: 100px;
+      max-height: 100px;
+      display: none;
+    }
+    .file-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      border: 2px dashed #5b21b6;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
   </style>
 </head>
 <body>
@@ -186,33 +196,45 @@
       @csrf
       <div class="input-group">
         <div class="input-field">
-          <label>Requesting Office/Unit</label>
-          <input type="text" name="requesting_office" required/>
+          <label for="officeName">Name of Requesting Office</label>
+          <select id="officeName" name="officeName" placeholder="Enter Purpose" required>
+            <option disabled selected>Select Office</option>
+            <option>Office of the Regional Director</option>
+            <option>Administrative Division</option>
+            <option>Finance Division</option>
+            <option>Planning Division</option>
+            <option>Technical Division</option>
+          </select>
         </div>
         <div class="input-field">
           <label>Purpose of Trip</label>
-          <input type="text" name="purpose" required/>
+          <input type="text" name="purpose" placeholder="Enter Purpose" required/>
         </div>
       </div>
-      <div id="passenger-container">
-        <div class="input-group passenger-group">
-          <div class="input-field">
-            <label>Name of Passenger</label>
-            <select name="passengers[]">
-              <option disabled selected>Select a passenger</option>
-              <option>Rea May Manlunas</option>
-              <option>Sheardeeh Zurrielle Fernandez</option>
-              <option>Inalyn Kim Tamayo</option>
-              <option>Beverly Consolacion</option>
-              <option>Ryu Colita</option>
-              <option>Justin Misajon</option>
-              <option>Elmer John Catalan</option>
-            </select>
-          </div>
+      <div class="input-group">
+        <div class="input-field">
+          <label>Place of Travel</label>
+          <input type="text" name="place_of_travel" placeholder="Enter Place" required/>
+        </div>
+        <div class="input-field passenger-field">
+          <label>Name of Passenger</label>
+          <select name="passengers[]" required>
+            <option disabled selected>Select a passenger</option>
+            <option>Rea May Manlunas</option>
+            <option>Sheardeeh Zurrielle Fernandez</option>
+            <option>Inalyn Kim Tamayo</option>
+            <option>Beverly Consolacion</option>
+            <option>Ryu Colita</option>
+            <option>Justin Misajon</option>
+            <option>Elmer John Catalan</option>
+          </select>
           <div class="button-container">
             <button class="add-passenger-btn" type="button" onclick="addPassenger()">+</button>
           </div>
         </div>
+      </div>
+      <div id="passenger-container">
+        <!-- New passenger fields will be appended here -->
       </div>
       <div id="date-time-container">
         <div class="input-group datetime-group">
@@ -227,69 +249,46 @@
           <div class="input-field">
             <label>Time Start</label>
             <input type="time" name="time_start[]" required/>
-          </div>
-          <div class="button-container">
+            <div class="button-container">
             <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
           </div>
+          </div>
         </div>
       </div>
       <div class="input-group">
         <div class="input-field">
-          <label>Place of Travel</label>
-          <input type="text" name="place_of_travel" required/>
-        </div>
-        <div class="input-field">
-          <label>Requested by</label>
-          <input type="text" name="requested_by" required/>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-field">
-          <label>Email of Requester</label>
-          <input type="email" name="email" required/>
+          <label for="e-signature">E-Signature</label>
+          <div class="file-upload">
+            <input type="file" id="e-signature" name="e-signature" style="display: none;" onchange="previewSignature(event)" required>
+            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
+              Click to upload e-sign.<br>Maximum file size: 31.46MB
+            </div>
+            <img id="signature-preview" alt="Signature Preview">
+            </div>
         </div>
         <div class="input-field">
           <label>Contact No.</label>
-          <input type="text" name="contact_no" required/>
+          <input type="text" name="contact_no" placeholder="Enter No." required/>
         </div>
       </div>
-      <div class="input-group">
-        <div class="input-field">
-          <label for="e-signature">E-Signature:</label>
-          <div class="file-upload">
-            <input type="file" id="e-signature" name="e_signature" style="display: none;" required/>
-            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-              Click to upload e-sign.<br />Maximum file size: 31.46MB
-            </div>
-          </div>
-        </div>
+      <div class="form-footer">
+        <button class="submit-btn" type="submit">Submit</button>
       </div>
-      <button class="submit-button" type="submit">Submit</button>
     </form>
   </div>
 </div>
 
 <script>
   function addPassenger() {
-    const passengerContainer = document.getElementById('passenger-container');
-    const newPassengerField = document.querySelector('.passenger-group').cloneNode(true);
-    newPassengerField.querySelector('select').value = '';
-    const removeButton = document.createElement('button');
-    removeButton.className = 'remove-passenger-btn';
-    removeButton.textContent = '-';
-    removeButton.type = 'button';
-    removeButton.onclick = function () {
-      removePassenger(this);
+    const passengerField = document.querySelector('.passenger-field').cloneNode(true);
+    passengerField.querySelector('label').remove();
+    passengerField.querySelector('select').value = "";
+    passengerField.querySelector('.add-passenger-btn').classList.replace('add-passenger-btn', 'remove-passenger-btn');
+    passengerField.querySelector('.remove-passenger-btn').textContent = '-';
+    passengerField.querySelector('.remove-passenger-btn').onclick = function() {
+      passengerField.remove();
     };
-    newPassengerField.querySelector('.button-container').appendChild(removeButton);
-    passengerContainer.appendChild(newPassengerField);
-  }
-
-  function removePassenger(element) {
-    const parent = element.closest('.passenger-group');
-    if (parent) {
-      parent.remove();
-    }
+    document.getElementById('passenger-container').appendChild(passengerField);
   }
 
   function addDateTime() {
@@ -323,8 +322,21 @@
     }
   }
 
-  function submitForm() {
-    alert('Form submitted successfully!');
+  function previewSignature(event) {
+    const input = event.target;
+    const preview = document.getElementById('signature-preview');
+    const reader = new FileReader();
+    const uploadText = document.querySelector('.e-signature-text');
+
+    reader.onload = function() {
+      preview.src = reader.result;
+      preview.style.display = 'block';
+      uploadText.style.display = 'none'; // Hide the upload text
+    };
+
+    if (input.files && input.files[0]) {
+      reader.readAsDataURL(input.files[0]);
+    }
   }
 </script>
 </body>
