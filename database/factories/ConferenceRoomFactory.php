@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Helpers\IDGenerator;
 use App\Models\ConferenceRoom;
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ConferenceRoom>
+ * @extends Factory<ConferenceRoom>
  */
 class ConferenceRoomFactory extends Factory
 {
@@ -28,13 +28,22 @@ class ConferenceRoomFactory extends Factory
             'Capacity' => $this->faker->numberBetween(1, 50),
         ];
     }
+    public function generateUniqueID(): string
+    {
+        $idGenerator = new IDGenerator();
+        do {
+            $generatedID = $idGenerator->generateID_10();
+        } while (ConferenceRoom::query()->where('CRoomID', $generatedID)->exists());
+
+        return $generatedID;
+    }
 
     public function magiting(): Factory
     {
         return $this->state(function (array $attributes) {
-            $idGenerator = new IDGenerator();
+            $generatedID = $this->generateUniqueID();
             return [
-                'CRoomID' => $idGenerator->generateID_3(),
+                'CRoomID' => $generatedID,
                 'CRoomName' => 'Magiting',
                 'Capacity' => 50,
                 'Location' => 'Diamond Building',
@@ -45,9 +54,9 @@ class ConferenceRoomFactory extends Factory
     public function maagap(): Factory
     {
         return $this->state(function (array $attributes) {
-            $idGenerator = new IDGenerator();
+            $generatedID = $this->generateUniqueID();
             return [
-                'CRoomID' => $idGenerator->generateID_3(),
+                'CRoomID' => $generatedID,
                 'CRoomName' => 'Maagap',
                 'Capacity' => 20,
                 'Location' => 'Emerald Building',
