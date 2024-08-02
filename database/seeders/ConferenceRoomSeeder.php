@@ -13,8 +13,8 @@ class ConferenceRoomSeeder extends Seeder
      */
     public function run(): void
     {
-//        $this->createConferenceRoom('magiting');
-//        $this->createConferenceRoom('maagap');
+        $this->createConferenceRoom('magiting');
+        $this->createConferenceRoom('maagap');
     }
 
     private function createConferenceRoom(string $type): void
@@ -22,6 +22,8 @@ class ConferenceRoomSeeder extends Seeder
         $conferenceRoom = ConferenceRoom::factory()->$type()->make();
         if (!ConferenceRoom::query()->where('CRoomID', $conferenceRoom->CRoomID)->exists()) {
             $conferenceRoom->save();
+        } else {
+            echo "<script>alert('Duplicate ID found for Conference Room');</script>";
         }
     }
 }
