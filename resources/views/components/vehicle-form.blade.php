@@ -104,7 +104,7 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 14px;
-      margin: 15px 0 15px 5px;
+      margin-left: 5px;
     }
     .remove-datetime-btn{
       background-color: #ff4d4d;
@@ -113,7 +113,7 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 14px;
-      margin: 15px 0 15px 5px;
+      margin-left: 5px;
     }
     .inline-group {
       display: flex;
@@ -134,6 +134,8 @@
     #passenger-container .passenger-field {
       width: 100%;
       margin-left: 8em;
+      display: flex;
+      align-items: center;
     }
     #date-time-container {
       max-height: 150px;
@@ -183,6 +185,24 @@
       border-radius: 6px;
       cursor: pointer;
       margin-bottom: 16px;
+    }
+    @media (max-width: 768px) {
+      .form-container {
+        width: 90%;
+        padding: 20px;
+        margin: 2em auto;
+        margin-top: 5em;
+      }
+      .input-group,
+      .input-field {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .input-field input,
+      .input-field select {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -256,6 +276,10 @@
         </div>
       </div>
       <div class="input-group">
+      <div class="input-field">
+          <label>Contact No.</label>
+          <input type="text" name="contact_no" placeholder="Enter No." required/>
+        </div>
         <div class="input-field">
           <label for="e-signature">E-Signature</label>
           <div class="file-upload">
@@ -265,10 +289,6 @@
             </div>
             <img id="signature-preview" alt="Signature Preview">
             </div>
-        </div>
-        <div class="input-field">
-          <label>Contact No.</label>
-          <input type="text" name="contact_no" placeholder="Enter No." required/>
         </div>
       </div>
       <div class="form-footer">

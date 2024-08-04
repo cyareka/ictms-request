@@ -275,6 +275,24 @@
       cursor: pointer;
       font-size: 16px;
     }
+    @media (max-width: 768px) {
+      .form-container {
+        width: 90%;
+        padding: 20px;
+        margin: 2em auto;
+        margin-top: 5em;
+      }
+      .input-group,
+      .input-field {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .input-field input,
+      .input-field select {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>

@@ -83,6 +83,8 @@
             margin-bottom: 8px;
         }
         .add-btn {
+            display: inline-block;
+            margin-left: 10px;
             background-color: #0056b3;
             color: white;
             padding: 3px 8px;
@@ -163,6 +165,35 @@
             color: red;
             right: -15px;
             top: 0;
+        }
+        @media (max-width: 768px) {
+            .container {
+            width: 90%;
+            flex-direction: column;
+            }
+            .row {
+                grid-template-columns: 1fr;
+            }
+            .row-multiple {
+                grid-template-columns: 1fr;
+            }
+            .inline-field {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .inline-field label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .inline-field input,
+            .inline-field select {
+                width: 100%;
+            }
+           .add-btn{
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
         }
     </style>
     <script>
@@ -272,8 +303,8 @@
                             <label for="dateStart">Date Start</label>
                             <input type="date" id="dateStart" name="dateStart[]" value="{{ $dateStart }}" required>
                         </div>
-                        <div class="inline-field" style="display: flex; align-items: center;">
-                            <label for="dateEnd" style="margin-right: 10px;">Date End</label>
+                        <div class="inline-field">
+                            <label for="dateEnd" >Date End</label>
                             <input type="date" id="dateEnd" name="dateEnd[]" value="{{ old('dateEnd.' . $index, date('Y-m-d')) }}" required>
                             <div class="button-container">
                                 <button class="add-btn" type="button" onclick="addRow()">+</button>
