@@ -9,11 +9,8 @@ class ConferenceRequest extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'CRequestID';
 
-    /**
-     * @var false|mixed|string
-     */
-    public mixed $RequesterSignature;
     protected $fillable = [
         'CRequestID',
         'OfficeID',
@@ -27,12 +24,27 @@ class ConferenceRequest extends Model
         'FormStatus',
         'EventStatus',
         'RequesterSignature',
+        'requesterName',
+        'dateStart',
+        'dateEnd',
+        'timeStart',
+        'timeEnd',
     ];
 
-     protected $casts = [
-        'date_start' => 'array',
-        'date_end' => 'array',
-        'time_start' => 'array',
-        'time_end' => 'array',
+    protected $casts = [
+        'dateStart' => 'array',
+        'dateEnd' => 'array',
+        'timeStart' => 'array',
+        'timeEnd' => 'array',
     ];
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'OfficeID');
+    }
+
+    public function conferenceRoom()
+    {
+        return $this->belongsTo(ConferenceRoom::class, 'CRoomID');
+    }
 }

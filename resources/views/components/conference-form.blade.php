@@ -44,7 +44,7 @@
         }
         .inline-field input[type="date"],
         .inline-field input[type="time"] {
-            width: 150px; /* adjust the width to your desired size */
+            width: 150px;
         }
         button {
             background-color: #65558F;
@@ -62,11 +62,8 @@
             gap: 15px;
             margin-bottom: 8px;
         }
-        /*.full-width {*/
-        /*    grid-column: span 2;*/
-        /*}*/
         .row-group-container {
-            height: 200px; /* Adjust height as necessary */
+            height: 200px;
             overflow-y: auto;
             margin-bottom: 15px;
         }
@@ -165,89 +162,27 @@
             top: 0;
         }
     </style>
-    <script>
-        function addRow() {
-            let rowGroupContainer = document.querySelector('.row-group-container');
-            let newRowGroup = document.createElement('div');
-            newRowGroup.className = 'row-group';
-            let today = new Date().toISOString().slice(0, 10); // get current date in YYYY-MM-DD format
-            newRowGroup.innerHTML = `
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="dateStart">Date Start</label>
-                        <input type="date" id="dateStart" name="dateStart[]" value="${today}" required>
-                    </div>
-                    <div class="inline-field" style="display: flex; align-items: center;">
-                        <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                        <input type="date" id="dateEnd" name="dateEnd[]" value="${today}" required>
-                        <div class="remove-container">
-                            <button class="remove-btn" onclick="removeRow(this)">-</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="timeStart">Time Start</label>
-                        <input type="time" id="timeStart" name="timeStart[]" required>
-                    </div>
-                    <div class="inline-field">
-                        <label for="timeEnd">Time End</label>
-                        <input type="time" id="timeEnd" name="timeEnd[]" required>
-                    </div>
-                </div>
-            `;
-            rowGroupContainer.appendChild(newRowGroup);
-        }
-        function removeRow(button) {
-            let container = button.closest('.row-group');
-            container.remove();
-        }
-        function previewSignature(event) {
-            const input = event.target;
-            const preview = document.getElementById('signature-preview');
-            const reader = new FileReader();
-            const uploadText = document.querySelector('.e-signature-text');
-            reader.onload = function() {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-                uploadText.style.display = 'none'; // Hide the upload text
-            };
-            if (input.files && input.files[0]) {
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-        function showError(message) {
-            alert(message);
-        }
-        function showSuccess(message) {
-            alert(message);
-        }
-    </script>
 </head>
 <body>
-@if (session('success'))
-    <script>
-        showSuccess("{{ session('success') }}");
-    </script>
-@endif
 @if ($errors->any())
     <script>
-        let errorMessages = '';
+        let errorMessages = [];
         @foreach ($errors->all() as $error)
-            errorMessages += '{{ $error }}\n';
+            errorMessages.push("{{ $error }}");
         @endforeach
-        showError(errorMessages);
+        alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
     </script>
 @endif
+
 @if(session('error'))
     <script>
-        showError("{{ session('error') }}");
+        alert(" {{ session('error') }}");
     </script>
 @endif
 <div class="container">
     <h1>Request For Use of Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
-    <form action="/conference-room/request" method="POST" enctype="multipart/form-data">
+    <form action="/conference-room/request" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
         @csrf
         <div class="row">
             <div class="inline-field">
@@ -265,29 +200,29 @@
             </div>
         </div>
         <div class="row-group-container">
-            @foreach (old('dateStart', [date('Y-m-d')]) as $index => $dateStart)
+            @foreach (old('date_start', [date('Y-m-d')]) as $index => $date_start)
                 <div class="row-group">
                     <div class="row">
                         <div class="inline-field">
-                            <label for="dateStart">Date Start</label>
-                            <input type="date" id="dateStart" name="dateStart[]" value="{{ $dateStart }}" required>
+                            <label for="date_start">Date Start</label>
+                            <input type="date" id="date_start" name="dateStart[]" value="{{ $date_start }}" required>
                         </div>
                         <div class="inline-field" style="display: flex; align-items: center;">
-                            <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                            <input type="date" id="dateEnd" name="dateEnd[]" value="{{ old('dateEnd.' . $index, date('Y-m-d')) }}" required>
+                            <label for="date_end" style="margin-right: 10px;">Date End</label>
+                            <input type="date" id="date_end" name="dateEnd[]" value="{{ old('date_end.' . $index, date('Y-m-d')) }}" required>
                             <div class="button-container">
-                                <button class="add-btn" type="button" onclick="addRow()">+</button>
+                                <button class="add-btn" type="button" onclick="handleFormActions('addRow')">+</button>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="inline-field">
-                            <label for="timeStart">Time Start</label>
-                            <input type="time" id="timeStart" name="timeStart[]" value="{{ old('timeStart.' . $index) }}" required>
+                            <label for="time_start">Time Start</label>
+                            <input type="time" id="time_start" name="timeStart[]" value="{{ old('time_start.' . $index) }}" required>
                         </div>
                         <div class="inline-field">
-                            <label for="timeEnd">Time End</label>
-                            <input type="time" id="timeEnd" name="timeEnd[]" value="{{ old('timeEnd.' . $index) }}" required>
+                            <label for="time_end">Time End</label>
+                            <input type="time" id="time_end" name="timeEnd[]" value="{{ old('time_end.' . $index) }}" required>
                         </div>
                     </div>
                 </div>
@@ -336,9 +271,9 @@
             <div class="inline-field">
                 <label for="RequesterSignature">E-Signature</label>
                 <div class="file-upload">
-                    <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;" onchange="previewSignature(event)"  required>
+                    <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;" onchange="handleFormActions('previewSignature', event)" required>
                     <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
-                        Click to upload e-sign.<br>Maximum file size: 31.46MB
+                        Click to upload e-sign.<br>Maximum file size: 32MB
                     </div>
                     <img id="signature-preview" alt="Signature Preview">
                 </div>
@@ -349,70 +284,109 @@
         </div>
     </form>
 </div>
+
 <script>
-    function addRow() {
-        let rowGroupContainer = document.querySelector('.row-group-container');
-        let newRowGroup = document.createElement('div');
-        newRowGroup.className = 'row-group';
-        let today = new Date().toISOString().slice(0, 10); // get current date in YYYY-MM-DD format
-        newRowGroup.innerHTML = `
-            <div class="row">
-                <div class="inline-field">
-                    <label for="dateStart">Date Start</label>
-                    <input type="date" id="dateStart" name="dateStart[]" value="${today}" required>
-                </div>
-                <div class="inline-field" style="display: flex; align-items: center;">
-                    <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                    <input type="date" id="dateEnd" name="dateEnd[]" value="${today}" required>
-                    <div class="remove-container">
-                        <button class="remove-btn" onclick="removeRow(this)">-</button>
+function handleFormActions(action, event) {
+    switch(action) {
+        case 'addRow':
+            let rowGroupContainer = document.querySelector('.row-group-container');
+            let newRowGroup = document.createElement('div');
+            newRowGroup.className = 'row-group';
+            let today = new Date().toISOString().slice(0, 10);
+            newRowGroup.innerHTML = `
+                <div class="row">
+                    <div class="inline-field">
+                        <label for="date_start">Date Start</label>
+                        <input type="date" id="date_start" name="dateStart[]" value="${today}" required>
+                    </div>
+                    <div class="inline-field" style="display: flex; align-items: center;">
+                        <label for="date_end" style="margin-right: 10px;">Date End</label>
+                        <input type="date" id="date_end" name="dateEnd[]" value="${today}" required>
+                        <div class="remove-container">
+                            <button class="remove-btn" onclick="handleFormActions('removeRow', event)">-</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="inline-field">
-                    <label for="timeStart">Time Start</label>
-                    <input type="time" id="timeStart" name="timeStart[]" required>
+                <div class="row">
+                    <div class="inline-field">
+                        <label for="time_start">Time Start</label>
+                        <input type="time" id="time_start" name="timeStart[]" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="time_end">Time End</label>
+                        <input type="time" id="time_end" name="timeEnd[]" required>
+                    </div>
                 </div>
-                <div class="inline-field">
-                    <label for="timeEnd">Time End</label>
-                    <input type="time" id="timeEnd" name="timeEnd[]" required>
-                </div>
-            </div>
-        `;
-        rowGroupContainer.appendChild(newRowGroup);
-    }
-    function removeRow(button) {
-        let container = button.closest('.row-group');
-        container.remove();
-    }
-    function previewSignature(event) {
-        const input = event.target;
-        const preview = document.getElementById('signature-preview');
-        const reader = new FileReader();
-        const uploadText = document.querySelector('.e-signature-text');
-        reader.onload = function() {
-            preview.src = reader.result;
-            preview.style.display = 'block';
-            uploadText.style.display = 'none'; // Hide the upload text
-        };
-        if (input.files && input.files[0]) {
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    // Place the validation script here
-    document.querySelector('form').addEventListener('submit', function(event) {
-        let datesValid = true;
-        document.querySelectorAll('input[type="date"]').forEach(function(input) {
-            if (!input.value) {
-                datesValid = false;
+            `;
+            rowGroupContainer.appendChild(newRowGroup);
+            break;
+        case 'removeRow':
+            event.target.closest('.row-group').remove();
+            break;
+        case 'previewSignature':
+            const input = event.target;
+            const preview = document.getElementById('signature-preview');
+            const reader = new FileReader();
+            const uploadText = document.querySelector('.e-signature-text');
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+                uploadText.style.display = 'none';
+            };
+            if (input.files && input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
             }
-        });
-        if (!datesValid) {
-            event.preventDefault();
-            alert('Please fill in all date fields.');
+            break;
+    }
+}
+
+document.querySelector('form').addEventListener('submit', function(event) {
+    let datesValid = true;
+    document.querySelectorAll('input[type="date"]').forEach(function(input) {
+        if (!input.value) {
+            datesValid = false;
         }
     });
+    if (!datesValid) {
+        event.preventDefault();
+        alert('Please fill in all date fields.');
+    }
+});
+
+function validateForm() {
+    let isValid = true;
+    let errorMessages = [];
+
+    // Check required fields
+    document.querySelectorAll('input[required], select[required]').forEach(function(element) {
+        if (!element.value) {
+            isValid = false;
+            errorMessages.push(element.previousElementSibling.textContent + " is required.");
+        }
+    });
+
+    // Check date fields
+    document.querySelectorAll('input[type="date"]').forEach(function(input) {
+        if (!input.value) {
+            isValid = false;
+            errorMessages.push("All date fields must be filled.");
+        }
+    });
+
+    // Check file size
+    let signatureFile = document.getElementById('RequesterSignature').files[0];
+    if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
+        isValid = false;
+        errorMessages.push("Signature file size must be less than 32MB.");
+    }
+
+    if (!isValid) {
+        alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
+        return false;
+    }
+
+    return true;
+}
 </script>
 </body>
 </html>
