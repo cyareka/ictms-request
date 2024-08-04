@@ -81,8 +81,8 @@
                <td>09-01-2024</td>
                <td>3:00 P.M</td>
                <td>Available</td>
-               <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td><span class="approved">Approved</span></td>
+               <td>Finished</td>
                <td>
                   <a href="{{ route('VehiclelogDetail') }}"><i class="bi bi-person-vcard"id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -97,8 +97,8 @@
                <td>09-01-2024</td>
                <td>3:00 P.M</td>
                <td>Available</td>
-               <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td><span class="approved">Approved</span></td>
+               <td>Finished</td>
                <td>
                   <a href="{{ route('VehiclelogDetail') }}"><i class="bi bi-person-vcard"id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -113,8 +113,8 @@
                <td>09-01-2024</td>
                <td>3:00 P.M</td>
                <td>Available</td>
-               <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td><span class="approved">Approved</span></td>
+               <td>Finished</td>
                <td>
                   <a href="{{ route('VehiclelogDetail') }}"><i class="bi bi-person-vcard"id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -129,8 +129,8 @@
                <td>09-01-2024</td>
                <td>3:00 P.M</td>
                <td>Available</td>
-               <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td><span class="approved">Approved</span></td>
+               <td>Cancelled</td>
                <td>
                   <a href="{{ route('VehiclelogDetail') }}"><i class="bi bi-person-vcard"id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -145,8 +145,8 @@
                <td>09-01-2024</td>
                <td>3:00 P.M</td>
                <td>Available</td>
-               <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td><span class="approved">Approved</span></td>
+               <td>Cancelled</td>
                <td>
                   <a href="{{ route('VehiclelogDetail') }}"><i class="bi bi-person-vcard"id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>

@@ -73,7 +73,7 @@
                <td>3:00 P.M</td>
                <td>Available</td>
                <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td>-</td>
                <td>
                   <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -89,7 +89,7 @@
                <td>3:00 P.M</td>
                <td>Available</td>
                <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td>-</td>
                <td>
                   <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -105,7 +105,7 @@
                <td>3:00 P.M</td>
                <td>Available</td>
                <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td>-</td>
                <td>
                   <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -121,7 +121,7 @@
                <td>3:00 P.M</td>
                <td>Available</td>
                <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td>-</td>
                <td>
                   <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
@@ -137,7 +137,7 @@
                <td>3:00 P.M</td>
                <td>Available</td>
                <td><span class="pending">Pending</span></td>
-               <td>Ongoing</td>
+               <td>-</td>
                <td>
                   <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
                   <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
