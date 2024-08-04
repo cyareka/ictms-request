@@ -31,64 +31,67 @@ class ConferenceController extends Controller
         return $generatedID;
     }
 
- public function submitCForm(Request $request): RedirectResponse
-{
-    $validated = $request->validate([
-        'officeName' => 'required|string|exists:offices,OfficeID',
-        'purpose' => 'required|string|max:255',
-        'dateStart' => 'required|array|min:1',
-        'dateStart.*' => 'required|date',
-        'dateEnd' => 'required|array|min:1',
-        'dateEnd.*' => 'required|date',
-        'timeStart' => 'required|array|min:1',
-        'timeStart.*' => 'required|date_format:H:i',
-        'timeEnd' => 'required|array|min:1',
-        'timeEnd.*' => 'required|date_format:H:i',
-        'npersons' => 'required|integer',
-        'focalPerson' => 'required|string|max:50',
-        'tables' => 'nullable|integer',
-        'chairs' => 'nullable|integer',
-        'otherFacilities' => 'nullable|string|max:50',
-        'conferenceRoom' => 'required|string|exists:conference_rooms,CRoomID',
-        'requesterName' => 'required|string|max:50',
-        'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
-    ]);
-
-    try {
-        $generatedID = $this->generateUniqueID();
-        $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
-        $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
-
-        $conferenceRequest = new ConferenceRequest();
-        $conferenceRequest->fill([
-            'CRequestID' => $generatedID,
-            'OfficeID' => $office->OfficeID,
-            'Purpose' => $validated['purpose'],
-            'date_start' => $validated['dateStart'],
-            'date_end' => $validated['dateEnd'],
-            'time_start' => $validated['timeStart'],
-            'time_end' => $validated['timeEnd'],
-            'npersons' => $validated['persons'],
-            'focalPerson' => $validated['focalPerson'],
-            'tables' => $validated['tables'],
-            'chairs' => $validated['chairs'],
-            'otherFacilities' => $validated['otherFacilities'],
-            'CRoomID' => $conferenceRoom->CRoomID,
-            'RequesterName' => $validated['requesterName'],
-            'FormStatus' => 'Pending',
-            'EventStatus' => '',
-        ]);
-
-        if ($request->hasFile('RequesterSignature')) {
-            $filePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
-            $conferenceRequest->RequesterSignature = $filePath;
+    public function submitCForm(Request $request): RedirectResponse
+    {
+        try {
+            $validated = $request->validate([
+                'officeName' => 'required|string|exists:offices,OfficeID',
+                'purpose' => 'required|string|max:255',
+                'date_start' => 'required|array|min:1',
+                'date_start.*' => 'required|date',
+                'date_end' => 'required|array|min:1',
+                'date_end.*' => 'required|date',
+                'time_start' => 'required|array|min:1',
+                'time_start.*' => 'required|date_format:H:i',
+                'time_end' => 'required|array|min:1',
+                'time_end.*' => 'required|date_format:H:i',
+                'npersons' => 'required|integer',
+                'focalPerson' => 'required|string|max:50',
+                'tables' => 'nullable|integer',
+                'chairs' => 'nullable|integer',
+                'otherFacilities' => 'nullable|string|max:50',
+                'conferenceRoom' => 'required|string|exists:conference_rooms,CRoomID',
+                'requesterName' => 'required|string|max:50',
+                'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            ]);
+    
+            $generatedID = $this->generateUniqueID();
+            $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
+            $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
+    
+            $conferenceRequest = new ConferenceRequest();
+            $conferenceRequest->fill([
+                'CRequestID' => $generatedID,
+                'OfficeID' => $office->OfficeID,
+                'Purpose' => $validated['purpose'],
+                'date_start' => $validated['date_start'],
+                'date_end' => $validated['date_end'],
+                'time_start' => $validated['time_start'],
+                'time_end' => $validated['time_end'],
+                'npersons' => $validated['npersons'],
+                'focalPerson' => $validated['focalPerson'],
+                'tables' => $validated['tables'],
+                'chairs' => $validated['chairs'],
+                'otherFacilities' => $validated['otherFacilities'],
+                'CRoomID' => $conferenceRoom->CRoomID,
+                'RequesterName' => $validated['requesterName'],
+                'FormStatus' => 'Pending',
+                'EventStatus' => '',
+            ]);
+    
+            if ($request->hasFile('RequesterSignature')) {
+                $filePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
+                $conferenceRequest->RequesterSignature = $filePath;
+            }
+    
+            $conferenceRequest->save();
+    
+            return redirect()->back()->with('success', 'Conference room request submitted successfully.');
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error('Conference room request submission failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Form submission failed. Please try again.');
         }
-
-        $conferenceRequest->save();
-
-        return redirect()->back()->with('success', 'Conference room request submitted successfully.');
-    } catch (Throwable $e) {
-        return redirect()->back()->with('error', 'Form submission failed. Please try again.');
     }
-}
 }

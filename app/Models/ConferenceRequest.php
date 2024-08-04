@@ -8,12 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class ConferenceRequest extends Model
 {
     use HasFactory;
+    protected $table = 'conference_room_requests';
 
+    protected $primaryKey = 'CRequestID';
 
-    /**
-     * @var false|mixed|string
-     */
-    public mixed $RequesterSignature;
     protected $fillable = [
         'CRequestID',
         'OfficeID',
@@ -27,12 +25,27 @@ class ConferenceRequest extends Model
         'FormStatus',
         'EventStatus',
         'RequesterSignature',
+        'RequesterName',
+        'date_start',
+        'date_end',
+        'time_start',
+        'time_end',
     ];
 
-     protected $casts = [
+    protected $casts = [
         'date_start' => 'array',
         'date_end' => 'array',
         'time_start' => 'array',
         'time_end' => 'array',
     ];
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'OfficeID');
+    }
+
+    public function conferenceRoom()
+    {
+        return $this->belongsTo(ConferenceRoom::class, 'CRoomID');
+    }
 }
