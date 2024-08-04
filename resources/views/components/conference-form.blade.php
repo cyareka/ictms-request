@@ -205,11 +205,11 @@
                     <div class="row">
                         <div class="inline-field">
                             <label for="date_start">Date Start</label>
-                            <input type="date" id="date_start" name="dateStart[]" value="{{ $date_start }}" required>
+                            <input type="date" id="date_start" name="date_start[]" value="{{ $date_start }}" required>
                         </div>
                         <div class="inline-field" style="display: flex; align-items: center;">
                             <label for="date_end" style="margin-right: 10px;">Date End</label>
-                            <input type="date" id="date_end" name="dateEnd[]" value="{{ old('date_end.' . $index, date('Y-m-d')) }}" required>
+                            <input type="date" id="date_end" name="date_end[]" value="{{ old('date_end.' . $index, date('Y-m-d')) }}" required>
                             <div class="button-container">
                                 <button class="add-btn" type="button" onclick="handleFormActions('addRow')">+</button>
                             </div>
@@ -218,11 +218,11 @@
                     <div class="row">
                         <div class="inline-field">
                             <label for="time_start">Time Start</label>
-                            <input type="time" id="time_start" name="timeStart[]" value="{{ old('time_start.' . $index) }}" required>
+                            <input type="time" id="time_start" name="time_start[]" value="{{ old('time_start.' . $index) }}" required>
                         </div>
                         <div class="inline-field">
                             <label for="time_end">Time End</label>
-                            <input type="time" id="time_end" name="timeEnd[]" value="{{ old('time_end.' . $index) }}" required>
+                            <input type="time" id="time_end" name="time_end[]" value="{{ old('time_end.' . $index) }}" required>
                         </div>
                     </div>
                 </div>
@@ -297,11 +297,11 @@ function handleFormActions(action, event) {
                 <div class="row">
                     <div class="inline-field">
                         <label for="date_start">Date Start</label>
-                        <input type="date" id="date_start" name="dateStart[]" value="${today}" required>
+                        <input type="date" id="date_start" name="date_start[]" value="${today}" required>
                     </div>
                     <div class="inline-field" style="display: flex; align-items: center;">
                         <label for="date_end" style="margin-right: 10px;">Date End</label>
-                        <input type="date" id="date_end" name="dateEnd[]" value="${today}" required>
+                        <input type="date" id="date_end" name="date_end[]" value="${today}" required>
                         <div class="remove-container">
                             <button class="remove-btn" onclick="handleFormActions('removeRow', event)">-</button>
                         </div>
@@ -310,11 +310,11 @@ function handleFormActions(action, event) {
                 <div class="row">
                     <div class="inline-field">
                         <label for="time_start">Time Start</label>
-                        <input type="time" id="time_start" name="timeStart[]" required>
+                        <input type="time" id="time_start" name="time_start[]" required>
                     </div>
                     <div class="inline-field">
                         <label for="time_end">Time End</label>
-                        <input type="time" id="time_end" name="timeEnd[]" required>
+                        <input type="time" id="time_end" name="time_end[]" required>
                     </div>
                 </div>
             `;

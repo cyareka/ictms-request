@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class ConferenceRequest extends Model
 {
     use HasFactory;
-    
     protected $table = 'conference_room_requests';
 
     protected $primaryKey = 'CRequestID';
@@ -26,18 +25,18 @@ class ConferenceRequest extends Model
         'FormStatus',
         'EventStatus',
         'RequesterSignature',
-        'requesterName',
-        'dateStart',
-        'dateEnd',
-        'timeStart',
-        'timeEnd',
+        'RequesterName',
+        'date_start',
+        'date_end',
+        'time_start',
+        'time_end',
     ];
 
     protected $casts = [
-        'dateStart' => 'array',
-        'dateEnd' => 'array',
-        'timeStart' => 'array',
-        'timeEnd' => 'array',
+        'date_start' => 'array',
+        'date_end' => 'array',
+        'time_start' => 'array',
+        'time_end' => 'array',
     ];
 
     public function office()

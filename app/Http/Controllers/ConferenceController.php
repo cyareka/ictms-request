@@ -9,7 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\ConferenceRoom;
-use App\Models\ConferenceRequest; 
+use App\Models\ConferenceRequest;
 use App\Helpers\IDGenerator;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -37,14 +37,14 @@ class ConferenceController extends Controller
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
                 'purpose' => 'required|string|max:255',
-                'dateStart' => 'required|array|min:1',
-                'dateStart.*' => 'required|date',
-                'dateEnd' => 'required|array|min:1',
-                'dateEnd.*' => 'required|date',
-                'timeStart' => 'required|array|min:1',
-                'timeStart.*' => 'required|date_format:H:i',
-                'timeEnd' => 'required|array|min:1',
-                'timeEnd.*' => 'required|date_format:H:i',
+                'date_start' => 'required|array|min:1',
+                'date_start.*' => 'required|date',
+                'date_end' => 'required|array|min:1',
+                'date_end.*' => 'required|date',
+                'time_start' => 'required|array|min:1',
+                'time_start.*' => 'required|date_format:H:i',
+                'time_end' => 'required|array|min:1',
+                'time_end.*' => 'required|date_format:H:i',
                 'npersons' => 'required|integer',
                 'focalPerson' => 'required|string|max:50',
                 'tables' => 'nullable|integer',
@@ -64,10 +64,10 @@ class ConferenceController extends Controller
                 'CRequestID' => $generatedID,
                 'OfficeID' => $office->OfficeID,
                 'Purpose' => $validated['purpose'],
-                'dateStart' => $validated['dateStart'],
-                'dateEnd' => $validated['dateEnd'],
-                'timeStart' => $validated['timeStart'],
-                'timeEnd' => $validated['timeEnd'],
+                'date_start' => $validated['date_start'],
+                'date_end' => $validated['date_end'],
+                'time_start' => $validated['time_start'],
+                'time_end' => $validated['time_end'],
                 'npersons' => $validated['npersons'],
                 'focalPerson' => $validated['focalPerson'],
                 'tables' => $validated['tables'],
