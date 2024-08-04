@@ -9,7 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\ConferenceRoom;
-use App\Models\ConferenceRequest;
+use App\Models\ConferenceRequest; 
 use App\Helpers\IDGenerator;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -64,11 +64,11 @@ class ConferenceController extends Controller
                 'CRequestID' => $generatedID,
                 'OfficeID' => $office->OfficeID,
                 'Purpose' => $validated['purpose'],
-                'date_start' => $validated['dateStart'],
-                'date_end' => $validated['dateEnd'],
-                'time_start' => $validated['timeStart'],
-                'time_end' => $validated['timeEnd'],
-                'npersons' => $validated['npersons'],  // Changed from 'persons' to 'npersons'
+                'dateStart' => $validated['dateStart'],
+                'dateEnd' => $validated['dateEnd'],
+                'timeStart' => $validated['timeStart'],
+                'timeEnd' => $validated['timeEnd'],
+                'npersons' => $validated['npersons'],
                 'focalPerson' => $validated['focalPerson'],
                 'tables' => $validated['tables'],
                 'chairs' => $validated['chairs'],

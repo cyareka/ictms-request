@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ConferenceRequest extends Model
 {
     use HasFactory;
+    
+    protected $table = 'conference_room_requests';
 
     protected $primaryKey = 'CRequestID';
 
