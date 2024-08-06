@@ -45,7 +45,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const emailInput = document.getElementById('email');
                 const emailError = document.getElementById('email-error');
-                const emailPattern = /^[a-zA-Z0-9._%+-]+@dswd\.gov\.ph$/;
+                const emailPattern = /^[a-zA-Z0-9._%+-]+@dswd\\.gov\\.ph$/;
 
                 emailInput.addEventListener('input', function() {
                     if (emailPattern.test(emailInput.value)) {
@@ -67,6 +67,5 @@
                 });
             });
         </script>
-   <a href="{{ route('register') }}" class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20]">ADD admin</a>
     </x-slot>
 </x-action-section>

@@ -2,6 +2,7 @@
 use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -86,3 +87,5 @@ Route::post('/conference-room/request', [ConferenceController::class, 'submitCFo
 Route::post('/vehicle-request', [VehicleController::class, 'store']);
 
 Route::get('/conference-room/request', [ConferenceController::class, 'showForm'])->name('conference.showForm');
+
+Route::post('/register', [AdminController::class, 'register'])->name('register');
