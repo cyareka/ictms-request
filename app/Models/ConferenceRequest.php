@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ConferenceRequest extends Model
 {
     use HasFactory;
-    protected $table = 'conference_room_requests';
 
+    protected $table = 'conference_room_requests';
     protected $primaryKey = 'CRequestID';
 
     protected $fillable = [
@@ -39,12 +40,12 @@ class ConferenceRequest extends Model
         'time_end' => 'array',
     ];
 
-    public function office()
+    public function office(): BelongsTo
     {
         return $this->belongsTo(Office::class, 'OfficeID');
     }
 
-    public function conferenceRoom()
+    public function conferenceRoom(): BelongsTo
     {
         return $this->belongsTo(ConferenceRoom::class, 'CRoomID');
     }

@@ -9,6 +9,10 @@ class ConferenceRoom extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'CRoomID';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'CRoomID',
         'Availability',
