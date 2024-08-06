@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VehicleRequest extends Model
 {
     use HasFactory;
+    protected $table = 'vehicle_request';
+    protected $primaryKey = 'VRequestID';
 
     protected $fillable = [
         'DriverID',
@@ -22,7 +25,7 @@ class VehicleRequest extends Model
         'requested_by',
         'email',
         'contact_no',
-        'e_signature',
+        'RequesterSignature',
         'FormStatus',
         'EventStatus',
     ];
@@ -34,4 +37,19 @@ class VehicleRequest extends Model
         'time_start' => 'array',
         'time_end' => 'array',
     ];
+
+    public function office(): BelongsTo
+    {
+        return $this->belongsTo(Office::class, 'OfficeID');
+    }
+
+    public function driver(): BelongsTo
+    {
+        return $this->belongsTo(Driver::class, 'DriverID');
+    }
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'EmployeeID');
+    }
 }

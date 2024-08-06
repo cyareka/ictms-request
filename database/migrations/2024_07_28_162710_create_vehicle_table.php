@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('vehicle', function (Blueprint $table) {
             $table->string('VehicleID', 3)->primary();
             $table->string('VehicleType');
-            $table->enum('Availability', ['Available', 'Not Available']);
+            $table->enum('Availability', ['Available', 'Not Available'])->default('Available');
             $table->string('PlateNo', 8);
             $table->integer('Capacity');
             $table->timestamps();
@@ -37,14 +37,19 @@ return new class extends Migration
             $table->string('Location', 30);
             $table->string('contact_no',13);
             $table->string('received_by', 50);
+
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved']);
             $table->enum('EventStatus', ['Cancelled', 'Finished'])->nullable()->default(null);
+            $table->string('RequesterName');
+            $table->string('RequesterSignature');
+            $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
+            $table->enum('EventStatus', ['-', 'Ongoing', 'Cancelled', 'Finished'])->default('-');
+            $table->timestamps();
             $table->timestamps();
 
             // Adding foreign keys
             $table->foreign('DriverID')->references('DriverID')->on('driver');
             $table->foreign('VehicleID')->references('VehicleID')->on('vehicle');
-            $table->foreign('BasInID')->references('BasInID')->on('basic_information');
         });
     }
 
