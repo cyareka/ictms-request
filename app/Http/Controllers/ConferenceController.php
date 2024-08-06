@@ -33,14 +33,13 @@ class ConferenceController extends Controller
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
                 'purpose' => 'required|string|max:255',
-                'date_start' => 'required|array|min:1',
                 'date_start.*' => 'required|date',
                 'date_end' => 'required|array|min:1',
-                'date_end.*' => 'required|date',
+                'date_end.*' => 'required|date|after_or_equal:date_start.*',
                 'time_start' => 'required|array|min:1',
                 'time_start.*' => 'required|date_format:H:i',
                 'time_end' => 'required|array|min:1',
-                'time_end.*' => 'required|date_format:H:i',
+                'time_end.*' => 'required|date_format:H:i|after:time_start.*',
                 'npersons' => 'required|integer',
                 'focalPerson' => 'required|string|max:50',
                 'tables' => 'nullable|integer',
@@ -51,6 +50,11 @@ class ConferenceController extends Controller
                 'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
             ]);
 
+            // Custom validation for duplicate dates
+            $dates = $validated['date_start'];
+            if (count($dates) !== count(array_unique($dates))) {
+                throw ValidationException::withMessages(['date_start' => 'Duplicate dates are not allowed.']);
+            }
 
             $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
             $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
