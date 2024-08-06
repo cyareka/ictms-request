@@ -15,7 +15,7 @@
       border-radius: 15px;
       margin: 5em auto;
       margin-bottom: 3em;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); 
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
       background-color: #f9f9f9;
       margin-top: 0;
     }
@@ -45,7 +45,7 @@
     }
     form {
       margin-bottom: 10px;
-      
+
     }
     .dropdown-button {
       position: relative;
@@ -114,7 +114,7 @@
         gap: 15px;
         margin-bottom: 8px;
     }
-   
+
     .inline {
         display: flex;
         align-items: center;
@@ -144,7 +144,7 @@
       border-radius: 10px;
       width: calc(100% - 160px);
       box-sizing: border-box;
-    } 
+    }
     .button-container {
       display: flex;
       align-items: center;
@@ -280,7 +280,7 @@
 <body>
 <div class="form-container">
   <h1>Request For Use of Vehicle</h1>
-  <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use. 
+  <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
     Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
   <div class="form-body">
     <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
@@ -426,7 +426,7 @@
               <input type="text" id="remark" name="remark" placeholder="Enter Remark">
             </div>
         </div>
-      
+
       </form>
     </div>
 
@@ -457,8 +457,8 @@
               <label for="eventStatus">Event Status</label>
                 <select id="eventStatus" name="eventStatus">
                     <option disabled selected>Select Event Status</option>
+                    <option>-</option>
                     <option>Approved</option>
-                    <option>Ongoing</option>
                     <option>Completed</option>
                     <option>Cancelled</option>
                 </select>
@@ -629,7 +629,7 @@
         adminServiceForm.style.display = "block";
       }
     }
-    
+
   </script>
 </body>
 </html>
