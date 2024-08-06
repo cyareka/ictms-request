@@ -317,6 +317,7 @@
 </div>
 
 <script>
+<<<<<<< Updated upstream
 function handleFormActions(action, event) {
     switch(action) {
         case 'addRow':
@@ -336,6 +337,24 @@ function handleFormActions(action, event) {
                         <div class="remove-container">
                             <button class="remove-btn" onclick="handleFormActions('removeRow', event)">-</button>
                         </div>
+=======
+    function addRow() {
+        let rowGroupContainer = document.querySelector('.row-group-container');
+        let newRowGroup = document.createElement('div');
+        newRowGroup.className = 'row-group';
+        let today = new Date().toISOString().slice(0, 10); // get current date in YYYY-MM-DD format
+        newRowGroup.innerHTML = `
+            <div class="row">
+                <div class="inline-field">
+                    <label for="dateStart">Date Start</label>
+                    <input type="date" id="dateStart" name="dateStart[]" required>
+                </div>
+                <div class="inline-field" style="display: flex; align-items: center;">
+                    <label for="dateEnd" style="margin-right: 10px;">Date End</label>
+                    <input type="date" id="dateEnd" name="dateEnd[]" required>
+                    <div class="remove-container">
+                        <button class="remove-btn" onclick="removeRow(this)">-</button>
+>>>>>>> Stashed changes
                     </div>
                 </div>
                 <div class="row">

@@ -1,53 +1,78 @@
 <x-action-section>
     <x-slot name="title">
-        {{ __('Delete Account') }}
+        {{ __('New Admin') }}
     </x-slot>
 
     <x-slot name="description">
-        {{ __('Permanently delete your account.') }}
+        {{ __('Add new additional Admin that can approve the requests.') }}
     </x-slot>
 
     <x-slot name="content">
-        <div class="max-w-xl text-sm text-gray-600">
-            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
-        </div>
+        <!-- Add New Admin Form -->
+        <x-validation-errors class="mb-4" />
 
-        <div class="mt-5">
-            <x-danger-button wire:click="confirmUserDeletion" wire:loading.attr="disabled">
-                {{ __('Delete Account') }}
-            </x-danger-button>
-        </div>
+        <form method="POST" action="{{ route('register') }}">
+            @csrf
+            <div>
+                <x-label for="name" value="{{ __('Name') }}" />
+                <x-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
+            </div>
 
-        <!-- Delete User Confirmation Modal -->
-        <x-dialog-modal wire:model.live="confirmingUserDeletion">
-            <x-slot name="title">
-                {{ __('Delete Account') }}
-            </x-slot>
+            <div class="mt-4">
+                <x-label for="email" value="{{ __('Email') }}" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username"/>
+                <span id="email-error" class="text-red-500 text-sm hidden">Invalid email domain. Must be @dswd.gov.ph</span>
+            </div>
 
-            <x-slot name="content">
-                {{ __('Are you sure you want to delete your account? Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const emailInput = document.getElementById('email');
+                    const emailError = document.getElementById('email-error');
+                    const emailPattern = /^[a-zA-Z0-9._%+-]+@dswd\.gov\.ph$/;
 
-                <div class="mt-4" x-data="{}" x-on:confirming-delete-user.window="setTimeout(() => $refs.password.focus(), 250)">
-                    <x-input type="password" class="mt-1 block w-3/4"
-                                autocomplete="current-password"
-                                placeholder="{{ __('Password') }}"
-                                x-ref="password"
-                                wire:model="password"
-                                wire:keydown.enter="deleteUser" />
+                    emailInput.addEventListener('input', function() {
+                        if (emailPattern.test(emailInput.value)) {
+                            emailError.classList.add('hidden');
+                            emailInput.setCustomValidity('');
+                        } else {
+                            emailError.classList.remove('hidden');
+                            emailInput.setCustomValidity('Invalid email domain. Must be @dswd.gov.ph');
+                        }
+                    });
+                });
+            </script>
 
-                    <x-input-error for="password" class="mt-2" />
+            <div class="mt-4">
+                <x-label for="password" value="{{ __('Password') }}" />
+                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
+                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+            </div>
+
+            @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
+                <div class="mt-4">
+                    <x-label for="terms">
+                        <div class="flex items-center">
+                            <x-checkbox name="terms" id="terms" required />
+                            <div class="ms-2">
+                                {!! __('I agree to the :terms_of_service and :privacy_policy', [
+                                    'terms_of_service' => '<a target="_blank" href="'.route('terms.show').'" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">'.__('Terms of Service').'</a>',
+                                    'privacy_policy' => '<a target="_blank" href="'.route('policy.show').'" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">'.__('Privacy Policy').'</a>',
+                                ]) !!}
+                            </div>
+                        </div>
+                    </x-label>
                 </div>
-            </x-slot>
+            @endif
 
-            <x-slot name="footer">
-                <x-secondary-button wire:click="$toggle('confirmingUserDeletion')" wire:loading.attr="disabled">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-danger-button class="ms-3" wire:click="deleteUser" wire:loading.attr="disabled">
-                    {{ __('Delete Account') }}
-                </x-danger-button>
-            </x-slot>
-        </x-dialog-modal>
+            <div class="flex items-center justify-end mt-4">
+                <x-button class="ms-4">
+                    {{ __('Register') }}
+                </x-button>
+            </div>
+        </form>
     </x-slot>
 </x-action-section>

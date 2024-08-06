@@ -15,9 +15,9 @@
         border-radius: 15px;
         margin: 5em auto 0;
         margin-bottom: 3em;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); 
-        background-color: #f9f9f9; 
-        margin-top: 0;           
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+        margin-top: 0;
     }
     h1 {
         font-size: 30px;
@@ -51,7 +51,7 @@
         box-sizing: border-box;
         margin-bottom: 15px;
     }
-    
+
     button {
         background-color: #65558F;
         color: white;
@@ -143,7 +143,7 @@
     .inline-field input,
     .inline-field select {
         width: 70%;
-    } 
+    }
     .form-footer {
         display: flex;
         justify-content: center;
@@ -216,7 +216,7 @@
 <body>
 
 <div class="container">
-    <h1>Update Requeat for Conference Room</h1>
+    <h1>Update Request for Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
 
     <div class="row">
@@ -338,8 +338,8 @@
             <label for="eventStatus">Event Status</label>
             <select id="eventStatus" name="eventStatus">
                 <option disabled selected>Select Event Status</option>
+                <option>-</option>
                 <option>Approved</option>
-                <option>Ongoing</option>
                 <option>Completed</option>
                 <option>Cancelled</option>
             </select>
@@ -433,7 +433,7 @@
         document.querySelector('.e-signature-text').style.display = 'block'; // Show the upload text again
         document.getElementById('e-signature').value = ''; // Reset the e-signature field
 
-        document.getElementById('conferenceRoom').selectedIndex = 0; 
+        document.getElementById('conferenceRoom').selectedIndex = 0;
         document.getElementById('availability').selectedIndex = 0; // Reset the availability field
         document.getElementById('formStatus').selectedIndex = 0; // Reset the form status field
         document.getElementById('eventStatus').selectedIndex = 0; // Reset the event status field
