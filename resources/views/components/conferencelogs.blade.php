@@ -112,7 +112,7 @@
                <td>Available</td>
                <td><span class="approved">Approved</span></td>
                <td>Finished</td>
-               <td>z
+               <td>
                   <a href="{{ route('ConferencelogDetail') }}"><i class="bi bi-person-vcard" id="actions"></i></a>
                   <i class="bi bi-download" id="actions"></i>
                </td>

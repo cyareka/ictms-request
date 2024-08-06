@@ -86,3 +86,5 @@ Route::post('/conference-room/request', [ConferenceController::class, 'submitCFo
 Route::post('/vehicle-request', [VehicleController::class, 'store']);
 
 Route::get('/conference-room/request', [ConferenceController::class, 'showForm'])->name('conference.showForm');
+
+Route::get('/conference-requests', [ConferenceController::class, 'showRequests'])->name('conference.requests');

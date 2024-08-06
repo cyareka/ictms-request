@@ -1,4 +1,8 @@
 
+<head>
+<title>Conference Calendar</title>
+<link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
+</head>
 <x-user-layout>
         <x-slot name="header">
             <!-- <h1 class="font-semibold text-xl text-gray-800 leading-tight">

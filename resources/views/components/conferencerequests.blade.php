@@ -81,81 +81,23 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <th scope="row">6013</th>
-                <td>08-09-2024</td>
-                <td>Magiting Room</td>
-                <td>HR Office</td>
-                <td>09-01-2024</td>
-                <td>3:00 P.M</td>
-                <td>Available</td>
-                <td><span class="pending">Pending</span></td>
-                <td>-</td>
-                <td>
-                    <a href="{{ route('ConferencedetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">6013</th>
-                <td>08-09-2024</td>
-                <td>Magiting Room</td>
-                <td>HR Office</td>
-                <td>09-01-2024</td>
-                <td>3:00 P.M</td>
-                <td>Available</td>
-                <td><span class="pending">Pending</span></td>
-                <td>-</td>
-                <td>
-                    <a href="{{ route('ConferencedetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">6013</th>
-                <td>08-09-2024</td>
-                <td>Magiting Room</td>
-                <td>HR Office</td>
-                <td>09-01-2024</td>
-                <td>3:00 P.M</td>
-                <td>Available</td>
-                <td><span class="pending">Pending</span></td>
-                <td>-</td>
-                <td>
-                    <a href="{{ route('ConferencedetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">6013</th>
-                <td>08-09-2024</td>
-                <td>Magiting Room</td>
-                <td>HR Office</td>
-                <td>09-01-2024</td>
-                <td>3:00 P.M</td>
-                <td>Available</td>
-                <td><span class="approved">Approved</span></td>
-                <td>Ongoing</td>
-                <td>
-                    <a href="{{ route('ConferencedetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">6013</th>
-                <td>08-09-2024</td>
-                <td>Magiting Room</td>
-                <td>HR Office</td>
-                <td>09-01-2024</td>
-                <td>3:00 P.M</td>
-                <td>Available</td>
-                <td><span class="approved">Approved</span></td>
-                <td>Ongoing</td>
-                <td>
-                    <a href="{{ route('ConferencedetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>
+            @foreach(App\Models\ConferenceRequest::all() as $request)
+                <tr>
+                    <th scope="row">{{ $request->CRequestID }}</th>
+                    <td>{{ $request->created_at->format('m-d-Y') }}</td>
+                    <td>{{ $request->conferenceRoom->CRoomName }}</td>
+                    <td>{{ $request->office->OfficeName }}</td>
+                    <td>{{ json_encode($request->date_start) }}</td>
+                    <td>{{ json_encode($request->time_start) }}</td>
+                    <td>{{ $request->conferenceRoom->Availability }}</td>
+                    <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
+                    <td>{{ $request->EventStatus }}</td>
+                    <td>
+                        <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>
