@@ -347,8 +347,6 @@
         </div>
         <div class="row">
             <div class="inline-field">
-=======
->>>>>>> Stashed changes
                 <label for="conferenceRoom">Select Conference Room</label>
                 <select id="conferenceRoom" name="conferenceRoom">
                     <option disabled selected>Select Room</option>
@@ -358,13 +356,10 @@
                 </select>
             </div>
             <div class="inline-field">
-<<<<<<< Updated upstream
                 <label for="requesterName">Requester Name</label>
                 <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
-=======
                 <label for="focalPerson">Focal Person</label>
                 <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person"  required>
->>>>>>> Stashed changes
             </div>
         </div>
         <div class="row">
