@@ -8,6 +8,19 @@
     </x-slot>
 
     <x-slot name="content">
+        <!-- Display Flash Messages -->
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <!-- Add New Admin Form -->
         <x-validation-errors class="mb-4" />
 
