@@ -13,19 +13,27 @@ class VehicleRequest extends Model
     protected $primaryKey = 'VRequestID';
 
     protected $fillable = [
-        'DriverID',
-        'VehicleID',
-        'requesting_office',
+        'VRequestID',
+        'OfficeID',
         'purpose',
         'passengers',
         'date_start',
         'date_end',
         'time_start',
-        'place_of_travel',
-        'requested_by',
-        'email',
-        'contact_no',
+        'location',
+        'RequesterName',
+        'RequesterContact',
+        'RequesterEmail',
         'RequesterSignature',
+        'IPAddress',
+
+        // to be filled by dispatcher
+        'DriverID',
+        'VehicleID',
+        'ReceivedBy',
+
+        // to be filled by administrative service
+        'Availability', // vehicle availability
         'FormStatus',
         'EventStatus',
     ];

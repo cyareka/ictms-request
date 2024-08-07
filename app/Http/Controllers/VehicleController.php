@@ -36,20 +36,23 @@ class VehicleController extends Controller
                 'RequestingOffice' => 'required|string|max:50',
                 'Purpose' => 'required|string|max:50',
                 'PassengerName' => 'required|array',
-                'PassengerName.*' => 'string|max:50',
+                'PassengerName.*' => 'array|max:50',
                 'date_start.*' => 'required|date',
                 'date_end' => 'required|array|min:1',
                 'date_end.*' => 'required|date|after_or_equal:date_start.*',
                 'time_start' => 'required|array|min:1',
                 'time_start.*' => 'required|date_format:H:i',
                 'Location' => 'required|string|max:50',
-                'requested_by' => 'required|string|max:50',
+                'RequesterName' => 'required|string|max:50',
                 'RequesterEmail' => 'required|email|max:50',
-                'contact_no' => 'required|string|max:13',
+                'RequesterContact' => 'required|string|max:13',
                 'ReceivedDate' => 'required|date',
-                'ip_address' => 'required|ip',
                 'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256', // example: 31.46MB in kilobytes
-                'received_by' => 'required|string|max:50',50
+                'IPAddress' => 'required|ip',
+
+                // To be filled by dispatcher
+                'ReceivedBy' => 'required|string|max:50',50
+
             ]);
 
             // Custom validation for duplicate dates

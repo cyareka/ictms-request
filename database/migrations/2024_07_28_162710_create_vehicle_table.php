@@ -23,33 +23,47 @@ return new class extends Migration
             $table->string('DriverID', 8)->primary();
             $table->string('DriverName', 50);
             $table->string('DriverEmail', 30);
-            $table->string('ContactNo', 11);
+            $table->string('ContactNo', 13);
             $table->enum('Availability', ['Available', 'Not Available']);
             $table->timestamps();
         });
 
         Schema::create('vehicle_request', function (Blueprint $table) {
+            // initial form
             $table->string('VRequestID', 10)->primary();
+            $table->string('OfficeID');
+            $table->string('Purpose', 50);
+            $table->string('Passengers');
+            $table->string('date_start', 10);
+            $table->string('date_end', 10);
+            $table->string('time_start', 9);
+            $table->string('RequesterName');
+            $table->string('Location', 50);
+            $table->string('', 50);
+            $table->string('RequesterName');
+            $table->string('RequesterContact',13);
+            $table->string('RequesterEmail', 20);
+            $table->string('RequesterSignature');
+            $table->string('IPAddress',45);
+            $table->string('ReceivedDate');
+
+            // To be filled by dispatcher
             $table->string('DriverID', 9);
             $table->string('VehicleID', 3);
-            $table->unsignedBigInteger('BasInID');
-            $table->string('PassengerName');
-            $table->string('Location', 30);
-            $table->string('contact_no',13);
-            $table->string('received_by', 50);
+            $table->string('ReceivedBy')->nullable()->default(null);
 
-            $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved']);
-            $table->enum('EventStatus', ['Cancelled', 'Finished'])->nullable()->default(null);
-            $table->string('RequesterName');
-            $table->string('RequesterSignature');
+            // to be filled by administrative service
+            // add availability
+
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
-            $table->enum('EventStatus', ['-', 'Ongoing', 'Cancelled', 'Finished'])->default('-');
-            $table->timestamps();
+            $table->enum('EventStatus', ['-', 'Cancelled', 'Finished'])->nullable()->default('-');
             $table->timestamps();
 
             // Adding foreign keys
             $table->foreign('DriverID')->references('DriverID')->on('driver');
             $table->foreign('VehicleID')->references('VehicleID')->on('vehicle');
+            $table->foreign('OfficeID')->references('OfficeID')->on('offices');
+            $table->foreign('Passengers')->references('EmployeeID')->on('employees');
         });
     }
 
