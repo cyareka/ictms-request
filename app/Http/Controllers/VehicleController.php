@@ -47,9 +47,9 @@ class VehicleController extends Controller
                 'RequesterEmail' => 'required|email|max:50',
                 'contact_no' => 'required|string|max:13',
                 'ReceivedDate' => 'required|date',
-                 'ip_address' => 'required|ip',
+                'ip_address' => 'required|ip',
                 'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256', // example: 31.46MB in kilobytes
-                // 'received_by' => 'required|string|max:50',
+                'received_by' => 'required|string|max:50',50
             ]);
 
             // Custom validation for duplicate dates

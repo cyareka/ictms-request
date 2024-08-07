@@ -256,21 +256,27 @@
     </style>
 </head>
 <body>
-@if ($errors->any())
-    <script>
-        let errorMessages = [];
-        @foreach ($errors->all() as $error)
-        errorMessages.push("{{ $error }}");
-        @endforeach
-        alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
-    </script>
-@endif
+    @if ($errors->any())
+        <script>
+            let errorMessages = [];
+            @foreach ($errors->all() as $error)
+            errorMessages.push("{{ $error }}");
+            @endforeach
+            alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
+        </script>
+    @endif
 
-@if(session('error'))
-    <script>
-        alert(" {{ session('error') }}");
-    </script>
-@endif
+    @if(session('error'))
+        <script>
+            alert(" {{ session('error') }}");
+        </script>
+    @endif
+
+    @if(session('success'))
+        <script>
+            alert(" {{ session('success') }}");
+        </script>
+    @endif
 <div class="container">
     <h1>Request For Use of Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
@@ -279,7 +285,7 @@
         <div class="row">
             <div class="inline-field">
                 <label for="officeName">Requesting Office</label>
-                <select id="officeName" name="officeName">
+                <select id="officeName" name="officeName" required>
                     <option disabled selected>Select Office</option>
                     @foreach(App\Models\Office::all() as $office)
                         <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
@@ -300,8 +306,8 @@
                             <input type="date" id="date_start" name="date_start[]"  required>
                         </div>
                         <div class="inline-field">
-                            <label for="dateEnd">Date End</label>
-                            <input type="date" id="dateEnd" name="dateEnd[]" required>
+                            <label for="date_end">Date End</label>
+                            <input type="date" id="date_end" name="date_end[]" required>
                             <div class="button-container">
                                 <button class="add-btn" type="button" onclick="handleFormActions('addRow')">+</button>
                             </div>
@@ -322,31 +328,6 @@
         </div>
         <div class="row">
             <div class="inline-field">
-<<<<<<< Updated upstream
-                <label for="persons">No. of Persons</label>
-                <input class="small-input" type="text" id="npersons" name="npersons" placeholder="Enter"  required>
-            </div>
-            <div class="inline-field">
-                <label for="focalPerson">Focal Person</label>
-                <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person"  required>
-            </div>
-        </div>
-        <div class="row-multiple">
-            <div class="inline-field" style="width: 8em;">
-                <label for="tables">Tables</label>
-                <input type="text" id="tables" name="tables" placeholder="Enter">
-            </div>
-            <div class="inline-field" style="width: 8em;">
-                <label for="chairs">Chairs</label>
-                <input type="text" id="chairs" name="chairs" placeholder="Enter">
-            </div>
-            <div class="inline-field">
-                <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others">
-            </div>
-        </div>
-        <div class="row">
-            <div class="inline-field">
                 <label for="conferenceRoom">Select Conference Room</label>
                 <select id="conferenceRoom" name="conferenceRoom">
                     <option disabled selected>Select Room</option>
@@ -356,16 +337,14 @@
                 </select>
             </div>
             <div class="inline-field">
-                <label for="requesterName">Requester Name</label>
-                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
                 <label for="focalPerson">Focal Person</label>
                 <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person"  required>
             </div>
         </div>
         <div class="row">
             <div class="tb">
-                <label for="person">No. of Persons</label>
-                <input type="number" id="tables" name="tables" min="0" value="0" step="1">
+                <label for="persons">No. of Persons</label>
+                <input type="number" id="npersons" name="npersons" min="0" value="0" step="1">
                 <div class="tb">
                     <label for="tables">Tables</label>
                     <input type="number" id="tables" name="tables" min="0" value="0" step="1">
@@ -382,7 +361,7 @@
         </div>
         <div class="row">
             <div class="inline-field">
-                <label for="requesterName">Name of Requester</label>
+                <label for="requesterName">Requester Name</label>
                 <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
             </div>
             <div class="inline-field">
@@ -505,6 +484,8 @@
 
         return true;
     }
+
+
 </script>
 </body>
 </html>
