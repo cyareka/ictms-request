@@ -33,13 +33,19 @@
                 @livewire('profile.logout-other-browser-sessions-form')
             </div>
 
-            @if (Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures())
+<<<<<<< Updated upstream
+=======
+{{--            @if (Laravel\Jetstream\Jetstream::hasAccountDeletionFeatures())--}}
+>>>>>>> Stashed changes
                 <x-section-border />
 
                 <div class="mt-10 sm:mt-0">
-                    @livewire('profile.delete-user-form')
+                    @livewire('profile.add-admin')
                 </div>
-            @endif
+<<<<<<< Updated upstream
+=======
+{{--            @endif--}}
+>>>>>>> Stashed changes
         </div>
     </div>
 </x-app-layout>

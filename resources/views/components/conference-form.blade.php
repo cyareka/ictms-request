@@ -199,7 +199,7 @@
     <script>
         let errorMessages = [];
         @foreach ($errors->all() as $error)
-            errorMessages.push("{{ $error }}");
+        errorMessages.push("{{ $error }}");
         @endforeach
         alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
     </script>
@@ -317,126 +317,139 @@
 </div>
 
 <script>
-<<<<<<< Updated upstream
-function handleFormActions(action, event) {
-    switch(action) {
-        case 'addRow':
-            let rowGroupContainer = document.querySelector('.row-group-container');
-            let newRowGroup = document.createElement('div');
-            newRowGroup.className = 'row-group';
-            let today = new Date().toISOString().slice(0, 10);
-            newRowGroup.innerHTML = `
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="date_start">Date Start</label>
-                        <input type="date" id="date_start" name="date_start[]" value="${today}" required>
-                    </div>
-                    <div class="inline-field" style="display: flex; align-items: center;">
-                        <label for="date_end" style="margin-right: 10px;">Date End</label>
-                        <input type="date" id="date_end" name="date_end[]" value="${today}" required>
-                        <div class="remove-container">
-                            <button class="remove-btn" onclick="handleFormActions('removeRow', event)">-</button>
-                        </div>
-=======
+    function handleFormActions(action, event) {
+        switch(action) {
+            case 'addRow':
+                addRow();
+                break;
+            case 'removeRow':
+                event.target.closest('.row-group').remove();
+                break;
+            case 'previewSignature':
+                previewSignature(event);
+                break;
+        }
+    }
+
     function addRow() {
         let rowGroupContainer = document.querySelector('.row-group-container');
         let newRowGroup = document.createElement('div');
         newRowGroup.className = 'row-group';
-        let today = new Date().toISOString().slice(0, 10); // get current date in YYYY-MM-DD format
+        let today = new Date().toISOString().slice(0, 10);
         newRowGroup.innerHTML = `
-            <div class="row">
-                <div class="inline-field">
-                    <label for="dateStart">Date Start</label>
-                    <input type="date" id="dateStart" name="dateStart[]" required>
+        <div class="row">
+            <div class="inline-field">
+                <label for="date_start">Date Start</label>
+                <input type="date" id="date_start" name="date_start[]" value="${today}" required>
+            </div>
+            <div class="inline-field" style="display: flex; align-items: center;">
+                <label for="date_end" style="margin-right: 10px;">Date End</label>
+                <input type="date" id="date_end" name="date_end[]" value="${today}" required>
+                <div class="remove-container">
+                    <button class="remove-btn" type="button" onclick="handleFormActions('removeRow', event)">-</button>
                 </div>
-                <div class="inline-field" style="display: flex; align-items: center;">
-                    <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                    <input type="date" id="dateEnd" name="dateEnd[]" required>
-                    <div class="remove-container">
-                        <button class="remove-btn" onclick="removeRow(this)">-</button>
->>>>>>> Stashed changes
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="time_start">Time Start</label>
-                        <input type="time" id="time_start" name="time_start[]" required>
-                    </div>
-                    <div class="inline-field">
-                        <label for="time_end">Time End</label>
-                        <input type="time" id="time_end" name="time_end[]" required>
-                    </div>
-                </div>
-            `;
-            rowGroupContainer.appendChild(newRowGroup);
-            break;
-        case 'removeRow':
-            event.target.closest('.row-group').remove();
-            break;
-        case 'previewSignature':
-            const input = event.target;
-            const preview = document.getElementById('signature-preview');
-            const reader = new FileReader();
-            const uploadText = document.querySelector('.e-signature-text');
-            reader.onload = function() {
-                preview.src = reader.result;
-                preview.style.display = 'block';
-                uploadText.style.display = 'none';
-            };
-            if (input.files && input.files[0]) {
-                reader.readAsDataURL(input.files[0]);
+            </div>
+        </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="time_start">Time Start</label>
+                <input type="time" id="time_start" name="time_start[]" required>
+            </div>
+            <div class="inline-field">
+                <label for="time_end">Time End</label>
+                <input type="time" id="time_end" name="time_end[]" required>
+            </div>
+        </div>
+    `;
+        rowGroupContainer.appendChild(newRowGroup);
+    }
+
+    function previewSignature(event) {
+        const input = event.target;
+        const preview = document.getElementById('signature-preview');
+        const reader = new FileReader();
+        const uploadText = document.querySelector('.e-signature-text');
+        reader.onload = function() {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+            uploadText.style.display = 'none';
+        };
+        if (input.files && input.files[0]) {
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function validateForm() {
+        let isValid = true;
+        let errorMessages = [];
+
+        // Check required fields
+        document.querySelectorAll('input[required], select[required]').forEach(function(element) {
+            if (!element.value) {
+                isValid = false;
+                errorMessages.push(element.previousElementSibling.textContent + " is required.");
             }
-            break;
-    }
-}
+        });
 
-document.querySelector('form').addEventListener('submit', function(event) {
-    let datesValid = true;
-    document.querySelectorAll('input[type="date"]').forEach(function(input) {
-        if (!input.value) {
-            datesValid = false;
-        }
-    });
-    if (!datesValid) {
-        event.preventDefault();
-        alert('Please fill in all date fields.');
-    }
-});
+        // Check date fields
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+            if (!input.value) {
+                isValid = false;
+                errorMessages.push("All date fields must be filled.");
+            }
+        });
 
-function validateForm() {
-    let isValid = true;
-    let errorMessages = [];
-
-    // Check required fields
-    document.querySelectorAll('input[required], select[required]').forEach(function(element) {
-        if (!element.value) {
+        // Check file size
+        let signatureFile = document.getElementById('RequesterSignature').files[0];
+        if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
             isValid = false;
-            errorMessages.push(element.previousElementSibling.textContent + " is required.");
+            errorMessages.push("Signature file size must be less than 32MB.");
         }
-    });
 
-    // Check date fields
-    document.querySelectorAll('input[type="date"]').forEach(function(input) {
-        if (!input.value) {
-            isValid = false;
-            errorMessages.push("All date fields must be filled.");
+        if (!isValid) {
+            alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
+            return false;
         }
-    });
 
-    // Check file size
-    let signatureFile = document.getElementById('RequesterSignature').files[0];
-    if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
-        isValid = false;
-        errorMessages.push("Signature file size must be less than 32MB.");
+        return true;
     }
 
-    if (!isValid) {
-        alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
-        return false;
-    }
-
-    return true;
-}
+    // function logFormData(event) {
+    //     event.preventDefault(); // Prevent the form from submitting immediately
+    //
+    //     const formData = new FormData(event.target);
+    //     const formEntries = Object.fromEntries(formData.entries());
+    //
+    //     console.log("Form Data:", formEntries);
+    //
+    //     fetch(event.target.action, {
+    //         method: 'POST',
+    //         body: formData,
+    //         headers: {
+    //             'X-Requested-With': 'XMLHttpRequest',
+    //             'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+    //         }
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data.errors) {
+    //                 console.log("Errors:", data.errors);
+    //                 let errorMessages = [];
+    //                 for (let field in data.errors) {
+    //                     errorMessages.push(data.errors[field].join("\n"));
+    //                 }
+    //                 alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
+    //             } else {
+    //                 event.target.submit(); // Submit the form if no errors
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error("Error:", error);
+    //             alert("An error occurred while submitting the form. Please try again.\n\n" + error.message);
+    //         });
+    // }
+    //
+    // document.querySelector('form').addEventListener('submit', logFormData);
 </script>
 </body>
 </html>

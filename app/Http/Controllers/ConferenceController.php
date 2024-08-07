@@ -12,15 +12,11 @@ use App\Models\ConferenceRoom;
 use App\Models\ConferenceRequest;
 use App\Helpers\IDGenerator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class ConferenceController extends Controller
 {
-    public function showForm(): View|Factory|Application
-    {
-        return view('components.conference-form');
-    }
-
     private function generateUniqueID(): string
     {
         $idGenerator = new IDGenerator();
@@ -37,14 +33,13 @@ class ConferenceController extends Controller
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
                 'purpose' => 'required|string|max:255',
-                'date_start' => 'required|array|min:1',
                 'date_start.*' => 'required|date',
                 'date_end' => 'required|array|min:1',
-                'date_end.*' => 'required|date',
+                'date_end.*' => 'required|date|after_or_equal:date_start.*',
                 'time_start' => 'required|array|min:1',
                 'time_start.*' => 'required|date_format:H:i',
                 'time_end' => 'required|array|min:1',
-                'time_end.*' => 'required|date_format:H:i',
+                'time_end.*' => 'required|date_format:H:i|after:time_start.*',
                 'npersons' => 'required|integer',
                 'focalPerson' => 'required|string|max:50',
                 'tables' => 'nullable|integer',
@@ -54,40 +49,48 @@ class ConferenceController extends Controller
                 'requesterName' => 'required|string|max:50',
                 'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
             ]);
-    
-            $generatedID = $this->generateUniqueID();
+
+            // Custom validation for duplicate dates
+            $dates = $validated['date_start'];
+            if (count($dates) !== count(array_unique($dates))) {
+                throw ValidationException::withMessages(['date_start' => 'Duplicate dates are not allowed.']);
+            }
+
             $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
             $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
-    
-            $conferenceRequest = new ConferenceRequest();
-            $conferenceRequest->fill([
-                'CRequestID' => $generatedID,
-                'OfficeID' => $office->OfficeID,
-                'Purpose' => $validated['purpose'],
-                'date_start' => $validated['date_start'],
-                'date_end' => $validated['date_end'],
-                'time_start' => $validated['time_start'],
-                'time_end' => $validated['time_end'],
-                'npersons' => $validated['npersons'],
-                'focalPerson' => $validated['focalPerson'],
-                'tables' => $validated['tables'],
-                'chairs' => $validated['chairs'],
-                'otherFacilities' => $validated['otherFacilities'],
-                'CRoomID' => $conferenceRoom->CRoomID,
-                'RequesterName' => $validated['requesterName'],
-                'FormStatus' => 'Pending',
-                'EventStatus' => '',
-            ]);
-    
-            if ($request->hasFile('RequesterSignature')) {
-                $filePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
-                $conferenceRequest->RequesterSignature = $filePath;
+
+            foreach ($validated['date_start'] as $index => $dateStart) {
+                $generatedID = $this->generateUniqueID();
+                $requesterSignaturePath = null;
+
+                if ($request->hasFile('RequesterSignature')) {
+                    $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
+                }
+
+                ConferenceRequest::create([
+                    'CRequestID' => $generatedID,
+                    'OfficeID' => $office->OfficeID,
+                    'Purpose' => $validated['purpose'],
+                    'npersons' => $validated['npersons'],
+                    'focalPerson' => $validated['focalPerson'],
+                    'tables' => $validated['tables'],
+                    'chairs' => $validated['chairs'],
+                    'otherFacilities' => $validated['otherFacilities'],
+                    'CRoomID' => $conferenceRoom->CRoomID,
+                    'FormStatus' => 'Pending',
+                    'EventStatus' => '-',
+                    'RequesterSignature' => $requesterSignaturePath,
+                    'RequesterName' => $validated['requesterName'],
+                    'date_start' => $dateStart,
+                    'date_end' => $validated['date_end'][$index],
+                    'time_start' => $validated['time_start'][$index],
+                    'time_end' => $validated['time_end'][$index],
+                ]);
             }
-    
-            $conferenceRequest->save();
-    
+
             return redirect()->back()->with('success', 'Conference room request submitted successfully.');
         } catch (ValidationException $e) {
+            Log::error('Validation errors: ', $e->errors());
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Throwable $e) {
             Log::error('Conference room request submission failed: ' . $e->getMessage());
