@@ -3,8 +3,6 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>DSWD WEB</title>
-      <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
       <!-- Fonts -->
       <link rel="preconnect" href="https://fonts.bunny.net">
       <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
@@ -393,7 +391,7 @@
          display: none;
          position: absolute;
          right: 0;
-         /* background-color: #f9f9f9; */
+         background-color: #f9f9f9;
          min-width: 260px;
          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
          z-index: 1000; /* Ensure dropdown content is on top */

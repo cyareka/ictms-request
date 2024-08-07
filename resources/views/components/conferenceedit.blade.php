@@ -10,7 +10,7 @@
     }
     .container {
         width: 60em;
-        padding: 3em 3em 3em 5em;
+        padding: 2em 2em 3em 1em;
         border: 1px solid #ddd;
         border-radius: 15px;
         margin: 5em auto 0;
@@ -180,6 +180,35 @@
         gap: 15px;
         margin-bottom: 8px;
     }
+    @media (max-width: 768px) {
+            .container {
+            width: 90%;
+            flex-direction: column;
+            }
+            .row {
+                grid-template-columns: 1fr;
+            }
+            .row-multiple {
+                grid-template-columns: 1fr;
+            }
+            .inline-field {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .inline-field label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .inline-field input,
+            .inline-field select {
+                width: 100%;
+            }
+           .add-btn{
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
+        }
 
   </style>
 

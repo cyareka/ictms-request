@@ -4,7 +4,8 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="csrf-token" content="{{ csrf_token() }}">
-
+      <title>DSWD WEB</title>
+        <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
        <title>DSWD Web</title>
        <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
       <!-- Fonts -->

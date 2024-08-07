@@ -1,5 +1,7 @@
 
 <head>
+    <title>Conference Calendar</title>
+    <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
 <title>Conference Calendar</title>
 <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
 </head>
