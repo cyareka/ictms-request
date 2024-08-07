@@ -6,10 +6,11 @@
   <title>Document</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family:'Poppins';
+      font-size: 18px;
     }
     .form-container {
-      width: 70em;
+      width: 60em;
       padding: 35px;
       border: 1px solid #ddd;
       border-radius: 15px;
@@ -215,25 +216,34 @@
       width: 100%;
       margin-left: 8em;
     }
-    #date-time-container {
-      max-height: 150px;
-      overflow-y: auto;
-      padding: 5px;
-      border-radius: 10px;
-    }
-    .datetime-group {
-      display: flex;
-      align-items: center;
-      width: 100%;
-    }
-    .datetime-group .input-field {
-      width: 32%;
-    }
-    .datetime-group .button-container {
-      display: flex;
-      align-items: center;
-      margin-left: 5px;
-    }
+    .date-field {
+        display: flex;
+        flex-direction: column;
+        width: 45%;
+        align-items: center;
+        margin-right: auto;
+        margin-left: 1em;
+      }
+
+      .date-field input { 
+        width: 68%;
+        margin-left: -20px;
+      }
+
+      #date_start {
+        margin-left: 30px;
+      } 
+
+      .below-label1 {
+        display: block;
+        margin-top: 5px;
+        margin-left: 12em;
+      }
+      .below-label2 {
+        display: block;
+        margin-top: 5px;
+        margin-left: 4em;
+      }
     .form-footer {
       display: flex;
       justify-content: center;
@@ -348,23 +358,38 @@
       <div id="date-time-container">
         <div class="input-group datetime-group">
           <div class="input-field">
-            <label>Date Start</label>
-            <input type="date" name="date_start[]" required/>
-          </div>
-          <div class="input-field">
-            <label>Date End</label>
-            <input type="date" name="date_end[]" required/>
-          </div>
-          <div class="input-field">
-            <label>Time Start</label>
-            <input type="time" name="time_start[]" required/>
-            <div class="button-container">
-            <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
-          </div>
+            <label> Date</label>
+            <div class="date-field">
+              <input type="date" id="date_start" name="date_start[]" />
+              <label for="date_start" class="below-label1">Start </label>
+            </div>
+            <div class="date-field">
+              <input type="date" id="date_end" name="date_end[]" required/>
+              <label for="date_end" class="below-label2">End</label>
+            </div>
+      </div>
+            <div class="input-field">
+              <label>Time Needed </label>
+              <input type="time" name="time_start[]" required/>
+            </div>
           </div>
         </div>
-      </div>
+        <div class="input-group">
+          <div class="input-field">
+              <label>Requested By </label>
+              <input type="text" name="contact_no" placeholder="Enter Name" required/>
+            </div>
+            <div class="input-field">
+              <label>Email Requester</label>
+              <input type="text" name="contact_no" placeholder="Enter Email" required/>
+            </div>
+        </div>
       <div class="input-group">
+      <div class="input-field">
+          <label>Contact No.</label>
+          <input type="text" name="contact_no" placeholder="Enter No." required/>
+        </div>
+
         <div class="input-field">
           <label for="e-signature">E-Signature</label>
           <div class="file-upload">
@@ -375,10 +400,7 @@
             <img id="signature-preview" alt="Signature Preview">
             </div>
         </div>
-        <div class="input-field">
-          <label>Contact No.</label>
-          <input type="text" name="contact_no" placeholder="Enter No." required/>
-        </div>
+
       </div>
     </form>
   </div>
