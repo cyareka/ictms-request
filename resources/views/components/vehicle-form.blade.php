@@ -254,7 +254,7 @@
         @csrf
         <div class="input-group">
           <div class="input-field">
-            <label for="officeName">Name of Requesting Office</label>
+            <label for="officeName">Requesting Office</label>
             <select id="officeName" name="officeName" placeholder="Enter Purpose" required>
               <option disabled selected>Select Office</option>
               <option>Office of the Regional Director</option>
@@ -275,7 +275,7 @@
             <input type="text" name="place_of_travel" placeholder="Enter Place" required/>
           </div>
           <div class="input-field passenger-field">
-            <label>Name of Passenger</label>
+            <label>Passenger Name/s</label>
             <select name="passengers[]" required>
               <option disabled selected>Select a passenger</option>
               <option>Rea May Manlunas</option>
@@ -297,7 +297,7 @@
       <div id="date-time-container">
         <div class="input-group datetime-group">
           <div class="input-field">
-            <label for="date_start">Date Range</label>
+            <label for="date_start">Date</label>
             <div class="date-field">
               <input type="date" id="date_start" name="date_start[]" required/>
               <label for="date_start" class="below-label1">Start</label>
@@ -319,11 +319,11 @@
 
         <div class="input-group">
           <div class="input-field">
-              <label>Requested By</label>
+              <label>Requested Name</label>
               <input type="text" name="contact_no" placeholder="Enter Name" required/>
             </div>
             <div class="input-field">
-              <label>Email Requester</label>
+              <label>Requester Email</label>
               <input type="text" name="contact_no" placeholder="Enter Email" required/>
             </div>
         </div>

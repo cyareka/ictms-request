@@ -217,7 +217,7 @@
         @csrf
         <div class="row">
             <div class="inline-field">
-                <label for="officeName">Name of Requesting Office</label>
+                <label for="officeName">Requesting Office</label>
                 <select id="officeName" name="officeName">
                     <option disabled selected>Select Office</option>
                     @foreach(App\Models\Office::all() as $office)
@@ -272,11 +272,11 @@
         <div class="row-multiple">
             <div class="inline-field" style="width: 8em;">
                 <label for="tables">Tables</label>
-                <input type="text" id="tables" name="tables" placeholder="Enter"  required>
+                <input type="text" id="tables" name="tables" placeholder="Enter">
             </div>
             <div class="inline-field" style="width: 8em;">
                 <label for="chairs">Chairs</label>
-                <input type="text" id="chairs" name="chairs" placeholder="Enter"  required>
+                <input type="text" id="chairs" name="chairs" placeholder="Enter">
             </div>
             <div class="inline-field">
                 <label for="otherFacilities">Other Facilities</label>
@@ -294,7 +294,7 @@
                 </select>
             </div>
             <div class="inline-field">
-                <label for="requesterName">Name of Requester</label>
+                <label for="requesterName">Requester Name</label>
                 <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
             </div>
         </div>
