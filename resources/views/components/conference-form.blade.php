@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference Room Request Form</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
         }
         .container {
-            width: 50em;
-            padding: 20px;
+            width: 60em;
+            padding: 35px;
             border: 1px solid #ddd;
             border-radius: 15px;
             margin: 5em auto 3em;
@@ -37,10 +39,10 @@
         select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid rgba(60, 54, 51, 0.5);
             border-radius: 15px;
             box-sizing: border-box;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
         }
         .inline-field input[type="date"],
         .inline-field input[type="time"] {
@@ -63,7 +65,7 @@
             margin-bottom: 8px;
         }
         .row-group-container {
-            height: 200px;
+            height: 135px;
             overflow-y: auto;
             margin-bottom: 15px;
         }
@@ -120,12 +122,20 @@
         .inline-field {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+
+        }
+        .tb {
+            display: flex;
+            align-items: center;
+
         }
         .inline-field label {
             display: inline-block;
             width: 100px;
-            margin-right: 10px;
+        }
+        .tb label {
+            display: inline-block;
+            width: 100px;
         }
         .inline-field input,
         .inline-field select {
@@ -151,22 +161,51 @@
             max-height: 100px;
             display: none;
         }
-        .row-multiple {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 8px;
-        }
         .inline-field label::after {
             content: "*";
             color: red;
             right: -15px;
             top: 0;
         }
+        input[type="number"] {
+            width: 40px;
+            height: 25px;
+            padding: 0;
+            border: none;
+            background-color: transparent;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            width: 25px;
+            height: 25px;
+            padding: 0;
+            margin: 0;
+            background-color: #ccc;
+            cursor: pointer;
+            justify-content: space-between;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .fac {
+            display: flex;
+            align-items: center;
+        }
+
+        .fac label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        .fac input {
+            width: 70%;
+        }
+
         @media (max-width: 768px) {
             .container {
-            width: 90%;
-            flex-direction: column;
+                width: 90%;
+                flex-direction: column;
             }
             .row {
                 grid-template-columns: 1fr;
@@ -178,15 +217,37 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+            .fac {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .tb {
+                flex-direction: column;
+                align-items: flex-start;
+            }
             .inline-field label {
                 width: 100%;
                 margin-bottom: 5px;
+            }
+            .tb label {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            .fac label {
+                width: 100%;
+                margin-bottom: 15px;
             }
             .inline-field input,
             .inline-field select {
                 width: 100%;
             }
-           .add-btn{
+            .fac input{
+                width: 100%;
+            }
+            .tb input{
+                margin-left: 20px;
+            }
+            .add-btn{
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
@@ -236,11 +297,11 @@
                     <div class="row">
                         <div class="inline-field">
                             <label for="date_start">Date Start</label>
-                            <input type="date" id="date_start" name="date_start[]" value="{{ $date_start }}" required>
+                            <input type="date" id="date_start" name="date_start[]"  required>
                         </div>
-                        <div class="inline-field" style="display: flex; align-items: center;">
-                            <label for="dateEnd" style="margin-right: 10px;">Date End</label>
-                            <input type="date" id="dateEnd" name="dateEnd[]" value="{{ old('dateEnd.' . $index, date('Y-m-d')) }}" required>
+                        <div class="inline-field">
+                            <label for="dateEnd">Date End</label>
+                            <input type="date" id="dateEnd" name="dateEnd[]" required>
                             <div class="button-container">
                                 <button class="add-btn" type="button" onclick="handleFormActions('addRow')">+</button>
                             </div>
@@ -261,6 +322,7 @@
         </div>
         <div class="row">
             <div class="inline-field">
+<<<<<<< Updated upstream
                 <label for="persons">No. of Persons</label>
                 <input class="small-input" type="text" id="npersons" name="npersons" placeholder="Enter"  required>
             </div>
@@ -285,6 +347,8 @@
         </div>
         <div class="row">
             <div class="inline-field">
+=======
+>>>>>>> Stashed changes
                 <label for="conferenceRoom">Select Conference Room</label>
                 <select id="conferenceRoom" name="conferenceRoom">
                     <option disabled selected>Select Room</option>
@@ -294,11 +358,38 @@
                 </select>
             </div>
             <div class="inline-field">
+<<<<<<< Updated upstream
                 <label for="requesterName">Requester Name</label>
                 <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
+=======
+                <label for="focalPerson">Focal Person</label>
+                <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person"  required>
+>>>>>>> Stashed changes
             </div>
         </div>
         <div class="row">
+            <div class="tb">
+                <label for="person">No. of Persons</label>
+                <input type="number" id="tables" name="tables" min="0" value="0" step="1">
+                <div class="tb">
+                    <label for="tables">Tables</label>
+                    <input type="number" id="tables" name="tables" min="0" value="0" step="1">
+                    <div class="tb">
+                        <label for="chairs">Chairs</label>
+                        <input type="number" id="chairs" name="chairs" min="0" value="0" step="1">
+                    </div>
+                </div>
+            </div>
+            <div class="fac">
+                <label for="otherFacilities">Other Facilities</label>
+                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others">
+            </div>
+        </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="requesterName">Name of Requester</label>
+                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
+            </div>
             <div class="inline-field">
                 <label for="RequesterSignature">E-Signature</label>
                 <div class="file-upload">
@@ -313,6 +404,7 @@
         <div class="form-footer">
             <button class="submit-btn" type="submit">Submit</button>
         </div>
+
     </form>
 </div>
 
@@ -320,64 +412,69 @@
     function handleFormActions(action, event) {
         switch(action) {
             case 'addRow':
-                addRow();
+                let rowGroupContainer = document.querySelector('.row-group-container');
+                let newRowGroup = document.createElement('div');
+                newRowGroup.className = 'row-group';
+                let today = new Date().toISOString().slice(0, 10);
+                newRowGroup.innerHTML = `
+                <div class="row">
+                    <div class="inline-field">
+                        <label for="date_start">Date Start</label>
+                        <input type="date" id="date_start" name="date_start[]" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="date_end">Date End</label>
+                        <input type="date" id="date_end" name="date_end[]" required>
+                        <div class="remove-container">
+                            <button class="remove-btn" onclick="handleFormActions('removeRow', event)">-</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="inline-field">
+                        <label for="time_start">Time Start</label>
+                        <input type="time" id="time_start" name="time_start[]" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="time_end">Time End</label>
+                        <input type="time" id="time_end" name="time_end[]" required>
+                    </div>
+                </div>
+            `;
+                rowGroupContainer.appendChild(newRowGroup);
                 break;
             case 'removeRow':
                 event.target.closest('.row-group').remove();
                 break;
             case 'previewSignature':
-                previewSignature(event);
+                const input = event.target;
+                const preview = document.getElementById('signature-preview');
+                const reader = new FileReader();
+                const uploadText = document.querySelector('.e-signature-text');
+                reader.onload = function() {
+                    preview.src = reader.result;
+                    preview.style.display = 'block';
+                    uploadText.style.display = 'none';
+                };
+                if (input.files && input.files[0]) {
+                    reader.readAsDataURL(input.files[0]);
+                }
                 break;
         }
     }
 
-    function addRow() {
-        let rowGroupContainer = document.querySelector('.row-group-container');
-        let newRowGroup = document.createElement('div');
-        newRowGroup.className = 'row-group';
-        let today = new Date().toISOString().slice(0, 10);
-        newRowGroup.innerHTML = `
-        <div class="row">
-            <div class="inline-field">
-                <label for="date_start">Date Start</label>
-                <input type="date" id="date_start" name="date_start[]" value="${today}" required>
-            </div>
-            <div class="inline-field" style="display: flex; align-items: center;">
-                <label for="date_end" style="margin-right: 10px;">Date End</label>
-                <input type="date" id="date_end" name="date_end[]" value="${today}" required>
-                <div class="remove-container">
-                    <button class="remove-btn" type="button" onclick="handleFormActions('removeRow', event)">-</button>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="inline-field">
-                <label for="time_start">Time Start</label>
-                <input type="time" id="time_start" name="time_start[]" required>
-            </div>
-            <div class="inline-field">
-                <label for="time_end">Time End</label>
-                <input type="time" id="time_end" name="time_end[]" required>
-            </div>
-        </div>
-    `;
-        rowGroupContainer.appendChild(newRowGroup);
-    }
-
-    function previewSignature(event) {
-        const input = event.target;
-        const preview = document.getElementById('signature-preview');
-        const reader = new FileReader();
-        const uploadText = document.querySelector('.e-signature-text');
-        reader.onload = function() {
-            preview.src = reader.result;
-            preview.style.display = 'block';
-            uploadText.style.display = 'none';
-        };
-        if (input.files && input.files[0]) {
-            reader.readAsDataURL(input.files[0]);
+    document.querySelector('form').addEventListener('submit', function(event) {
+        let datesValid = true;
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+            if (!input.value) {
+                datesValid = false;
+            }
+        });
+        if (!datesValid) {
+            event.preventDefault();
+            alert('Please fill in all date fields.');
         }
-    }
+    });
 
     function validateForm() {
         let isValid = true;
@@ -413,43 +510,6 @@
 
         return true;
     }
-
-    // function logFormData(event) {
-    //     event.preventDefault(); // Prevent the form from submitting immediately
-    //
-    //     const formData = new FormData(event.target);
-    //     const formEntries = Object.fromEntries(formData.entries());
-    //
-    //     console.log("Form Data:", formEntries);
-    //
-    //     fetch(event.target.action, {
-    //         method: 'POST',
-    //         body: formData,
-    //         headers: {
-    //             'X-Requested-With': 'XMLHttpRequest',
-    //             'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-    //         }
-    //     })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             if (data.errors) {
-    //                 console.log("Errors:", data.errors);
-    //                 let errorMessages = [];
-    //                 for (let field in data.errors) {
-    //                     errorMessages.push(data.errors[field].join("\n"));
-    //                 }
-    //                 alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
-    //             } else {
-    //                 event.target.submit(); // Submit the form if no errors
-    //             }
-    //         })
-    //         .catch(error => {
-    //             console.error("Error:", error);
-    //             alert("An error occurred while submitting the form. Please try again.\n\n" + error.message);
-    //         });
-    // }
-    //
-    // document.querySelector('form').addEventListener('submit', logFormData);
 </script>
 </body>
 </html>
