@@ -13,8 +13,8 @@
             @vite(['resources/css/app.css', 'resources/js/app.js'])
 
             <!-- Styles -->
-            <style>
-                .head {
+    <style>
+        .head {
             position: fixed;
             top: 0;
             right: 0;
@@ -23,11 +23,11 @@
             padding: 10px;
             text-align: right;
             z-index: 200; /* Ensures header is on top */
+            margin-bottom: 10px;
         }
         .nav {
             display: flex;
             align-items: center;
-            border-bottom: 2px solid #EEEEF1;
         }
         .logo {
             margin-right: auto;
