@@ -378,10 +378,8 @@
         <div class="form-footer">
             <button class="submit-btn" type="submit">Submit</button>
         </div>
-
     </form>
 </div>
-
 <script>
     function handleFormActions(action, event) {
         switch(action) {
@@ -484,8 +482,6 @@
 
         return true;
     }
-
-
 </script>
 </body>
 </html>

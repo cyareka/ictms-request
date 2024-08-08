@@ -97,4 +97,10 @@ class ConferenceController extends Controller
             return redirect()->back()->with('error', 'Form submission failed. Please try again.');
         }
     }
+
+    public function getRequestData($CRequestID): View|Factory|Application
+    {
+        $requestData = ConferenceRequest::findOrFail($CRequestID);
+        return view('ConferencedetailEdit', compact('requestData'));
+    }
 }

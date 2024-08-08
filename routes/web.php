@@ -13,6 +13,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
+    // admin routes
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
@@ -44,9 +45,9 @@ Route::middleware([
         return view('VehicleLogs');
     })->name('VehicleLogs');
 
-    Route::get('/ConferencedetailEdit', function () {
-        return view('ConferencedetailEdit');
-    })->name('ConferencedetailEdit');
+//    Route::get('/conferencedetailedit', function () {
+//        return view('ConferencedetailEdit');
+//    })->name('ConferencedetailEdit');
 
     Route::get('/VehicledetailEdit', function () {
         return view('VehicledetailEdit');
@@ -65,6 +66,7 @@ Route::middleware([
     })->name('VehiclelogDetail');
 });
 
+// user routes
 Route::get('/user-conference', function () {
     return view('user-conference');
 })->name('user-conference');
@@ -72,21 +74,28 @@ Route::get('/user-conference', function () {
 Route::get('/user-vehicle', function () {
     return view('user-vehicle');
 })->name('user-vehicle');
+
 Route::get('/UserconCalendar', function () {
     return view('UserconCalendar');
 })->name('UserconCalendar');
+
 Route::get('/UservehiCalendar', function () {
     return view('UservehiCalendar');
 })->name('UservehiCalendar');
+
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Route::post('/conference-room/request', [ConferenceController::class, 'submitCForm']);
+// user form submissions
+Route::post('/conference-room/request',
+    [ConferenceController::class, 'submitCForm']);
 
-Route::post('/vehicle-request', [VehicleController::class, 'store']);
+Route::post('/vehicle-request',
+    [VehicleController::class, 'submitVForm']);
 
-Route::get('/conference-room/request', [ConferenceController::class, 'showForm'])->name('conference.showForm');
+// admin form submissions
+Route::post('/register',
+    [AdminController::class, 'register'])->name('register');
 
-Route::get('/conference-requests', [ConferenceController::class, 'showRequests'])->name('conference.requests');
-Route::post('/register', [AdminController::class, 'register'])->name('register');
+Route::get('/conferencedetailedit/{CRequestID}/edit', [ConferenceController::class, 'getRequestData'])->name('conferenceedit');
