@@ -8,6 +8,7 @@ class IDGenerator
 
     }
 
+    // generate IDs for Office, Employee, Conference Room, Conference Request, and Vehicle Request
     public function generateID_10(): string
     {
         $currentYear = date('Y');
@@ -17,6 +18,7 @@ class IDGenerator
         return $currentYear . $currentMonth . $randomNumber;
     }
 
+    // generate IDs for Vehicle
     public function generateID_3(): string
     {
         $randomNumber = str_pad(mt_rand(1, 999), 3, '0', STR_PAD_LEFT);

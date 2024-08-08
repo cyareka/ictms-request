@@ -2,7 +2,7 @@
     <div class="py-12">
         <div>
             <div>
-                <x-conferenceedit/>
+                <x-conferenceedit :requestData="$requestData"/>
             </div>
         </div>
     </div>

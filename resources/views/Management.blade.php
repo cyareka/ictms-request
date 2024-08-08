@@ -2,10 +2,8 @@
     <div class="py-12">
         <div>
             <div>
-            <x-conferencecalendarnav/>
-            <x-conferencecalendar/>
+            <x-Management/>
             </div>
         </div>
     </div>
 </x-app-layout>
-
