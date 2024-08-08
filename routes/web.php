@@ -98,4 +98,4 @@ Route::post('/vehicle-request',
 Route::post('/register',
     [AdminController::class, 'register'])->name('register');
 
-Route::get('/conferencedetailedit/{CRequestID}/edit', [ConferenceController::class, 'getRequestData'])->name('conferenceedit');
+Route::get('/conferencedetailedit/{CRequestID}/edit', [ConferenceController::class, 'getRequestData'])->name('ConferencedetailEdit');
