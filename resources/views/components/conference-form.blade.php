@@ -187,7 +187,6 @@
             opacity: 1;
             visibility: visible;
         }
-
         .fac {
             display: flex;
             align-items: center;
@@ -201,7 +200,6 @@
         .fac input {
             width: 70%;
         }
-
         @media (max-width: 768px) {
             .container {
                 width: 90%;
@@ -374,10 +372,11 @@
                     <img id="signature-preview" alt="Signature Preview">
                 </div>
             </div>
-        </div>
+            </div>
         <div class="form-footer">
             <button class="submit-btn" type="submit">Submit</button>
         </div>
+
     </form>
 </div>
 <script>

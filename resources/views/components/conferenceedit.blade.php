@@ -1,91 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conference Room Request Form</title>
-    <style>
-        body {
-            font-family: sans-serif;
-        }
-
-        .container {
-            width: 60em;
-            padding: 2em 2em 3em 1em;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conference Room Request Form</title>
+  <style>
+    body {
+        font-family:'Poppins';
+        font-size: 18px;
+    }
+    .container {
+        width: 60em;
+            padding: 35px;
             border: 1px solid #ddd;
             border-radius: 15px;
-            margin: 5em auto 0;
-            margin-bottom: 3em;
+            margin: 5em auto 3em;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             background-color: #f9f9f9;
-            margin-top: 0;
-        }
-
-        h1 {
-            font-size: 30px;
-            text-align: center;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        p {
-            margin-bottom: 15px;
-            font-style: italic;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
+            margin-top: 15px;
+    }
+    h1 {
+        font-size: 30px;
+        text-align: center;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+    p {
+        margin-bottom: 15px;
+        font-style: italic;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    input[type="text"],
+        input[type="date"],
+        input[type="time"],
         select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid rgba(60, 54, 51, 0.5);
             border-radius: 15px;
             box-sizing: border-box;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
         }
-
         .inline-field input[type="date"],
         .inline-field input[type="time"] {
-            width: 10em; /* Adjusted width */
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 15px;
-            box-sizing: border-box;
-            margin-bottom: 15px;
+            width: 150px;
         }
 
-        button {
-            background-color: #65558F;
-            color: white;
-            padding: 10px 20px;
+    button {
+        background-color: #65558F;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+        display: block;
+    }
+    .row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 8px;
+    }
+    .row-group-container {
+        height: 200px; /* Adjust height as necessary */
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin-bottom: -40px;
+        margin-right: 10px;
+    }
+    .row-group {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        position: relative;
+    }
+    .remove-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    .button-container {
+        display: flex;
+        align-items: center;
+        padding: 3px;
+        margin-bottom: 8px;
+    }
+    .add-btn {
+        background-color: #0056b3;
+        color: white;
+        padding: 3px 8px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 20px;
+        margin-left: 5px;
+    }
+    .add-btn:hover {
+        background-color: #003d80;
+    }
+    .remove-btn {
+        background-color: #ff4d4d;
+        color: white;
+        padding: 5px 10px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 20px;
+        margin-left: 5px;
+    }
+    .remove-btn:hover {
+        background-color: #cc0000;
+    }
+    .file-upload {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        border: 2px dashed #5b21b6;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-bottom: 16px;
+        text-align: center;
+    }
+    .inline-field {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        margin-left: 20px;
+    }
+    .tb {
+            display: flex;
+            align-items: center;
+
+        }
+    .inline-field label {
+        display: inline-block;
+        width: 120px;
+        margin-right: 10px;
+    }
+    .inline-field input,
+    .inline-field select {
+        width: 70%;
+    }
+    .tb label {
+            display: inline-block;
+            width: 100px;
+        }
+    .form-footer {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 20px;
+    }
+    .submit-btn {
+        background-color: #65558F;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .cancel-btn {
+        background-color: #ff4d4d;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    #signature-preview {
+        margin-top: 15px;
+        max-width: 100px;
+        max-height: 100px;
+        display: none;
+    }
+    input[type="number"] {
+            width: 40px;
+            height: 25px;
+            padding: 0;
             border: none;
-            border-radius: 20px;
+            background-color: transparent;
+            }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            width: 25px;
+            height: 25px;
+            padding: 0;
+            margin: 0;
+            background-color: #ccc;
             cursor: pointer;
-            font-size: 16px;
-            display: block;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 8px;
-        }
-
-        .row-group-container {
-            height: 200px; /* Adjust height as necessary */
-            overflow-y: auto;
-            overflow-x: hidden;
-            margin-bottom: 15px;
-            margin-right: 10px;
-        }
-
-        .row-group {
-            display: grid;
+            justify-content: space-between;
+            opacity: 1; 
+            visibility: visible; 
+            }
+                    
+        @media (max-width: 768px) {
+            .container {
+            width: 90%;
             flex-direction: column;
             gap: 15px;
             position: relative;
@@ -215,25 +333,47 @@
                 grid-template-columns: 1fr;
             }
 
-            .row-multiple {
-                grid-template-columns: 1fr;
+            .row-group-container {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 20px;
+                max-height: 200px;
+            }
+            .row-group-container label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .row-group-container input[type="date"],
+            .row-group-container input[type="time"] {
+                width: 50%;
             }
 
             .inline-field {
                 flex-direction: column;
                 align-items: flex-start;
             }
-
+            .inline-field label[for="person"] {
+                margin-right: -150px; /* adjust the value as needed */
+                }
+            .tb {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .tb input {
+               margin-right: -150px;
+            }
             .inline-field label {
                 width: 100%;
                 margin-bottom: 5px;
             }
-
+            .tb label {
+                width: 100%;
+                margin-bottom: 15px;
+            }
             .inline-field input,
             .inline-field select {
                 width: 100%;
             }
-
             .add-btn {
                 display: flex;
                 align-items: center;
@@ -266,7 +406,6 @@
                        readonly>
             </div>
         </div>
-
         <div class="row-group-container">
             <div class="row-group">
                 <div class="row">
@@ -296,7 +435,6 @@
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="inline-field" style=" width: 12em;">
                 <label for="persons">No. of Persons</label>
@@ -309,25 +447,6 @@
                        placeholder="Enter Focal Person" readonly>
             </div>
         </div>
-
-        <div class="row-multiple">
-            <div class="inline-field" style=" width: 8em; margin-left: 43px;">
-                <label for="tables">Tables</label>
-                <input type="text" id="tables" name="tables" value="{{ $requestData->tables }}" placeholder="-"
-                       readonly>
-            </div>
-            <div class="inline-field" style=" width: 8em;">
-                <label for="chairs">Chairs</label>
-                <input type="text" id="chairs" name="chairs" value="{{ $requestData->chairs }}" placeholder="-"
-                       readonly>
-            </div>
-            <div class="inline-field">
-                <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities"
-                       value="{{ $requestData->otherFacilities }}" placeholder="-" readonly>
-            </div>
-        </div>
-
         <div class="row">
             <div class="inline-field">
                 <label for="conferenceRoom">Select Conference Room</label>
@@ -349,57 +468,82 @@
         </div>
         <div class="row">
             <div class="inline-field">
-                <label for="e-signature">E-Signature</label>
-                <div class="file-upload">
-                    <input type="file" id="e-signature" style="display: none;" onchange="previewSignature(event)">
-                    <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                        Click to upload e-sign.<br>Maximum file size: 31.46MB
-                    </div>
-                    <img id="signature-preview"
-                         src="{{ $requestData->RequesterSignature ? asset('storage/' . $requestData->RequesterSignature) : '' }}"
-                         alt="Signature Preview"
-                         style="{{ $requestData->RequesterSignature ? 'display: block;' : 'display: none;' }}">
-                </div>
+                <label for="person">No. of Persons</label>
+                <input type="number" id="person" name="tables" min="0" value="0" step="1">
+            <div class="tb">
+                <label for="tables">Tables</label>
+                <input type="number" id="tables" name="tables" min="0" value="0" step="1">
+            <div class="tb"> 
+                <label for="chairs">Chairs</label>
+                <input type="number" id="chairs" name="chairs" min="0" value="0" step="1">
+            </div>
+            </div>
             </div>
             <div class="inline-field">
-                <label for="availability">Availability</label>
-                <select id="availability" name="availability">
-                    <option
-                        value="Available" {{ $requestData->conferenceRoom->Availability == 'Available' ? 'selected' : '' }}>
-                        Available
-                    </option>
-                    <option
-                        value="Not Available" {{ $requestData->conferenceRoom->Availability == 'Not Available' ? 'selected' : '' }}>
-                        Not Available
-                    </option>
-                </select>
+                <label for="otherFacilities">Other Facilities</label>
+                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others">
+                
+            <div class="row-multiple">
+            <div class="inline-field" style=" width: 8em; margin-left: 43px;">
+                <label for="tables">Tables</label>
+                <input type="text" id="tables" name="tables" value="{{ $requestData->tables }}" placeholder="-"
+                       readonly>
+            </div>
+            <div class="inline-field" style=" width: 8em;">
+                <label for="chairs">Chairs</label>
+                <input type="text" id="chairs" name="chairs" value="{{ $requestData->chairs }}" placeholder="-"
+                       readonly>
+            </div>
+            <div class="inline-field">
+                <label for="otherFacilities">Other Facilities</label>
+                <input type="text" id="otherFacilities" name="otherFacilities"
+                       value="{{ $requestData->otherFacilities }}" placeholder="-" readonly>
+            </div>
+          </div>
             </div>
         </div>
         <div class="row">
             <div class="inline-field">
-                <label for="formStatus">Form Status</label>
-                <select id="formStatus" name="formStatus">
-                    <option disabled selected>Select Form Status</option>
-                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>Pending
-                    </option>
-                    <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved
-                    </option>
-                </select>
+                <label for="requesterName">Name of Requester</label>
+                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"  required>
             </div>
             <div class="inline-field">
-                <label for="eventStatus">Event Status</label>
-                <select id="eventStatus" name="eventStatus">
-                    <option value="-" {{ $requestData->EventStatus == '-' ? 'selected' : '' }}>-</option>
-                    <option value="Approved" {{ $requestData->EventStatus == 'Approved' ? 'selected' : '' }}>Approved
-                    </option>
-                    <option value="Completed" {{ $requestData->EventStatus == 'Completed' ? 'selected' : '' }}>
-                        Completed
-                    </option>
-                    <option value="Cancelled" {{ $requestData->EventStatus == 'Cancelled' ? 'selected' : '' }}>
-                        Cancelled
-                    </option>
-                </select>
-            </div>
+                <label for="RequesterSignature">E-Signature</label>
+                <div class="file-upload">
+                    <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;" onchange="handleFormActions('previewSignature', event)" required>
+                    <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
+                        Click to upload e-sign.<br>Maximum file size: 32MB
+                    </div>
+                    <img id="signature-preview" alt="Signature Preview">
+                </div>
+    </div>
+        <div class="inline-field">
+            <label for="availability">Availability</label>
+            <select id="availability" name="availability">
+                <option disabled selected>Select Availability</option>
+                <option>Available</option>
+                <option>Not Available</option>
+            </select>
+        </div>
+        <div class="inline-field">
+            <label for="formStatus">Form Status</label>
+            <select id="formStatus" name="formStatus">
+                <option disabled selected>Select Form Status</option>
+                <option>Pending</option>
+                <option>Approved</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="inline-field">
+            <label for="eventStatus">Event Status</label>
+            <select id="eventStatus" name="eventStatus">
+                <option disabled selected>Select Event Status</option>
+                <option>-</option>
+                <option>Approved</option>
+                <option>Completed</option>
+                <option>Cancelled</option>
+            </select>
         </div>
 
         <div class="form-footer">
@@ -409,43 +553,7 @@
     </form>
 </div>
 <script>
-    function addRow() {
-        let rowGroupContainer = document.querySelector('.row-group-container');
-        let newRowGroup = document.createElement('div');
-        newRowGroup.className = 'row-group';
-        newRowGroup.innerHTML = `
-            <div class="row">
-                <div class="inline-field">
-                    <label for="dateStart">Date Start</label>
-                    <input type="date" id="dateStart" name="dateStart">
-                </div>
-                <div class="inline-field">
-                    <label for="dateEnd">Date End</label>
-                    <input type="date" id="dateEnd" name="dateEnd">
-                     <div class="remove-container">
-                <button class="remove-btn" onclick="removeRow(this)">-</button>
-            </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="inline-field">
-                    <label for="timeStart">Time Start</label>
-                    <input type="time" id="timeStart" name="timeStart">
-                </div>
-                <div class="inline-field">
-                    <label for="timeEnd">Time End</label>
-                    <input type="time" id="timeEnd" name="timeEnd">
-                </div>
-            </div>
-        `;
-
-        rowGroupContainer.appendChild(newRowGroup);
-    }
-
-    function removeRow(button) {
-        let container = button.closest('.row-group');
-        container.remove();
-    }
+  
 
     function updateForm() {
         alert('Your request has been successfully updated.');
@@ -456,35 +564,6 @@
         inputFields.forEach((field) => {
             field.value = '';
         });
-
-        let rowGroupContainer = document.querySelector('.row-group-container');
-        rowGroupContainer.innerHTML = `
-            <div class="row-group">
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="dateStart">Date Start</label>
-                        <input type="date" id="dateStart" name="dateStart">
-                    </div>
-                    <div class="inline-field">
-                        <label for="dateEnd">Date End</label>
-                        <input type="date" id="dateEnd" name="dateEnd">
-                        <div class="button-container">
-                            <button class="add-btn" onclick="addRow()">+</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="inline-field">
-                        <label for="timeStart">Time Start</label>
-                        <input type="time" id="timeStart" name="timeStart">
-                    </div>
-                    <div class="inline-field">
-                        <label for="timeEnd">Time End</label>
-                        <input type="time" id="timeEnd" name="timeEnd">
-                    </div>
-                </div>
-            </div>
-        `;
 
         document.getElementById('signature-preview').style.display = 'none';
         document.querySelector('.e-signature-text').style.display = 'block'; // Show the upload text again
