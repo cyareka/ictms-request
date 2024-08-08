@@ -271,7 +271,12 @@
             }
         }
 
-
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -279,8 +284,9 @@
     <h1>Request For Use of Vehicle</h1>
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
         Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
+    <div class="error-message" id="error-message">There was an error submitting the form. Please try again.</div>
     <div class="form-body">
-        <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
+        <form action="/vehicle-request" method="POST" enctype="multipart/form-data" id="vehicle-request-form">
             @csrf
             <div class="input-group">
                 <div class="input-field">
@@ -294,7 +300,7 @@
                 </div>
                 <div class="input-field">
                     <label>Purpose of Trip</label>
-                    <input type="text" name="purpose" placeholder="Enter Purpose" required/>
+                    <input type="text" name="Purpose" placeholder="Enter Purpose" required/>
                 </div>
             </div>
             <div class="input-group">
@@ -348,14 +354,14 @@
                 </div>
                 <div class="input-field">
                     <label>Requester Email</label>
-                    <input type="text" name="contact_no" placeholder="Enter Email" required/>
+                    <input type="text" name="RequesterEmail" placeholder="Enter Email" required/>
                 </div>
             </div>
 
             <div class="input-group">
                 <div class="input-field">
                     <label>Contact No.</label>
-                    <input type="text" name="contact_no" placeholder="Enter No." required/>
+                    <input type="text" name="RequesterContact" placeholder="Enter No." required/>
                 </div>
                 <div class="input-field">
                     <label for="RequesterSignature">E-Signature</label>
@@ -377,6 +383,28 @@
 </div>
 
 <script>
+    document.getElementById('vehicle-request-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        fetch('/vehicle-request', {
+            method: 'POST',
+            body: new FormData(this)
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            if (data.success) {
+                window.location.href = '/success-page'; // Replace with your success page URL
+            } else {
+                document.getElementById('error-message').style.display = 'block';
+            }
+        }).catch(error => {
+            document.getElementById('error-message').style.display = 'block';
+        });
+    });
+
     function addPassenger() {
         const passengerField = document.querySelector('.passenger-field').cloneNode(true);
         passengerField.querySelector('label').remove();

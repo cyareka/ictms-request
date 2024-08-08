@@ -84,9 +84,10 @@ Route::get('/', function () {
 
 Route::post('/conference-room/request', [ConferenceController::class, 'submitCForm']);
 
-Route::post('/vehicle-request', [VehicleController::class, 'store']);
+Route::post('/vehicle-request', [VehicleController::class, 'submitVForm']);
 
 Route::get('/conference-room/request', [ConferenceController::class, 'showForm'])->name('conference.showForm');
 
 Route::get('/conference-requests', [ConferenceController::class, 'showRequests'])->name('conference.requests');
+// Folr the registration of new admin
 Route::post('/register', [AdminController::class, 'register'])->name('register');
