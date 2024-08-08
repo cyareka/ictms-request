@@ -535,10 +535,10 @@
                     <option value="Cancelled" {{ $requestData->eventStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
             </div>
-            <div class="form-footer">
-                <button class="submit-btn" type="button" onclick="updateForm()">Update</button>
-                <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
-            </div>
+        </div>
+        <div class="form-footer">
+            <button class="submit-btn" type="button" onclick="updateForm()">Update</button>
+            <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
         </div>
     </form>
 </div>
