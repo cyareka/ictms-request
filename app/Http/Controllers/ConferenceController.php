@@ -17,6 +17,14 @@ use Throwable;
 
 class ConferenceController extends Controller
 {
+    /**
+     * Generates a unique ID for a conference request.
+     *
+     * This function uses the IDGenerator class to generate a 10-character unique ID.
+     * It ensures the generated ID does not already exist in the ConferenceRequest table.
+     *
+     * @return string The generated unique ID.
+     */
     private function generateUniqueID(): string
     {
         $idGenerator = new IDGenerator();
@@ -27,6 +35,16 @@ class ConferenceController extends Controller
         return $generatedID;
     }
 
+    /**
+     * Submits the conference room request form.
+     *
+     * This function validates the request data, checks for duplicate dates, and creates conference requests.
+     * It handles file uploads for the requester's signature and stores the data in the database.
+     * If validation or any other error occurs, it logs the error and redirects back with an error message.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object containing form data.
+     * @return \Illuminate\Http\RedirectResponse The response object redirecting back to the form with a success or error message.
+     */
     public function submitCForm(Request $request): RedirectResponse
     {
         try {
@@ -98,6 +116,15 @@ class ConferenceController extends Controller
         }
     }
 
+    /**
+     * Retrieves the request data for a specific conference request.
+     *
+     * This function fetches the conference request data along with related office and conference room details.
+     * It then returns a view with the retrieved data.
+     *
+     * @param string $CRequestID The ID of the conference request to retrieve.
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application The view displaying the conference request details.
+     */
     public function getRequestData($CRequestID): View|Factory|Application
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);

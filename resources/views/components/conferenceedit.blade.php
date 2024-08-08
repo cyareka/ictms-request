@@ -565,39 +565,62 @@
         alert('Form has been reset.');
     }
 
-        function updateEventStatus() {
-            const formStatus = document.getElementById('formStatus').value;
-            const eventStatus = document.getElementById('eventStatus');
+    /**
+     * Updates the event status based on the selected form status.
+     *
+     * This function is triggered when the form status select element changes.
+     * It sets the event status to 'Ongoing' if the form status is 'Approved'.
+     * Otherwise, it sets the event status to '-'.
+     */
+    function updateEventStatus() {
+        const formStatus = document.getElementById('formStatus').value;
+        const eventStatus = document.getElementById('eventStatus');
 
-            if (formStatus === 'Approved') {
-                eventStatus.value = 'Ongoing';
-            } else if (formStatus === 'Not Approved') {
-                eventStatus.value = '-';
-            } else {
-                eventStatus.value = '-';
-            }
+        if (formStatus === 'Approved') {
+            eventStatus.value = 'Ongoing';
+        } else if (formStatus === 'Not Approved') {
+            eventStatus.value = '-';
+        } else {
+            eventStatus.value = '-';
         }
+    }
 
-        function updateFormStatus() {
-            const eventStatus = document.getElementById('eventStatus').value;
-            const formStatus = document.getElementById('formStatus');
+    /**
+     * Updates the event status based on the selected form status.
+     *
+     * This function is triggered when the form status select element changes.
+     * It sets the event status to 'Ongoing' if the form status is 'Approved'.
+     * Otherwise, it sets the event status to '-'.
+     */
+    function updateFormStatus() {
+        const eventStatus = document.getElementById('eventStatus').value;
+        const formStatus = document.getElementById('formStatus');
 
-            switch(eventStatus) {
-                case 'Ongoing':
-                    formStatus.value = 'Approved';
-                    break;
-                case 'Finished':
-                    formStatus.value= 'Approved';
-                    break;
-                case 'Cancelled':
-                    formStatus.value = 'Approved';
-                    break;
-                default:
-                    formStatus.value = 'Pending';
-                    break;
-            }
+        switch(eventStatus) {
+            case 'Ongoing':
+                formStatus.value = 'Approved';
+                break;
+            case 'Finished':
+                formStatus.value= 'Approved';
+                break;
+            case 'Cancelled':
+                formStatus.value = 'Approved';
+                break;
+            default:
+                formStatus.value = 'Pending';
+                break;
         }
+    }
 
+    /**
+     * Previews the signature image when a file is selected.
+     *
+     * This function is triggered when a file input changes.
+     * It reads the selected file and displays it in the signature preview element.
+     * Additionally, it hides the upload text.
+     *
+     * @param {Event} event - The event object from the file input change.
+     */
     function previewSignature(event) {
         const input = event.target;
         const preview = document.getElementById('signature-preview');
