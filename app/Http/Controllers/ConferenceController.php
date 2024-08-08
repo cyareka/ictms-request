@@ -100,7 +100,7 @@ class ConferenceController extends Controller
 
     public function getRequestData($CRequestID): View|Factory|Application
     {
-        $requestData = ConferenceRequest::findOrFail($CRequestID);
+        $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
         return view('ConferencedetailEdit', compact('requestData'));
     }
 }
