@@ -1,7 +1,7 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import tailwindcss from 'tailwindcss';
+// import tailwindcss from 'tailwindcss';
 
 /** @type {import('tailwindcss').Config} */
 export default {

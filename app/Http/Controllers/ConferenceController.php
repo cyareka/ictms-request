@@ -116,6 +116,35 @@ class ConferenceController extends Controller
         }
     }
 
+    public function updateCForm(Request $request): RedirectResponse
+    {
+        try {
+            // Validate only the formStatus and eventStatus fields
+            $validated = $request->validate([
+                'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
+                'FormStatus' => 'required|string|in:Pending,Approved,Not Approved',
+                'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
+            ]);
+
+            // Retrieve the conference request using Eloquent ORM
+            $conferenceRequest = ConferenceRequest::query()->where('CRequestID', $validated['CRequestID'])->firstOrFail();
+
+            // Update the formStatus and eventStatus fields
+            $conferenceRequest->update([
+                'FormStatus' => $validated['FormStatus'],
+                'EventStatus' => $validated['EventStatus'],
+            ]);
+
+            return redirect()->back()->with('success', 'Conference room request updated successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation errors: ', $e->errors());
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error('Conference room request update failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Form update failed. Please try again.');
+        }
+    }
+
     /**
      * Retrieves the request data for a specific conference request.
      *

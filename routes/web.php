@@ -44,10 +44,6 @@ Route::middleware([
         return view('VehicleLogs');
     })->name('VehicleLogs');
 
-    Route::get('/ConferencedetailEdit', function () {
-        return view('ConferencedetailEdit');
-    })->name('ConferencedetailEdit');
-
     Route::get('/VehicledetailEdit', function () {
         return view('VehicledetailEdit');
     })->name('VehicledetailEdit');
@@ -72,22 +68,29 @@ Route::get('/user-conference', function () {
 Route::get('/user-vehicle', function () {
     return view('user-vehicle');
 })->name('user-vehicle');
+
 Route::get('/UserconCalendar', function () {
     return view('UserconCalendar');
 })->name('UserconCalendar');
+
 Route::get('/UservehiCalendar', function () {
     return view('UservehiCalendar');
 })->name('UservehiCalendar');
+
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
+// user form submission
 Route::post('/conference-room/request', [ConferenceController::class, 'submitCForm']);
 
 Route::post('/vehicle-request', [VehicleController::class, 'submitVForm']);
 
-Route::get('/conference-room/request', [ConferenceController::class, 'showForm'])->name('conference.showForm');
-
 Route::get('/conference-requests', [ConferenceController::class, 'showRequests'])->name('conference.requests');
-// Folr the registration of new admin
+
 Route::post('/register', [AdminController::class, 'register'])->name('register');
+
+Route::get('/conferencerequest/{CRequestID}/edit', [ConferenceController::class, 'getRequestData'])->name('ConferencedetailEdit');
+
+Route::post('/conference-room/update',
+    [ConferenceController::class, 'updateCForm']);

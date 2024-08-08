@@ -420,13 +420,33 @@
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <script>
+        let errorMessages = [];
+        @foreach ($errors->all() as $error)
+        errorMessages.push("{{ $error }}");
+        @endforeach
+        alert("Updating request failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
+    </script>
+@endif
 
+@if(session('error'))
+    <script>
+        alert(" {{ session('error') }}");
+    </script>
+@endif
+
+@if(session('success'))
+    <script>
+        alert(" {{ session('success') }}");
+    </script>
+@endif
 <div class="container">
     <h1>Update Request for Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
 
     {{-- display for edit --}}
-    <form method="POST" action="" enctype="multipart/form-data">
+    <form method="POST" action="/conference-room/update" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="CRequestID" value="{{ $requestData-> CRequestID }}">
         <div class="row">
@@ -517,53 +537,62 @@
                     <input type="text" id="availability" name="availability" value="{{ $requestData->conferenceRoom->Availability }}" placeholder="-" readonly>
             </div>
             <div class="inline-field">
-                <label for="formStatus">Form Status</label>
-                <select id="formStatus" name="formStatus" onchange="updateEventStatus()">
-                    <option value="Pending" {{ $requestData->formStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
-                    <option value="Approved" {{ $requestData->formStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
-                    <option value="Not Approved" {{ $requestData->formStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
+                <label for="FormStatus">Form Status</label>
+                <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
+                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
                 </select>
             </div>
         </div>
         <div class="row">
             <div class="inline-field">
-                <label for="eventStatus">Event Status</label>
-                <select id="eventStatus" name="eventStatus" onchange="updateFormStatus()">
-                    <option value="-" {{ $requestData->eventStatus == '-' ? 'selected' : '' }}>-</option>
-                    <option value="Ongoing" {{ $requestData->eventStatus == 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
-                    <option value="Finished" {{ $requestData->eventStatus == 'Finished' ? 'selected' : '' }}>Finished</option>
-                    <option value="Cancelled" {{ $requestData->eventStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                <label for="EventStatus">Event Status</label>
+                <select id="EventStatus" name="EventStatus" onchange="updateFormStatus()">
+                    <option value="-" {{ $requestData->EventStatus == '-' ? 'selected' : '' }}>-</option>
+                    <option value="Ongoing" {{ $requestData->EventStatus == 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
+                    <option value="Finished" {{ $requestData->EventStatus == 'Finished' ? 'selected' : '' }}>Finished</option>
+                    <option value="Cancelled" {{ $requestData->EventStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
             </div>
         </div>
         <div class="form-footer">
-            <button class="submit-btn" type="button" onclick="updateForm()">Update</button>
             <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
+            <button class="submit-btn" type="submit">Update</button>
         </div>
     </form>
 </div>
 <script>
-    function updateForm() {
-        alert('Request has been successfully updated.');
-    }
+    /**
+     * Sets up form change detection and handles the cancel action with a confirmation prompt.
+     */
+    function setupFormChangeDetectionAndCancel() {
+        let formChanged = false;
 
-    function cancelForm() {
-        let inputFields = document.querySelectorAll('input');
-        inputFields.forEach((field) => {
-            field.value = '';
+        // Add event listeners to all form fields to detect changes
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('change', () => {
+                formChanged = true;
+            });
         });
 
-        document.getElementById('signature-preview').style.display = 'none';
-        document.querySelector('.e-signature-text').style.display = 'block'; // Show the upload text again
-        document.getElementById('e-signature').value = ''; // Reset the e-signature field
+        // Define the cancelForm function
+        function cancelForm() {
+            if (formChanged) {
+                const confirmDiscard = confirm("You have unsaved changes. Do you really want to go back? Changes will be discarded.");
+                if (!confirmDiscard) {
+                    return;
+                }
+            }
+            window.location.href = '/dashboard';
+        }
 
-        document.getElementById('conferenceRoom').selectedIndex = 0;
-        document.getElementById('availability').selectedIndex = 0; // Reset the availability field
-        document.getElementById('formStatus').selectedIndex = 0; // Reset the form status field
-        document.getElementById('eventStatus').selectedIndex = 0; // Reset the event status field
-
-        alert('Form has been reset.');
+        // Attach the cancelForm function to the cancel button
+        document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
     }
+
+    // Call the setup function to initialize everything
+    setupFormChangeDetectionAndCancel();
 
     /**
      * Updates the event status based on the selected form status.
@@ -573,15 +602,15 @@
      * Otherwise, it sets the event status to '-'.
      */
     function updateEventStatus() {
-        const formStatus = document.getElementById('formStatus').value;
-        const eventStatus = document.getElementById('eventStatus');
+        const FormStatus = document.getElementById('FormStatus').value;
+        const EventStatus = document.getElementById('EventStatus');
 
-        if (formStatus === 'Approved') {
-            eventStatus.value = 'Ongoing';
-        } else if (formStatus === 'Not Approved') {
-            eventStatus.value = '-';
+        if (FormStatus === 'Approved') {
+            EventStatus.value = 'Ongoing';
+        } else if (FormStatus === 'Not Approved') {
+            EventStatus.value = '-';
         } else {
-            eventStatus.value = '-';
+            EventStatus.value = '-';
         }
     }
 
@@ -593,21 +622,21 @@
      * Otherwise, it sets the event status to '-'.
      */
     function updateFormStatus() {
-        const eventStatus = document.getElementById('eventStatus').value;
-        const formStatus = document.getElementById('formStatus');
+        const EventStatus = document.getElementById('EventStatus').value;
+        const FormStatus = document.getElementById('FormStatus');
 
-        switch(eventStatus) {
+        switch(EventStatus) {
             case 'Ongoing':
-                formStatus.value = 'Approved';
+                FormStatus.value = 'Approved';
                 break;
             case 'Finished':
-                formStatus.value= 'Approved';
+                FormStatus.value= 'Approved';
                 break;
             case 'Cancelled':
-                formStatus.value = 'Approved';
+                FormStatus.value = 'Approved';
                 break;
             default:
-                formStatus.value = 'Pending';
+                FormStatus.value = 'Pending';
                 break;
         }
     }
