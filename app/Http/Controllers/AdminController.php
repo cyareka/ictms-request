@@ -5,7 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth; // Import Auth
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -34,7 +34,6 @@ class AdminController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => 'admin', // assuming you have a role field
                 'added_by' => Auth::user()->email, // Store the email of the user who added the new admin
             ]);
 
@@ -48,7 +47,7 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        // Return the admin dashboard view
-        return view('admin.dashboard');
+        $admins = User::where('role', 'admin')->get(); // Get all admin users
+        return view('admin.dashboard', compact('admins'));
     }
 }

@@ -37,7 +37,6 @@ return new class extends Migration
             $table->string('date_start', 10);
             $table->string('date_end', 10);
             $table->string('time_start', 9);
-            $table->string('RequesterName');
             $table->string('Location', 50);
             $table->string('', 50);
             $table->string('RequesterName');
