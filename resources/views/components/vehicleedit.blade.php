@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Vehicle Edit Form</title>
   <style>
     body {
       font-family:'Poppins';
@@ -94,7 +94,7 @@
     select {
         width: 100%;
         padding: 10px;
-        border: 1px solid #ddd;
+        border: 1px solid rgba(60, 54, 51, 0.5);
         border-radius: 15px;
         box-sizing: border-box;
         margin-bottom: 15px;
@@ -141,7 +141,6 @@
     .inline-field select {
       height: 35px;
       padding: 8px;
-      border: 1px solid #ccc;
       border-radius: 10px;
       width: calc(100% - 160px);
       box-sizing: border-box;
@@ -149,52 +148,6 @@
     .button-container {
       display: flex;
       align-items: center;
-    }
-    .add-passenger-btn {
-      background-color: #0056b3;
-      color: white;
-      padding: 3px 8px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-left: 5px;
-    }
-    .remove-passenger-btn{
-      background-color: #ff4d4d;
-      color: white;
-      padding: 3px 8px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-left: 5px;
-    }
-    .add-passenger-btn:hover,
-    .add-datetime-btn:hover {
-        background-color: #003d80;
-    }
-    .remove-passenger-btn:hover,
-    .remove-datetime-btn:hover {
-      background-color: #cc0000;
-    }
-    .add-datetime-btn {
-      background-color: #0056b3;
-      color: white;
-      padding: 3px 8px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      margin: 15px 0 15px 5px;
-    }
-    .remove-datetime-btn{
-      background-color: #ff4d4d;
-      color: white;
-      padding: 3px 8px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      margin: 15px 0 15px 5px;
     }
     .inline-group {
       display: flex;
@@ -237,13 +190,21 @@
       .below-label1 {
         display: block;
         margin-top: 5px;
-        margin-left: 12em;
+        margin-left: 7em;
       }
       .below-label2 {
         display: block;
         margin-top: 5px;
-        margin-left: 4em;
+        margin-left: 5em;
       }
+      input[type="time"]
+       {
+            width: 30%;
+            padding: 10px;
+            margin-bottom:50px;
+            margin-left: -40px;
+        }
+      
     .form-footer {
       display: flex;
       justify-content: center;
@@ -290,7 +251,7 @@
         width: 90%;
         padding: 20px;
         margin: 2em auto;
-        margin-top: 5em;
+        margin-top: 1em;
       }
       .input-group,
       .input-field {
@@ -347,9 +308,7 @@
             <option>Justin Misajon</option>
             <option>Elmer John Catalan</option>
           </select>
-          <div class="button-container">
-            <button class="add-passenger-btn" type="button" onclick="addPassenger()">+</button>
-          </div>
+  
         </div>
       </div>
       <div id="passenger-container">
@@ -400,7 +359,6 @@
             <img id="signature-preview" alt="Signature Preview">
             </div>
         </div>
-
       </div>
     </form>
   </div>

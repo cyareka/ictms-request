@@ -62,6 +62,10 @@ Route::middleware([
     Route::get('/VehiclelogDetail', function () {
         return view('VehiclelogDetail');
     })->name('VehiclelogDetail');
+
+    Route::get('/Management', function () {
+        return view('Management');
+    })->name('Management');
 });
 
 Route::get('/user-conference', function () {
