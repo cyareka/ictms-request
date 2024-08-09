@@ -3,7 +3,8 @@ use App\Http\Controllers\ConferenceController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
-
+use App\Http\Controllers\NVehicleController;
+use App\Http\Controllers\NDriverController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -98,3 +99,8 @@ Route::get('/conferencerequest/{CRequestID}/edit', [ConferenceController::class,
 
 Route::post('/conference-room/update',
     [ConferenceController::class, 'updateCForm']);
+
+// adding new driver, vehicle, conference, and employee.
+Route::post('/add-driver', [NDriverController::class, 'store'])->name('driver.store');
+Route::post('/add-vehicle', [NVehicleController::class, 'store'])->name('vehicle.store');
+

@@ -10,6 +10,7 @@ class Vehicle extends Model
     use HasFactory;
 
     protected $table = 'vehicle';
+    protected $primaryKey = 'VehicleID';
 
     protected $fillable = [
         'VehicleID',
@@ -19,10 +20,5 @@ class Vehicle extends Model
         'Capacity',
     ];
 
-    protected $casts = [
-        'date_start' => 'array',
-        'date_end' => 'array',
-        'time_start' => 'array',
-        'time_end' => 'array',
-    ];
+   
 }

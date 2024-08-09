@@ -9,7 +9,7 @@ class Driver extends Model
 {
     use HasFactory;
 
-    protected $table = 'drivers';
+    protected $table = 'driver';
     protected $primaryKey = 'DriverID';
 
     protected $fillable = [
@@ -20,10 +20,4 @@ class Driver extends Model
         'Availability',
     ];
 
-    protected $casts = [
-        'date_start' => 'array',
-        'date_end' => 'array',
-        'time_start' => 'array',
-        'time_end' => 'array',
-    ];
 }
