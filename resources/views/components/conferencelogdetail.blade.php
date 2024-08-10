@@ -263,7 +263,7 @@
 <body>
 
 <div class="container">
-    <h1>Update Request for Conference Room</h1>
+    <h1>View Details of Request for Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
 
     <div class="row">
