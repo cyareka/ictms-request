@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NVehicleController;
 use App\Http\Controllers\NDriverController;
+use App\Http\Controllers\NConferenceRController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -103,4 +104,5 @@ Route::post('/conference-room/update',
 // adding new driver, vehicle, conference, and employee.
 Route::post('/add-driver', [NDriverController::class, 'store'])->name('driver.store');
 Route::post('/add-vehicle', [NVehicleController::class, 'store'])->name('vehicle.store');
+Route::post('/conferences', [NConferenceRController::class, 'store'])->name('conferences.store');
 

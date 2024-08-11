@@ -214,25 +214,26 @@
         </div>
 
         <div id="conference" class="toggle-section">
-            <form class="row-dispatch">
+            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}">
+                @csrf
                 <div class="form-row">
                     <div class="inline-field">
-                        <label for="name">Name</label>
-                        <input type="text" id="tables" name="person" placeholder="Enter Name" required>
+                        <label for="CRoomName">Name</label>
+                        <input type="text" id="CRoomName" name="CRoomName" placeholder="Enter Name" required>
                     </div>
                     <div class="inline-field">
-                        <label for="contact">Location</label>
-                        <input type="text" id="contact" name="contact" placeholder="Enter Location" required>
+                        <label for="Location">Location</label>
+                        <input type="text" id="Location" name="Location" placeholder="Enter Location" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="inline-field">
-                        <label for="capacity">Capacity</label>
-                        <input type="number" id="capacity" name="capacity" min="0" value="0">
+                        <label for="Capacity">Capacity</label>
+                        <input type="number" id="Capacity" name="Capacity" min="1" value="0" required>
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="updateForm()">Submit</button>
+                    <button class="submit-btn" type="submit">Submit</button>
                 </div>
             </form>
         </div>
