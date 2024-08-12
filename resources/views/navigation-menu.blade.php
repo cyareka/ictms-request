@@ -24,7 +24,7 @@
                         {{ __('Logs') }}
                     </x-nav-link>
 
-                    <x-nav-link href="{{ route('Statistics') }}" :active="request()->routeIs('Statistics')">
+                    <x-nav-link href="{{ route('ConferenceStatistics') }}" :active="request()->routeIs('ConferenceStatistics')">
                         {{ __('Statistics') }}
                     </x-nav-link>
                     
@@ -167,8 +167,12 @@
                         {{ __('Logs') }}
                     </x-responsive-nav-link>
 
-                    <x-responsive-nav-link href="{{ route('Statistics') }}" :active="request()->routeIs('Statistics')">
+                    <x-responsive-nav-link href="{{ route('ConferenceStatistics') }}" :active="request()->routeIs('ConferenceStatistics')">
                         {{ __('Statistics') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link href="{{ route('Management') }}" :active="request()->routeIs('Management')">
+                        {{ __('Management') }}
                     </x-responsive-nav-link>
         </div>
 

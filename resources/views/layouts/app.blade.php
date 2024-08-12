@@ -4,10 +4,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="csrf-token" content="{{ csrf_token() }}">
-      <title>DSWD WEB</title>
-        <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
-       <title>DSWD Web</title>
-       <link rel= "shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
+      <title>{{ config('app.name', 'Laravel') }}</title>
       <!-- Fonts -->
       <link rel="preconnect" href="https://fonts.bunny.net">
       <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -20,6 +17,43 @@
       @vite(['resources/css/app.css', 'resources/js/app.js'])
       <!-- Styles -->
       <style>
+         #content main .box-info {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+         grid-gap: 24px;
+         margin: 36px;
+         margin-top:0px;
+         }
+         #content main .box-info li {
+         padding: 24px;
+         background: white;
+         border-radius: 20px;
+         display: flex;
+         align-items: center;
+         grid-gap: 24px;
+         box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+         }
+         #content main .box-info li .bx {
+         width: 80px;
+         height: 80px;
+         border-radius: 10px;
+         font-size: 36px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         }
+         #content main .box-info li .bx {
+         background: white;
+         color: #354e7d;
+         }
+         #content main .box-info li .text h3 {
+         font-size: 24px;
+         font-weight: 600;
+         color: var(--dark);
+         }
+         #content main .box-info li .text p {
+         color: var(--dark);	
+         }
          a:hover {
          text-decoration: none;
          }
@@ -72,9 +106,10 @@
          margin-right: 10px;
          font-size: 20px;
          z-index: 3;
+         cursor:pointer;
          }
          #iconborder {
-         margin-right: 30px;
+         margin-right: 10px;
          border-right: 1px solid #d1d5db;
          padding-right: 20px;
          }
@@ -219,6 +254,84 @@
          width:160px;
          }
          }
+         @media (max-width: 768px) {
+         .chart-container {
+         width: 90%;
+         margin: 10px auto;
+         }
+         }
+         .chart-container {
+         width: 90%;
+         margin: 20px auto;
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+         margin: 0 auto;
+         width: 100%;
+         gap: 20px; /* Space between charts */
+         }
+         .chart-container > div {
+         flex: 1 1 45%; /* Flex-grow, Flex-shrink, Flex-basis */
+         min-width: 300px; /* Minimum width of the charts */
+         height: 500px;
+         }
+         @media (max-width: 768px) {
+         .chart-container > div {
+         flex: 1 1 100%; /* Stack charts vertically on small screens */
+         height: 400px; /* Adjust height for smaller screens */
+         }
+         }
+         .bar-chart-wrapper {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         margin: 50px auto;
+         }
+         .bar-chart-wrapper h1{
+         font-size:30px;
+         font-weight:bold;
+         margin-bottom:10px;
+         }
+         .simple-bar-chart{
+         --line-count: 10;
+         --line-color: currentcolor;
+         --line-opacity: 0.25;
+         --item-gap: 2%;
+         --item-default-color: #060606;
+         height: 17rem;
+         display: grid;
+         grid-auto-flow: column;
+         gap: var(--item-gap);
+         align-items: end;
+         padding-inline: var(--item-gap);
+         --padding-block: 1.5rem; /*space for labels*/
+         padding-block: var(--padding-block);
+         position: relative;
+         isolation: isolate;
+         width:90%;
+         }
+         .simple-bar-chart::after{
+         content: "";
+         position: absolute;
+         inset: var(--padding-block) 0;
+         z-index: -1;
+         --line-width: 1px;
+         --line-spacing: calc(100% / var(--line-count));
+         background-image: repeating-linear-gradient(to top, transparent 0 calc(var(--line-spacing) - var(--line-width)), var(--line-color) 0 var(--line-spacing));
+         box-shadow: 0 var(--line-width) 0 var(--line-color);
+         opacity: var(--line-opacity);
+         }
+         .simple-bar-chart > .item{
+         height: calc(1% * var(--val));
+         background-color: var(--clr, var(--item-default-color));
+         position: relative;
+         animation: item-height 1s ease forwards
+         }
+         @keyframes item-height { from { height: 0 } }
+         .simple-bar-chart > .item > * { position: absolute; text-align: center }
+         .simple-bar-chart > .item > .label { inset: 100% 0 auto 0 }
+         .simple-bar-chart > .item > .value { inset: auto 0 100% 0 }
       </style>
    </head>
    <body class="font-sans antialiased">
