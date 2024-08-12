@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NVehicleController;
 use App\Http\Controllers\NDriverController;
 use App\Http\Controllers\NConferenceRController;
+use App\Http\Controllers\EmployeeController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -105,4 +106,5 @@ Route::post('/conference-room/update',
 Route::post('/add-driver', [NDriverController::class, 'store'])->name('driver.store');
 Route::post('/add-vehicle', [NVehicleController::class, 'store'])->name('vehicle.store');
 Route::post('/conferences', [NConferenceRController::class, 'store'])->name('conferences.store');
+Route::post('/employee', [EmployeeController::class, 'store'])->name('employee.store');
 

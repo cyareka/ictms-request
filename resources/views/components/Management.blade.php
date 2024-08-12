@@ -239,31 +239,31 @@
         </div>
 
         <div id="employee" class="toggle-section">
-            <form class="row-dispatch">
+            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}">
+                @csrf
                 <div class="form-row">
                     <div class="inline-field">
-                        <label for="employeeName">Name</label>
-                        <input type="text" id="employeeName" name="employeeName" placeholder="Enter Name" required>
+                        <label for="EmployeeName">Name</label>
+                        <input type="text" id="EmployeeName" name="EmployeeName" placeholder="Enter Name" required>
                     </div>
                     <div class="inline-field">
-                        <label for="employeeEmail">Email</label>
-                        <input type="text" id="employeeEmail" name="employeeEmail" placeholder="Enter Email" required>
+                        <label for="EmployeeEmail">Email</label>
+                        <input type="text" id="EmployeeEmail" name="EmployeeEmail" placeholder="Enter Email" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="inline-field">
-                        <label for="e-signature">E-Signature</label>
-                        <div class="file-upload">
-                            <input type="file" id="e-signature" name="e-signature" style="display: none;" onchange="previewSignature(event)" required>
-                            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                                Click to upload e-sign.<br>Maximum file size: 31.46MB
-                            </div>
-                            <img id="signature-preview" alt="Signature Preview">
-                        </div>
+                        <label for="officeName">Assingned Office</label>
+                        <select id="officeName" name="officeName" required>
+                            <option disabled selected>Select Office</option>
+                            @foreach(App\Models\Office::all() as $office)
+                                <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="updateForm()">Submit</button>
+                    <button class="submit-btn" type="submit">Submit</button>
                 </div>
             </form>
         </div>
@@ -292,22 +292,6 @@
         }
     }
 
-    function previewSignature(event) {
-        const input = event.target;
-        const preview = document.getElementById('signature-preview');
-        const reader = new FileReader();
-        const uploadText = document.querySelector('.e-signature-text');
-
-        reader.onload = function() {
-            preview.src = reader.result;
-            preview.style.display = 'block';
-            uploadText.style.display = 'none';
-        };
-
-        if (input.files && input.files[0]) {
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
 </script>
 </body>
 </html>

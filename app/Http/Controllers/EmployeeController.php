@@ -3,64 +3,49 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
-use App\Http\Requests\StoreEmployeeRequest;
-use App\Http\Requests\UpdateEmployeeRequest;
+use App\Models\Office;
+use Illuminate\Http\Request;
+use App\Helpers\IDGenerator;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private function generateUniqueID(): string
     {
-        //
+        $idGenerator = new IDGenerator();
+        do {
+            $generatedID = $idGenerator->generateID_8();
+        } while (Employee::query()->where('EmployeeID', $generatedID)->exists());
+
+        return $generatedID;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreEmployeeRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateEmployeeRequest $request, Employee $employee)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Employee $employee)
-    {
-        //
+        try {
+            $validated = $request->validate([
+                'EmployeeName' => 'required|string|max:50',
+                'EmployeeEmail' => 'required|email|max:30',
+                'officeName' => 'required|string|exists:offices,OfficeID',
+            ]);
+    
+            $generatedID = $this->generateUniqueID();
+            $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
+    
+            Employee::create([
+                'EmployeeID' => $generatedID,
+                'EmployeeName' => $validated['EmployeeName'],
+                'EmployeeEmail' => $validated['EmployeeEmail'],
+                'OfficeID' => $office->OfficeID,
+                'EmployeeSignature' => 'https://via.placeholder.com/640x480.png/00aabb?text=cats+voluptas',
+            ]);
+    
+            return redirect()->back()->with('success', 'Employee added successfully!');
+        } catch (Exception $e) {
+            // Log the error
+            Log::error('Error adding employee: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to add employee.');
+        }
     }
 }
