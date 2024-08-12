@@ -55,17 +55,20 @@ Route::middleware([
     Route::get('/management', function () {
         return view('management');
     })->name('Management');
+    Route::get('/ConferenceStatistics', function () {
+        return view('ConferenceStatistics');
+    })->name('ConferenceStatistics');
+    Route::get('/VehicleStatistics', function () {
+        return view('VehicleStatistics');
+    })->name('VehicleStatistics');
     // more admin stuff
-    Route::get('/conference-requests',
-        [ConferenceController::class, 'showRequests'])->name('conference.requests');
     Route::post('/register',
         [AdminController::class, 'register'])->name('register');
     Route::get('/conferencerequest/{CRequestID}/edit',
         [ConferenceController::class, 'getRequestData'])->name('ConferencedetailEdit');
     Route::post('/conference-room/update',
         [ConferenceController::class, 'updateCForm']);
-    Route::get('/conference-requests',
-        [ConferenceController::class, 'index']);
+    Route::get('/conference-requests', [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');
 });
 
 Route::get('/user-conference', function () {

@@ -173,19 +173,15 @@ class ConferenceController extends Controller
         return view('ConferencedetailEdit', compact('requestData'));
     }
 
-
-    public function index(Request $request): \Illuminate\Http\JsonResponse|\Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
+    public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
         $sort = $request->get('sort', 'created_at');
-        $order = $request->get('order', 'asc'); // Default to descending order
+        $order = $request->get('order', 'desc');
         $conferenceRequests = ConferenceRequest::with('office', 'conferenceRoom')
             ->orderBy($sort, $order)
             ->get();
 
-        if ($request->ajax()) {
-            return response()->json($conferenceRequests);
-        }
+        return response()->json($conferenceRequests);
 
-        return view('components.conferencerequests', compact('conferenceRequests', 'sort', 'order'));
     }
 }

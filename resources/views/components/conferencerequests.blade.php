@@ -70,7 +70,7 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">
-                    <a href="#" id="sort-date-requested" data-order="asc">
+                    <a href="#" id="sort-date-requested" data-order="desc">
                         Date Requested
                     </a>
                 </th>
@@ -85,7 +85,13 @@
             </tr>
             </thead>
             <tbody>
-            @foreach(App\Models\ConferenceRequest::all() as $request)
+            @php
+                $filteredRequests = App\Models\ConferenceRequest::whereIn('FormStatus', ['Approved', 'Pending'])
+                    ->whereIn('EventStatus', ['Ongoing', '-'])
+                    ->get();
+            @endphp
+
+            @foreach($filteredRequests as $request)
                 <tr>
                     <th scope="row">{{ $request->CRequestID }}</th>
                     <td>{{ $request->created_at->format('m-d-Y') }}</td>
@@ -109,43 +115,49 @@
 <div class="end"></div>
 
 <script>
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder);
-    });
+document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+    e.preventDefault();
+    let order = this.getAttribute('data-order');
+    let newOrder = order === 'asc' ? 'desc' : 'asc';
+    this.setAttribute('data-order', newOrder);
+    fetchSortedData(newOrder);
+});
 
-    function fetchSortedData(order) {
-        fetch(`/conference-requests?sort=created_at&order=${order}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                alert('An error occurred while fetching data. Please try again.');
-            });
-    }
+function fetchSortedData(order) {
+    fetch(`/conference-requests?sort=created_at&order=${order}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(`Error: ${errorData.message}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert(`An error occurred while fetching data: ${error.message}`);
+        });
+}
 
-    function updateTable(data) {
-        let tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
-        data.forEach(request => {
-            let row = `<tr>
+function updateTable(data) {
+    let tbody = document.querySelector('tbody');
+    tbody.innerHTML = '';
+    data.forEach(request => {
+        console.log(request);
+        let conferenceRoomName = request.conferenceRoom ? request.conferenceRoom.CRoomName : 'N/A';
+        let officeName = request.office ? request.office.OfficeName : 'N/A';
+        let availability = request.conferenceRoom ? request.conferenceRoom.Availability : 'N/A';
+        let row = `<tr>
             <th scope="row">${request.CRequestID}</th>
-            <td>${new Date(request.created_at).toLocaleDateString()}</td>
-            <td>${request.conferenceRoom.CRoomName}</td>
-            <td>${request.office.OfficeName}</td>
+            <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
+            <td>${conferenceRoomName}</td>
+            <td>${officeName}</td>
             <td>${request.date_start}</td>
             <td>${request.time_start}</td>
-            <td>${request.conferenceRoom.Availability}</td>
+            <td>${availability}</td>
             <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
             <td>${request.EventStatus}</td>
             <td>
@@ -153,8 +165,7 @@
                 <i class="bi bi-download" id="actions"></i>
             </td>
         </tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
-        });
-    }
-
+        tbody.insertAdjacentHTML('beforeend', row);
+    });
+}
 </script>
