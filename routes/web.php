@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NVehicleController;
 use App\Http\Controllers\NDriverController;
+use App\Http\Controllers\NConferenceRController;
+use App\Http\Controllers\EmployeeController;
 Route::get('/', function () {
     return view('welcome');
 });

@@ -318,35 +318,73 @@
 </div>
 
 <script>
-    function toggleSection(sectionId, button) {
-        const section = document.getElementById(sectionId);
-        const isVisible = section.style.display === 'block';
-        const allSections = document.querySelectorAll('.toggle-section');
-        const allButtons = document.querySelectorAll('.dropdown-button');
+let currentForm = null;
 
-        // Hide all sections and remove active class from all buttons
-        allSections.forEach(sec => sec.style.display = 'none');
-        allButtons.forEach(btn => btn.classList.remove('active'));
+function toggleSection(sectionId, button) {
+    const section = document.getElementById(sectionId);
+    const isVisible = section.style.display === 'block';
+    const allSections = document.querySelectorAll('.toggle-section');
+    const allButtons = document.querySelectorAll('.dropdown-button');
 
-        // Show the clicked section and add active class to the clicked button
-        if (!isVisible) {
-            section.style.display = 'block';
-            button.classList.add('active');
-        }
+    allSections.forEach(sec => sec.style.display = 'none');
+    allButtons.forEach(btn => btn.classList.remove('active'));
+
+    if (!isVisible) {
+        section.style.display = 'block';
+        button.classList.add('active');
     }
+}
 
-    function showSuccessMessage(event) {
-        event.preventDefault(); // Prevent the default form submission
+function showSuccessMessage(event) {
+    event.preventDefault(); // Prevent the default form submission
+    currentForm = event.target; // Store the form being submitted
 
-        // Show a confirmation dialog
-        const confirmation = confirm('Are you sure you want to submit this form?');
-        
-        if (confirmation) {
-            alert('Form submitted successfully!');
-            event.target.submit(); // Submit the form after showing the message
-        }
+    // Check if the form has already been submitted
+    if (!localStorage.getItem('formSubmitted')) {
+        openModal(); // Open the confirmation modal if form not already submitted
+    } else {
+        localStorage.removeItem('formSubmitted'); // Clear the flag after reload
     }
+}
+
+function openModal() {
+    document.getElementById('confirmationModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('confirmationModal').style.display = 'none';
+}
+
+function confirmSubmission() {
+    closeModal(); // Close the modal
+    if (currentForm) {
+        localStorage.setItem('formSubmitted', 'true'); // Set the flag before submitting
+        currentForm.submit(); // Submit the stored form
+    }
+}
+
+// Ensure modal doesn't appear on page refresh or after successful submission
+window.onload = function() {
+    if (localStorage.getItem('formSubmitted')) {
+        localStorage.removeItem('formSubmitted'); // Clear the flag on page load
+    }
+    
+    // Attach event listener to forms only if the form wasn't already submitted
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', showSuccessMessage);
+    });
+};
 </script>
+<!-- Modal for confirmation -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content">
+        <p>Are you sure you want to submit this form?</p>
+        <div class="modal-buttons">
+            <button class="modal-button confirm-btn" onclick="confirmSubmission()">Yes</button>
+            <button class="modal-button cancel-btn" onclick="closeModal()">No</button>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
