@@ -557,7 +557,7 @@
             </div>
         </div>
         <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
+            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
             <button class="submit-btn" type="submit">Update</button>
         </div>
     </form>

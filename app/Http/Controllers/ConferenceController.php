@@ -85,6 +85,18 @@ class ConferenceController extends Controller
                     $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
                 }
 
+                // Check for existing approved and ongoing forms
+                $existingRequest = ConferenceRequest::query()
+                    ->where('CRoomID', $conferenceRoom->CRoomID)
+                    ->where('FormStatus', 'Approved')
+                    ->where('EventStatus', 'Ongoing')
+                    ->where('date_start', $dateStart)
+                    ->where('time_start', '<=', $validated['time_end'][$index])
+                    ->where('time_end', '>=', $validated['time_start'][$index])
+                    ->exists();
+
+                $availability = $existingRequest ? 'Unavailable' : 'Available';
+
                 ConferenceRequest::create([
                     'CRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
@@ -103,6 +115,7 @@ class ConferenceController extends Controller
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
                     'time_end' => $validated['time_end'][$index],
+                    'Availability' => $availability,
                 ]);
             }
 
@@ -127,7 +140,7 @@ class ConferenceController extends Controller
             ]);
 
             // Retrieve the conference request using Eloquent ORM
-            $conferenceRequest = ConferenceRequest::query()->where('CRequestID', $validated['CRequestID'])->firstOrFail();
+            $conferenceRequest = ConferenceRequest::with('conferenceRoom')->where('CRequestID', $validated['CRequestID'])->firstOrFail();
 
             // Update the formStatus and eventStatus fields
             $conferenceRequest->update([
@@ -158,5 +171,21 @@ class ConferenceController extends Controller
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
         return view('ConferencedetailEdit', compact('requestData'));
+    }
+
+
+    public function index(Request $request): \Illuminate\Http\JsonResponse|\Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'asc'); // Default to descending order
+        $conferenceRequests = ConferenceRequest::with('office', 'conferenceRoom')
+            ->orderBy($sort, $order)
+            ->get();
+
+        if ($request->ajax()) {
+            return response()->json($conferenceRequests);
+        }
+
+        return view('components.conferencerequests', compact('conferenceRequests', 'sort', 'order'));
     }
 }

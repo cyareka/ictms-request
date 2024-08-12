@@ -69,7 +69,11 @@
             <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Date Requested</th>
+                <th scope="col">
+                    <a href="#" id="sort-date-requested" data-order="asc">
+                        Date Requested
+                    </a>
+                </th>
                 <th scope="col">Conference Room</th>
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date Needed</th>
@@ -87,8 +91,8 @@
                     <td>{{ $request->created_at->format('m-d-Y') }}</td>
                     <td>{{ $request->conferenceRoom->CRoomName }}</td>
                     <td>{{ $request->office->OfficeName }}</td>
-                    <td>{{ json_encode($request->date_start) }}</td>
-                    <td>{{ json_encode($request->time_start) }}</td>
+                    <td>{{ $request->date_start }}</td>
+                    <td>{{ $request->time_start }}</td>
                     <td>{{ $request->conferenceRoom->Availability }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
@@ -103,3 +107,54 @@
     </div>
 </div>
 <div class="end"></div>
+
+<script>
+    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder);
+    });
+
+    function fetchSortedData(order) {
+        fetch(`/conference-requests?sort=created_at&order=${order}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                updateTable(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                alert('An error occurred while fetching data. Please try again.');
+            });
+    }
+
+    function updateTable(data) {
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+        data.forEach(request => {
+            let row = `<tr>
+            <th scope="row">${request.CRequestID}</th>
+            <td>${new Date(request.created_at).toLocaleDateString()}</td>
+            <td>${request.conferenceRoom.CRoomName}</td>
+            <td>${request.office.OfficeName}</td>
+            <td>${request.date_start}</td>
+            <td>${request.time_start}</td>
+            <td>${request.conferenceRoom.Availability}</td>
+            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+            <td>${request.EventStatus}</td>
+            <td>
+                <a href="/conference-requests/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                <i class="bi bi-download" id="actions"></i>
+            </td>
+        </tr>`;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+</script>
