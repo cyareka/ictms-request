@@ -150,6 +150,53 @@
                 align-items: flex-start;
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+        }
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .modal-button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .confirm-btn {
+            background-color: #354e7d;
+            color: white;
+        }
+        .cancel-btn {
+            background-color: #ccc;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -164,32 +211,32 @@
         </div>
 
         <div id="addVehi" class="toggle-section">
-    <form class="row-dispatch" method="POST" action="{{ route('driver.store') }}">
-        @csrf
-        <div class="form-row">
-            <div class="inline-field">
-                <label for="DriverName">Driver Name</label>
-                <input type="text" id="DriverName" name="DriverName" placeholder="Enter Driver Name" required>
-            </div>
-            <div class="inline-field">
-                <label for="DriverEmail">Driver Email</label>
-                <input type="email" id="DriverEmail" name="DriverEmail" placeholder="Enter Driver Email" required>
-            </div>
+            <form class="row-dispatch" method="POST" action="{{ route('driver.store') }}" onsubmit="showSuccessMessage(event)">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="DriverName">Driver Name</label>
+                        <input type="text" id="DriverName" name="DriverName" placeholder="Enter Driver Name" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="DriverEmail">Driver Email</label>
+                        <input type="email" id="DriverEmail" name="DriverEmail" placeholder="Enter Driver Email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="ContactNo">Contact No.</label>
+                        <input type="tel" id="ContactNo" name="ContactNo" placeholder="Enter Contact No." required>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="submit">Submit</button>
+                </div>
+            </form>
         </div>
-        <div class="form-row">
-            <div class="inline-field">
-                <label for="ContactNo">Contact No.</label>
-                <input type="tel" id="ContactNo" name="ContactNo" placeholder="Enter Contact No." required>
-            </div>
-        </div>
-        <div class="form-footer">
-            <button class="submit-btn" type="submit">Submit</button>
-        </div>
-    </form>
-</div>
 
         <div id="vehicle" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('vehicle.store') }}">
+            <form class="row-dispatch" method="POST" action="{{ route('vehicle.store') }}" onsubmit="showSuccessMessage(event)">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -204,7 +251,7 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="Capacity">Capacity</label>
-                        <input type="number" id="Capacity" name="Capacity" min="1" value="1" required>
+                        <input type="number" id="Capacity" name="Capacity" min="1" value="0" required>
                     </div>
                 </div>
                 <div class="form-footer">
@@ -214,7 +261,7 @@
         </div>
 
         <div id="conference" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}">
+            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" onsubmit="showSuccessMessage(event)">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -239,7 +286,7 @@
         </div>
 
         <div id="employee" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}">
+            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" onsubmit="showSuccessMessage(event)">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -253,7 +300,7 @@
                 </div>
                 <div class="form-row">
                     <div class="inline-field">
-                        <label for="officeName">Assingned Office</label>
+                        <label for="officeName">Assigned Office</label>
                         <select id="officeName" name="officeName" required>
                             <option disabled selected>Select Office</option>
                             @foreach(App\Models\Office::all() as $office)
@@ -271,10 +318,6 @@
 </div>
 
 <script>
-    function updateForm() {
-        alert('You successfully added.');
-    }
-
     function toggleSection(sectionId, button) {
         const section = document.getElementById(sectionId);
         const isVisible = section.style.display === 'block';
@@ -292,6 +335,18 @@
         }
     }
 
+    function showSuccessMessage(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Show a confirmation dialog
+        const confirmation = confirm('Are you sure you want to submit this form?');
+        
+        if (confirmation) {
+            alert('Form submitted successfully!');
+            event.target.submit(); // Submit the form after showing the message
+        }
+    }
 </script>
+
 </body>
 </html>
