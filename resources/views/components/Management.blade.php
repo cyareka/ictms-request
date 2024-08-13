@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Edit Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -98,22 +99,6 @@
             display: none;
             width: 100%;
         }
-        #signature-preview {
-            margin-top: 15px;
-            max-width: 100px;
-            max-height: 100px;
-            display: none;
-        }
-        .file-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px;
-            border: 2px dashed #5b21b6;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 16px;
-        }
         @media (max-width: 768px) {
             .form-container {
                 width: 90%;
@@ -125,7 +110,6 @@
             .toggle-button {
                 margin: 10px 0;
                 display: flex;
-                border
                 flex-direction: column;
                 width: 100%;
             }
@@ -150,53 +134,6 @@
                 align-items: flex-start;
             }
         }
-
-        /* Modal Styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed;
-            z-index: 1000; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgb(0, 0, 0); /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-        }
-        .modal-buttons {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-around;
-        }
-        .modal-button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        .confirm-btn {
-            background-color: #354e7d;
-            color: white;
-        }
-        .cancel-btn {
-            background-color: #ccc;
-            color: black;
-        }
     </style>
 </head>
 <body>
@@ -211,7 +148,7 @@
         </div>
 
         <div id="addVehi" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('driver.store') }}" onsubmit="showSuccessMessage(event)">
+            <form class="row-dispatch" method="POST" action="{{ route('driver.store') }}" id="addVehiForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -230,13 +167,13 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="submit">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('addVehiForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
 
         <div id="vehicle" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('vehicle.store') }}" onsubmit="showSuccessMessage(event)">
+            <form class="row-dispatch" method="POST" action="{{ route('vehicle.store') }}" id="vehicleForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -255,13 +192,13 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="submit">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('vehicleForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
 
         <div id="conference" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" onsubmit="showSuccessMessage(event)">
+            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" id="conferenceForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -280,13 +217,13 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="submit">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('conferenceForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
 
         <div id="employee" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" onsubmit="showSuccessMessage(event)">
+            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" id="employeeForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -310,12 +247,37 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="submit">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('employeeForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirm Submission</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to submit this form?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
 let currentForm = null;
@@ -335,56 +297,16 @@ function toggleSection(sectionId, button) {
     }
 }
 
-function showSuccessMessage(event) {
-    event.preventDefault(); // Prevent the default form submission
-    currentForm = event.target; // Store the form being submitted
-
-    // Check if the form has already been submitted
-    if (!localStorage.getItem('formSubmitted')) {
-        openModal(); // Open the confirmation modal if form not already submitted
-    } else {
-        localStorage.removeItem('formSubmitted'); // Clear the flag after reload
-    }
+function setCurrentForm(formId) {
+    currentForm = document.getElementById(formId);
 }
 
-function openModal() {
-    document.getElementById('confirmationModal').style.display = 'flex';
-}
-
-function closeModal() {
-    document.getElementById('confirmationModal').style.display = 'none';
-}
-
-function confirmSubmission() {
-    closeModal(); // Close the modal
+function submitForm() {
     if (currentForm) {
-        localStorage.setItem('formSubmitted', 'true'); // Set the flag before submitting
-        currentForm.submit(); // Submit the stored form
+        currentForm.submit();
     }
 }
-
-// Ensure modal doesn't appear on page refresh or after successful submission
-window.onload = function() {
-    if (localStorage.getItem('formSubmitted')) {
-        localStorage.removeItem('formSubmitted'); // Clear the flag on page load
-    }
-    
-    // Attach event listener to forms only if the form wasn't already submitted
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', showSuccessMessage);
-    });
-};
 </script>
-<!-- Modal for confirmation -->
-<div id="confirmationModal" class="modal">
-    <div class="modal-content">
-        <p>Are you sure you want to submit this form?</p>
-        <div class="modal-buttons">
-            <button class="modal-button confirm-btn" onclick="confirmSubmission()">Yes</button>
-            <button class="modal-button cancel-btn" onclick="closeModal()">No</button>
-        </div>
-    </div>
-</div>
 
 </body>
 </html>
