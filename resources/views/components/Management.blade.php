@@ -63,6 +63,7 @@
             align-items: center;
             width: 48%;
             margin-bottom: 15px;
+            position: relative;
         }
         .inline-field label {
             margin-right: 20px;
@@ -76,6 +77,14 @@
             border: 1px solid rgba(60, 54, 51, 0.5);
             border-radius: 15px;
             box-sizing: border-box;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
         }
         input[type="number"] {
             width: 80px;
@@ -117,6 +126,7 @@
                 width: 100%;
                 display: flex;
                 flex-direction: column;
+                position: relative;
             }
             .inline-field label {
                 width: 100%;
@@ -133,67 +143,6 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-        }
-        .custom-modal-header {
-        background-color: #354e7d;
-        color: white;
-        padding: 14px;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        }
-        .custom-close-button {
-            color: white;
-            font-size: 1.5em;
-        }
-        .modal-body {
-            padding: 20px;
-            font-size: 16px;
-            text-align: center;
-        }
-        .custom-modal-footer {
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 20px;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-        }
-        .custom-cancel-button {
-            background-color: #d9534f;
-            color: white;
-            border-radius: 15px;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-        .custom-cancel-button:hover {
-            background-color: #c9302c;
-        }
-        .custom-submit-button {
-            background-color: #354e7d;
-            color: white;
-            border-radius: 15px;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-        .custom-submit-button:hover {
-            background-color: #4cae4c;
-        }
-
-        .custom-modal-size {
-            max-width: 400px;
-        }
-
-        .modal-body {
-            padding: 15px;
-            font-size: 16px;
-            text-align: center;
-        }
-
-        .custom-modal-footer {
-            padding: 10px 20px;
         }
     </style>
 </head>
@@ -293,7 +242,8 @@
                     </div>
                     <div class="inline-field">
                         <label for="EmployeeEmail">Email</label>
-                        <input type="email" id="EmployeeEmail" name="EmployeeEmail" placeholder="Enter Email" pattern="[a-zA-Z0-9._%+-]+@dswd\.gov\.ph" required>
+                        <input type="text" id="EmployeeEmail" name="EmployeeEmail" placeholder="Enter Email" required oninput="validateEmail()">
+                        <div id="emailError" class="error-message"></div>
                     </div>
                 </div>
                 <div class="form-row">
@@ -316,24 +266,24 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered custom-modal-size" role="document">
-        <div class="modal-content">
-            <div class="modal-header custom-modal-header">
-                <h5 class="modal-title" id="confirmationModalTitle">Confirm Submission</h5>
-                <button type="button" class="close custom-close-button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to submit this form?
-            </div>
-            <div class="modal-footer custom-modal-footer">
-                <button type="button" class="btn custom-cancel-button" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn custom-submit-button" onclick="submitForm()">Submit</button>
-            </div>
-        </div>
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Confirm Submission</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to submit this form?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -362,35 +312,32 @@ function setCurrentForm(formId) {
     currentForm = document.getElementById(formId);
 }
 
-function handleFormSubmit(event) {
-    event.preventDefault(); // Prevent default form submission
-    
-    if (currentForm.checkValidity()) {
-        currentForm.submit();
+function validateEmail() {
+    const emailInput = document.getElementById('EmployeeEmail');
+    const emailValue = emailInput.value;
+    const emailError = document.getElementById('emailError');
+    const domain = emailValue.split('@')[1];
+
+    if (domain !== 'dswd.gov.ph') {
+        emailInput.setCustomValidity('Please use a dswd.gov.ph email address.');
+        emailError.textContent = 'Only dswd.gov.ph email addresses are allowed.';
     } else {
-        // Trigger browser's validation UI
-        currentForm.reportValidity();
+        emailInput.setCustomValidity('');
+        emailError.textContent = '';
     }
-    return false; // Prevent default form submission
 }
 
 function submitForm() {
-    if (currentForm) {
-        // Create a FormData object to verify the form validity
-        const formData = new FormData(currentForm);
-        const isValid = currentForm.checkValidity();
-
-        if (isValid) {
-            // If valid, submit the form
-            currentForm.submit();
-        } else {
-            // If not valid, trigger the validation UI
-            currentForm.reportValidity();
-        }
+    const emailInput = document.getElementById('EmployeeEmail');
+    validateEmail();
+    if (emailInput.checkValidity()) {
+        currentForm.submit();
+    } else {
+        // Trigger validation message
+        emailInput.reportValidity();
     }
 }
 </script>
-
 
 </body>
 </html>
