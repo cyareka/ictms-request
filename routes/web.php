@@ -34,7 +34,7 @@ Route::middleware([
     Route::get('/VehicleStatistics', function () {
         return view('VehicleStatistics');
     })->name('VehicleStatistics');
-    
+
     Route::get('/VehicleTabular', function () {
         return view('VehicleTabular');
     })->name('VehicleTabular');

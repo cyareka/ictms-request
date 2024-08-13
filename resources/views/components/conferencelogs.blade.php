@@ -12,9 +12,9 @@
             <div id="divide">
                 <i class="bi bi-arrow-left-short"></i>
                 <i class="bi bi-arrow-right-short" id="iconborder"></i>
-                    <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
+                    <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
                     <div class="dropdown-content">
                         <p id="filterlabel">Filter By</p>
                         <hr>
@@ -24,7 +24,7 @@
                                 <input class="form-check-input" type="radio" name="flexRadioDefault"
                                        id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
-                                    MAAGAP Conference
+                                    Maagap
                                 </label>
                             </div>
                         </a>
@@ -33,7 +33,7 @@
                                 <input class="form-check-input" type="radio" name="flexRadioDefault"
                                        id="flexRadioDefault1">
                                 <label class="form-check-label" for="flexRadioDefault1">
-                                    MAGITING Conference
+                                    Magiting
                                 </label>
                             </div>
                         </a>
