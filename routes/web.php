@@ -34,7 +34,7 @@ Route::middleware([
     Route::get('/VehicleStatistics', function () {
         return view('VehicleStatistics');
     })->name('VehicleStatistics');
-
+    
     Route::get('/VehicleTabular', function () {
         return view('VehicleTabular');
     })->name('VehicleTabular');
@@ -70,6 +70,15 @@ Route::middleware([
     Route::get('/management', function () {
         return view('management');
     })->name('Management');
+    // more admin stuff
+    Route::post('/register',
+        [AdminController::class, 'register'])->name('register');
+    Route::get('/conferencerequest/{CRequestID}/edit',
+        [ConferenceController::class, 'getRequestData'])->name('ConferencedetailEdit');
+    Route::post('/conference-room/update',
+        [ConferenceController::class, 'updateCForm']);
+    Route::get('/conference-requests', [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');
+    Route::get('/fetchSortedRequests', [ConferenceController::class, 'fetchSortedRequests'])->name('fetchSortedRequests');
 });
 
 Route::get('/user-conference', function () {

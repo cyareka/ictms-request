@@ -177,11 +177,39 @@ class ConferenceController extends Controller
     {
         $sort = $request->get('sort', 'created_at');
         $order = $request->get('order', 'desc');
-        $conferenceRequests = ConferenceRequest::with('office', 'conferenceRoom')
-            ->orderBy($sort, $order)
-            ->get();
+        $conferenceRoom = $request->get('conference_room');
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'conference_room' => $conferenceRoom,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
+        ]);
+
+        $query = ConferenceRequest::with('office', 'conferenceRoom')
+            ->orderBy($sort, $order);
+
+        if ($conferenceRoom) {
+            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+                $q->where('CRoomName', $conferenceRoom);
+            });
+        }
+
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+
+        if ($eventStatuses) {
+            $query->whereIn('EventStatus', $eventStatuses);
+        }
+
+        $conferenceRequests = $query->get();
+
+        Log::info('Query results:', $conferenceRequests->toArray());
 
         return response()->json($conferenceRequests);
-
     }
 }

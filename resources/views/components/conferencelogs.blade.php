@@ -12,6 +12,7 @@
             <div id="divide">
                 <i class="bi bi-arrow-left-short"></i>
                 <i class="bi bi-arrow-right-short" id="iconborder"></i>
+                    <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <div class="dropdown-content">
@@ -68,6 +69,7 @@
                         </div>
                     </div>
                 </div>
+            </form>
             </div>
         </div>
     </div>
