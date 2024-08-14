@@ -38,13 +38,12 @@ return new class extends Migration
             $table->string('date_end', 10);
             $table->string('time_start', 9);
             $table->string('Location', 50);
-            $table->string('', 50);
             $table->string('RequesterName');
             $table->string('RequesterContact',13);
             $table->string('RequesterEmail', 20);
             $table->string('RequesterSignature');
             $table->string('IPAddress',45);
-            $table->string('ReceivedDate');
+            $table->timestamps();
 
             // To be filled by dispatcher
             $table->string('DriverID', 9);
@@ -53,10 +52,8 @@ return new class extends Migration
 
             // to be filled by administrative service
             // add availability
-
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
             $table->enum('EventStatus', ['-', 'Cancelled', 'Finished'])->nullable()->default('-');
-            $table->timestamps();
 
             // Adding foreign keys
             $table->foreign('DriverID')->references('DriverID')->on('driver');

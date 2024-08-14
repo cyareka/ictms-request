@@ -17,8 +17,7 @@ class Employee extends Model
         'EmployeeID',
         'EmployeeName',
         'EmployeeEmail',
-        'OfficeID',
-        'EmployeeSignature'
+        'OfficeID'
     ];
 
     public function office(): BelongsTo

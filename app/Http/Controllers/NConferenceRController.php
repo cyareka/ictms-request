@@ -19,17 +19,19 @@ class NConferenceRController extends Controller
         return $generatedID;
     }
 
-
     public function store(Request $request)
     {
+        // Validate the request data
         $request->validate([
             'CRoomName' => 'required|string|max:30',
             'Location' => 'required|string|max:30',
             'Capacity' => 'required|integer|min:1',
+            'EmployeeEmail' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@dswd\.gov\.ph$/'],
         ]);
-    
+
+        try {
             $generatedID = $this->generateUniqueID();  // Generate the unique ID
-    
+
             $conferenceRoom = ConferenceRoom::create([
                 'CRoomID' => $generatedID,
                 'Availability' => 'Available',
@@ -37,6 +39,11 @@ class NConferenceRController extends Controller
                 'Location' => $request->Location,
                 'Capacity' => $request->Capacity,
             ]);
+
             return redirect()->back()->with('success', 'Conference details saved successfully!');
+        } catch (Throwable $e) {
+            // Handle the exception and return an error message
+            return redirect()->back()->with('error', 'An error occurred while saving conference details. Please try again.');
+        }
     }
 }
