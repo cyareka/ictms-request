@@ -167,19 +167,17 @@ class ConferenceController extends Controller
      * @param string $CRequestID The ID of the conference request to retrieve.
      * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application The view displaying the conference request details.
      */
-    public function getRequestData($VRequestID): View|Factory|Application
+    public function getRequestData(string $CRequestID): View|Factory|Application
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
         return view('ConferencedetailEdit', compact('requestData'));
     }
 
-    public function getLogData($CRequestID): View|Factory|Application
+    public function getLogData(string $CRequestID): View|Factory|Application
     {
-        $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
-        return view('conferencelogdetail', compact('requestData'));
+        $requestLogData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
+        return view('ConferencelogDetail', compact('requestLogData'));
     }
-
-
 
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
@@ -223,19 +221,18 @@ class ConferenceController extends Controller
     }
 
     // Conference Request Logs Filter and Sort
-    public function fetchLogSortedRequests(Request $request) {
+    public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
         $sort = $request->get('sort', 'created_at');
         $order = $request->get('order', 'desc');
         $conferenceRoom = $request->get('conference_room');
-        $formStatuses = $request->get('form_statuses', ['Approved', 'Not Approved']);
-        $eventStatuses = $request->get('event_statuses', ['Finished', 'Cancelled', '-']);
+        $statusPairs = $request->get('status_pairs', []);
 
         Log::info('Filter parameters:', [
             'sort' => $sort,
             'order' => $order,
             'conference_room' => $conferenceRoom,
-            'form_statuses' => $formStatuses,
-            'event_statuses' => $eventStatuses,
+            'status_pairs' => $statusPairs,
         ]);
 
         $query = ConferenceRequest::with('office', 'conferenceRoom')
@@ -247,12 +244,16 @@ class ConferenceController extends Controller
             });
         }
 
-        if ($formStatuses) {
-            $query->whereIn('FormStatus', $formStatuses);
-        }
-
-        if ($eventStatuses) {
-            $query->whereIn('EventStatus', $eventStatuses);
+        if ($statusPairs) {
+            $query->where(function ($q) use ($statusPairs) {
+                foreach ($statusPairs as $pair) {
+                    [$formStatus, $eventStatus] = explode(',', $pair);
+                    $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                        $q->where('FormStatus', $formStatus)
+                          ->where('EventStatus', $eventStatus);
+                    });
+                }
+            });
         }
 
         $conferenceRequests = $query->get();

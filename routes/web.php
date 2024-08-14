@@ -56,9 +56,8 @@ Route::middleware([
     // CONFERENCE LOG ROUTES
     Route::get('/conferencerequest/{CRequestID}/log',
         [ConferenceController::class, 'getLogData'])->name('ConferencelogDetail');
-    Route::get('/ConferencelogDetail', function () {
-        return view('ConferencelogDetail');
-    })->name('ConferencelogDetail');
+    Route::get('/fetchSortedLogRequests',
+        [ConferenceController::class, 'fetchSortedLogRequests'])->name('fetchSortedLogRequests');
 
     // VEHICLE ROUTES
     // Vehicle Statistics
@@ -104,7 +103,6 @@ Route::middleware([
         [NConferenceRController::class, 'store'])->name('conferences.store');
     Route::post('/employee',
         [EmployeeController::class, 'store'])->name('employee.store');
-
 });
 
 // USER ROUTES

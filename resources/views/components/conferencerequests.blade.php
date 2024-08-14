@@ -116,12 +116,12 @@
 
 <script>
     document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-    e.preventDefault();
-    let order = this.getAttribute('data-order');
-    let newOrder = order === 'asc' ? 'desc' : 'asc';
-    this.setAttribute('data-order', newOrder);
-    fetchSortedData(newOrder);
-});
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder);
+    });
 
     function fetchSortedData(order) {
         const form = document.getElementById('filterForm');
@@ -156,7 +156,7 @@
                 <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
                 <td>${request.EventStatus}</td>
                 <td>
-                    <a href="/conference-requests/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                    <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
                     <i class="bi bi-download" id="actions"></i>
                 </td>
             </tr>`;

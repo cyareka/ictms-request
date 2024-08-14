@@ -305,15 +305,15 @@
 
     <form method="POST" action="" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="CRequestID" value="{{ $requestData-> CRequestID }}">
+        <input type="hidden" name="CRequestID" value="{{ $requestLogData-> CRequestID }}">
         <div class="row">
             <div class="inline-field">
                 <label for="officeName">Requesting Office</label>
-                <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName }}" placeholder="-" readonly>
+                <input type="text" id="officeName" name="officeName" value="{{ $requestLogData->office->OfficeName }}" placeholder="-" readonly>
             </div>
             <div class="inline-field ">
                 <label for="purpose">Purpose</label>
-                <input type="text" id="purpose" name="purpose" value="{{ $requestData->Purpose }}" placeholder="-"
+                <input type="text" id="purpose" name="purpose" value="{{ $requestLogData->Purpose }}" placeholder="-"
                        readonly>
             </div>
         </div>
@@ -322,23 +322,23 @@
                 <div class="row">
                     <div class="inline-field">
                         <label for="dateStart">Date Start</label>
-                        <input type="date" id="dateStart" name="dateStart" value="{{ $requestData->date_start }}"
+                        <input type="date" id="dateStart" name="dateStart" value="{{ $requestLogData->date_start }}"
                                readonly>
                     </div>
                     <div class="inline-field">
                         <label for="dateEnd">Date End</label>
-                        <input type="date" id="dateEnd" name="dateEnd" value="{{ $requestData->date_end }}" readonly>
+                        <input type="date" id="dateEnd" name="dateEnd" value="{{ $requestLogData->date_end }}" readonly>
                     </div>
                 </div>
                 <div class="row">
                     <div class="inline-field">
                         <label for="timeStart">Time Start</label>
-                        <input type="time" id="timeStart" name="timeStart" value="{{ $requestData->time_start }}"
+                        <input type="time" id="timeStart" name="timeStart" value="{{ $requestLogData->time_start }}"
                                readonly>
                     </div>
                     <div class="inline-field">
                         <label for="timeEnd">Time End</label>
-                        <input type="time" id="timeEnd" name="timeEnd" value="{{ $requestData->time_end }}" readonly>
+                        <input type="time" id="timeEnd" name="timeEnd" value="{{ $requestLogData->time_end }}" readonly>
                     </div>
                 </div>
             </div>
@@ -346,11 +346,11 @@
         <div class="row">
             <div class="inline-field">
                 <label for="conferenceRoom">Conference Room</label>
-                <input type="text" id="conferenceRoom" name="conferenceRoom" value="{{ $requestData->conferenceRoom->CRoomName }}" placeholder="-" readonly>
+                <input type="text" id="conferenceRoom" name="conferenceRoom" value="{{ $requestLogData->conferenceRoom->CRoomName }}" placeholder="-" readonly>
             </div>
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
-                <input type="text" id="focalPerson" name="focalPerson" value="{{ $requestData->focalPerson }}" placeholder="Enter Focal Person" readonly>
+                <input type="text" id="focalPerson" name="focalPerson" value="{{ $requestLogData->focalPerson }}" placeholder="Enter Focal Person" readonly>
             </div>
             <div class="row">
             </div>
@@ -358,50 +358,50 @@
         <div class="row">
             <div class="inline-field">
                 <label for="person">No. of Persons</label>
-                <input type="number" id="npersons" name="npersons" value="{{ $requestData->npersons }}" placeholder="0"
+                <input type="number" id="npersons" name="npersons" value="{{ $requestLogData->npersons }}" placeholder="0"
                        readonly>
                 <div class="tb">
                     <label for="tables">Tables</label>
-                    <input type="number" id="tables" name="tables" value="{{ $requestData->tables }}" placeholder="0" readonly>
+                    <input type="number" id="tables" name="tables" value="{{ $requestLogData->tables }}" placeholder="0" readonly>
                     <div class="tb">
                         <label for="chairs">Chairs</label>
-                        <input type="number" id="chairs" name="chairs" value="{{ $requestData->chairs }}" placeholder="0" readonly>
+                        <input type="number" id="chairs" name="chairs" value="{{ $requestLogData->chairs }}" placeholder="0" readonly>
                     </div>
                 </div>
             </div>
             <div class="inline-field">
                 <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities" value="{{ $requestData->otherFacilities }}" placeholder="-" readonly>
+                <input type="text" id="otherFacilities" name="otherFacilities" value="{{ $requestLogData->otherFacilities }}" placeholder="-" readonly>
             </div>
         </div>
 
         <div class="row">
             <div class="inline-field">
                 <label for="requesterName">Requester Name</label>
-                <input type="text" id="requesterName" name="requesterName" value="{{ $requestData->RequesterName }}" placeholder="-" readonly   >
+                <input type="text" id="requesterName" name="requesterName" value="{{ $requestLogData->RequesterName }}" placeholder="-" readonly   >
             </div>
             <div class="inline-field">
                 <label for="RequesterSignature">E-Signature</label>
                 <div class="file-upload">
                     <img id="signature-preview"
-                         src="{{ $requestData->RequesterSignature ? asset('storage/' . $requestData->RequesterSignature) : '' }}"
+                         src="{{ $requestLogData->RequesterSignature ? asset('storage/' . $requestLogData->RequesterSignature) : '' }}"
                          alt="Signature Preview"
-                         style="{{ $requestData->RequesterSignature ? 'display: block;' : 'display: none;' }}" readonly>
+                         style="{{ $requestLogData->RequesterSignature ? 'display: block;' : 'display: none;' }}" readonly>
                 </div>
             </div>
             <div class="inline-field">
                 <label for="availability">Availability</label>
-                <input type="text" id="availability" name="availability" value="{{ $requestData->conferenceRoom->Availability }}" placeholder="-" readonly>
+                <input type="text" id="availability" name="availability" value="{{ $requestLogData->conferenceRoom->Availability }}" placeholder="-" readonly>
             </div>
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
-                <input type="text" id="FormStatus" name="FormStatus" value="{{ $requestData->FormStatus }}" placeholder="-" readonly>
+                <input type="text" id="FormStatus" name="FormStatus" value="{{ $requestLogData->FormStatus }}" placeholder="-" readonly>
             </div>
         </div>
         <div class="row">
             <div class="inline-field">
                 <label for="EventStatus">Event Status</label>
-                <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}" placeholder="-" readonly>
+                <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestLogData->EventStatus }}" placeholder="-" readonly>
             </div>
         </div>
         <div class="form-footer">
