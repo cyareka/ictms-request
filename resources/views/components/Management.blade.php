@@ -181,7 +181,7 @@
             background-color: #c9302c;
         }
         .custom-submit-button {
-            background-color: #5cb85c;
+            background-color: #354e7d;
             color: white;
             border-radius: 15px;
             padding: 10px 20px;
@@ -190,7 +190,7 @@
             cursor: pointer;
         }
         .custom-submit-button:hover {
-            background-color: #4cae4c;
+            background-color: #354e7d;
         }
 
         .custom-modal-size {
@@ -394,7 +394,7 @@ function validateEmail() {
 
 function submitForm() {
     const emailInput = document.getElementById('EmployeeEmail');
-    
+
     if (currentForm.id === 'employeeForm') {
         validateEmail();
         if (emailInput.checkValidity()) {

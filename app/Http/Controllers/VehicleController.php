@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ConferenceRequest;
 use App\Models\Driver;
 use App\Models\Employee;
 use App\Models\Office;
@@ -33,8 +34,8 @@ class VehicleController extends Controller
     {
         try {
             $validated = $request->validate([
-                'RequestingOffice' => 'required|string|max:50',
-                'Purpose' => 'required|string|max:50',
+                'officeName' => 'required|string|exists:offices,OfficeID',
+                'purpose' => 'required|string|max:50',
                 'PassengerName' => 'required|array',
                 'PassengerName.*' => 'array|max:50',
                 'date_start.*' => 'required|date',
@@ -46,13 +47,11 @@ class VehicleController extends Controller
                 'RequesterName' => 'required|string|max:50',
                 'RequesterEmail' => 'required|email|max:50',
                 'RequesterContact' => 'required|string|max:13',
-                'ReceivedDate' => 'required|date',
-                'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256', // example: 31.46MB in kilobytes
+                'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
                 'IPAddress' => 'required|ip',
 
                 // To be filled by dispatcher
                 'ReceivedBy' => 'required|string|max:50',50
-
             ]);
 
             // Custom validation for duplicate dates
@@ -100,4 +99,37 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', 'Form submission failed. Please try again.');
         }
     }
+
+    public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
+        ]);
+
+        $query = VehicleRequest::with('driver', 'vehicle', 'office', 'passenger')
+            ->orderBy($sort, $order);
+
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+
+        if ($eventStatuses) {
+            $query->whereIn('EventStatus', $eventStatuses);
+        }
+
+        $vehicleRequests = $query->get();
+
+        Log::info('Query results:', $vehicleRequests->toArray());
+
+        return response()->json($vehicleRequests);
+    }
+
 }

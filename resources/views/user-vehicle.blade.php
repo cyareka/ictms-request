@@ -19,7 +19,6 @@
                 <div class="overflow-hidden">
                     <x-vehicle-form/>
                 </div>
-            </div>
         </div>
     </x-user-layout>
 </body>

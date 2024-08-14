@@ -38,7 +38,6 @@ class EmployeeFactory extends Factory
             'EmployeeEmail' => fake()->unique()->userName() . '@dswd.gov.ph',
             'EmployeeName' => fake()->name(),
             'OfficeID' => $officeID,
-            'EmployeeSignature' => $this->faker->imageUrl($width = 640, $height = 480, 'cats'),
         ];
     }
 }
