@@ -26,7 +26,6 @@ class NConferenceRController extends Controller
             'CRoomName' => 'required|string|max:30',
             'Location' => 'required|string|max:30',
             'Capacity' => 'required|integer|min:1',
-            'EmployeeEmail' => ['required', 'email', 'regex:/^[a-zA-Z0-9._%+-]+@dswd\.gov\.ph$/'],
         ]);
 
         try {

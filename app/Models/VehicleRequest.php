@@ -12,6 +12,15 @@ class VehicleRequest extends Model
     protected $table = 'vehicle_request';
     protected $primaryKey = 'VRequestID';
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updating(function ($model) {
+            $model->UpdatedAt = now();
+        });
+    }
+
     protected $fillable = [
         'VRequestID',
         'OfficeID',
@@ -20,7 +29,7 @@ class VehicleRequest extends Model
         'date_start',
         'date_end',
         'time_start',
-        'location',
+        'Destination',
         'RequesterName',
         'RequesterContact',
         'RequesterEmail',
@@ -31,9 +40,13 @@ class VehicleRequest extends Model
         'DriverID',
         'VehicleID',
         'ReceivedBy',
+        'UpdatedAt',
+        'Remarks',
 
         // to be filled by administrative service
         'Availability', // vehicle availability
+        'AAID',
+        'SOID',
         'FormStatus',
         'EventStatus',
     ];
@@ -58,5 +71,20 @@ class VehicleRequest extends Model
     public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'EmployeeID');
+    }
+
+    public function SOAuth(): BelongsTo
+    {
+        return $this->belongsTo(SOAuthority::class, 'SOID');
+    }
+
+    public function AAuth(): BelongsTo
+    {
+        return $this->belongsTo(AAuthority::class, 'AAID');
+    }
+
+    public function receivedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'ReceivedBy');
     }
 }

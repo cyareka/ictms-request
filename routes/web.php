@@ -30,7 +30,8 @@ Route::middleware([
     Route::get('/management', function () {
         return view('management');
     })->name('Management');
-    Route::post('/register', [AdminController::class, 'register'])->name('register');
+//    Route::post('/register',
+//        [AdminController::class, 'register'])->name('register');
 
     // CONFERENCE ROUTES
     // Conference Statistics
@@ -128,7 +129,7 @@ Route::get('/UserconCalendar', function () {
 Route::get('/user-vehicle', function () {
     return view('user-vehicle');
 })->name('user-vehicle');
-Route::post('/vehicle-request',
+Route::post('/vehicle/request',
     [VehicleController::class, 'submitVForm']);
 Route::get('/UservehiCalendar', function () {
     return view('UservehiCalendar');

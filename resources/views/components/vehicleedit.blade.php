@@ -392,46 +392,45 @@
             <form class="row-dispatch">
                 <div class="row-dispatch">
                     <div class="inline">
-                        <label for="name">Name</label>
-                        <input type="text" id="tables" name="person" placeholder="Enter Name" required>
+                        <label for="name">Driver Name</label>
+                        <select id="tables" name="driver" required>
+                            @foreach(App\Models\Driver::all() as $driver)
+                                <option value="{{ $driver->DriverID }}">{{ $driver->DriverName }}</option>
+                            @endforeach
+                        </select>
+                        <input type="text" >
                     </div>
                     <div class="inline">
-                        <label for="contact">Contact No.</label>
-                        <input type="text" id="contact" name="contact" placeholder="Enter No." required>
+                        <label for="contact">Driver Contact No.</label>
+                        <input type="text" id="contact" name="contact" placeholder="N/A" readonly>
                     </div>
                     <div class="inline">
-                        <label for="email">Email</label>
-                        <input type="text" id="e-mail" name="e-mail" placeholder="Enter Email">
+                        <label for="email">Driver Email</label>
+                        <input type="text" id="driveremail" name="driveremail" placeholder="N/A" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="VName">Vehicle Type</label>
                         <select id="VName" name="VName">
-                            <option disabled selected>Select Vehicle Type</option>
-                            <option>Mercedes</option>
-                            <option>Ford</option>
-                            <option>McLaren</option>
-                            <option>Ferrari</option>
-                            <option>LAMBO</option>
+                            @foreach(App\Models\Vehicle::all() as $vehicle)
+                                <option value="{{ $vehicle->VehicleID }}">{{ $vehicle->VehicleType }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="inline">
                         <label for="plate">Plate No.</label>
-                        <input type="text" id="plate" name="plate" placeholder="Enter No." required>
+                        <input type="text" id="plate" name="plate" placeholder="N/A" readonly>
                     </div>
                     <div class="inline">
-                        <label for="CkName">Checked by</label>
-                        <select id="CkName" name="CkName">
-                            <option disabled selected>Select Office</option>
-                            <option>Office of the Regional Director</option>
-                            <option>Administrative Division</option>
-                        </select>
+                        {{-- depends on admin logged in --}}
+                        <label for="RbName">Received by</label>
+                        <input type="text" id="RbName" name="RbName" value="{{ Auth::user()->name }}">{{ Auth::user()->name }}">
                     </div>
                 </div>
-                <div class="row-dispatch">
+                <div class="row-dispatch ">
                     <div class="inline">
-                        <label for="date">Date Start</label>
+                        <label for="date">Date</label>
                         <input type="date" id="date" name="date[]" required>
                     </div>
                     <div class="inline">
@@ -457,18 +456,14 @@
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="availability">Availability</label>
-                        <select id="availability" name="availability">
-                            <option disabled selected>Select Availability</option>
-                            <option>Available</option>
-                            <option>Not Available</option>
-                        </select>
+                        <input type="text" id="availability" name="availability" value="{{ $requestData->vehicle->Availability }}" placeholder="-" readonly>
                     </div>
                     <div class="inline">
                         <label for="formStatus">Form Status</label>
-                        <select id="formStatus" name="formStatus">
-                            <option disabled selected>Select Form Status</option>
-                            <option>Pending</option>
-                            <option>Approved</option>
+                        <select id="formStatus" name="formStatus" onchange="updateEventStatus()">
+                            <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
+                            <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
                         </select>
                     </div>
                     <div class="inline">
@@ -509,21 +504,14 @@
                         <label for="VName">SO Approving Authority</label>
                         <select id="VName" name="VName">
                             <option disabled selected>Select Authority</option>
-                            <option>Rea May Manlunas</option>
-                            <option>Sheardeeh Fernandez</option>
-                            <option>Beverly Consolacion</option>
-                            <option>Inalyn Tamayo</option>
+                            @foreach(App\Models\SOAuthority::all() as $SOauth)
+                                <option value="{{ $SOauth->SOID }}">{{ $SOauth->SOName }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="inline">
                         <label for="VName">SO Approving Authority Position</label>
-                        <select id="VName" name="VName">
-                            <option disabled selected>Select Authority</option>
-                            <option>Rea May Manlunas</option>
-                            <option>Sheardeeh Fernandez</option>
-                            <option>Beverly Consolacion</option>
-                            <option>Inalyn Tamayo</option>
-                        </select>
+                        <input type="text" id="VName" name="VName" value=" {{  }} ">
                     </div>
                 </div>
                 <div class="row-dispatch">
@@ -538,36 +526,94 @@
                         </select>
                     </div>
                     <div class="inline">
-                        <label for="e-signature">File Upload</label>
+                        <label for="RequesterSignature">E-Signature</label>
                         <div class="file-upload">
-                            <input type="file" id="e-signature" name="e-signature" style="display: none;"
-                                   onchange="previewSignature(event)" required>
-                            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                                Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
-                            </div>
-                            <img id="signature-preview" alt="Signature Preview">
+                            <img id="signature-preview"
+                                 src="{{ $requestData->RequesterSignature ? asset('storage/' . $requestData->RequesterSignature) : '' }}"
+                                 alt="Signature Preview"
+                                 style="{{ $requestData->RequesterSignature ? 'display: block;' : 'display: none;' }}" readonly>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
         <div class="form-footer">
-            <button class="submit-btn" type="button" onclick="updateForm()">Update</button>
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
+            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+            <button class="submit-btn" type="submit">Update</button>
         </div>
     </div>
 </div>
 
 <script>
-    function updateForm() {
-        alert('Your request has been successfully updated.');
+    /**
+     * Sets up form change detection and handles the cancel action with a confirmation prompt.
+     */
+    function setupFormChangeDetectionAndCancel() {
+        let formChanged = false;
+
+        // Add event listeners to all form fields to detect changes
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('change', () => {
+                formChanged = true;
+            });
+        });
+
+        // Define the cancelForm function
+        function cancelForm() {
+            if (formChanged) {
+                const confirmDiscard = confirm("You have unsaved changes. Do you really want to go back? Changes will be discarded.");
+                if (!confirmDiscard) {
+                    return;
+                }
+            }
+            window.location.href = '/dashboard';
+        }
+
+        // Attach the cancelForm function to the cancel button
+        document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
     }
 
-    function cancelForm() {
-        let inputFields = document.querySelectorAll('input');
-        inputFields.forEach((field) => {
-            field.value = '';
-        });
+    // Call the setup function to initialize everything
+    setupFormChangeDetectionAndCancel();
+
+    function updateEventStatus() {
+        const FormStatus = document.getElementById('FormStatus').value;
+        const EventStatus = document.getElementById('EventStatus');
+
+        if (FormStatus === 'Approved') {
+            EventStatus.value = 'Ongoing';
+        } else if (FormStatus === 'Not Approved') {
+            EventStatus.value = '-';
+        } else {
+            EventStatus.value = '-';
+        }
+    }
+
+    /**
+     * Updates the event status based on the selected form status.
+     *
+     * This function is triggered when the form status select element changes.
+     * It sets the event status to 'Ongoing' if the form status is 'Approved'.
+     * Otherwise, it sets the event status to '-'.
+     */
+    function updateFormStatus() {
+        const EventStatus = document.getElementById('EventStatus').value;
+        const FormStatus = document.getElementById('FormStatus');
+
+        switch(EventStatus) {
+            case 'Ongoing':
+                FormStatus.value = 'Approved';
+                break;
+            case 'Finished':
+                FormStatus.value= 'Approved';
+                break;
+            case 'Cancelled':
+                FormStatus.value = 'Approved';
+                break;
+            default:
+                FormStatus.value = 'Pending';
+                break;
+        }
     }
 
     function previewSignature(event) {

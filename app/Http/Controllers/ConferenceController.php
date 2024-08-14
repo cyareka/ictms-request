@@ -167,7 +167,7 @@ class ConferenceController extends Controller
      * @param string $CRequestID The ID of the conference request to retrieve.
      * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application The view displaying the conference request details.
      */
-    public function getRequestData($CRequestID): View|Factory|Application
+    public function getRequestData($VRequestID): View|Factory|Application
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
         return view('ConferencedetailEdit', compact('requestData'));

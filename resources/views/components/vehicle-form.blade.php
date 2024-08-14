@@ -304,16 +304,37 @@
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <script>
+        let errorMessages = [];
+        @foreach ($errors->all() as $error)
+        errorMessages.push("{{ $error }}");
+        @endforeach
+        alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        alert(" {{ session('error') }}");
+    </script>
+@endif
+
+@if(session('success'))
+    <script>
+        alert(" {{ session('success') }}");
+    </script>
+@endif
 <div class="form-container">
     <h1>Request For Use of Vehicle</h1>
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
         Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
     <div class="form-body">
-        <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
+        <form action="/vehicle/request" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="input-group">
                 <div class="input-field">
-                    <label>Requesting Office <span class="required">*</span></label>
+                    <label>Requesting Office<span class="required">*</span></label>
                     <select id="officeName" name="officeName" placeholder="Enter Purpose" required>
                         <option disabled selected>Select Office</option>
                         @foreach(App\Models\Office::all() as $office)
@@ -329,7 +350,7 @@
             <div class="input-group">
                 <div class="input-field">
                     <label>Destination<span class="required">*</span></label>
-                    <input type="text" name="place_of_travel" placeholder="Enter Place" required/>
+                    <input type="text" name="Destination" placeholder="Enter Place" required/>
                 </div>
                 <div class="passenger-field">
                     <label>Passenger Name/s<span class="required">*</span></label>
@@ -351,7 +372,7 @@
             <div id="date-time-container">
                 <div class="input-group datetime-group">
                     <div class="input-field">
-                        <label> Date</label>
+                        <label>Date</label>
                         <div class="date-field">
                             <input type="date" id="date_start" name="date_start[]" required/>
                             <label for="date_start" class="below-label1">Start <span class="required">*</span></label>
@@ -362,7 +383,7 @@
                         </div>
                     </div>
                     <div class="input-field">
-                        <label>Time Needed<span class="required">*</span></label>
+                        <label>Time<span class="required">*</span></label>
                         <input type="time" name="time_start[]" required/>
                         <div class="button-container">
                             <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
@@ -373,24 +394,24 @@
 
             <div class="input-group">
                 <div class="input-field">
-                    <label>Requested By <span class="required">*</span></label>
-                    <input type="text" name="contact_no" placeholder="Enter Name" required/>
+                    <label>Requester Name<span class="required">*</span></label>
+                    <input type="text" name="RequesterName" placeholder="Enter Name" required/>
                 </div>
                 <div class="input-field">
                     <label>Requester Email <span class="required">*</span></label>
-                    <input type="text" name="contact_no" placeholder="Enter Email" required/>
+                    <input type="text" name="RequesterEmail" placeholder="Enter Email" required/>
                 </div>
             </div>
 
             <div class="input-group">
                 <div class="input-field">
                     <label>Contact No. <span class="required">*</span></label>
-                    <input type="text" name="contact_no" placeholder="Enter No." required/>
+                    <input type="text" name="RequesterContact" placeholder="Enter No." required/>
                 </div>
                 <div class="input-field">
-                    <label for="e-signature">E-Signature <span class="required">*</span></label>
+                    <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
                     <div class="file-upload">
-                        <input type="file" id="e-signature" name="e-signature" style="display: none;"
+                        <input type="file" id="e-signature" name="RequesterSignature" style="display: none;"
                                onchange="previewSignature(event)" required>
                         <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
                             Click to upload e-sign.<br>Maximum file size: 31.46MB
@@ -413,13 +434,9 @@
         passengerField.innerHTML = `
         <select name="passengers[]" required>
           <option disabled selected>Select a passenger</option>
-          <option>Rea May Manlunas</option>
-          <option>Sheardeeh Zurrielle Fernandez</option>
-          <option>Inalyn Kim Tamayo</option>
-          <option>Beverly Consolacion</option>
-          <option>Ryu Colita</option>
-          <option>Justin Misajon</option>
-          <option>Elmer John Catalan</option>
+            @foreach(App\Models\Employee::all() as $passenger)
+                <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
+            @endforeach
         </select>
         <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
       `;
@@ -471,6 +488,54 @@
         if (input.files && input.files[0]) {
             reader.readAsDataURL(input.files[0]);
         }
+    }
+
+    // event listener for submit
+    document.querySelector('form').addEventListener('submit', function (event) {
+        let datesValid = true;
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+            if (!input.value) {
+                datesValid = false;
+            }
+        });
+        if (!datesValid) {
+            event.preventDefault();
+            alert('Please fill in all date fields.');
+        }
+    });
+
+    function validateForm() {
+        let isValid = true;
+        let errorMessages = [];
+
+        // Check required fields
+        document.querySelectorAll('input[required], select[required]').forEach(function (element) {
+            if (!element.value) {
+                isValid = false;
+                errorMessages.push(element.previousElementSibling.textContent + " is required.");
+            }
+        });
+
+        // Check date fields
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                errorMessages.push("All date fields must be filled.");
+            }
+        });
+
+        // Check file size
+        let signatureFile = document.getElementById('RequesterSignature').files[0];
+        if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
+            isValid = false;
+            errorMessages.push("Signature file size must be less than 32MB.");
+        }
+
+        if (!isValid) {
+            alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
+            return false;
+        }
+        return true;
     }
 </script>
 </body>
