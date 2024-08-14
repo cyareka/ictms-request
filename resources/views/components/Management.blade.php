@@ -385,7 +385,7 @@ function validateEmail() {
 
     if (domain !== 'dswd.gov.ph') {
         emailInput.setCustomValidity('Please use a dswd.gov.ph email address.');
-        emailError.textContent = 'Please use the DSWD email address.';
+        emailError.textContent = 'Only dswd.gov.ph email addresses are allowed.';
     } else {
         emailInput.setCustomValidity('');
         emailError.textContent = '';
@@ -394,12 +394,16 @@ function validateEmail() {
 
 function submitForm() {
     const emailInput = document.getElementById('EmployeeEmail');
-    validateEmail();
-    if (emailInput.checkValidity()) {
-        currentForm.submit();
+    
+    if (currentForm.id === 'employeeForm') {
+        validateEmail();
+        if (emailInput.checkValidity()) {
+            currentForm.submit();
+        } else {
+            emailInput.reportValidity();
+        }
     } else {
-        // Trigger validation message
-        emailInput.reportValidity();
+        currentForm.submit();
     }
 }
 </script>
