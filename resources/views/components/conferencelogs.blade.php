@@ -107,7 +107,7 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('ConferencelogDetail') }}"><i class="bi bi-person-vcard" id="actions"></i></a>
+                        <a href="{{ route('ConferencelogDetail', $request->CRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
                         <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>

@@ -75,6 +75,9 @@ Route::middleware([
         [AdminController::class, 'register'])->name('register');
     Route::get('/conferencerequest/{CRequestID}/edit',
         [ConferenceController::class, 'getRequestData'])->name('ConferencedetailEdit');
+
+    Route::get('/conferencerequest/{CRequestID}/log', [ConferenceController::class, 'getLogData'])->name('ConferencelogDetail');
+
     Route::post('/conference-room/update',
         [ConferenceController::class, 'updateCForm']);
     Route::get('/conference-requests', [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');

@@ -173,6 +173,14 @@ class ConferenceController extends Controller
         return view('ConferencedetailEdit', compact('requestData'));
     }
 
+    public function getLogData($CRequestID): View|Factory|Application
+    {
+        $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
+        return view('conferencelogdetail', compact('requestData'));
+    }
+
+
+
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
