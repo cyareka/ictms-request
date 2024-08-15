@@ -28,6 +28,20 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('AAuthority', function (Blueprint $table) {
+            $table->string('AAID');
+            $table->string('AAName');
+            $table->string('AAPosition');
+            $table->timestamps();
+        });
+
+        Schema::create('SOAuthority', function (Blueprint $table) {
+            $table->string('SOID');
+            $table->string('SOName');
+            $table->string('SOPosition');
+            $table->timestamps();
+        });
+
         Schema::create('vehicle_request', function (Blueprint $table) {
             // initial form
             $table->string('VRequestID', 10)->primary();
@@ -37,32 +51,36 @@ return new class extends Migration
             $table->string('date_start', 10);
             $table->string('date_end', 10);
             $table->string('time_start', 9);
-            $table->string('Location', 50);
-            $table->string('', 50);
+            $table->string('Destination', 50);
             $table->string('RequesterName');
             $table->string('RequesterContact',13);
             $table->string('RequesterEmail', 20);
             $table->string('RequesterSignature');
             $table->string('IPAddress',45);
-            $table->string('ReceivedDate');
+            $table->timestamps();
 
             // To be filled by dispatcher
-            $table->string('DriverID', 9);
-            $table->string('VehicleID', 3);
+            $table->string('DriverID')->nullable()->default(null);
+            $table->string('VehicleID')->nullable()->default(null);
             $table->string('ReceivedBy')->nullable()->default(null);
+            $table->string('Remarks')->nullable()->default(null);
 
             // to be filled by administrative service
             // add availability
-
+            // $table->string('VehicleID')->nullable()->default(null); for availability
+            $table->string('AAID')->nullable()->default(null);
+            $table->string('SOID')->nullable()->default(null);
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
             $table->enum('EventStatus', ['-', 'Cancelled', 'Finished'])->nullable()->default('-');
-            $table->timestamps();
 
             // Adding foreign keys
             $table->foreign('DriverID')->references('DriverID')->on('driver');
             $table->foreign('VehicleID')->references('VehicleID')->on('vehicle');
             $table->foreign('OfficeID')->references('OfficeID')->on('offices');
             $table->foreign('Passengers')->references('EmployeeID')->on('employees');
+            $table->foreign('AAID')->references('AAID')->on('AAuthority');
+            $table->foreign('SOID')->references('SOID')->on('SOAuthority');
+            $table->foreign('ReceivedBy')->references('id')->on('users');
         });
     }
 
@@ -71,8 +89,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicle_request');
+        Schema::dropIfExists('AAuthority');
+        Schema::dropIfExists('SOAuthority');
         Schema::dropIfExists('driver');
         Schema::dropIfExists('vehicle');
+        Schema::dropIfExists('vehicle_request');
     }
 };

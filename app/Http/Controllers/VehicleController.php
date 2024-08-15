@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\IDGenerator;
+use App\Models\ConferenceRequest;
 use App\Models\Driver;
 use App\Models\Employee;
 use App\Models\Office;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\VehicleRequest;
 use Illuminate\Support\Facades\Log;
@@ -21,7 +27,7 @@ class VehicleController extends Controller
         $idGenerator = new IDGenerator();
         do {
             $generatedID = $idGenerator->generateID_10();
-        } while (VehicleRequest::query()->where('CRequestID', $generatedID)->exists());
+        } while (VehicleRequest::query()->where('VRequestID', $generatedID)->exists());
 
         return $generatedID;
     }
@@ -29,30 +35,24 @@ class VehicleController extends Controller
     /**
      * @throws ValidationException
      */
-    public function submitVForm(Request $request)
+    public function submitVForm(Request $request): RedirectResponse
     {
         try {
             $validated = $request->validate([
-                'RequestingOffice' => 'required|string|max:50',
-                'Purpose' => 'required|string|max:50',
-                'PassengerName' => 'required|array',
-                'PassengerName.*' => 'array|max:50',
+                'officeName' => 'required|string|exists:offices,OfficeID',
+                'purpose' => 'required|string|max:50',
+                'passengers' => 'required|array',
+                'passengers.*' => 'array'|'exists:employee,EmployeeID',
                 'date_start.*' => 'required|date',
                 'date_end' => 'required|array|min:1',
                 'date_end.*' => 'required|date|after_or_equal:date_start.*',
                 'time_start' => 'required|array|min:1',
                 'time_start.*' => 'required|date_format:H:i',
-                'Location' => 'required|string|max:50',
+                'Destination' => 'required|string|max:50',
                 'RequesterName' => 'required|string|max:50',
                 'RequesterEmail' => 'required|email|max:50',
                 'RequesterContact' => 'required|string|max:13',
-                'ReceivedDate' => 'required|date',
-                'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256', // example: 31.46MB in kilobytes
-                'IPAddress' => 'required|ip',
-
-                // To be filled by dispatcher
-                'ReceivedBy' => 'required|string|max:50',50
-
+                'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
             ]);
 
             // Custom validation for duplicate dates
@@ -62,9 +62,7 @@ class VehicleController extends Controller
             }
 
             $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
-
-            $driver = Driver::query()->where('DriverID', $validated['DriverID'])->firstOrFail();
-            $employee = Employee::query()->where('EmpID', $validated['EmployeeID'])->firstOrFail();
+            $employee = Employee::query()->where('EmployeeID', $validated['EmployeeID'])->firstOrFail();
 
             foreach ($validated['date_start'] as $index => $dateStart) {
                 $generatedID = $this->generateUniqueID();
@@ -76,28 +74,76 @@ class VehicleController extends Controller
 
                 VehicleRequest::create([
                     'VRequestID' => $generatedID,
-                    'DriverID' => $driver->DriverID,
-                    'VehicleID' => '', // null bc no assigned vehicle yet
                     'OfficeID' => $office->OfficeID,
                     'Purpose' => $validated['purpose'],
-                    'EmployeeID' => $employee->EmpID, // need to be an array for multiselect
+                    'passengers' => $validated['passengers'], // handle passengers as an array
                     'date_start' => $dateStart,
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
-                    'time_end' => $validated['time_end'][$index],
+                    'Destination' => $validated['Destination'],
+                    'RequesterName' => $validated['RequesterName'],
+                    'RequesterContact' => $validated['RequesterContact'],
+                    'RequesterEmail' => $validated['RequesterEmail'],
+                    'RequesterSignature' => $requesterSignaturePath,
+                    'IPAddress' => $request->ip(),
+                    'DriverID' => null,
+                    'VehicleID' => null,
+                    'ReceivedBy' => null,
+                    'Remarks' => null,
+                    'UpdatedAt' => null,
+                    'AAID' => null,
+                    'SOID' => null,
                     'FormStatus' => 'Pending',
                     'EventStatus' => '-',
-                    'RequesterSignature' => $requesterSignaturePath,
                 ]);
             }
 
-            return redirect()->back()->with('success', 'Conference room request submitted successfully.');
+            return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation errors: ', $e->errors());
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Throwable $e) {
-            Log::error('Conference room request submission failed: ' . $e->getMessage());
+            Log::error('Vehicle request submission failed: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Form submission failed. Please try again.');
         }
     }
+
+    public function getRequestData($CRequestID): View|Factory|Application
+    {
+        $requestData = VehicleRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
+        return view('ConferencedetailEdit', compact('requestData'));
+    }
+
+    public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
+        ]);
+
+        $query = VehicleRequest::with('driver', 'vehicle', 'office', 'passenger')
+            ->orderBy($sort, $order);
+
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+
+        if ($eventStatuses) {
+            $query->whereIn('EventStatus', $eventStatuses);
+        }
+
+        $vehicleRequests = $query->get();
+
+        Log::info('Query results:', $vehicleRequests->toArray());
+
+        return response()->json($vehicleRequests);
+    }
+
 }

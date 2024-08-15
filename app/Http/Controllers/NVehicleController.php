@@ -12,7 +12,7 @@ class NVehicleController extends Controller
     {
         $idGenerator = new IDGenerator();
         do {
-            $generatedID = $idGenerator->generateID_8();
+            $generatedID = $idGenerator->generateID_3();
         } while (Vehicle::query()->where('VehicleID', $generatedID)->exists());
 
         return $generatedID;

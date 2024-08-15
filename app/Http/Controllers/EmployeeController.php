@@ -29,18 +29,17 @@ class EmployeeController extends Controller
                 'EmployeeEmail' => 'required|email|max:30',
                 'officeName' => 'required|string|exists:offices,OfficeID',
             ]);
-    
+
             $generatedID = $this->generateUniqueID();
             $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
-    
+
             Employee::create([
                 'EmployeeID' => $generatedID,
                 'EmployeeName' => $validated['EmployeeName'],
                 'EmployeeEmail' => $validated['EmployeeEmail'],
                 'OfficeID' => $office->OfficeID,
-                'EmployeeSignature' => 'https://via.placeholder.com/640x480.png/00aabb?text=cats+voluptas',
             ]);
-    
+
             return redirect()->back()->with('success', 'Employee added successfully!');
         } catch (Exception $e) {
             // Log the error

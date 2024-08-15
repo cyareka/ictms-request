@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('EmployeeName', 50);
             $table->string('EmployeeEmail', 20);
             $table->string('OfficeID');
-            $table->string('EmployeeSignature');
             $table->timestamps();
 
             // FK

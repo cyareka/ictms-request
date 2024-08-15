@@ -14,32 +14,34 @@
                 <i class="bi bi-arrow-right-short" id="iconborder"></i>
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
-                    <div class="dropdown-content">
-                        <p id="filterlabel">Filter By</p>
-                        <hr>
-                        <p>Status</p>
-                        <a>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Pending
-                                </label>
+                    <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
+                        <div class="dropdown-content">
+                            <p id="filterlabel">Filter By</p>
+                            <hr>
+                            <p>Status</p>
+                            <a>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Pending
+                                    </label>
+                                </div>
+                            </a>
+                            <a>
+                                <div class="form-check" id="margincheck">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                        Approved and Ongoing
+                                    </label>
+                                </div>
+                            </a>
+                            <hr>
+                            <div class="buttons">
+                                <button class="cancelbtn">Remove</button>
+                                <button class="applybtn">Filter</button>
                             </div>
-                        </a>
-                        <a>
-                            <div class="form-check" id="margincheck">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Approved and Ongoing
-                                </label>
-                            </div>
-                        </a>
-                        <hr>
-                        <div class="buttons">
-                            <button class="cancelbtn">Remove</button>
-                            <button class="applybtn">Filter</button>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -53,11 +55,11 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Date Requested</th>
-                <th scope="col">Place of Travel</th>
+                <th scope="col">Destination</th>
                 <th scope="col">Purpose</th>
                 <th scope="col">Requesting Office</th>
-                <th scope="col">Date Needed</th>
-                <th scope="col">Time Needed</th>
+                <th scope="col">Date</th>
+                <th scope="col">Time</th>
                 <th scope="col">Availability</th>
                 <th scope="col">Form Status</th>
                 <th scope="col">Event Status</th>
@@ -66,21 +68,46 @@
             </thead>
             <tbody>
             <tr>
-                <th scope="row">6013</th>
-                <td>08-09-2024</td>
-                <td>Cagayan</td>
-                <td>Meeting with Stakeholders</td>
-                <td>HR Office</td>
-                <td>09-01-2024</td>
-                <td>3:00 P.M</td>
-                <td>Available</td>
-                <td><span class="pending">Pending</span></td>
-                <td>-</td>
+            @php
+                $filteredRequests = App\Models\VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending'])
+                    ->whereIn('EventStatus', ['Ongoing', '-'])
+                    ->get();
+            @endphp
+
+                <th scope="row">20210522</th>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
+                <td>Rawr</td>
                 <td>
                     <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>
-                    <a href="{{ route('VehicleDownload') }}"><i class="bi bi-download" id="actions"></i></a>
+                    <i class="bi bi-download" id="actions"></i>
                 </td>
-            </tr>
+
+{{--            @foreach($filteredRequests as $request)--}}
+{{--                <tr>--}}
+{{--                    <th scope="row">{{ $request->VRequestID }}</th>--}}
+{{--                    <td>{{ $request->created_at->format('m-d-Y') }}</td>--}}
+{{--                    <td>{{ $request->destination }}</td>--}}
+{{--                    <td>{{ $request->purpose }}</td>--}}
+{{--                    <td>{{ $request->office->OfficeName }}</td>--}}
+{{--                    <td>{{ $request->date_start }}</td>--}}
+{{--                    <td>{{ $request->time_start }}</td>--}}
+{{--                    <td>{{ $request->vehicle->Availability }}</td>--}}
+{{--                    <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>--}}
+{{--                    <td>{{ $request->EventStatus }}</td>--}}
+{{--                    <td>--}}
+{{--                        <a href="{{ route('VehicleDetailedit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>--}}
+{{--                        <i class="bi bi-download" id="actions"></i>--}}
+{{--                    </td>--}}
+{{--                </tr>--}}
+{{--            @endforeach--}}
             </tbody>
         </table>
     </div>

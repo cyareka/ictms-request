@@ -85,6 +85,18 @@ class ConferenceController extends Controller
                     $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
                 }
 
+                // Check for existing approved and ongoing forms
+                $existingRequest = ConferenceRequest::query()
+                    ->where('CRoomID', $conferenceRoom->CRoomID)
+                    ->where('FormStatus', 'Approved')
+                    ->where('EventStatus', 'Ongoing')
+                    ->where('date_start', $dateStart)
+                    ->where('time_start', '<=', $validated['time_end'][$index])
+                    ->where('time_end', '>=', $validated['time_start'][$index])
+                    ->exists();
+
+                $availability = $existingRequest ? 'Unavailable' : 'Available';
+
                 ConferenceRequest::create([
                     'CRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
@@ -103,6 +115,7 @@ class ConferenceController extends Controller
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
                     'time_end' => $validated['time_end'][$index],
+                    'Availability' => $availability,
                 ]);
             }
 
@@ -127,7 +140,7 @@ class ConferenceController extends Controller
             ]);
 
             // Retrieve the conference request using Eloquent ORM
-            $conferenceRequest = ConferenceRequest::query()->where('CRequestID', $validated['CRequestID'])->firstOrFail();
+            $conferenceRequest = ConferenceRequest::with('conferenceRoom')->where('CRequestID', $validated['CRequestID'])->firstOrFail();
 
             // Update the formStatus and eventStatus fields
             $conferenceRequest->update([
@@ -154,9 +167,99 @@ class ConferenceController extends Controller
      * @param string $CRequestID The ID of the conference request to retrieve.
      * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application The view displaying the conference request details.
      */
-    public function getRequestData($CRequestID): View|Factory|Application
+    public function getRequestData(string $CRequestID): View|Factory|Application
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
         return view('ConferencedetailEdit', compact('requestData'));
+    }
+
+    public function getLogData(string $CRequestID): View|Factory|Application
+    {
+        $requestLogData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
+        return view('ConferencelogDetail', compact('requestLogData'));
+    }
+
+    // Conference Request Main Filter and Sort
+    public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $conferenceRoom = $request->get('conference_room');
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'conference_room' => $conferenceRoom,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
+        ]);
+
+        $query = ConferenceRequest::with('office', 'conferenceRoom')
+            ->orderBy($sort, $order);
+
+        if ($conferenceRoom) {
+            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+                $q->where('CRoomName', $conferenceRoom);
+            });
+        }
+
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+
+        if ($eventStatuses) {
+            $query->whereIn('EventStatus', $eventStatuses);
+        }
+
+        $conferenceRequests = $query->get();
+
+        Log::info('Query results:', $conferenceRequests->toArray());
+
+        return response()->json($conferenceRequests);
+    }
+
+    // Conference Request Logs Filter and Sort
+    public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $conferenceRoom = $request->get('conference_room');
+        $statusPairs = $request->get('status_pairs', []);
+
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'conference_room' => $conferenceRoom,
+            'status_pairs' => $statusPairs,
+        ]);
+
+        $query = ConferenceRequest::with('office', 'conferenceRoom')
+            ->orderBy($sort, $order);
+
+        if ($conferenceRoom) {
+            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+                $q->where('CRoomName', $conferenceRoom);
+            });
+        }
+
+        if ($statusPairs) {
+            $query->where(function ($q) use ($statusPairs) {
+                foreach ($statusPairs as $pair) {
+                    [$formStatus, $eventStatus] = explode(',', $pair);
+                    $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                        $q->where('FormStatus', $formStatus)
+                          ->where('EventStatus', $eventStatus);
+                    });
+                }
+            });
+        }
+
+        $conferenceRequests = $query->get();
+
+        Log::info('Query results:', $conferenceRequests->toArray());
+
+        return response()->json($conferenceRequests);
     }
 }

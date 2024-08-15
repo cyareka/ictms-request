@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Edit Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -62,6 +63,7 @@
             align-items: center;
             width: 48%;
             margin-bottom: 15px;
+            position: relative;
         }
         .inline-field label {
             margin-right: 20px;
@@ -75,6 +77,14 @@
             border: 1px solid rgba(60, 54, 51, 0.5);
             border-radius: 15px;
             box-sizing: border-box;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
         }
         input[type="number"] {
             width: 80px;
@@ -98,22 +108,6 @@
             display: none;
             width: 100%;
         }
-        #signature-preview {
-            margin-top: 15px;
-            max-width: 100px;
-            max-height: 100px;
-            display: none;
-        }
-        .file-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px;
-            border: 2px dashed #5b21b6;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 16px;
-        }
         @media (max-width: 768px) {
             .form-container {
                 width: 90%;
@@ -125,7 +119,6 @@
             .toggle-button {
                 margin: 10px 0;
                 display: flex;
-                border
                 flex-direction: column;
                 width: 100%;
             }
@@ -133,6 +126,7 @@
                 width: 100%;
                 display: flex;
                 flex-direction: column;
+                position: relative;
             }
             .inline-field label {
                 width: 100%;
@@ -150,6 +144,71 @@
                 align-items: flex-start;
             }
         }
+
+        .custom-modal-header {
+        background-color: #354e7d;
+        color: white;
+        padding: 14px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        }
+        .custom-close-button {
+            color: white;
+            font-size: 1.5em;
+        }
+        .modal-body {
+            padding: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .custom-modal-footer {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 20px;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+        .custom-cancel-button {
+            background-color: #d9534f;
+            color: white;
+            border-radius: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        .custom-cancel-button:hover {
+            background-color: #c9302c;
+        }
+        .custom-submit-button {
+            background-color: #354e7d;
+            color: white;
+            border-radius: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        .custom-submit-button:hover {
+            background-color: #354e7d;
+        }
+
+        .custom-modal-size {
+            max-width: 350px;
+        }
+
+        .modal-body {
+            padding: 15px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .custom-modal-footer {
+            padding: 10px 20px;
+        }
+        .error-message{
+            margin-left: 173px;
+        }
     </style>
 </head>
 <body>
@@ -164,32 +223,32 @@
         </div>
 
         <div id="addVehi" class="toggle-section">
-    <form class="row-dispatch" method="POST" action="{{ route('driver.store') }}">
-        @csrf
-        <div class="form-row">
-            <div class="inline-field">
-                <label for="DriverName">Driver Name</label>
-                <input type="text" id="DriverName" name="DriverName" placeholder="Enter Driver Name" required>
-            </div>
-            <div class="inline-field">
-                <label for="DriverEmail">Driver Email</label>
-                <input type="email" id="DriverEmail" name="DriverEmail" placeholder="Enter Driver Email" required>
-            </div>
+            <form class="row-dispatch" method="POST" action="{{ route('driver.store') }}" id="addVehiForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="DriverName">Driver Name</label>
+                        <input type="text" id="DriverName" name="DriverName" placeholder="Enter Driver Name" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="DriverEmail">Driver Email</label>
+                        <input type="email" id="DriverEmail" name="DriverEmail" placeholder="Enter Driver Email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="ContactNo">Contact No.</label>
+                        <input type="tel" id="ContactNo" name="ContactNo" placeholder="Enter Contact No." required>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('addVehiForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
+                </div>
+            </form>
         </div>
-        <div class="form-row">
-            <div class="inline-field">
-                <label for="ContactNo">Contact No.</label>
-                <input type="tel" id="ContactNo" name="ContactNo" placeholder="Enter Contact No." required>
-            </div>
-        </div>
-        <div class="form-footer">
-            <button class="submit-btn" type="submit">Submit</button>
-        </div>
-    </form>
-</div>
 
         <div id="vehicle" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('vehicle.store') }}">
+            <form class="row-dispatch" method="POST" action="{{ route('vehicle.store') }}" id="vehicleForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -204,17 +263,17 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="Capacity">Capacity</label>
-                        <input type="number" id="Capacity" name="Capacity" min="1" value="1" required>
+                        <input type="number" id="Capacity" name="Capacity" min="1" value="0" required>
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="submit">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('vehicleForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
 
         <div id="conference" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}">
+            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" id="conferenceForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -233,13 +292,13 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="submit">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('conferenceForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
 
         <div id="employee" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}">
+            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" id="employeeForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
@@ -248,12 +307,13 @@
                     </div>
                     <div class="inline-field">
                         <label for="EmployeeEmail">Email</label>
-                        <input type="text" id="EmployeeEmail" name="EmployeeEmail" placeholder="Enter Email" required>
+                        <input type="text" id="EmployeeEmail" name="EmployeeEmail" placeholder="Enter Email" required oninput="validateEmail()">
+                        <div id="emailError" class="error-message"></div>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="inline-field">
-                        <label for="officeName">Assingned Office</label>
+                        <label for="officeName">Assigned Office</label>
                         <select id="officeName" name="officeName" required>
                             <option disabled selected>Select Office</option>
                             @foreach(App\Models\Office::all() as $office)
@@ -263,35 +323,90 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="submit">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('employeeForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-modal-size" role="document">
+        <div class="modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="confirmationModalTitle">Confirm Submission</h5>
+                <button type="button" class="close custom-close-button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to submit this form?
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn custom-cancel-button" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn custom-submit-button" onclick="submitForm()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <script>
-    function updateForm() {
-        alert('You successfully added.');
+let currentForm = null;
+
+function toggleSection(sectionId, button) {
+    const section = document.getElementById(sectionId);
+    const isVisible = section.style.display === 'block';
+    const allSections = document.querySelectorAll('.toggle-section');
+    const allButtons = document.querySelectorAll('.dropdown-button');
+
+    allSections.forEach(sec => sec.style.display = 'none');
+    allButtons.forEach(btn => btn.classList.remove('active'));
+
+    if (!isVisible) {
+        section.style.display = 'block';
+        button.classList.add('active');
     }
+}
 
-    function toggleSection(sectionId, button) {
-        const section = document.getElementById(sectionId);
-        const isVisible = section.style.display === 'block';
-        const allSections = document.querySelectorAll('.toggle-section');
-        const allButtons = document.querySelectorAll('.dropdown-button');
+function setCurrentForm(formId) {
+    currentForm = document.getElementById(formId);
+}
 
-        // Hide all sections and remove active class from all buttons
-        allSections.forEach(sec => sec.style.display = 'none');
-        allButtons.forEach(btn => btn.classList.remove('active'));
+function validateEmail() {
+    const emailInput = document.getElementById('EmployeeEmail');
+    const emailValue = emailInput.value;
+    const emailError = document.getElementById('emailError');
+    const domain = emailValue.split('@')[1];
 
-        // Show the clicked section and add active class to the clicked button
-        if (!isVisible) {
-            section.style.display = 'block';
-            button.classList.add('active');
+    if (domain !== 'dswd.gov.ph') {
+        emailInput.setCustomValidity('Please use a dswd.gov.ph email address.');
+        emailError.textContent = 'Only dswd.gov.ph email addresses are allowed.';
+    } else {
+        emailInput.setCustomValidity('');
+        emailError.textContent = '';
+    }
+}
+
+function submitForm() {
+    const emailInput = document.getElementById('EmployeeEmail');
+
+    if (currentForm.id === 'employeeForm') {
+        validateEmail();
+        if (emailInput.checkValidity()) {
+            currentForm.submit();
+        } else {
+            emailInput.reportValidity();
         }
+    } else {
+        currentForm.submit();
     }
-
+}
 </script>
+
 </body>
 </html>
