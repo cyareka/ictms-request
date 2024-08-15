@@ -346,7 +346,7 @@
                 </div>
                 <div class="input-field">
                     <label>Purpose<span class="required">*</span></label>
-                    <input type="text" name="purpose" placeholder="Enter Purpose" value="{{ old('purpose') }}" required/>
+                    <input type="text" name="Purpose" placeholder="Enter Purpose" value="{{ old('Purpose') }}" required/>
                 </div>
             </div>
             <div class="input-group">
@@ -508,6 +508,7 @@
         }
     });
 
+
     function validateForm() {
         let isValid = true;
         let errorMessages = [];
@@ -521,6 +522,23 @@
                 console.error(errorMessage);  // Log the error to the console
             }
         });
+
+        // Check dynamic passenger fields
+        const passengerSelects = document.querySelectorAll('select[name="passengers[]"]');
+        const passengerValues = Array.from(passengerSelects).map(select => select.value).filter(value => value !== '');
+
+        if (passengerValues.length === 0) {
+            isValid = false;
+            errorMessages.push("At least one passenger must be selected.");
+            console.error("At least one passenger must be selected.");
+        }
+
+        // Check if passengers are unique
+        if (new Set(passengerValues).size !== passengerValues.length) {
+            isValid = false;
+            errorMessages.push("Duplicate passengers are not allowed.");
+            console.error("Duplicate passengers are not allowed.");
+        }
 
         // Check date fields
         document.querySelectorAll('input[type="date"]').forEach(function (input) {
@@ -547,6 +565,7 @@
         }
         return true;
     }
+
 
 </script>
 </body>

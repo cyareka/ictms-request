@@ -29,14 +29,14 @@ return new class extends Migration
         });
 
         Schema::create('AAuthority', function (Blueprint $table) {
-            $table->string('AAID');
+            $table->string('AAID')->primary();
             $table->string('AAName');
             $table->string('AAPosition');
             $table->timestamps();
         });
 
         Schema::create('SOAuthority', function (Blueprint $table) {
-            $table->string('SOID');
+            $table->string('SOID')->primary();
             $table->string('SOName');
             $table->string('SOPosition');
             $table->timestamps();
@@ -47,7 +47,6 @@ return new class extends Migration
             $table->string('VRequestID', 10)->primary();
             $table->string('OfficeID');
             $table->string('Purpose', 50);
-            $table->string('Passengers');
             $table->string('date_start', 10);
             $table->string('date_end', 10);
             $table->string('time_start', 9);
@@ -71,16 +70,26 @@ return new class extends Migration
             $table->string('AAID')->nullable()->default(null);
             $table->string('SOID')->nullable()->default(null);
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
-            $table->enum('EventStatus', ['-', 'Cancelled', 'Finished'])->nullable()->default('-');
+            $table->enum('EventStatus', ['-', 'Cancelled', 'Finished'])->default('-');
 
             // Adding foreign keys
             $table->foreign('DriverID')->references('DriverID')->on('driver');
             $table->foreign('VehicleID')->references('VehicleID')->on('vehicle');
             $table->foreign('OfficeID')->references('OfficeID')->on('offices');
-            $table->foreign('Passengers')->references('EmployeeID')->on('employees');
             $table->foreign('AAID')->references('AAID')->on('AAuthority');
             $table->foreign('SOID')->references('SOID')->on('SOAuthority');
             $table->foreign('ReceivedBy')->references('id')->on('users');
+        });
+
+        Schema::create('vrequest_passenger', function (Blueprint $table) {
+            $table->string('VRPassID');
+            $table->string('VRequestID');
+            $table->string('EmployeeID');
+            $table->timestamps();
+
+            // foreign key
+            $table->foreign('VRequestID')->references('VRequestID')->on('vehicle_request');
+            $table->foreign('EmployeeID')->references('EmployeeID')->on('employees');
         });
     }
 

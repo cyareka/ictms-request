@@ -24,7 +24,7 @@ class VehicleRequest extends Model
     protected $fillable = [
         'VRequestID',
         'OfficeID',
-        'purpose',
+        'Purpose',
         'passengers',
         'date_start',
         'date_end',
@@ -40,7 +40,6 @@ class VehicleRequest extends Model
         'DriverID',
         'VehicleID',
         'ReceivedBy',
-        'UpdatedAt',
         'Remarks',
 
         // to be filled by administrative service

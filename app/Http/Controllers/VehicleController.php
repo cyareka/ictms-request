@@ -13,6 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\VehicleRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -32,6 +33,16 @@ class VehicleController extends Controller
         return $generatedID;
     }
 
+    private function generateUniqueVRPassID(): string
+    {
+        $idGenerator = new IDGenerator();
+        do {
+            $generatedID = $idGenerator->generateID_10(); // Assuming the same length of ID
+        } while (DB::table('vrequest_passenger')->where('VRPassID', $generatedID)->exists());
+
+        return $generatedID;
+    }
+
     /**
      * @throws ValidationException
      */
@@ -40,9 +51,9 @@ class VehicleController extends Controller
         try {
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
-                'purpose' => 'required|string|max:50',
+                'Purpose' => 'required|string|max:50',
                 'passengers' => 'required|array',
-                'passengers.*' => 'array'|'exists:employee,EmployeeID',
+                'passengers.*' => 'string|exists:employees,EmployeeID',
                 'date_start.*' => 'required|date',
                 'date_end' => 'required|array|min:1',
                 'date_end.*' => 'required|date|after_or_equal:date_start.*',
@@ -55,6 +66,11 @@ class VehicleController extends Controller
                 'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
             ]);
 
+            $passengers = $validated['passengers'];
+            if (count($passengers) !== count(array_unique($passengers))) {
+                throw ValidationException::withMessages(['passengers' => 'Duplicate passengers are not allowed.']);
+            }
+
             // Custom validation for duplicate dates
             $dates = $validated['date_start'];
             if (count($dates) !== count(array_unique($dates))) {
@@ -62,7 +78,6 @@ class VehicleController extends Controller
             }
 
             $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
-            $employee = Employee::query()->where('EmployeeID', $validated['EmployeeID'])->firstOrFail();
 
             foreach ($validated['date_start'] as $index => $dateStart) {
                 $generatedID = $this->generateUniqueID();
@@ -75,8 +90,7 @@ class VehicleController extends Controller
                 VehicleRequest::create([
                     'VRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
-                    'Purpose' => $validated['purpose'],
-                    'passengers' => $validated['passengers'], // handle passengers as an array
+                    'Purpose' => $validated['Purpose'],
                     'date_start' => $dateStart,
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
@@ -90,11 +104,19 @@ class VehicleController extends Controller
                     'VehicleID' => null,
                     'ReceivedBy' => null,
                     'Remarks' => null,
-                    'UpdatedAt' => null,
                     'AAID' => null,
                     'SOID' => null,
                     'FormStatus' => 'Pending',
                     'EventStatus' => '-',
+                ]);
+            }
+
+            foreach ($passengers as $passenger) {
+                $VRPassID = $this->generateUniqueVRPassID();
+                DB::table('vrequest_passenger')->insert([
+                    'VRPassID' => $VRPassID,
+                    'VRequestID' => $generatedID,
+                    'EmployeeID' => $passenger,
                 ]);
             }
 
@@ -145,5 +167,4 @@ class VehicleController extends Controller
 
         return response()->json($vehicleRequests);
     }
-
 }
