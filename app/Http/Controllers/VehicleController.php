@@ -42,7 +42,7 @@ class VehicleController extends Controller
                 'officeName' => 'required|string|exists:offices,OfficeID',
                 'purpose' => 'required|string|max:50',
                 'passengers' => 'required|array',
-                'passengers.*' => 'array|max:50'|'exists:employee,EmployeeID',
+                'passengers.*' => 'array'|'exists:employee,EmployeeID',
                 'date_start.*' => 'required|date',
                 'date_end' => 'required|array|min:1',
                 'date_end.*' => 'required|date|after_or_equal:date_start.*',

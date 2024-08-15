@@ -330,7 +330,7 @@
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
         Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
     <div class="form-body">
-        <form action="/vehicle/request" method="POST" enctype="multipart/form-data">
+        <form action="/vehicle/request" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             @csrf
             <div class="input-group">
                 <div class="input-field">
@@ -338,26 +338,30 @@
                     <select id="officeName" name="officeName" placeholder="Enter Purpose" required>
                         <option disabled selected>Select Office</option>
                         @foreach(App\Models\Office::all() as $office)
-                            <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
+                            <option value="{{ $office->OfficeID }}" {{ old('officeName') == $office->OfficeID ? 'selected' : '' }}>
+                                {{ $office->OfficeName }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="input-field">
                     <label>Purpose<span class="required">*</span></label>
-                    <input type="text" name="purpose" placeholder="Enter Purpose" required/>
+                    <input type="text" name="purpose" placeholder="Enter Purpose" value="{{ old('purpose') }}" required/>
                 </div>
             </div>
             <div class="input-group">
                 <div class="input-field">
                     <label>Destination<span class="required">*</span></label>
-                    <input type="text" name="Destination" placeholder="Enter Place" required/>
+                    <input type="text" name="Destination" placeholder="Enter Place" value="{{ old('Destination') }}" required/>
                 </div>
                 <div class="passenger-field">
                     <label>Passenger Name/s<span class="required">*</span></label>
                     <select name="passengers[]" required>
                         <option disabled selected>Select a passenger</option>
                         @foreach(App\Models\Employee::all() as $passenger)
-                            <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
+                            <option value="{{ $passenger->EmployeeID }}" {{ in_array($passenger->EmployeeID, old('passengers', [])) ? 'selected' : '' }}>
+                                {{ $passenger->EmployeeName }}
+                            </option>
                         @endforeach
                     </select>
 
@@ -374,17 +378,17 @@
                     <div class="input-field">
                         <label>Date</label>
                         <div class="date-field">
-                            <input type="date" id="date_start" name="date_start[]" required/>
+                            <input type="date" id="date_start" name="date_start[]" value="{{ old('date_start.0') }}" required/>
                             <label for="date_start" class="below-label1">Start <span class="required">*</span></label>
                         </div>
                         <div class="date-field">
-                            <input type="date" id="date_end" name="date_end[]" required/>
+                            <input type="date" id="date_end" name="date_end[]" value="{{ old('date_end.0') }}" required/>
                             <label for="date_end" class="below-label2">End <span class="required">*</span></label>
                         </div>
                     </div>
                     <div class="input-field">
                         <label>Time<span class="required">*</span></label>
-                        <input type="time" name="time_start[]" required/>
+                        <input type="time" name="time_start[]" value="{{ old('time_start.0') }}" required/>
                         <div class="button-container">
                             <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
                         </div>
@@ -395,18 +399,18 @@
             <div class="input-group">
                 <div class="input-field">
                     <label>Requester Name<span class="required">*</span></label>
-                    <input type="text" name="RequesterName" placeholder="Enter Name" required/>
+                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" required/>
                 </div>
                 <div class="input-field">
                     <label>Requester Email <span class="required">*</span></label>
-                    <input type="text" name="RequesterEmail" placeholder="Enter Email" required/>
+                    <input type="text" name="RequesterEmail" placeholder="Enter Email" value="{{ old('RequesterEmail') }}"  required/>
                 </div>
             </div>
 
             <div class="input-group">
                 <div class="input-field">
                     <label>Contact No. <span class="required">*</span></label>
-                    <input type="text" name="RequesterContact" placeholder="Enter No." required/>
+                    <input type="text" name="RequesterContact" placeholder="Enter No." value="{{ old('RequesterContact') }}" required/>
                 </div>
                 <div class="input-field">
                     <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
@@ -439,7 +443,7 @@
             @endforeach
         </select>
         <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
-      `;
+    `;
         document.getElementById('passenger-container').appendChild(passengerField);
     }
 
@@ -512,7 +516,9 @@
         document.querySelectorAll('input[required], select[required]').forEach(function (element) {
             if (!element.value) {
                 isValid = false;
-                errorMessages.push(element.previousElementSibling.textContent + " is required.");
+                let errorMessage = element.previousElementSibling.textContent + " is required.";
+                errorMessages.push(errorMessage);
+                console.error(errorMessage);  // Log the error to the console
             }
         });
 
@@ -520,7 +526,9 @@
         document.querySelectorAll('input[type="date"]').forEach(function (input) {
             if (!input.value) {
                 isValid = false;
-                errorMessages.push("All date fields must be filled.");
+                let errorMessage = "All date fields must be filled.";
+                errorMessages.push(errorMessage);
+                console.error(errorMessage);  // Log the error to the console
             }
         });
 
@@ -528,7 +536,9 @@
         let signatureFile = document.getElementById('RequesterSignature').files[0];
         if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
             isValid = false;
-            errorMessages.push("Signature file size must be less than 32MB.");
+            let errorMessage = "Signature file size must be less than 32MB.";
+            errorMessages.push(errorMessage);
+            console.error(errorMessage);  // Log the error to the console
         }
 
         if (!isValid) {
@@ -537,6 +547,7 @@
         }
         return true;
     }
+
 </script>
 </body>
 </html>
