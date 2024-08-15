@@ -98,12 +98,12 @@ class VehicleController extends Controller
                 ]);
             }
 
-            return redirect()->back()->with('success', 'Conference room request submitted successfully.');
+            return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation errors: ', $e->errors());
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Throwable $e) {
-            Log::error('Conference room request submission failed: ' . $e->getMessage());
+            Log::error('Vehicle request submission failed: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Form submission failed. Please try again.');
         }
     }
