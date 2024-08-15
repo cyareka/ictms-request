@@ -327,13 +327,15 @@
                 <select id="officeName" name="officeName" required>
                     <option disabled selected>Select Office</option>
                     @foreach(App\Models\Office::all() as $office)
-                        <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
+                        <option value="{{ $office->OfficeID }}" {{ old('officeName') == $office->OfficeID ? 'selected' : '' }}>
+                            {{ $office->OfficeName }}
+                        </option>
                     @endforeach
                 </select>
             </div>
             <div class="inline-field">
                 <label for="purpose">Purpose</label>
-                <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" required>
+                <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" value="{{ old('purpose') }}" required>
             </div>
         </div>
         <div class="row-group-container">
@@ -342,11 +344,11 @@
                     <div class="row">
                         <div class="inline-field">
                             <label for="date_start">Date Start</label>
-                            <input type="date" id="date_start" name="date_start[]" required>
+                            <input type="date" id="date_start" name="date_start[]" value="{{ old('date_start.' . $index) }}" required>
                         </div>
                         <div class="inline-field">
                             <label for="date_end">Date End</label>
-                            <input type="date" id="date_end" name="date_end[]" required>
+                            <input type="date" id="date_end" name="date_end[]" value="{{ old('date_end.' . $index) }}" required>
                             <div class="button-container">
                                 <button class="add-btn" type="button" onclick="handleFormActions('addRow')">+</button>
                             </div>
@@ -355,13 +357,11 @@
                     <div class="row">
                         <div class="inline-field">
                             <label for="time_start">Time Start</label>
-                            <input type="time" id="time_start" name="time_start[]"
-                                   value="{{ old('time_start.' . $index) }}" required>
+                            <input type="time" id="time_start" name="time_start[]" value="{{ old('time_start.' . $index) }}" required>
                         </div>
                         <div class="inline-field">
                             <label for="time_end">Time End</label>
-                            <input type="time" id="time_end" name="time_end[]" value="{{ old('time_end.' . $index) }}"
-                                   required>
+                            <input type="time" id="time_end" name="time_end[]" value="{{ old('time_end.' . $index) }}" required>
                         </div>
                     </div>
                 </div>
@@ -370,47 +370,48 @@
         <div class="row">
             <div class="inline-field">
                 <label for="conferenceRoom">Select Conference Room</label>
-                <select id="conferenceRoom" name="conferenceRoom">
+                <select id="conferenceRoom" name="conferenceRoom" required>
                     <option disabled selected>Select Room</option>
                     @foreach(App\Models\ConferenceRoom::all() as $room)
-                        <option value="{{ $room->CRoomID }}">{{ $room->CRoomName }}</option>
+                        <option value="{{ $room->CRoomID }}" {{ old('conferenceRoom') == $room->CRoomID ? 'selected' : '' }}>
+                            {{ $room->CRoomName }}
+                        </option>
                     @endforeach
                 </select>
             </div>
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
-                <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person" required>
+                <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person" value="{{ old('purpose') }}" required>
             </div>
         </div>
         <div class="row">
             <div class="tb">
                 <label for="persons">No. of Persons</label>
-                <input type="number" id="npersons" name="npersons" min="0" value="0" step="1">
+                <input type="number" id="npersons" name="npersons" min="0" value="{{ old('npersons', 0) }}" step="1">
                 <div class="tb">
                     <label for="tables">Tables</label>
-                    <input type="number" id="tables" name="tables" min="0" value="0" step="1">
+                    <input type="number" id="tables" name="tables" min="0" value="{{ old('tables', 0) }}" step="1">
                     <div class="tb">
                         <label for="chairs">Chairs</label>
-                        <input type="number" id="chairs" name="chairs" min="0" value="0" step="1">
+                        <input type="number" id="chairs" name="chairs" min="0" value="{{ old('chairs', 0) }}" step="1">
                     </div>
                 </div>
             </div>
             <div class="fac">
                 <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others">
+                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others" value="{{ old('otherFacilities') }}">
             </div>
         </div>
         <div class="row">
             <div class="inline-field">
                 <label for="requesterName">Requester Name</label>
-                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"
-                       required>
+                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester" value="{{ old('requesterName') }}" required>
             </div>
             <div class="inline-field">
                 <label for="RequesterSignature">E-Signature</label>
                 <div class="file-upload">
                     <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;"
-                           onchange="handleFormActions('previewSignature', event)" required>
+                           onchange="handleFormActions('previewSignature')" required>
                     <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
                         Click to upload e-sign.<br>Maximum file size: 32MB
                     </div>
@@ -448,7 +449,7 @@
                         <label for="date_end">Date End</label>
                         <input type="date" id="date_end" name="date_end[]" required>
                         <div class="remove-container">
-                            <button class="remove-btn" onclick="handleFormActions('removeRow', event)">-</button>
+                            <button class="remove-btn" onclick="handleFormActions('removeRow')">-</button>
                         </div>
                     </div>
                 </div>

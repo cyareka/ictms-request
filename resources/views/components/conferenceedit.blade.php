@@ -577,15 +577,15 @@
         });
 
         // Define the cancelForm function
-        function cancelForm() {
-            if (formChanged) {
-                const confirmDiscard = confirm("You have unsaved changes. Do you really want to go back? Changes will be discarded.");
-                if (!confirmDiscard) {
-                    return;
-                }
+    function cancelForm() {
+        if (formChanged) {
+            const confirmDiscard = confirm("You have unsaved changes. Do you really want to go back? Changes will be discarded.");
+            if (!confirmDiscard) {
+                return;
             }
-            window.location.href = '/dashboard';
         }
+        window.location.href = '/dashboard';
+    }
 
         // Attach the cancelForm function to the cancel button
         document.querySelector('.cancel-btn').addEventListener('click', cancelForm);

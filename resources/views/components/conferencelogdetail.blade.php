@@ -303,138 +303,119 @@
     <h1>View Details of Request for Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
 
-    <div class="row">
-        <div class="inline-field">
-            <label for="officeName">Requesting Office</label>
-            <input type="text" id="officeName" name="officeName">
-        </div>
-        <div class="inline-field">
-            <label for="purpose">Purpose</label>
-            <input type="text" id="purpose" name="purpose">
-        </div>
-    </div>
-
-    <div class="row-group-container">
-        <div class="row-group">
-            <div class="row">
-                <div class="inline-field">
-                    <label for="dateStart">Date Start</label>
-                    <input type="date" id="dateStart" name="dateStart">
-                </div>
-                <div class="inline-field">
-                    <label for="dateEnd">Date End</label>
-                    <input type="date" id="dateEnd" name="dateEnd">
-                </div>
+    <form method="POST" action="" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="CRequestID" value="{{ $requestLogData-> CRequestID }}">
+        <div class="row">
+            <div class="inline-field">
+                <label for="officeName">Requesting Office</label>
+                <input type="text" id="officeName" name="officeName" value="{{ $requestLogData->office->OfficeName }}" placeholder="-" readonly>
             </div>
-            <div class="row">
-                <div class="inline-field">
-                    <label for="timeStart">Time Start</label>
-                    <input type="time" id="timeStart" name="timeStart">
-                </div>
-                <div class="inline-field">
-                    <label for="timeEnd">Time End</label>
-                    <input type="time" id="timeEnd" name="timeEnd">
-                </div>
+            <div class="inline-field ">
+                <label for="purpose">Purpose</label>
+                <input type="text" id="purpose" name="purpose" value="{{ $requestLogData->Purpose }}" placeholder="-"
+                       readonly>
             </div>
         </div>
-    </div>
-
-    <div class="row">
-        <div class="inline-field">
-            <label for="conferenceRoom">Conference Room</label>
-            <input type="text" id="conferenceRoom" name="conferenceRoom">
-        </div>
-
-        <div class="inline-field">
-            <label for="focalPerson">Focal Person</label>
-            <input type="text" id="focalPerson" name="focalPerson">
-        </div>
-    </div>
-    <div class="row">
-        <div class="inline-field">
-            <label for="person">No. of Persons</label>
-            <input type="number" id="person" name="tables" min="0" value="0" step="1">
-            <div class="tb">
-                <label for="tables">Tables</label>
-                <input type="number" id="tables" name="tables" min="0" value="0" step="1">
-                <div class="tb">
-                    <label for="chairs">Chairs</label>
-                    <input type="number" id="chairs" name="chairs" min="0" value="0" step="1">
+        <div class="row-group-container">
+            <div class="row-group">
+                <div class="row">
+                    <div class="inline-field">
+                        <label for="dateStart">Date Start</label>
+                        <input type="date" id="dateStart" name="dateStart" value="{{ $requestLogData->date_start }}"
+                               readonly>
+                    </div>
+                    <div class="inline-field">
+                        <label for="dateEnd">Date End</label>
+                        <input type="date" id="dateEnd" name="dateEnd" value="{{ $requestLogData->date_end }}" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="inline-field">
+                        <label for="timeStart">Time Start</label>
+                        <input type="time" id="timeStart" name="timeStart" value="{{ $requestLogData->time_start }}"
+                               readonly>
+                    </div>
+                    <div class="inline-field">
+                        <label for="timeEnd">Time End</label>
+                        <input type="time" id="timeEnd" name="timeEnd" value="{{ $requestLogData->time_end }}" readonly>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="inline-field">
-            <label for="otherFacilities">Other Facilities</label>
-            <input type="text" id="otherFacilities" name="otherFacilities">
-        </div>
-    </div>
-    <div class="row">
-        <div class="inline-field">
-            <label for="requestName">Requester Name</label>
-            <input type="text" id="requestName" name="requestName">
-        </div>
-        <div class="inline-field">
-            <label for="RequesterSignature">E-Signature</label>
-            <div class="file-upload">
-                <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;"
-                       onchange="handleFormActions('previewSignature', event)" required>
-                <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
-                    Click to upload e-sign.<br>Maximum file size: 32MB
-                </div>
-                <img id="signature-preview" alt="Signature Preview">
-            </div>
-        </div>
-        <div class="inline-field">
-            <label for="formStatus">Form Status</label>
-            <input type="text" id="formStatus" name="formStatus">
-        </div>
-        <div class="inline-field">
-            <label for="eventStatus">Event Status</label>
-            <input type="text" id="eventStatus" name="eventStatus">
         </div>
         <div class="row">
+            <div class="inline-field">
+                <label for="conferenceRoom">Conference Room</label>
+                <input type="text" id="conferenceRoom" name="conferenceRoom" value="{{ $requestLogData->conferenceRoom->CRoomName }}" placeholder="-" readonly>
+            </div>
+            <div class="inline-field">
+                <label for="focalPerson">Focal Person</label>
+                <input type="text" id="focalPerson" name="focalPerson" value="{{ $requestLogData->focalPerson }}" placeholder="Enter Focal Person" readonly>
+            </div>
+            <div class="row">
+            </div>
         </div>
-        <!-- <div class="inline-field">
-            <label for="eventStatus">Event Status</label>
-            <select id="eventStatus" name="eventStatus">
-                <option disabled selected>Select Event Status</option>
-                <option>-</option>
-                <option>Approved</option>
-                <option>Completed</option>
-                <option>Cancelled</option>
-            </select>
-        </div> -->
-    </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="person">No. of Persons</label>
+                <input type="number" id="npersons" name="npersons" value="{{ $requestLogData->npersons }}" placeholder="0"
+                       readonly>
+                <div class="tb">
+                    <label for="tables">Tables</label>
+                    <input type="number" id="tables" name="tables" value="{{ $requestLogData->tables }}" placeholder="0" readonly>
+                    <div class="tb">
+                        <label for="chairs">Chairs</label>
+                        <input type="number" id="chairs" name="chairs" value="{{ $requestLogData->chairs }}" placeholder="0" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="inline-field">
+                <label for="otherFacilities">Other Facilities</label>
+                <input type="text" id="otherFacilities" name="otherFacilities" value="{{ $requestLogData->otherFacilities }}" placeholder="-" readonly>
+            </div>
+        </div>
 
-    <!-- <div class="form-footer">
-        <button class="submit-btn" type="button" onclick="updateForm()">Update</button>
-        <button class="cancel-btn" type="button" onclick="cancelForm()">Cancel</button>
-    </div> -->
+        <div class="row">
+            <div class="inline-field">
+                <label for="requesterName">Requester Name</label>
+                <input type="text" id="requesterName" name="requesterName" value="{{ $requestLogData->RequesterName }}" placeholder="-" readonly   >
+            </div>
+            <div class="inline-field">
+                <label for="RequesterSignature">E-Signature</label>
+                <div class="file-upload">
+                    <img id="signature-preview"
+                         src="{{ $requestLogData->RequesterSignature ? asset('storage/' . $requestLogData->RequesterSignature) : '' }}"
+                         alt="Signature Preview"
+                         style="{{ $requestLogData->RequesterSignature ? 'display: block;' : 'display: none;' }}" readonly>
+                </div>
+            </div>
+            <div class="inline-field">
+                <label for="availability">Availability</label>
+                <input type="text" id="availability" name="availability" value="{{ $requestLogData->conferenceRoom->Availability }}" placeholder="-" readonly>
+            </div>
+            <div class="inline-field">
+                <label for="FormStatus">Form Status</label>
+                <input type="text" id="FormStatus" name="FormStatus" value="{{ $requestLogData->FormStatus }}" placeholder="-" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="EventStatus">Event Status</label>
+                <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestLogData->EventStatus }}" placeholder="-" readonly>
+            </div>
+        </div>
+        <div class="form-footer">
+            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+        </div>
+    </form>
 </div>
-<!-- <script>
-
-
-    function updateForm() {
-        alert('Your request has been successfully updated.');
-    }
-
+<script>
     function cancelForm() {
-        let inputFields = document.querySelectorAll('input');
-        inputFields.forEach((field) => {
-            field.value = '';
-        });
-
-        document.getElementById('signature-preview').style.display = 'none';
-        document.querySelector('.e-signature-text').style.display = 'block'; // Show the upload text again
-        document.getElementById('e-signature').value = ''; // Reset the e-signature field
-
-        document.getElementById('conferenceRoom').selectedIndex = 0;
-        document.getElementById('availability').selectedIndex = 0; // Reset the availability field
-        document.getElementById('formStatus').selectedIndex = 0; // Reset the form status field
-        document.getElementById('eventStatus').selectedIndex = 0; // Reset the event status field
-
-        alert('Form has been reset.');
+        window.location.href = '/Logs';
     }
+
+    // Attach the cancelForm function to the cancel button
+    document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
 
     function previewSignature(event) {
         const input = event.target;
@@ -452,7 +433,7 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-</script> -->
+</script>
 
 </body>
 </html>
