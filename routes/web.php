@@ -7,6 +7,17 @@ use App\Http\Controllers\NVehicleController;
 use App\Http\Controllers\NDriverController;
 use App\Http\Controllers\NConferenceRController;
 use App\Http\Controllers\EmployeeController;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Mail\SendLoginOtp;
+use App\Http\Controllers\Auth\OtpVerificationController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -133,3 +144,43 @@ Route::get('/UservehiCalendar', function () {
     return view('UservehiCalendar');
 })->name('UservehiCalendar');
 
+// OTP Verification Routes
+Route::get('/verify-otp', [OtpVerificationController::class, 'showVerifyForm'])->name('verify.otp');
+Route::post('/verify-otp', [OtpVerificationController::class, 'verifyOtp'])->name('otp.verify');
+Route::post('/resend-otp', [OtpVerificationController::class, 'resendOtp'])->name('resend.otp');
+
+// Modified login route to trigger OTP sending and redirection
+Route::post('/login', function (Request $request) {
+    // Validate the request
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    // Attempt to authenticate the user
+    $credentials = $request->only('email', 'password');
+    if (Auth::attempt($credentials)) {
+        $user = Auth::user();
+
+        // Generate a random OTP
+        $otp = rand(100000, 999999);
+
+        // Store OTP and user ID in session
+        Session::put('login_otp', $otp);
+        Session::put('login_user_id', $user->id);
+
+        // Send OTP via email
+        Mail::to($user->email)->send(new SendLoginOtp($otp));
+
+        // Log out the user temporarily
+        Auth::logout();
+
+        // Redirect to OTP verification form
+        return redirect()->route('verify.otp');
+    }
+
+    // If authentication fails, redirect back with error
+    return back()->withErrors([
+        'email' => 'The provided credentials do not match our records.',
+    ])->onlyInput('email');
+})->middleware(['guest'])->name('login');

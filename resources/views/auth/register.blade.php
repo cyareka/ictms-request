@@ -20,24 +20,10 @@
             <div class="mt-4">
                 <x-label for="email" value="{{ __('Email') }}" />
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username"/>
-                <span id="email-error" class="text-red-500 text-sm hidden">Invalid email domain. Must be @dswd.gov.ph</span>
+                
             </div>
 
-            <script>
-                document.getElementById('email').addEventListener('input', function (event) {
-                    const emailPattern = /^[a-zA-Z0-9._%+-]+@dswd\.gov\.ph$/;
-                    const emailInput = event.target;
-                    const emailError = document.getElementById('email-error');
-
-                    if (emailPattern.test(emailInput.value)) {
-                        emailError.classList.add('hidden');
-                        emailInput.setCustomValidity('');
-                    } else {
-                        emailError.classList.remove('hidden');
-                        emailInput.setCustomValidity('Invalid email domain. Must be @dswd.gov.ph');
-                    }
-                });
-            </script>
+           
 
             <div class="mt-4">
                 <x-label for="password" value="{{ __('Password') }}" />
