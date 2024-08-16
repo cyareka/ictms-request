@@ -178,6 +178,20 @@ class ConferenceController extends Controller
         $requestLogData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
         return view('ConferencelogDetail', compact('requestLogData'));
     }
+    public function getCalendarEvents()
+    {
+        $events = ConferenceRequest::select('Purpose', 'date_start', 'date_end', 'time_start', 'time_end')
+            ->get()
+            ->map(function($event) {
+                return [
+                    'title' => $event->Purpose,
+                    'start' => $event->date_start . 'T' . $event->time_start,
+                    'end' => $event->date_end . 'T' . $event->time_end,
+                ];
+            });
+
+        return response()->json($events);
+    }
 
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
@@ -250,7 +264,7 @@ class ConferenceController extends Controller
                     [$formStatus, $eventStatus] = explode(',', $pair);
                     $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
                         $q->where('FormStatus', $formStatus)
-                          ->where('EventStatus', $eventStatus);
+                            ->where('EventStatus', $eventStatus);
                     });
                 }
             });

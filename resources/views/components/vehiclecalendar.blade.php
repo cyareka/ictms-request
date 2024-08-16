@@ -5,7 +5,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
     <style>
       /* Ensure the calendar is centered and the body takes full viewport height */
-      
+
 
       /* Set the calendar to fit 90% of the width and height of the viewport */
       #calendar {

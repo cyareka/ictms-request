@@ -297,29 +297,22 @@
             <div class="input-group">
                 <div class="input-field">
                     <label for="officeName">Requesting Office</label>
-                    <select id="officeName" name="officeName" placeholder="Enter Purpose" required>
-                        <option disabled selected>Select Office</option>
-                        <option>Office of the Regional Director</option>
-                        <option>Administrative Division</option>
-                        <option>Finance Division</option>
-                        <option>Planning Division</option>
-                        <option>Technical Division</option>
-                    </select>
+                    <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName }}" placeholder="-" readonly>
                 </div>
                 <div class="input-field">
                     <label>Purpose</label>
-                    <input type="text" name="purpose" placeholder="Enter Purpose" required/>
+                    <input type="text" id="purpose" name="purpose" value="{{ $requestData->Purpose }}" placeholder="-"
+                    readonly>
                 </div>
             </div>
             <div class="input-group">
                 <div class="input-field">
                     <label>Destination</label>
-                    <input type="text" name="place_of_travel" placeholder="Enter Place" required/>
+                    <input type="text" name="Destination" placeholder="Enter Place" value="{{ $requestData->Destination }}" readonly/>
                 </div>
                 <div class="input-field">
                     <label>Passenger/s</label>
-                    <select name="passengers[]" required>
-                        <option disabled selected>Select a passenger</option>
+                    <select name="passengers[]" readonly>
                         <option>Rea May Manlunas</option>
                         <option>Sheardeeh Zurrielle Fernandez</option>
                         <option>Inalyn Kim Tamayo</option>
@@ -338,44 +331,42 @@
                     <div class="input-field">
                         <label>Date</label>
                         <div class="date-field">
-                            <input type="date" id="date_start" name="date_start[]"/>
+                            <input type="date" id="date_start" name="date_start[]" value="{{ $requestData->date_start }}" readonly/>
                             <label for="date_start" class="below-label1">Start</label>
                         </div>
                         <div class="date-field">
-                            <input type="date" id="date_end" name="date_end[]" required/>
+                            <input type="date" id="date_end" name="date_end[]" value="{{ $requestData->date_end }}" readonly/>
                             <label for="date_end" class="below-label2">End</label>
                         </div>
                     </div>
                     <div class="input-field">
                         <label>Time</label>
-                        <input type="time" name="time_start[]" required/>
+                        <input type="time" name="time_start[]" value="{{ $requestData->time_start }}" readonly/>
                     </div>
                 </div>
             </div>
             <div class="input-group">
                 <div class="input-field">
-                    <label>Requested By</label>
-                    <input type="text" name="requested_by" placeholder="Enter Name" required/>
+                    <label>Requester Name</label>
+                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ $requestData->RequesterName }}" required/>
                 </div>
                 <div class="input-field">
                     <label>Requester Email</label>
-                    <input type="text" name="email_requester" placeholder="Enter Email" required/>
+                    <input type="text" name="RequesterEmail" placeholder="Enter Email" value="{{ $requestData->RequesterEmail }}" readonly/>
                 </div>
             </div>
             <div class="input-group">
                 <div class="input-field">
                     <label>Contact No.</label>
-                    <input type="text" name="contact_no" placeholder="Enter No." required/>
+                    <input type="text" name="RequesterContact" placeholder="Enter No." value="{{ $requestData->RequesterContact }}" readonly/>
                 </div>
                 <div class="input-field">
-                    <label for="e-signature">E-Signature</label>
+                    <label for="RequesterSignature">E-Signature</label>
                     <div class="file-upload">
-                        <input type="file" id="e-signature" name="e-signature" style="display: none;"
-                               onchange="previewSignature(event)" required>
-                        <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                            Click to upload e-sign.<br>Maximum file size: 31.46MB
-                        </div>
-                        <img id="signature-preview" alt="Signature Preview">
+                        <img id="signature-preview"
+                             src="{{ $requestData->RequesterSignature ? asset('storage/' . $requestData->RequesterSignature) : '' }}"
+                             alt="Signature Preview"
+                             style="{{ $requestData->RequesterSignature ? 'display: block;' : 'display: none;' }}" readonly>
                     </div>
                 </div>
             </div>
@@ -395,18 +386,17 @@
                         <label for="name">Driver Name</label>
                         <select id="tables" name="driver" required>
                             @foreach(App\Models\Driver::all() as $driver)
-                                <option value="{{ $driver->DriverID }}">{{ $driver->DriverName }}</option>
+                                <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}" data-email="{{ $driver->DriverEmail }}">{{ $driver->DriverName }}</option>
                             @endforeach
                         </select>
-                        <input type="text" >
                     </div>
                     <div class="inline">
-                        <label for="contact">Driver Contact No.</label>
-                        <input type="text" id="contact" name="contact" placeholder="N/A" readonly>
+                        <label for="contact">Contact No.</label>
+                        <input type="text" id="contact" name="contact" placeholder="N/A" value="{{ $driver->ContactNo }}" readonly>
                     </div>
                     <div class="inline">
-                        <label for="email">Driver Email</label>
-                        <input type="text" id="driveremail" name="driveremail" placeholder="N/A" readonly>
+                        <label for="email">Email</label>
+                        <input type="text" id="DriverEmail" name="DriverEmail" placeholder="N/A" value="{{ $driver->DriverEmail }}" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
@@ -414,7 +404,7 @@
                         <label for="VName">Vehicle Type</label>
                         <select id="VName" name="VName">
                             @foreach(App\Models\Vehicle::all() as $vehicle)
-                                <option value="{{ $vehicle->VehicleID }}">{{ $vehicle->VehicleType }}</option>
+                                <option value="{{ $vehicle->VehicleID }}" data-plate="{{ $vehicle->PlateNo }}">{{ $vehicle->VehicleType }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -424,18 +414,18 @@
                     </div>
                     <div class="inline">
                         {{-- depends on admin logged in --}}
-                        <label for="RbName">Received by</label>
-                        <input type="text" id="RbName" name="RbName" value="{{ Auth::user()->name }}">{{ Auth::user()->name }}">
+                        <label for="ReceivedBy">Received by</label>
+                        <input type="text" id="ReceivedBy" name="ReceivedBy" value="{{ Auth::user()->name }}" readonly>
                     </div>
                 </div>
-                <div class="row-dispatch ">
+                <div class="row-dispatch">
                     <div class="inline">
                         <label for="date">Date</label>
-                        <input type="date" id="date" name="date[]" required>
+                        <input type="date" id="date" name="date[]" readonly>
                     </div>
                     <div class="inline">
                         <label for="time">Time</label>
-                        <input type="time" id="dtime" name="time[]" required>
+                        <input type="time" id="dtime" name="time[]" readonly>
                     </div>
                     <div class="inline">
                         <label for="remark">Remarks</label>
@@ -456,7 +446,7 @@
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="availability">Availability</label>
-                        <input type="text" id="availability" name="availability" value="{{ $requestData->vehicle->Availability }}" placeholder="-" readonly>
+                        <input type="text" id="availability" name="availability" placeholder="-" readonly>
                     </div>
                     <div class="inline">
                         <label for="formStatus">Form Status</label>
@@ -479,39 +469,31 @@
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
-                        <label for="VName">Approving Authority</label>
-                        <select id="VName" name="VName">
-                            <option disabled selected>Select Authority</option>
-                            <option>Rea May Manlunas</option>
-                            <option>Sheardeeh Fernandez</option>
-                            <option>Beverly Consolacion</option>
-                            <option>Inalyn Tamayo</option>
-                        </select>
-                    </div>
-                    <div class="inline">
-                        <label for="VName">Approving Authority Position</label>
-                        <select id="VName" name="VName">
-                            <option disabled selected>Select Authority</option>
-                            <option>Rea May Manlunas</option>
-                            <option>Sheardeeh Fernandez</option>
-                            <option>Beverly Consolacion</option>
-                            <option>Inalyn Tamayo</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row-dispatch">
-                    <div class="inline">
-                        <label for="VName">SO Approving Authority</label>
-                        <select id="VName" name="VName">
-                            <option disabled selected>Select Authority</option>
-                            @foreach(App\Models\SOAuthority::all() as $SOauth)
-                                <option value="{{ $SOauth->SOID }}">{{ $SOauth->SOName }}</option>
+                        <label for="AAuth">Approving Authority</label>
+                        <select id="AAuth" name="AAuth" required>
+                            @foreach(App\Models\AAuthority::all() as $AAuth)
+                                <option value="{{ $AAuth->AAID }}" data-position="{{ $AAuth->AAPosition }}">{{ $AAuth->AAName }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="inline">
-                        <label for="VName">SO Approving Authority Position</label>
-                        <input type="text" id="VName" name="VName" value=" {{  }} ">
+                        <label for="AAPosition">Approving Authority Position</label>
+                        <input type="text" id="AAPosition" name="AAPosition" value="{{ $AAuth->AAPosition }}" readonly>
+                    </div>
+                </div>
+                <div class="row-dispatch">
+                    <div class="inline">
+                        <label for="SOAuthority">SO Approving Authority</label>
+                        <select id="SOAuthority" name="SOName" required>
+                            <option disabled selected>Select Authority</option>
+                            @foreach(App\Models\SOAuthority::all() as $SOAuth)
+                                <option value="{{ $SOAuth->SOID }}" data-position="{{ $SOAuth->SOPosition }}">{{ $SOAuth->SOName }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="inline">
+                        <label for="SOPosition">SO Approving Authority Position</label>
+                        <input type="text" id="SOPosition" name="SOPosition" value="{{ $SOAuth->SOPosition }}" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
@@ -545,6 +527,83 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const driverSelect = document.getElementById('driver');
+    const contactInput = document.getElementById('contact');
+    const emailInput = document.getElementById('DriverEmail');
+
+    const vehicleSelect = document.getElementById('VName');
+    const plateInput = document.getElementById('plate');
+
+    const AAuthSelect = document.getElementById('AAuth');
+    const AAPositionInput = document.getElementById('AAPosition');
+
+    const SOAuthSelect = document.getElementById('SOAuthority');
+    const SOPositionInput = document.getElementById('SOPosition');
+
+    function updateDriverFields() {
+        console.log('Driver select changed');
+        const selectedOption = driverSelect.options[driverSelect.selectedIndex];
+        const contact = selectedOption.getAttribute('data-contact');
+        const email = selectedOption.getAttribute('data-email');
+
+        console.log('Selected driver contact:', contact);
+        console.log('Selected driver email:', email);
+
+        contactInput.value = contact || '';
+        emailInput.value = email || '';
+    }
+
+    function updateVehicleFields() {
+        console.log('Vehicle select changed');
+        const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+        const plate = selectedOption.getAttribute('data-plate');
+
+        console.log('Selected vehicle plate:', plate);
+
+        plateInput.value = plate || '';
+    }
+
+    function updateAAuthFields() {
+        console.log('AAuth select changed');
+        const selectedOption = AAuthSelect.options[AAuthSelect.selectedIndex];
+        const position = selectedOption.getAttribute('data-position');
+
+        console.log('Selected AAuth position:', position);
+
+        AAPositionInput.value = position || '';
+    }
+
+    function updateSOAuthFields() {
+        console.log('SOAuth select changed');
+        const selectedOption = SOAuthSelect.options[SOAuthSelect.selectedIndex];
+        const position = selectedOption.getAttribute('data-position');
+
+        console.log('Selected SOAuth position:', position);
+
+        SOPositionInput.value = position || '';
+    }
+
+    driverSelect.addEventListener('change', updateDriverFields);
+    vehicleSelect.addEventListener('change', updateVehicleFields);
+    AAuthSelect.addEventListener('change', updateAAuthFields);
+    SOAuthSelect.addEventListener('change', updateSOAuthFields);
+
+    // Trigger change events to set initial values
+    updateDriverFields();
+    updateVehicleFields();
+    updateAAuthFields();
+    updateSOAuthFields();
+});
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('dtime').value = `${hours}:${minutes}`;
+    });
     /**
      * Sets up form change detection and handles the cancel action with a confirmation prompt.
      */

@@ -60,7 +60,6 @@
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date</th>
                 <th scope="col">Time</th>
-                <th scope="col">Availability</th>
                 <th scope="col">Form Status</th>
                 <th scope="col">Event Status</th>
                 <th scope="col"></th>
@@ -74,36 +73,20 @@
                     ->get();
             @endphp
 
-{{--                <th scope="row">20210522</th>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>Rawr</td>--}}
-{{--                <td>--}}
-{{--                    <a href="{{ route('VehicledetailEdit') }}"><i class="bi bi-pencil" id="actions"></i></a>--}}
-{{--                    <i class="bi bi-download" id="actions"></i>--}}
-{{--                </td>--}}
-
                 @foreach($filteredRequests as $request)
                     <tr>
                         <th scope="row">{{ $request->VRequestID }}</th>
                         <td>{{ $request->created_at->format('m-d-Y') }}</td>
-                        <td>{{ $request->destination }}</td>
-                        <td>{{ $request->purpose }}</td>
+                        <td>{{ $request->Destination }}</td>
+                        <td>{{ $request->Purpose }}</td>
                         <td>{{ $request->office->OfficeName }}</td>
                         <td>{{ $request->date_start }}</td>
                         <td>{{ $request->time_start }}</td>
-                        <td>{{ $request->vehicle->Availability }}</td>
+{{--                        <td>{{ $request->vehicle->Availability }}</td>--}}
                         <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                         <td>{{ $request->EventStatus }}</td>
                         <td>
-                            <a href="{{ route('VehicleDetailedit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+                            <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
                             <i class="bi bi-download" id="actions"></i>
                         </td>
                     </tr>

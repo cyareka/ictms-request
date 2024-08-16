@@ -40,6 +40,7 @@ Route::middleware([
     })->name('ConferenceStatistics');
 
     // Conference Calendar View
+    Route::get('/calendar/events', [ConferenceController::class, 'getCalendarEvents']);
 
     // Conference Table View
     Route::get('/conference-requests',
@@ -69,6 +70,7 @@ Route::middleware([
     Route::get('/VehiclecalendarView', function () {
         return view('VehiclecalendarView');
     })->name('VehiclecalendarView');
+    Route::get('/calendar/events', [VehicleController::class, 'getCalendarEvents']);
 
     // Vehicle Table View
     Route::get('/VehicleTabular', function () {
@@ -76,9 +78,11 @@ Route::middleware([
     })->name('VehicleTabular');
 
     // Vehicle Edit
-    Route::get('/VehicledetailEdit', function () {
+    Route::get('/VehicledetailEdit',    function () {
         return view('VehicledetailEdit');
     })->name('VehicledetailEdit');
+    Route::get('/vehiclerequest/{VRequestID}/edit',
+    [VehicleController::class, 'getRequestData'])->name('VehicledetailEdit');
 
     // VEHICLE LOG ROUTES
     Route::get('/VehicleLogs', function () {
@@ -118,7 +122,6 @@ Route::get('/user-conference', function () {
 Route::post('/conference-room/request',
     [ConferenceController::class, 'submitCForm']);
 
-
 Route::get('/UserconCalendar', function () {
     return view('UserconCalendar');
 })->name('UserconCalendar');
@@ -133,3 +136,4 @@ Route::get('/UservehiCalendar', function () {
     return view('UservehiCalendar');
 })->name('UservehiCalendar');
 
+Route::get('/calendar/events', [ConferenceController::class, 'getCalendarEvents']);

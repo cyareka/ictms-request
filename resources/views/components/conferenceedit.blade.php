@@ -355,64 +355,195 @@
                     flex-direction: column;
                 }
 
-                .row {
-                    grid-template-columns: 1fr;
+                .button-container {
+                    display: flex;
+                    align-items: center;
+                    padding: 3px;
+                    margin-bottom: 8px;
                 }
 
-                .row-group-container {
+                .add-btn {
+                    background-color: #0056b3;
+                    color: white;
+                    padding: 3px 8px;
+                    border: none;
+                    border-radius: 50px;
+                    cursor: pointer;
+                    font-size: 20px;
+                    margin-left: 5px;
+                }
+
+                .add-btn:hover {
+                    background-color: #003d80;
+                }
+
+                .remove-btn {
+                    background-color: #ff4d4d;
+                    color: white;
+                    padding: 5px 10px;
+                    border: none;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    font-size: 20px;
+                    margin-left: 5px;
+                }
+
+                .remove-btn:hover {
+                    background-color: #cc0000;
+                }
+
+                .file-upload {
+                    display: flex;
                     flex-direction: column;
-                    align-items: flex-start;
-                    margin-bottom: 20px;
-                    max-height: 200px;
-                }
-
-                .row-group-container label {
-                    width: 100%;
-                    margin-bottom: 5px;
-                }
-
-                .row-group-container input[type="date"],
-                .row-group-container input[type="time"] {
-                    width: 50%;
+                    align-items: center;
+                    padding: 16px;
+                    border: 2px dashed #5b21b6;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    margin-bottom: 16px;
+                    text-align: center;
                 }
 
                 .inline-field {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
-                .inline-field label[for="person"] {
-                    margin-right: -150px; /* adjust the value as needed */
-                }
-
-                .tb {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-
-                .tb input {
-                    margin-right: -150px;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 15px;
+                    margin-left: 20px;
                 }
 
                 .inline-field label {
-                    width: 100%;
-                    margin-bottom: 5px;
-                }
-
-                .tb label {
-                    width: 100%;
-                    margin-bottom: 15px;
+                    display: inline-block;
+                    width: 120px;
+                    margin-right: 10px;
                 }
 
                 .inline-field input,
                 .inline-field select {
-                    width: 100%;
+                    width: 70%;
                 }
 
-                .add-btn {
+                .form-footer {
                     display: flex;
-                    align-items: center;
-                    justify-content: flex-end;
+                    justify-content: center;
+                    margin-top: 20px;
+                    gap: 20px;
+                }
+
+                .submit-btn {
+                    background-color: #354e7d;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                .cancel-btn {
+                    background-color: #ff4d4d;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                #signature-preview {
+                    margin-top: 15px;
+                    max-width: 100px;
+                    max-height: 100px;
+                    display: none;
+                }
+
+                .row-multiple {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 15px;
+                    margin-bottom: 8px;
+                }
+
+                @media (max-width: 768px) {
+                    .container {
+                        width: 90%;
+                        flex-direction: column;
+                    }
+
+                    .row {
+                        grid-template-columns: 1fr;
+
+                    }
+
+                    .row-group-container {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        margin-bottom: 20px;
+                        overflow-y: hidden;
+                        height: auto;
+                    }
+
+                    .row-group-container label {
+                        width: 100%;
+                        margin-bottom: 5px;
+                    }
+
+                    .row-group-container input[type="date"],
+                    .row-group-container input[type="time"] {
+                        width: 50%;
+                    }
+
+                    .row-group-container label {
+                        display: block;
+                        margin-bottom: 5px;
+                    }
+
+                    .row-group-container input,
+                    .row-group-container select {
+                        width: 100%;
+                    }
+
+                    .inline-field {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+                    #npersons {
+                        width: 19%; /* Make the input take full width */
+                        box-sizing: border-box; /* Ensure padding and border are included in the width */
+                    }
+
+                    .inline-field label[for="person"] {
+                        margin-right: -150px; /* adjust the value as needed */
+                    }
+
+                    .tb {
+                        flex-direction: column;
+                        align-items: flex-start;
+                    }
+
+                    .tb input {
+                        margin-right: -150px;
+                    }
+
+                    .inline-field label {
+                        width: 100%;
+                        margin-bottom: 5px;
+                    }
+
+                    .tb label {
+                        width: 100%;
+                        margin-bottom: 15px;
+                    }
+
+                    .inline-field input,
+                    .inline-field select {
+                        width: 100%;
+                    }
+
+                    .add-btn {
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                    }
                 }
             }
         }

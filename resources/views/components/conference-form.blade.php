@@ -411,7 +411,7 @@
                 <label for="RequesterSignature">E-Signature</label>
                 <div class="file-upload">
                     <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;"
-                           onchange="handleFormActions('previewSignature')" required>
+                           onchange="previewSignature(event)" required>
                     <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
                         Click to upload e-sign.<br>Maximum file size: 32MB
                     </div>
@@ -426,6 +426,24 @@
     </form>
 </div>
 <script>
+    function previewSignature(event) {
+        const input = event.target;
+        const preview = document.getElementById('signature-preview');
+        const reader = new FileReader();
+        const uploadText = document.querySelector('.e-signature-text');
+
+        reader.onload = function () {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+            uploadText.style.display = 'none'; // Hide the upload text
+        };
+
+        if (input.files && input.files[0]) {
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+
     /**
      * Handles various form actions such as adding or removing rows and previewing the signature.
      *

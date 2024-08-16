@@ -130,10 +130,10 @@ class VehicleController extends Controller
         }
     }
 
-    public function getRequestData($CRequestID): View|Factory|Application
+    public function getRequestData($VRequestID): View|Factory|Application
     {
-        $requestData = VehicleRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
-        return view('ConferencedetailEdit', compact('requestData'));
+        $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
+        return view('VehicledetailEdit', compact('requestData'));
     }
 
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
@@ -150,7 +150,7 @@ class VehicleController extends Controller
             'event_statuses' => $eventStatuses,
         ]);
 
-        $query = VehicleRequest::with('driver', 'vehicle', 'office', 'passenger')
+        $query = VehicleRequest::with('office')
             ->orderBy($sort, $order);
 
         if ($formStatuses) {
@@ -167,4 +167,21 @@ class VehicleController extends Controller
 
         return response()->json($vehicleRequests);
     }
+
+    public function getCalendarEvents()
+    {
+        $events = VehicleRequest::select('Purpose', 'date_start', 'date_end', 'time_start', 'time_end')
+            ->get()
+            ->map(function($event) {
+                return [
+                    'title' => $event->Purpose,
+                    'start' => $event->date_start . 'T' . $event->time_start,
+                    'end' => $event->date_end . 'T' . $event->time_end,
+                ];
+            });
+
+        return response()->json($events);
+    }
+
+
 }
