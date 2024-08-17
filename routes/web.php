@@ -93,7 +93,7 @@ Route::middleware([
         return view('VehicledetailEdit');
     })->name('VehicledetailEdit');
     Route::get('/vehiclerequest/{VRequestID}/edit',
-    [VehicleController::class, 'getRequestData'])->name('VehicledetailEdit');
+        [VehicleController::class, 'getRequestData'])->name('VehicledetailEdit');
 
     // VEHICLE LOG ROUTES
     Route::get('/VehicleLogs', function () {
@@ -109,7 +109,7 @@ Route::middleware([
     })->name('VehiclelogDetail');
 
 
-    // Management Routes
+    // MANAGEMENT ROUTES
     Route::post('/add-driver',
         [NDriverController::class, 'store'])->name('driver.store');
     Route::post('/add-vehicle',

@@ -330,7 +330,7 @@
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
         Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
     <div class="form-body">
-        <form action="/vehicle/update" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+        <form action="/vehicle/request" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             @csrf
             <div class="input-group">
                 <div class="input-field">
@@ -425,7 +425,7 @@
                 </div>
             </div>
             <div class="form-footer">
-                <button class="submit-btn" type="submit">Update</button>
+                <button class="submit-btn" type="submit">Submit</button>
             </div>
         </form>
     </div>

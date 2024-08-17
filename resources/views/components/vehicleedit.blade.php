@@ -312,15 +312,15 @@
                 </div>
                 <div class="input-field">
                     <label>Passenger/s</label>
-                    <select name="passengers[]" readonly>
-                        <option>Rea May Manlunas</option>
-                        <option>Sheardeeh Zurrielle Fernandez</option>
-                        <option>Inalyn Kim Tamayo</option>
-                        <option>Beverly Consolacion</option>
-                        <option>Ryu Colita</option>
-                        <option>Justin Misajon</option>
-                        <option>Elmer John Catalan</option>
-                    </select>
+                    <ul>
+                        @if(isset($passengers) && $passengers->isNotEmpty())
+                            @foreach($passengers as $passenger)
+                                <li value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</li>
+                            @endforeach
+                        @else
+                            <li>No passengers found</li>
+                        @endif
+                    </ul>
                 </div>
             </div>
             <div id="passenger-container">
@@ -460,10 +460,10 @@
                         <label for="EventStatus">Event Status</label>
                         <select id="EventStatus" name="EventStatus" onchange="updateFormStatus()">
                             <option disabled selected>Select Event Status</option>
-                            <option>-</option>
-                            <option>Approved</option>
-                            <option>Completed</option>
-                            <option>Cancelled</option>
+                            <option value="-" {{ $requestData->EventStatus == '-' ? 'selected' : '' }}>-</option>
+                            <option value="Ongoing" {{ $requestData->EventStatus == 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
+                            <option value="Finished" {{ $requestData->EventStatus == 'Finished' ? 'selected' : '' }}>Finished</option>
+                            <option value="Cancelled" {{ $requestData->EventStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
                     </div>
                 </div>

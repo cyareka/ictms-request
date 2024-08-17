@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\IDGenerator;
-use App\Models\ConferenceRequest;
 use App\Models\Driver;
 use App\Models\Employee;
 use App\Models\Office;
+use App\Models\VRequestPassenger;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -131,11 +131,6 @@ class VehicleController extends Controller
         }
     }
 
-    public function getRequestData($VRequestID): View|Factory|Application
-    {
-        $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
-        return view('VehicledetailEdit', compact('requestData'));
-    }
 
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -183,6 +178,20 @@ class VehicleController extends Controller
 
         return response()->json($events);
     }
+    public function getRequestData($VRequestID): View|Factory|Application
+    {
+        // Fetch the vehicle request data
+        $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
 
+        // Fetch passengers associated with the given VRequestID
+        $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
+            ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
+            ->select('employees.EmployeeID', 'employees.EmployeeName')
+            ->get();
 
+        Log::info('Passengers fetched:', $passengers->toArray());
+
+        // Pass the request data and passengers to the view
+        return view('VehicledetailEdit', compact('requestData', 'passengers'));
+    }
 }
