@@ -297,7 +297,7 @@
             <div class="input-group">
                 <div class="input-field">
                     <label for="officeName">Requesting Office</label>
-                    <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName }}" placeholder="-" readonly>
+                    <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName ?? '' }}" placeholder="-" readonly>
                 </div>
                 <div class="input-field">
                     <label>Purpose</label>
@@ -391,12 +391,12 @@
                         </select>
                     </div>
                     <div class="inline">
-                        <label for="contact">Contact No.</label>
-                        <input type="text" id="contact" name="contact" placeholder="N/A" value="{{ $driver->ContactNo }}" readonly>
+                        <label for="ContactNo">Contact No.</label>
+                        <input type="text" id="ContactNo" name="ContactNo" placeholder="N/A" readonly>
                     </div>
                     <div class="inline">
                         <label for="email">Email</label>
-                        <input type="text" id="DriverEmail" name="DriverEmail" placeholder="N/A" value="{{ $driver->DriverEmail }}" readonly>
+                        <input type="text" id="DriverEmail" name="DriverEmail" placeholder="N/A" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
@@ -449,16 +449,16 @@
                         <input type="text" id="availability" name="availability" placeholder="-" readonly>
                     </div>
                     <div class="inline">
-                        <label for="formStatus">Form Status</label>
-                        <select id="formStatus" name="formStatus" onchange="updateEventStatus()">
+                        <label for="FormStatus">Form Status</label>
+                        <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
                             <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
                             <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
                             <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
                         </select>
                     </div>
                     <div class="inline">
-                        <label for="eventStatus">Event Status</label>
-                        <select id="eventStatus" name="eventStatus">
+                        <label for="EventStatus">Event Status</label>
+                        <select id="EventStatus" name="EventStatus" onchange="updateFormStatus()">
                             <option disabled selected>Select Event Status</option>
                             <option>-</option>
                             <option>Approved</option>
@@ -471,6 +471,7 @@
                     <div class="inline">
                         <label for="AAuth">Approving Authority</label>
                         <select id="AAuth" name="AAuth" required>
+                            <option disabled selected>Select Authority</option>
                             @foreach(App\Models\AAuthority::all() as $AAuth)
                                 <option value="{{ $AAuth->AAID }}" data-position="{{ $AAuth->AAPosition }}">{{ $AAuth->AAName }}</option>
                             @endforeach
@@ -498,22 +499,18 @@
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
-                        <label for="VName">Authorized Signatory</label>
-                        <select id="VName" name="VName">
-                            <option disabled selected>Select Authority</option>
-                            <option>Rea May Manlunas</option>
-                            <option>Sheardeeh Fernandez</option>
-                            <option>Beverly Consolacion</option>
-                            <option>Inalyn Tamayo</option>
-                        </select>
+                        <label for="ASignatory">Authorized Signatory</label>
+                        <input type="text" id="ASignatory" name="ASignatory" value="{{ Auth::user()->name }}" readonly>
                     </div>
-                    <div class="inline">
-                        <label for="RequesterSignature">E-Signature</label>
+                    <div class="input-field">
+                        <label for="signature">E-Signature <span class="required">*</span></label>
                         <div class="file-upload">
-                            <img id="signature-preview"
-                                 src="{{ $requestData->RequesterSignature ? asset('storage/' . $requestData->RequesterSignature) : '' }}"
-                                 alt="Signature Preview"
-                                 style="{{ $requestData->RequesterSignature ? 'display: block;' : 'display: none;' }}" readonly>
+                            <input type="file" id="e-signature" name="signature" style="display: none;"
+                                   onchange="previewSignature(event)" required>
+                            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
+                                Click to upload e-sign.<br>Maximum file size: 31.46MB
+                            </div>
+                            <img id="signature-preview" alt="Signature Preview">
                         </div>
                     </div>
                 </div>
@@ -527,74 +524,72 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const driverSelect = document.getElementById('driver');
-    const contactInput = document.getElementById('contact');
-    const emailInput = document.getElementById('DriverEmail');
+    document.addEventListener('DOMContentLoaded', function() {
+        const driverSelect = document.getElementById('tables');
+        const contactInput = document.getElementById('ContactNo');
+        const emailInput = document.getElementById('DriverEmail');
 
-    const vehicleSelect = document.getElementById('VName');
-    const plateInput = document.getElementById('plate');
+        function updateDriverFields() {
+            const selectedOption = driverSelect.options[driverSelect.selectedIndex];
+            const contact = selectedOption.getAttribute('data-contact');
+            const email = selectedOption.getAttribute('data-email');
 
-    const AAuthSelect = document.getElementById('AAuth');
-    const AAPositionInput = document.getElementById('AAPosition');
+            contactInput.value = contact || 'N/A';
+            emailInput.value = email || 'N/A';
+        }
 
-    const SOAuthSelect = document.getElementById('SOAuthority');
-    const SOPositionInput = document.getElementById('SOPosition');
+        driverSelect.addEventListener('change', updateDriverFields);
 
-    function updateDriverFields() {
-        console.log('Driver select changed');
-        const selectedOption = driverSelect.options[driverSelect.selectedIndex];
-        const contact = selectedOption.getAttribute('data-contact');
-        const email = selectedOption.getAttribute('data-email');
+        updateDriverFields();
+    });
 
-        console.log('Selected driver contact:', contact);
-        console.log('Selected driver email:', email);
+    document.addEventListener('DOMContentLoaded', function() {
+        const vehicleSelect = document.getElementById('VName');
+        const plateInput = document.getElementById('plate');
 
-        contactInput.value = contact || '';
-        emailInput.value = email || '';
-    }
+        function updateVehicleFields() {
+            const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
+            const plate = selectedOption.getAttribute('data-plate');
 
-    function updateVehicleFields() {
-        console.log('Vehicle select changed');
-        const selectedOption = vehicleSelect.options[vehicleSelect.selectedIndex];
-        const plate = selectedOption.getAttribute('data-plate');
+            plateInput.value = plate || 'N/A';
+        }
 
-        console.log('Selected vehicle plate:', plate);
+        vehicleSelect.addEventListener('change', updateVehicleFields);
 
-        plateInput.value = plate || '';
-    }
+        updateVehicleFields();
+    });
 
-    function updateAAuthFields() {
-        console.log('AAuth select changed');
-        const selectedOption = AAuthSelect.options[AAuthSelect.selectedIndex];
-        const position = selectedOption.getAttribute('data-position');
+    document.addEventListener('DOMContentLoaded', function() {
+        const soAuthSelect = document.getElementById('SOAuthority');
+        const soPositionInput = document.getElementById('SOPosition');
 
-        console.log('Selected AAuth position:', position);
+        function updateSOAuthorityFields() {
+            const selectedOption = soAuthSelect.options[soAuthSelect.selectedIndex];
+            const position = selectedOption.getAttribute('data-position');
 
-        AAPositionInput.value = position || '';
-    }
+            soPositionInput.value = position || 'N/A';
+        }
 
-    function updateSOAuthFields() {
-        console.log('SOAuth select changed');
-        const selectedOption = SOAuthSelect.options[SOAuthSelect.selectedIndex];
-        const position = selectedOption.getAttribute('data-position');
+        soAuthSelect.addEventListener('change', updateSOAuthorityFields);
 
-        console.log('Selected SOAuth position:', position);
+        updateSOAuthorityFields();
+    });
 
-        SOPositionInput.value = position || '';
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const aaAuthSelect = document.getElementById('AAuth');
+        const aaPositionInput = document.getElementById('AAPosition');
 
-    driverSelect.addEventListener('change', updateDriverFields);
-    vehicleSelect.addEventListener('change', updateVehicleFields);
-    AAuthSelect.addEventListener('change', updateAAuthFields);
-    SOAuthSelect.addEventListener('change', updateSOAuthFields);
+        function updateAAAuthorityFields() {
+            const selectedOption = aaAuthSelect.options[aaAuthSelect.selectedIndex];
+            const position = selectedOption.getAttribute('data-position');
 
-    // Trigger change events to set initial values
-    updateDriverFields();
-    updateVehicleFields();
-    updateAAuthFields();
-    updateSOAuthFields();
-});
+            aaPositionInput.value = position || 'N/A';
+        }
+
+        aaAuthSelect.addEventListener('change', updateAAAuthorityFields);
+
+        updateAAAuthorityFields();
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
@@ -701,6 +696,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var adminServiceForm = document.getElementById("admin-service-form");
         adminServiceForm.style.display = (adminServiceForm.style.display === "block") ? "none" : "block";
     }
+
+
 </script>
 </body>
 </html>

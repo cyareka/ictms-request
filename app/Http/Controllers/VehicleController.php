@@ -106,6 +106,7 @@ class VehicleController extends Controller
                     'Remarks' => null,
                     'AAID' => null,
                     'SOID' => null,
+                    'ASignatory' => null,
                     'FormStatus' => 'Pending',
                     'EventStatus' => '-',
                 ]);

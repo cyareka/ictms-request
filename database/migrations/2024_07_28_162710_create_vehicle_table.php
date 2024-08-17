@@ -69,8 +69,9 @@ return new class extends Migration
             // $table->string('VehicleID')->nullable()->default(null); for availability
             $table->string('AAID')->nullable()->default(null);
             $table->string('SOID')->nullable()->default(null);
+            $table->string('ASignatory')->nullable()->default(null);
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
-            $table->enum('EventStatus', ['-', 'Cancelled', 'Finished'])->default('-');
+            $table->enum('EventStatus', ['-', 'Ongoing', 'Finished','Cancelled'])->default('-');
 
             // Adding foreign keys
             $table->foreign('DriverID')->references('DriverID')->on('driver');
@@ -79,6 +80,7 @@ return new class extends Migration
             $table->foreign('AAID')->references('AAID')->on('AAuthority');
             $table->foreign('SOID')->references('SOID')->on('SOAuthority');
             $table->foreign('ReceivedBy')->references('id')->on('users');
+            $table->foreign('ASignatory')->references('id')->on('users');
         });
 
         Schema::create('vrequest_passenger', function (Blueprint $table) {
@@ -103,5 +105,7 @@ return new class extends Migration
         Schema::dropIfExists('driver');
         Schema::dropIfExists('vehicle');
         Schema::dropIfExists('vehicle_request');
+        Schema::dropIfExists('vrequest_passenger');
+
     }
 };

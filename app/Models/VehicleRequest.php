@@ -46,6 +46,7 @@ class VehicleRequest extends Model
         'Availability', // vehicle availability
         'AAID',
         'SOID',
+        'ASignatory',
         'FormStatus',
         'EventStatus',
     ];
