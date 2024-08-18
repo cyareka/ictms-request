@@ -21,7 +21,7 @@
                             <p>Status</p>
                             <a>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <input class="form-check-input" type="checkbox" value="Pending" name="FormStatus[]">
                                     <label class="form-check-label" for="flexCheckDefault">
                                         Pending
                                     </label>
@@ -29,7 +29,7 @@
                             </a>
                             <a>
                                 <div class="form-check" id="margincheck">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <input class="form-check-input" type="checkbox" value="Approved" name="FormStatus[]">
                                     <label class="form-check-label" for="flexCheckDefault">
                                         Approved and Ongoing
                                     </label>
@@ -37,8 +37,8 @@
                             </a>
                             <hr>
                             <div class="buttons">
-                                <button class="cancelbtn">Remove</button>
-                                <button class="applybtn">Filter</button>
+                                <button type="button" class="cancelbtn">Remove</button>
+                                <button type="submit" class="applybtn">Filter</button>
                             </div>
                         </div>
                     </form>
@@ -54,7 +54,11 @@
             <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Date Requested</th>
+                <th scope="col">
+                    <a href="#" id="sort-date-requested" data-order="desc">
+                        Date Requested
+                    </a>
+                </th>
                 <th scope="col">Destination</th>
                 <th scope="col">Purpose</th>
                 <th scope="col">Requesting Office</th>
@@ -66,12 +70,11 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-            @php
-                $filteredRequests = App\Models\VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending'])
-                    ->whereIn('EventStatus', ['Ongoing', '-'])
-                    ->get();
-            @endphp
+                @php
+                    $filteredRequests = App\Models\VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending'])
+                        ->whereIn('EventStatus', ['Ongoing', '-'])
+                        ->get();
+                @endphp
 
                 @foreach($filteredRequests as $request)
                     <tr>
@@ -82,7 +85,6 @@
                         <td>{{ $request->office->OfficeName }}</td>
                         <td>{{ $request->date_start }}</td>
                         <td>{{ $request->time_start }}</td>
-{{--                        <td>{{ $request->vehicle->Availability }}</td>--}}
                         <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                         <td>{{ $request->EventStatus }}</td>
                         <td>
@@ -96,3 +98,106 @@
     </div>
 </div>
 <div class="end"></div>
+
+<script>
+    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder);
+    });
+
+    function fetchSortedData(order) {
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        const url = `/fetchSortedRequests?sort=created_at&order=${order}&${params}`;
+        console.log(url);  // Log the constructed URL
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);  // Log the response data
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert(`An error occurred while fetching data: ${error.message}`);
+        });
+    }
+
+    function updateTable(data) {
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(request => {
+                let row = `<tr>
+                    <th scope="row">${request.VRequestID}</th>
+                    <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
+                    <td>${request.Destination}</td>
+                    <td>${request.Purpose}</td>
+                    <td>${request.officeName}</td>
+                    <td>${request.date_start}</td>
+                    <td>${request.time_start}</td>
+                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                    <td>${request.EventStatus}</td>
+                    <td>
+                        <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
+                    </td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+        }
+    }
+
+    document.getElementById('filterForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+
+        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('Error fetching filtered data:', error);
+        });
+    });
+
+    document.querySelector('.cancelbtn').addEventListener('click', function() {
+        document.getElementById('filterForm').reset();
+        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+
+        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('Error fetching unfiltered data:', error);
+        });
+    });
+</script>
