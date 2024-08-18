@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;  // <-- Make sure this line is included
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Mail\SendLoginOtp;
@@ -14,7 +14,7 @@ class OtpVerificationController extends Controller
 {
     public function showVerifyForm()
     {
-        return inertia('Auth/VerifyOtp');
+        return view('auth.verify_otp'); // Ensure 'auth.verify_otp' view exists in your resources/views/auth directory
     }
 
     public function verifyOtp(Request $request)
@@ -22,16 +22,15 @@ class OtpVerificationController extends Controller
         $request->validate(['otp' => 'required']);
 
         if ($request->otp == Session::get('login_otp')) {
-            // Ensure Auth facade is correctly imported and used here
             Auth::loginUsingId(Session::get('login_user_id'));
 
             Session::forget('login_otp');
             Session::forget('login_user_id');
 
-            return redirect()->intended('/dashboard');
+            return response()->json(['redirect' => url('/dashboard')]);
         }
 
-        return back()->withErrors(['otp' => 'Invalid OTP.']);
+        return response()->json(['errors' => ['otp' => ['Invalid OTP.']]], 422);
     }
 
     public function resendOtp(Request $request)
@@ -40,13 +39,8 @@ class OtpVerificationController extends Controller
         $user = User::find($userId);
 
         if ($user) {
-            // Generate a new OTP
             $otp = rand(100000, 999999);
-
-            // Update the OTP in the session
             Session::put('login_otp', $otp);
-
-            // Send the OTP via email
             Mail::to($user->email)->send(new SendLoginOtp($otp));
 
             return response()->json(['message' => 'OTP resent successfully!']);
