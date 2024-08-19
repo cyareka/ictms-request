@@ -94,8 +94,8 @@
             @foreach($filteredRequests as $request)
                 @php
                     $availability = app('App\Http\Controllers\ConferenceController')->checkAvailability(
-                        $request->conference_room_id, 
-                        $request->date_start, 
+                        $request->conference_room_id,
+                        $request->date_start,
                         $request->time_start,
                         $request->date_end,
                         $request->time_end,
@@ -195,4 +195,51 @@
     function resetFilters() {
         document.getElementById('filterForm').reset();
     }
+
+    function updateAvailability(conferenceRoomId, dateStart, timeStart, dateEnd, timeEnd, createdAt) {
+        fetch('/updateAvailability', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                conference_room_id: conferenceRoomId,
+                date_start: dateStart,
+                time_start: timeStart,
+                date_end: dateEnd,
+                time_end: timeEnd,
+                created_at: createdAt
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.querySelectorAll('tbody tr').forEach(row => {
+                    let rowConferenceRoomId = row.querySelector('td:nth-child(3)').textContent;
+                    let rowDateStart = row.querySelector('td:nth-child(5)').textContent;
+                    let rowTimeStart = row.querySelector('td:nth-child(6)').textContent;
+                    let rowDateEnd = row.querySelector('td:nth-child(5)').textContent;
+                    let rowTimeEnd = row.querySelector('td:nth-child(6)').textContent;
+                    let rowCreatedAt = row.querySelector('td:nth-child(2)').textContent;
+
+                    if (rowConferenceRoomId === conferenceRoomId && rowDateStart === dateStart && rowTimeStart === timeStart && rowDateEnd === dateEnd && rowTimeEnd === timeEnd && rowCreatedAt === createdAt) {
+                        row.querySelector('td:nth-child(7)').textContent = data.availability;
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    document.querySelectorAll('tbody tr').forEach(row => {
+        row.querySelector('a').addEventListener('click', function() {
+            let conferenceRoomId = row.querySelector('td:nth-child(3)').textContent;
+            let dateStart = row.querySelector('td:nth-child(5)').textContent;
+            let timeStart = row.querySelector('td:nth-child(6)').textContent;
+            let dateEnd = row.querySelector('td:nth-child(5)').textContent;
+            let timeEnd = row.querySelector('td:nth-child(6)').textContent;
+            let createdAt = row.querySelector('td:nth-child(2)').textContent;
+
+            updateAvailability(conferenceRoomId, dateStart, timeStart, dateEnd, timeEnd, createdAt);
+        });
+    });
 </script>

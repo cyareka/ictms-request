@@ -277,7 +277,7 @@ class ConferenceController extends Controller
 
         return response()->json($conferenceRequests);
     }
-    
+
 
 // Availability
 
@@ -331,6 +331,21 @@ public function checkAvailability($conferenceRoomId, $dateStart, $timeStart, $da
         return "Available";
     }
 }
+
+// Add this method to ConferenceController.php
+    public function updateAvailability(Request $request)
+    {
+        $conferenceRoomId = $request->input('conference_room_id');
+        $dateStart = $request->input('date_start');
+        $timeStart = $request->input('time_start');
+        $dateEnd = $request->input('date_end');
+        $timeEnd = $request->input('time_end');
+        $createdAt = $request->input('created_at');
+
+        $availability = $this->checkAvailability($conferenceRoomId, $dateStart, $timeStart, $dateEnd, $timeEnd, $createdAt);
+
+        return response()->json(['availability' => $availability]);
+    }
 
 
 }

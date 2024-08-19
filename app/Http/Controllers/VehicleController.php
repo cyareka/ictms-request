@@ -192,6 +192,6 @@ class VehicleController extends Controller
         Log::info('Passengers fetched:', $passengers->toArray());
 
         // Pass the request data and passengers to the view
-        return view('VehicledetailEdit', compact('requestData', 'passengers'));
+        return view('VehicledetailEdit', ['requestData' => $requestData, 'passengers' => $passengers]);
     }
 }
