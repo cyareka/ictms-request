@@ -92,6 +92,16 @@
             @endphp
 
             @foreach($filteredRequests as $request)
+                @php
+                    $availability = app('App\Http\Controllers\ConferenceController')->checkAvailability(
+                        $request->conference_room_id, 
+                        $request->date_start, 
+                        $request->time_start,
+                        $request->date_end,
+                        $request->time_end,
+                        $request->created_at
+                    );
+                @endphp
                 <tr>
                     <th scope="row">{{ $request->CRequestID }}</th>
                     <td>{{ $request->created_at->format('m-d-Y') }}</td>
@@ -99,7 +109,7 @@
                     <td>{{ $request->office->OfficeName }}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
-                    <td>{{ $request->conferenceRoom->Availability }}</td>
+                    <td>{{ $availability }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
@@ -177,21 +187,12 @@
                 updateTable(data);
             })
             .catch(error => {
-                console.error('Error fetching filtered data:', error);
+                console.error('There was a problem with the fetch operation:', error);
+                alert(`An error occurred while fetching data: ${error.message}`);
             });
     });
 
-    document.querySelector('.cancelbtn').addEventListener('click', function() {
+    function resetFilters() {
         document.getElementById('filterForm').reset();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('Error fetching unfiltered data:', error);
-            });
-    });
+    }
 </script>

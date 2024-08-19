@@ -16,7 +16,7 @@ class ConferenceRoom extends Model
 
     protected $fillable = [
         'CRoomID',
-        'Availability',
+        // 'Availability',
         'CRoomName',
         'Location',
         'Capacity',

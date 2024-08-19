@@ -13,6 +13,7 @@ use App\Models\ConferenceRequest;
 use App\Helpers\IDGenerator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
 use Throwable;
 
 class ConferenceController extends Controller
@@ -276,4 +277,60 @@ class ConferenceController extends Controller
 
         return response()->json($conferenceRequests);
     }
+    
+
+// Availability
+
+public function checkAvailability($conferenceRoomId, $dateStart, $timeStart, $dateEnd, $timeEnd, $createdAt)
+{
+    $startDateTime = Carbon::parse($dateStart . ' ' . $timeStart);
+    $endDateTime = Carbon::parse($dateEnd . ' ' . $timeEnd);
+
+    // Find all requests that overlap with the requested time range
+    $overlappingRequests = ConferenceRequest::where('conference_room_id', $conferenceRoomId)
+        ->where('FormStatus', 'Approved')
+        ->where('EventStatus', 'Ongoing')
+        ->where(function($query) use ($startDateTime, $endDateTime) {
+            $query->where(function($q) use ($startDateTime, $endDateTime) {
+                $q->where('date_start', '<=', $endDateTime->toDateString())
+                  ->where('date_end', '>=', $startDateTime->toDateString())
+                  ->where(function($q2) use ($startDateTime, $endDateTime) {
+                      $q2->where('time_start', '<', $endDateTime->toTimeString())
+                         ->where('time_end', '>', $startDateTime->toTimeString());
+                  });
+            });
+        })
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+    // Check if the request overlaps with any existing booking
+    if ($overlappingRequests->count() > 0) {
+        $firstRequest = $overlappingRequests->first();
+
+        // Compare the created_at timestamp to determine availability
+        if ($firstRequest->created_at->eq($createdAt)) {
+            return "Available";
+        } else {
+            // Find the next available time slot after the last overlapping request
+            $nextAvailableSlot = ConferenceRequest::where('conference_room_id', $conferenceRoomId)
+                ->where('FormStatus', 'Approved')
+                ->where('EventStatus', 'Ongoing')
+                ->where('date_start', '>', $endDateTime->toDateString())
+                ->orderBy('date_start', 'asc')
+                ->orderBy('time_start', 'asc')
+                ->first();
+
+            if ($nextAvailableSlot) {
+                $nextAvailableTime = Carbon::parse($nextAvailableSlot->date_start . ' ' . $nextAvailableSlot->time_start);
+                return "Not Available, next available at " . $nextAvailableTime->format('m-d-Y h:i A');
+            } else {
+                return "Not Available";
+            }
+        }
+    } else {
+        return "Available";
+    }
+}
+
+
 }
