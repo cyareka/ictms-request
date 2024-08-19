@@ -281,71 +281,38 @@ class ConferenceController extends Controller
 
 // Availability
 
-public function checkAvailability($conferenceRoomId, $dateStart, $timeStart, $dateEnd, $timeEnd, $createdAt)
+public function checkAvailability($conference_room_id, $date_start, $time_start, $date_end, $time_end, $current_request_id)
 {
-    $startDateTime = Carbon::parse($dateStart . ' ' . $timeStart);
-    $endDateTime = Carbon::parse($dateEnd . ' ' . $timeEnd);
-
-    // Find all requests that overlap with the requested time range
-    $overlappingRequests = ConferenceRequest::where('conference_room_id', $conferenceRoomId)
-        ->where('FormStatus', 'Approved')
-        ->where('EventStatus', 'Ongoing')
-        ->where(function($query) use ($startDateTime, $endDateTime) {
-            $query->where(function($q) use ($startDateTime, $endDateTime) {
-                $q->where('date_start', '<=', $endDateTime->toDateString())
-                  ->where('date_end', '>=', $startDateTime->toDateString())
-                  ->where(function($q2) use ($startDateTime, $endDateTime) {
-                      $q2->where('time_start', '<', $endDateTime->toTimeString())
-                         ->where('time_end', '>', $startDateTime->toTimeString());
-                  });
-            });
+    // Fetch all requests that overlap with the given date and time for the same conference room
+    $conflictingRequests = ConferenceRequest::where('conference_room_id', $conference_room_id)
+        ->where(function ($query) use ($date_start, $date_end, $time_start, $time_end) {
+            $query->where(function ($query) use ($date_start, $date_end) {
+                    $query->whereBetween('date_start', [$date_start, $date_end])
+                          ->orWhereBetween('date_end', [$date_start, $date_end]);
+                })
+                ->orWhere(function ($query) use ($date_start, $date_end) {
+                    $query->where('date_start', '<=', $date_start)
+                          ->where('date_end', '>=', $date_end);
+                })
+                ->where(function ($query) use ($time_start, $time_end) {
+                    $query->whereBetween('time_start', [$time_start, $time_end])
+                          ->orWhereBetween('time_end', [$time_start, $time_end]);
+                });
         })
-        ->orderBy('created_at', 'asc')
         ->get();
 
-    // Check if the request overlaps with any existing booking
-    if ($overlappingRequests->count() > 0) {
-        $firstRequest = $overlappingRequests->first();
+    // Check if there is an approved request among the conflicting ones
+    $approvedRequest = $conflictingRequests->firstWhere('FormStatus', 'Approved');
 
-        // Compare the created_at timestamp to determine availability
-        if ($firstRequest->created_at->eq($createdAt)) {
-            return "Available";
-        } else {
-            // Find the next available time slot after the last overlapping request
-            $nextAvailableSlot = ConferenceRequest::where('conference_room_id', $conferenceRoomId)
-                ->where('FormStatus', 'Approved')
-                ->where('EventStatus', 'Ongoing')
-                ->where('date_start', '>', $endDateTime->toDateString())
-                ->orderBy('date_start', 'asc')
-                ->orderBy('time_start', 'asc')
-                ->first();
-
-            if ($nextAvailableSlot) {
-                $nextAvailableTime = Carbon::parse($nextAvailableSlot->date_start . ' ' . $nextAvailableSlot->time_start);
-                return "Not Available, next available at " . $nextAvailableTime->format('m-d-Y h:i A');
-            } else {
-                return "Not Available";
-            }
-        }
-    } else {
-        return "Available";
+    // If there's an approved request, and it's not the current one, the current one is not available
+    if ($approvedRequest && $approvedRequest->CRequestID != $current_request_id) {
+        return "Not Available";
     }
+
+    // Otherwise, the request is available
+    return "Available";
 }
 
-// Add this method to ConferenceController.php
-    public function updateAvailability(Request $request)
-    {
-        $conferenceRoomId = $request->input('conference_room_id');
-        $dateStart = $request->input('date_start');
-        $timeStart = $request->input('time_start');
-        $dateEnd = $request->input('date_end');
-        $timeEnd = $request->input('time_end');
-        $createdAt = $request->input('created_at');
-
-        $availability = $this->checkAvailability($conferenceRoomId, $dateStart, $timeStart, $dateEnd, $timeEnd, $createdAt);
-
-        return response()->json(['availability' => $availability]);
-    }
 
 
 }
