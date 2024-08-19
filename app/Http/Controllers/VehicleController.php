@@ -131,7 +131,6 @@ class VehicleController extends Controller
         }
     }
 
-
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
         $sort = $request->get('sort', 'created_at');
@@ -178,11 +177,9 @@ class VehicleController extends Controller
 
         return response()->json($events);
     }
-    public function getRequestData($VRequestID): View|Factory|Application
-    {
-        // Fetch the vehicle request data
-        $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
 
+    public function getPassengersByRequestId($VRequestID)
+    {
         // Fetch passengers associated with the given VRequestID
         $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
             ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
@@ -191,7 +188,49 @@ class VehicleController extends Controller
 
         Log::info('Passengers fetched:', $passengers->toArray());
 
+        return $passengers;
+    }
+
+    public function getRequestData($VRequestID): View|Factory|Application
+    {
+        // Fetch the vehicle request data
+        $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
+        $passengers = $this->getPassengersByRequestId($VRequestID);
+
         // Pass the request data and passengers to the view
         return view('VehicledetailEdit', ['requestData' => $requestData, 'passengers' => $passengers]);
+    }
+
+    public function updateVForm(Request $request, $VRequestID): RedirectResponse
+    {
+        try {
+            // Fetch the existing vehicle request
+            $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
+
+            // Validate the incoming request data
+            $validated = $request->validate([
+                'DriverID' => 'nullable|string|exists:drivers,DriverID',
+                'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
+                'ReceivedBy' => 'nullable|string|max:50',
+                'Remarks' => 'nullable|string|max:255',
+                'Availability' => 'nullable|string|max:50',
+                'AAID' => 'nullable|string|exists:a_authorities,AAID',
+                'SOID' => 'nullable|string|exists:so_authorities,SOID',
+                'ASignatory' => 'nullable|string|max:50',
+                'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
+                'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
+            ]);
+
+            // Update the vehicle request
+            $vehicleRequest->update($validated);
+
+            return redirect()->back()->with('success', 'Vehicle request updated successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation errors: ', $e->errors());
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error('Vehicle request update failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Update failed. Please try again.');
+        }
     }
 }

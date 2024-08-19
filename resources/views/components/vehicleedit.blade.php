@@ -315,7 +315,7 @@
                     <ul>
                         @if(isset($passengers) && $passengers->isNotEmpty())
                             @foreach($passengers as $passenger)
-                                <li value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</li>
+                                <li id="passengers" name="passengers[]" value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</li>
                             @endforeach
                         @else
                             <li>No passengers found</li>

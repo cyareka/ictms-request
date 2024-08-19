@@ -2,7 +2,7 @@
     <div class="py-12">
         <div>
             <div>
-                <x-vehicleedit :requestData="$requestData"/>
+                <x-vehicleedit :requestData="$requestData" :passengers="$passengers"/>
             </div>
         </div>
     </div>
