@@ -426,6 +426,13 @@
     </form>
 </div>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+            input.setAttribute('min', today);
+        });
+    });
+
     function previewSignature(event) {
         const input = event.target;
         const preview = document.getElementById('signature-preview');
@@ -442,7 +449,6 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-
 
     /**
      * Handles various form actions such as adding or removing rows and previewing the signature.
