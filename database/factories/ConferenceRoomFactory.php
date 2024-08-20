@@ -22,7 +22,6 @@ class ConferenceRoomFactory extends Factory
         $idGenerator = new IDGenerator();
         return [
             'CRoomID' => $idGenerator->generateID_3(),
-            'Availability' => 'Available',
             'CRoomName' => $this->faker->name(),
             'Location' => $this->faker->city(),
             'Capacity' => $this->faker->numberBetween(1, 50),

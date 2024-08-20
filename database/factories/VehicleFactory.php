@@ -21,7 +21,6 @@ class VehicleFactory extends Factory
         return [
             'VehicleID' => $idGenerator->generateID_3(),
             'VehicleType' => fake()->word(),
-            'Availability' => 'Available',
             'PlateNo' => fake()->regexify('[A-Z0-9]{8}'),
             'Capacity' => fake()->numberBetween(1, 20),
         ];

@@ -92,40 +92,47 @@
             @endphp
 
             @foreach($filteredRequests as $request)
-    @php
-        // Default availability based on FormStatus
-        if ($request->FormStatus == 'Approved') {
-            $availability = 'Available';
-        } elseif ($request->FormStatus == 'Pending') {
-            $availability = app('App\Http\Controllers\ConferenceController')->checkAvailability(
-                $request->CRoomID,
-                $request->date_start,
-                $request->time_start,
-                $request->date_end,
-                $request->time_end,
-                $request->CRequestID
-            );
-        } else {
-            // Default case for other statuses
-            $availability = 'N/A';
-        }
-    @endphp
-    <tr>
-        <th scope="row">{{ $request->CRequestID }}</th>
-        <td>{{ $request->created_at->format('m-d-Y') }}</td>
-        <td>{{ $request->conferenceRoom->CRoomName }}</td>
-        <td>{{ $request->office->OfficeName }}</td>
-        <td>{{ $request->date_start }}</td>
-        <td>{{ $request->time_start }}</td>
-        <td>{{ $availability }}</td>
-        <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
-        <td>{{ $request->EventStatus }}</td>
-        <td>
-            <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
-            <i class="bi bi-download" id="actions"></i>
-        </td>
-    </tr>
-@endforeach
+                @php
+                    // Determine availability based on the form status
+                    if ($request->FormStatus == 'Approved') {
+                        $availability = 'Available';
+                    } elseif ($request->FormStatus == 'Pending') {
+                        // Check availability against approved and ongoing requests
+                        $checkAv = app('App\Http\Controllers\ConferenceController')->checkAvailability(
+                            $request->CRoomID,
+                            $request->date_start,
+                            $request->time_start,
+                            $request->date_end,
+                            $request->time_end,
+                            $request->CRequestID,
+                        );
+
+                        if ($checkAv === 'Not Available') {
+                            $availability = 'Not Available';
+                        } else {
+                            $availability = 'Available';
+                        }
+                    } else {
+                        // Default case for other statuses
+                        $availability = 'N/A';
+                    }
+                @endphp
+                <tr>
+                    <th scope="row">{{ $request->CRequestID }}</th>
+                    <td>{{ $request->created_at->format('m-d-Y') }}</td>
+                    <td>{{ $request->conferenceRoom->CRoomName }}</td>
+                    <td>{{ $request->office->OfficeName }}</td>
+                    <td>{{ $request->date_start }}</td>
+                    <td>{{ $request->time_start }}</td>
+                    <td>{{ $availability }}</td>
+                    <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
+                    <td>{{ $request->EventStatus }}</td>
+                    <td>
+                        <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>
@@ -141,22 +148,7 @@
         fetchSortedData(newOrder);
     });
 
-    function fetchSortedData(order) {
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-        fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                alert(`An error occurred while fetching data: ${error.message}`);
-            });
-    }
-
-    function updateTable(data) {
+/*    function updateTable(data) {
         let tbody = document.querySelector('tbody');
         tbody.innerHTML = '';
         data.forEach(request => {
@@ -180,7 +172,7 @@
             </tr>`;
             tbody.insertAdjacentHTML('beforeend', row);
         });
-    }
+    }*/
 
     document.getElementById('filterForm').addEventListener('submit', function(event) {
         event.preventDefault();
@@ -204,111 +196,62 @@
         document.getElementById('filterForm').reset();
     }
 
-    function updateAvailability(conferenceRoomId, dateStart, timeStart, dateEnd, timeEnd, createdAt) {
-        fetch('/updateAvailability', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                conference_room_id: conferenceRoomId,
-                date_start: dateStart,
-                time_start: timeStart,
-                date_end: dateEnd,
-                time_end: timeEnd,
-                created_at: createdAt
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                document.querySelectorAll('tbody tr').forEach(row => {
-                    let rowConferenceRoomId = row.querySelector('td:nth-child(3)').textContent;
-                    let rowDateStart = row.querySelector('td:nth-child(5)').textContent;
-                    let rowTimeStart = row.querySelector('td:nth-child(6)').textContent;
-                    let rowDateEnd = row.querySelector('td:nth-child(5)').textContent;
-                    let rowTimeEnd = row.querySelector('td:nth-child(6)').textContent;
-                    let rowCreatedAt = row.querySelector('td:nth-child(2)').textContent;
-
-                    if (rowConferenceRoomId === conferenceRoomId && rowDateStart === dateStart && rowTimeStart === timeStart && rowDateEnd === dateEnd && rowTimeEnd === timeEnd && rowCreatedAt === createdAt) {
-                        row.querySelector('td:nth-child(7)').textContent = data.availability;
-                    }
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    document.querySelectorAll('tbody tr').forEach(row => {
-        row.querySelector('a').addEventListener('click', function() {
-            let conferenceRoomId = row.querySelector('td:nth-child(3)').textContent;
-            let dateStart = row.querySelector('td:nth-child(5)').textContent;
-            let timeStart = row.querySelector('td:nth-child(6)').textContent;
-            let dateEnd = row.querySelector('td:nth-child(5)').textContent;
-            let timeEnd = row.querySelector('td:nth-child(6)').textContent;
-            let createdAt = row.querySelector('td:nth-child(2)').textContent;
-
-            updateAvailability(conferenceRoomId, dateStart, timeStart, dateEnd, timeEnd, createdAt);
-        });
-    });
-
     // Availability
     function fetchSortedData(order) {
-    const form = document.getElementById('filterForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData).toString();
-    fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
-        .then(response => response.json())
-        .then(data => {
-            updateTable(data);
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-            alert(`An error occurred while fetching data: ${error.message}`);
-        });
-}
-
-function updateTable(data) {
-    let tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
-
-    data.forEach(request => {
-        // Ensure that availability is fetched before rendering the row
-        fetch('/checkAvailability', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                conference_room_id: request.conference_room_id,
-                date_start: request.date_start,
-                time_start: request.time_start,
-                date_end: request.date_end,
-                time_end: request.time_end,
-                created_at: request.created_at
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data);
             })
-        })
-        .then(response => response.json())
-        .then(availability => {
-            let row = `<tr>
-                <th scope="row">${request.CRequestID}</th>
-                <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
-                <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
-                <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
-                <td>${request.date_start}</td>
-                <td>${request.time_start}</td>
-                <td>${availability}</td>
-                <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                <td>${request.EventStatus}</td>
-                <td>
-                    <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
-        })
-        .catch(error => console.error('Error:', error));
-    });
-}
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                alert(`An error occurred while fetching data: ${error.message}`);
+            });
+    }
 
+    function updateTable(data) {
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        data.forEach(request => {
+            fetch('/checkAvailability', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    CRoomID: request.CRoomID,
+                    dateStart: request.date_start,
+                    timeStart: request.time_start,
+                    dateEnd: request.date_end,
+                    timeEnd: request.time_end,
+                    currentRequestId: request.CRequestID
+                })
+            })
+            .then(response => response.json())
+            .then(availability => {
+                let row = `<tr>
+                    <th scope="row">${request.CRequestID}</th>
+                    <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
+                    <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
+                    <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
+                    <td>${request.date_start}</td>
+                    <td>${request.time_start}</td>
+                    <td>${availability}</td>
+                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                    <td>${request.EventStatus}</td>
+                    <td>
+                        <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
+                    </td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
 </script>

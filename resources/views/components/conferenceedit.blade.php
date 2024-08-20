@@ -665,7 +665,7 @@
             </div>
             <div class="inline-field">
                 <label for="availability">Availability</label>
-                    <input type="text" id="availability" name="availability" value="{{ $requestData->conferenceRoom->Availability }}" placeholder="-" readonly>
+                    <input type="text" id="availability" name="availability" placeholder="-" readonly>
             </div>
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>

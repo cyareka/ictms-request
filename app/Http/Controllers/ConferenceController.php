@@ -86,17 +86,6 @@ class ConferenceController extends Controller
                     $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
                 }
 
-                // Check for existing approved and ongoing forms
-                $existingRequest = ConferenceRequest::query()
-                    ->where('CRoomID', $conferenceRoom->CRoomID)
-                    ->where('FormStatus', 'Approved')
-                    ->where('EventStatus', 'Ongoing')
-                    ->where('date_start', $dateStart)
-                    ->where('time_start', '<=', $validated['time_end'][$index])
-                    ->where('time_end', '>=', $validated['time_start'][$index])
-                    ->exists();
-
-
                 ConferenceRequest::create([
                     'CRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
@@ -115,7 +104,7 @@ class ConferenceController extends Controller
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
                     'time_end' => $validated['time_end'][$index],
-                    'Availability' => 'Available',
+//                    'Availability' => 'Available',
                 ]);
             }
 
@@ -178,11 +167,12 @@ class ConferenceController extends Controller
         $requestLogData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
         return view('ConferencelogDetail', compact('requestLogData'));
     }
+
     public function getCalendarEvents()
     {
         $events = ConferenceRequest::select('Purpose', 'date_start', 'date_end', 'time_start', 'time_end')
             ->get()
-            ->map(function($event) {
+            ->map(function ($event) {
                 return [
                     'title' => $event->Purpose,
                     'start' => $event->date_start . 'T' . $event->time_start,
@@ -277,52 +267,26 @@ class ConferenceController extends Controller
         return response()->json($conferenceRequests);
     }
 
+    public function checkAvailability($CRoomID, $dateStart, $timeStart, $dateEnd, $timeEnd, $CRequestID): string
+    {
+        // Check for overlapping approved requests
+        $overlappingApproved = ConferenceRequest::where('CRoomID', $CRoomID)
+            ->where('FormStatus', 'Approved')
+            ->where('EventStatus', 'Ongoing')
+            ->where('CRequestID', '!=', $CRequestID)
+            ->where(function ($query) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
+                $query->where(function ($q) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
+                    $q->where('date_start', '<=', $dateEnd)
+                        ->where('date_end', '>=', $dateStart)
+                        ->where('time_start', '<=', $timeEnd)
+                        ->where('time_end', '>=', $timeStart);
+                });
+            })
+            ->exists();
 
-// Availability
-public function checkAvailability($CRoomID, $dateStart, $timeStart, $dateEnd, $timeEnd, $currentRequestId = null)
-{
-    // Check for overlapping approved requests
-    $overlappingApproved = ConferenceRequest::where('CRoomID', $CRoomID)
-        ->where('FormStatus', 'Approved')
-        ->where('EventStatus', 'Ongoing')
-        ->where(function ($query) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
-            $query->where(function ($q) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
-                $q->where('date_start', '<=', $dateEnd)
-                  ->where('date_end', '>=', $dateStart)
-                  ->where('time_start', '<=', $timeEnd)
-                  ->where('time_end', '>=', $timeStart);
-            });
-        })
-        ->exists();
-
-    // If the request itself is approved, it is available
-    if ($overlappingApproved) {
-        return 'Available';
-    } else if ($overlappingApproved == false) {
-        $overlappingPending = ConferenceRequest::where('CRoomID', $CRoomID)
-        ->where('FormStatus', 'Pending')
-        ->where('EventStatus', '-')
-        ->where(function ($query) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
-            $query->where(function ($q) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
-                $q->where('date_start', '<=', $dateEnd)
-                  ->where('date_end', '>=', $dateStart)
-                  ->where('time_start', '<=', $timeEnd)
-                  ->where('time_end', '>=', $timeStart);
-            });
-        })
-        ->exists();
-
-        if ($overlappingPending) {
+        if ($overlappingApproved) {
+            return 'Available';
+        } else
             return 'Not Available';
-        } else {
-            // If the request is pending and overlaps with an approved request, it's not available
-             return '   Available';
-        }
-    } else {
-        return 'Not Available';
     }
-}
-
-
-
 }
