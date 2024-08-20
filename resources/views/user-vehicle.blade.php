@@ -6,7 +6,7 @@
     <title>Vehicle Form</title>
     <link rel="shortcut icon" type="image/png" href="{{('/Logo/logo.png')}}">
 </head>
-<body style="background-image: linear-gradient(to bottom, #02225d,#677a9e)">
+<body style=" background: #eeeeef">
     <x-user-layout>
         <x-slot name="header">
             <!-- <h1 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -16,7 +16,7 @@
 
         <div class="py-12">
             <!-- <div class="max-w-7xl mx-auto sm:px-20"> -->
-                <div class="overflow-hidden">
+                <div class="overflow-hidden" >
                     <x-vehicle-form/>
                 </div>
         </div>

@@ -104,11 +104,29 @@
         span{
             margin-right: 5px;
         }
+        @media (max-width: 768px) {
+                .nav {
+                    flex-direction: row;
+                    align-items: flex-start;
+                }
+                .logo {
+                    margin: 0 auto 15px auto;
+                }
+                .dropdown {
+                    margin: 5px 0;
+                }
+                .dropdown-content a {
+                    font: 10px;
+                }
+                .back-button {
+                    margin: 5px 0;
+                }
+            }
             </style>
             <!-- Import Font Awesome for icons -->
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
     </head>
-            <body style="background-image: linear-gradient(to bottom, #02225d,#677a9e)">
+            <body style=" background: #eeeeef">
                 <div class="head">
                     <div class="nav">
                         <div class="logo">
