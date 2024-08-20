@@ -96,7 +96,6 @@ class ConferenceController extends Controller
                     ->where('time_end', '>=', $validated['time_start'][$index])
                     ->exists();
 
-                $availability = $existingRequest ? 'Unavailable' : 'Available';
 
                 ConferenceRequest::create([
                     'CRequestID' => $generatedID,
@@ -116,7 +115,7 @@ class ConferenceController extends Controller
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
                     'time_end' => $validated['time_end'][$index],
-                    'Availability' => $availability,
+                    'Availability' => 'Available',
                 ]);
             }
 
@@ -280,37 +279,48 @@ class ConferenceController extends Controller
 
 
 // Availability
-
-public function checkAvailability($conference_room_id, $date_start, $time_start, $date_end, $time_end, $current_request_id)
+public function checkAvailability($CRoomID, $dateStart, $timeStart, $dateEnd, $timeEnd, $currentRequestId = null)
 {
-    // Fetch all requests that overlap with the given date and time for the same conference room
-    $conflictingRequests = ConferenceRequest::where('conference_room_id', $conference_room_id)
-        ->where(function ($query) use ($date_start, $date_end, $time_start, $time_end) {
-            $query->where(function ($query) use ($date_start, $date_end) {
-                    $query->whereBetween('date_start', [$date_start, $date_end])
-                          ->orWhereBetween('date_end', [$date_start, $date_end]);
-                })
-                ->orWhere(function ($query) use ($date_start, $date_end) {
-                    $query->where('date_start', '<=', $date_start)
-                          ->where('date_end', '>=', $date_end);
-                })
-                ->where(function ($query) use ($time_start, $time_end) {
-                    $query->whereBetween('time_start', [$time_start, $time_end])
-                          ->orWhereBetween('time_end', [$time_start, $time_end]);
-                });
+    // Check for overlapping approved requests
+    $overlappingApproved = ConferenceRequest::where('CRoomID', $CRoomID)
+        ->where('FormStatus', 'Approved')
+        ->where('EventStatus', 'Ongoing')
+        ->where(function ($query) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
+            $query->where(function ($q) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
+                $q->where('date_start', '<=', $dateEnd)
+                  ->where('date_end', '>=', $dateStart)
+                  ->where('time_start', '<=', $timeEnd)
+                  ->where('time_end', '>=', $timeStart);
+            });
         })
-        ->get();
+        ->exists();
 
-    // Check if there is an approved request among the conflicting ones
-    $approvedRequest = $conflictingRequests->firstWhere('FormStatus', 'Approved');
+    // If the request itself is approved, it is available
+    if ($overlappingApproved) {
+        return 'Available';
+    } else if ($overlappingApproved == false) {
+        $overlappingPending = ConferenceRequest::where('CRoomID', $CRoomID)
+        ->where('FormStatus', 'Pending')
+        ->where('EventStatus', '-')
+        ->where(function ($query) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
+            $query->where(function ($q) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
+                $q->where('date_start', '<=', $dateEnd)
+                  ->where('date_end', '>=', $dateStart)
+                  ->where('time_start', '<=', $timeEnd)
+                  ->where('time_end', '>=', $timeStart);
+            });
+        })
+        ->exists();
 
-    // If there's an approved request, and it's not the current one, the current one is not available
-    if ($approvedRequest && $approvedRequest->CRequestID != $current_request_id) {
-        return "Not Available";
+        if ($overlappingPending) {
+            return 'Not Available';
+        } else {
+            // If the request is pending and overlaps with an approved request, it's not available
+             return '   Available';
+        }
+    } else {
+        return 'Not Available';
     }
-
-    // Otherwise, the request is available
-    return "Available";
 }
 
 

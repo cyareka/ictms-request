@@ -92,32 +92,40 @@
             @endphp
 
             @foreach($filteredRequests as $request)
-                @php
-                    $availability = app('App\Http\Controllers\ConferenceController')->checkAvailability(
-                        $request->conference_room_id,
-                        $request->date_start,
-                        $request->time_start,
-                        $request->date_end,
-                        $request->time_end,
-                        $request->CRequestID
-                    );
-                @endphp
-                <tr>
-                    <th scope="row">{{ $request->CRequestID }}</th>
-                    <td>{{ $request->created_at->format('m-d-Y') }}</td>
-                    <td>{{ $request->conferenceRoom->CRoomName }}</td>
-                    <td>{{ $request->office->OfficeName }}</td>
-                    <td>{{ $request->date_start }}</td>
-                    <td>{{ $request->time_start }}</td>
-                    <td>{{ $availability }}</td>
-                    <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
-                    <td>{{ $request->EventStatus }}</td>
-                    <td>
-                        <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
-                    </td>
-                </tr>
-            @endforeach
+    @php
+        // Default availability based on FormStatus
+        if ($request->FormStatus == 'Approved') {
+            $availability = 'Available';
+        } elseif ($request->FormStatus == 'Pending') {
+            $availability = app('App\Http\Controllers\ConferenceController')->checkAvailability(
+                $request->CRoomID,
+                $request->date_start,
+                $request->time_start,
+                $request->date_end,
+                $request->time_end,
+                $request->CRequestID
+            );
+        } else {
+            // Default case for other statuses
+            $availability = 'N/A';
+        }
+    @endphp
+    <tr>
+        <th scope="row">{{ $request->CRequestID }}</th>
+        <td>{{ $request->created_at->format('m-d-Y') }}</td>
+        <td>{{ $request->conferenceRoom->CRoomName }}</td>
+        <td>{{ $request->office->OfficeName }}</td>
+        <td>{{ $request->date_start }}</td>
+        <td>{{ $request->time_start }}</td>
+        <td>{{ $availability }}</td>
+        <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
+        <td>{{ $request->EventStatus }}</td>
+        <td>
+            <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+            <i class="bi bi-download" id="actions"></i>
+        </td>
+    </tr>
+@endforeach
             </tbody>
         </table>
     </div>
