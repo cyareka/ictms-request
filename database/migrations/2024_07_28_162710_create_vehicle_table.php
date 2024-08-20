@@ -13,7 +13,6 @@ return new class extends Migration
         Schema::create('vehicle', function (Blueprint $table) {
             $table->string('VehicleID', 3)->primary();
             $table->string('VehicleType');
-            $table->enum('Availability', ['Available', 'Not Available'])->default('Available');
             $table->string('PlateNo', 8);
             $table->integer('Capacity');
             $table->timestamps();
@@ -24,7 +23,6 @@ return new class extends Migration
             $table->string('DriverName', 50);
             $table->string('DriverEmail', 30);
             $table->string('ContactNo', 13);
-            $table->enum('Availability', ['Available', 'Not Available']);
             $table->timestamps();
         });
 
