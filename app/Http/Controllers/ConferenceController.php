@@ -186,44 +186,33 @@ class ConferenceController extends Controller
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
-        $sort = $request->get('sort', 'created_at');
-        $order = $request->get('order', 'desc');
-        $conferenceRoom = $request->get('conference_room');
-        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
-        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
-
-        Log::info('Filter parameters:', [
-            'sort' => $sort,
-            'order' => $order,
-            'conference_room' => $conferenceRoom,
-            'form_statuses' => $formStatuses,
-            'event_statuses' => $eventStatuses,
-        ]);
-
-        $query = ConferenceRequest::with('office', 'conferenceRoom')
-            ->orderBy($sort, $order);
-
-        if ($conferenceRoom) {
-            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
-                $q->where('CRoomName', $conferenceRoom);
+        // Get sorting criteria from the request
+        $sortBy = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'desc');
+    
+        // Fetch requests based on filters and sorting criteria
+        $conferenceRequests = ConferenceRequest::with(['conferenceRoom', 'office']) // Include related models
+            ->whereIn('FormStatus', ['Approved', 'Pending'])
+            ->whereIn('EventStatus', ['Ongoing', '-'])
+            ->orderBy($sortBy, $order)
+            ->get()
+            ->map(function ($request) {
+                // Determine availability for each request
+                $availability = $request->FormStatus == 'Approved' ? 'Available' : $this->checkAvailability(
+                    $request->CRoomID,
+                    $request->date_start,
+                    $request->time_start,
+                    $request->date_end,
+                    $request->time_end,
+                    $request->CRequestID
+                );
+    
+                return array_merge($request->toArray(), ['availability' => $availability]);
             });
-        }
-
-        if ($formStatuses) {
-            $query->whereIn('FormStatus', $formStatuses);
-        }
-
-        if ($eventStatuses) {
-            $query->whereIn('EventStatus', $eventStatuses);
-        }
-
-        $conferenceRequests = $query->get();
-
-        Log::info('Query results:', $conferenceRequests->toArray());
-
+    
         return response()->json($conferenceRequests);
     }
-
+    
     // Conference Request Logs Filter and Sort
     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
     {

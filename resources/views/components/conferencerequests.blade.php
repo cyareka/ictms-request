@@ -140,118 +140,52 @@
 <div class="end"></div>
 
 <script>
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder);
-    });
+   document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+    e.preventDefault();
+    let order = this.getAttribute('data-order');
+    let newOrder = order === 'asc' ? 'desc' : 'asc';
+    this.setAttribute('data-order', newOrder);
+    fetchSortedData(newOrder);
+});
 
-/*    function updateTable(data) {
-        let tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
-        data.forEach(request => {
-            let conferenceRoomName = request.conference_room ? request.conference_room.CRoomName : 'N/A';
-            let officeName = request.office ? request.office.OfficeName : 'N/A';
-            let availability = request.conference_room ? request.conference_room.Availability : 'N/A';
-            let row = `<tr>
-                <th scope="row">${request.CRequestID}</th>
-                <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
-                <td>${conferenceRoomName}</td>
-                <td>${officeName}</td>
-                <td>${request.date_start}</td>
-                <td>${request.time_start}</td>
-                <td>${availability}</td>
-                <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                <td>${request.EventStatus}</td>
-                <td>
-                    <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
+function fetchSortedData(order) {
+    const form = document.getElementById('filterForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
+
+    fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert(`An error occurred while fetching data: ${error.message}`);
         });
-    }*/
+}
 
-    document.getElementById('filterForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+function updateTable(data) {
+    let tbody = document.querySelector('tbody');
+    tbody.innerHTML = '';
 
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                alert(`An error occurred while fetching data: ${error.message}`);
-            });
+    data.forEach(request => {
+        let row = `<tr>
+            <th scope="row">${request.CRequestID}</th>
+            <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
+            <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
+            <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
+            <td>${request.date_start}</td>
+            <td>${request.time_start}</td>
+            <td>${request.availability}</td>
+            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+            <td>${request.EventStatus}</td>
+            <td>
+                <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                <i class="bi bi-download" id="actions"></i>
+            </td>
+        </tr>`;
+        tbody.insertAdjacentHTML('beforeend', row);
     });
+}
 
-    function resetFilters() {
-        document.getElementById('filterForm').reset();
-    }
-
-    // Availability
-    function fetchSortedData(order) {
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-        fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                alert(`An error occurred while fetching data: ${error.message}`);
-            });
-    }
-
-    function updateTable(data) {
-        let tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
-
-        data.forEach(request => {
-            fetch('/checkAvailability', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    CRoomID: request.CRoomID,
-                    dateStart: request.date_start,
-                    timeStart: request.time_start,
-                    dateEnd: request.date_end,
-                    timeEnd: request.time_end,
-                    currentRequestId: request.CRequestID
-                })
-            })
-            .then(response => response.json())
-            .then(availability => {
-                let row = `<tr>
-                    <th scope="row">${request.CRequestID}</th>
-                    <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
-                    <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
-                    <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
-                    <td>${request.date_start}</td>
-                    <td>${request.time_start}</td>
-                    <td>${availability}</td>
-                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                    <td>${request.EventStatus}</td>
-                    <td>
-                        <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
-                    </td>
-                </tr>`;
-                tbody.insertAdjacentHTML('beforeend', row);
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    }
 </script>
