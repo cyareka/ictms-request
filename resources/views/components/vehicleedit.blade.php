@@ -620,7 +620,7 @@
                     return;
                 }
             }
-            window.location.href = '/dashboard';
+            window.location.href = '/VehicleTabular';
         }
 
         // Attach the cancelForm function to the cancel button
