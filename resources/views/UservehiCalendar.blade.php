@@ -13,7 +13,7 @@
 
         <div class="py-12">
             <div>
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div  style=" background: #eeeeef">
                     <x-uservehicalendar/>
                 </div>
             </div>
