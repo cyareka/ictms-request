@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use Throwable;
+use function Pest\Laravel\get;
 
 class ConferenceController extends Controller
 {
@@ -86,7 +87,7 @@ class ConferenceController extends Controller
                 if ($request->hasFile('RequesterSignature')) {
                     $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
                 }
-                
+
                 $existingRequests = ConferenceRequest::query()
                     ->where('CRoomID', $conferenceRoom->CRoomID)
                     ->where('FormStatus', 'Approved')
@@ -140,58 +141,115 @@ class ConferenceController extends Controller
         }
     }
 
-    public function updateCForm(Request $request): RedirectResponse
-    {
-        try {
-            // Validate only the formStatus and eventStatus fields
-            $validated = $request->validate([
-                'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
-                'FormStatus' => 'required|string|in:Pending,Approved,Not Approved',
-                'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
-            ]);
+public function updateCForm(Request $request): RedirectResponse
+{
+    try {
+        // Validate only the formStatus and eventStatus fields
+        $validated = $request->validate([
+            'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
+            'FormStatus' => 'required|string|in:Pending,Approved,Not Approved',
+            'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
+        ]);
 
-            // Retrieve the conference request using Eloquent ORM
-            $conferenceRequest = ConferenceRequest::with('conferenceRoom')->where('CRequestID', $validated['CRequestID'])->firstOrFail();
+        // Retrieve the conference request using Eloquent ORM
+        $conferenceRequest = ConferenceRequest::with('conferenceRoom')->where('CRequestID', $validated['CRequestID'])->firstOrFail();
 
-            // Update the formStatus and eventStatus fields
-            $conferenceRequest->update([
-                'FormStatus' => $validated['FormStatus'],
-                'EventStatus' => $validated['EventStatus'],
-            ]);
+        // Update the formStatus and eventStatus fields
+        $conferenceRequest->update([
+            'FormStatus' => $validated['FormStatus'],
+            'EventStatus' => $validated['EventStatus'],
+        ]);
 
-            // If the request is approved, update availability and other pending requests
-            if ($validated['FormStatus'] === 'Approved') {
-                $conferenceRequest->CAvailability = true;
-                $conferenceRequest->save();
+        // If the request is approved, update availability and other pending requests
+        if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
+            $conferenceRequest->CAvailability = true;
+            $conferenceRequest->save();
 
-                $otherRequests = ConferenceRequest::all()->where('FormStatus', 'Pending');
+            $otherRequests = ConferenceRequest::all()
+                ->where('date_start', '=', $conferenceRequest->date_start)
+                ->where('date_end', '=', $conferenceRequest->date_end)
+                ->where('time_start', '=', $conferenceRequest->time_start)
+                ->where('time_end', '=', $conferenceRequest->time_end)
+                ->where('CRoomID', '=', $conferenceRequest->CRoomID)
+                ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
+                ->where('FormStatus', '=','Pending')
+                ->where('EventStatus', '=','-');
 
-                Log::info('Other requests:', $otherRequests->toArray());
-
-                foreach ($otherRequests as $request) {
-                    ConferenceRequest::query()
-                        ->whereDate('date_start', '=', $request->date_start)
-                        ->whereDate('date_end', '=', $request->date_end)
-                        ->whereTime('time_start', '=', $request->time_start)
-                        ->whereTime('time_end', '=', $request->time_end)
-                        ->where('CRoomID', '=', $request->CRoomID)
-                        ->where('FormStatus', '=', 'Pending')
-                        ->where('CRequestID', '!=', $request->CRequestID);
-                }
-                foreach ($otherRequests as $otherRequest) {
+            foreach ($otherRequests as $otherRequest) {
+                if (
+                    $otherRequest->date_start <= $conferenceRequest->date_end &&
+                    $otherRequest->date_end >= $conferenceRequest->date_start &&
+                    $otherRequest->time_start <= $conferenceRequest->time_end &&
+                    $otherRequest->time_end >= $conferenceRequest->time_start &&
+                    ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
+                    ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
+                ) {
                     $otherRequest->update(['CAvailability' => false]);
                 }
             }
+        } elseif ($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') {
+            $conferenceRequest->CAvailability = true;
+            $conferenceRequest->save();
 
-            return redirect()->back()->with('success', 'Conference room request updated successfully.');
-        } catch (ValidationException $e) {
-            Log::error('Validation errors: ', $e->errors());
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (Throwable $e) {
-            Log::error('Conference room request update failed: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Form update failed. Please try again.');
+            $otherRequests = ConferenceRequest::all()
+                ->where('date_start', '=', $conferenceRequest->date_start)
+                ->where('date_end', '=', $conferenceRequest->date_end)
+                ->where('time_start', '=', $conferenceRequest->time_start)
+                ->where('time_end', '=', $conferenceRequest->time_end)
+                ->where('CRoomID', '=', $conferenceRequest->CRoomID)
+                ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
+                ->where('FormStatus', '=','Pending')
+                ->where('EventStatus', '=','-');
+
+            foreach ($otherRequests as $otherRequest) {
+                if (
+                    $otherRequest->date_start <= $conferenceRequest->date_end &&
+                    $otherRequest->date_end >= $conferenceRequest->date_start &&
+                    $otherRequest->time_start <= $conferenceRequest->time_end &&
+                    $otherRequest->time_end >= $conferenceRequest->time_start &&
+                    ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
+                    ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
+                ) {
+                    $otherRequest->update(['CAvailability' => true]);
+                }
+            }
+        } elseif(($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
+            $conferenceRequest->CAvailability = null;
+            $conferenceRequest->save();
+
+            $otherRequests = ConferenceRequest::all()
+                ->where('date_start', '=', $conferenceRequest->date_start)
+                ->where('date_end', '=', $conferenceRequest->date_end)
+                ->where('time_start', '=', $conferenceRequest->time_start)
+                ->where('time_end', '=', $conferenceRequest->time_end)
+                ->where('CRoomID', '=', $conferenceRequest->CRoomID)
+                ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
+                ->where('FormStatus', '=','Pending')
+                ->where('EventStatus', '=','-');
+
+            foreach ($otherRequests as $otherRequest) {
+                if (
+                    $otherRequest->date_start <= $conferenceRequest->date_end &&
+                    $otherRequest->date_end >= $conferenceRequest->date_start &&
+                    $otherRequest->time_start <= $conferenceRequest->time_end &&
+                    $otherRequest->time_end >= $conferenceRequest->time_start &&
+                    ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
+                    ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
+                ) {
+                    $otherRequest->update(['CAvailability' => true]);
+                }
+            }
         }
+
+        return redirect()->back()->with('success', 'Conference room request updated successfully.');
+    } catch (ValidationException $e) {
+        Log::error('Validation errors: ', $e->errors());
+        return redirect()->back()->withErrors($e->errors())->withInput();
+    } catch (Throwable $e) {
+        Log::error('Conference room request update failed: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Form update failed. Please try again.');
     }
+}
 
     /**
      * Retrieves the request data for a specific conference request.
@@ -261,45 +319,19 @@ class ConferenceController extends Controller
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
         // Get sorting criteria from the request
-        $sortBy = $request->input('sort', 'created_at');
+        $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
 
-        // Fetch requests based on filters and sorting criteria
-        $conferenceRequests = ConferenceRequest::with(['conferenceRoom', 'office']) // Include related models
-            ->whereIn('FormStatus', ['Approved', 'Pending'])
-            ->whereIn('EventStatus', ['Ongoing', '-'])
-            ->orderBy($sortBy, $order)
-            ->get()
-            ->map(function ($request) {
-                // Determine availability for each request
-                $availability = $request->FormStatus == 'Approved' ? 'Available' : $this->checkAvailability(
-                    $request->CRoomID,
-                    $request->date_start,
-                    $request->time_start,
-                    $request->date_end,
-                    $request->time_end,
-                    $request->CRequestID
-                );
-
-                return array_merge($request->toArray(), ['availability' => $availability]);
-            });
-
-        return response()->json($conferenceRequests);
-    }
-
-    // Conference Request Logs Filter and Sort
-    public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $sort = $request->get('sort', 'created_at');
-        $order = $request->get('order', 'desc');
         $conferenceRoom = $request->get('conference_room');
-        $statusPairs = $request->get('status_pairs', []);
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
 
         Log::info('Filter parameters:', [
             'sort' => $sort,
             'order' => $order,
             'conference_room' => $conferenceRoom,
-            'status_pairs' => $statusPairs,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
         ]);
 
         $query = ConferenceRequest::with('office', 'conferenceRoom')
@@ -311,9 +343,60 @@ class ConferenceController extends Controller
             });
         }
 
-        if ($statusPairs) {
-            $query->where(function ($q) use ($statusPairs) {
-                foreach ($statusPairs as $pair) {
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+
+        if ($eventStatuses) {
+            $query->whereIn('EventStatus', $eventStatuses);
+        }
+
+        $conferenceRequests = $query->get();
+
+        Log::info('Query results:', $conferenceRequests->toArray());
+
+        return response()->json($conferenceRequests);
+    }
+
+    // Conference Request Logs Filter and Sort
+     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $conferenceRoom = $request->get('conference_room');
+        $statusPairs = $request->get('status_pairs', []);
+
+        // Define allowed status pairs
+        $allowedStatusPairs = [
+            'Approved,Finished',
+            'Approved,Cancelled',
+            'Not Approved,-'
+        ];
+
+        // Filter status pairs to include only allowed ones
+        $filteredStatusPairs = array_filter($statusPairs, function ($pair) use ($allowedStatusPairs) {
+            return in_array($pair, $allowedStatusPairs);
+        });
+
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'conference_room' => $conferenceRoom,
+            'status_pairs' => $filteredStatusPairs,
+        ]);
+
+        $query = ConferenceRequest::with('office', 'conferenceRoom')
+            ->orderBy($sort, $order);
+
+        if ($conferenceRoom) {
+            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+                $q->where('CRoomName', $conferenceRoom);
+            });
+        }
+
+        if ($filteredStatusPairs) {
+            $query->where(function ($q) use ($filteredStatusPairs) {
+                foreach ($filteredStatusPairs as $pair) {
                     [$formStatus, $eventStatus] = explode(',', $pair);
                     $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
                         $q->where('FormStatus', $formStatus)

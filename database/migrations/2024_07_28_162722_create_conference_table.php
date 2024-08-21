@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('time_end', 9);
             $table->integer('npersons');
             $table->string('focalPerson', 50);
-            $table->boolean('CAvailability')->default(true);
+            $table->boolean('CAvailability')->default(true)->nullable();
             $table->integer('tables')->nullable();
             $table->integer('chairs')->nullable();
             $table->string('otherFacilities', 50)->nullable();

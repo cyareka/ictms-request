@@ -56,12 +56,10 @@ Route::middleware([
     // Conference Table View
     Route::get('/conference-requests',
         [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');
-    Route::post('/checkAvailability', [ConferenceController::class, 'checkAvailability']);
 
     // Vehicle Table View
     Route::get('/vehicle-requests',
         [VehicleController::class, 'fetchSortedRequests'])->name('conference.requests');
-
 
     // Conference Edit
     Route::post('/conference-room/update',
