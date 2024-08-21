@@ -163,19 +163,49 @@ class VehicleController extends Controller
         return response()->json($vehicleRequests);
     }
 
-    public function getCalendarEvents()
+    public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
     {
-        $events = VehicleRequest::select('Purpose', 'date_start', 'date_end', 'time_start', 'time_end')
-            ->get()
-            ->map(function($event) {
+        $title = $request->get('Purpose');
+        $destination = $request->get('Destination');
+        $formStatuses = $request->get('form_statuses', []);
+        $startDate = $request->get('date_start');
+        $endDate = $request->get('date_end');
+    
+        $query = VehicleRequest::query();
+    
+        if ($title) {
+            $query->where('Purpose', 'like', "%$title%");
+        }
+    
+        if ($destination) {
+            $query->where('Destination', 'like', "%$destination%");
+        }
+    
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+    
+        if ($startDate && $endDate) {
+            $query->whereBetween('date_start', [$startDate, $endDate])
+                  ->orWhereBetween('date_end', [$startDate, $endDate])
+                  ->orWhere(function ($q) use ($startDate, $endDate) {
+                      $q->where('date_start', '<=', $startDate)
+                        ->where('date_end', '>=', $endDate);
+                  });
+        }
+    
+        $vehicleRequests = $query->get()
+            ->map(function ($event) {
                 return [
                     'title' => $event->Purpose,
                     'start' => $event->date_start . 'T' . $event->time_start,
                     'end' => $event->date_end . 'T' . $event->time_end,
+                    'EventStatus' => $event->FormStatus,
+                    'Destination' => $event->Destination,
                 ];
             });
-
-        return response()->json($events);
+    
+        return response()->json($vehicleRequests);
     }
 
     public function getPassengersByRequestId($VRequestID)

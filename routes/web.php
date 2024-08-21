@@ -153,7 +153,8 @@ Route::get('/UservehiCalendar', function () {
     return view('UservehiCalendar');
 })->name('UservehiCalendar');
 
-Route::get('/calendar/events', [ConferenceController::class, 'getCalendarEvents']);
+Route::get('/calendar/events', [ConferenceController::class, 'fetchCalendarEvents'])->name('fetchCalendarEvents');
+Route::get('/calendar2/events', [VehicleController::class, 'fetchCalendarEvents'])->name('fetchCalendarEvents');
 // OTP Verification Routes
 Route::get('/verify-otp', [OtpVerificationController::class, 'showVerifyForm'])->name('verify.otp');
 Route::post('/verify-otp', [OtpVerificationController::class, 'verifyOtp'])->name('otp.verify');
