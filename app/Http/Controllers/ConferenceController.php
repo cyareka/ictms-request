@@ -141,125 +141,115 @@ class ConferenceController extends Controller
         }
     }
 
-public function updateCForm(Request $request): RedirectResponse
-{
-    try {
-        // Validate only the formStatus and eventStatus fields
-        $validated = $request->validate([
-            'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
-            'FormStatus' => 'required|string|in:Pending,Approved,Not Approved',
-            'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
-        ]);
+    public function updateCForm(Request $request): RedirectResponse
+    {
+        try {
+            // Validate only the formStatus and eventStatus fields
+            $validated = $request->validate([
+                'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
+                'FormStatus' => 'required|string|in:Pending,Approved,Not Approved',
+                'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
+            ]);
 
-        // Retrieve the conference request using Eloquent ORM
-        $conferenceRequest = ConferenceRequest::with('conferenceRoom')->where('CRequestID', $validated['CRequestID'])->firstOrFail();
+            // Retrieve the conference request using Eloquent ORM
+            $conferenceRequest = ConferenceRequest::with('conferenceRoom')->where('CRequestID', $validated['CRequestID'])->firstOrFail();
 
-        // Update the formStatus and eventStatus fields
-        $conferenceRequest->update([
-            'FormStatus' => $validated['FormStatus'],
-            'EventStatus' => $validated['EventStatus'],
-        ]);
+            // Update the formStatus and eventStatus fields
+            $conferenceRequest->update([
+                'FormStatus' => $validated['FormStatus'],
+                'EventStatus' => $validated['EventStatus'],
+            ]);
 
-        // If the request is approved, update availability and other pending requests
-        if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
-            $conferenceRequest->CAvailability = true;
-            $conferenceRequest->save();
+            // If the request is approved, update availability and other pending requests
+            if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
+                $conferenceRequest->CAvailability = true;
+                $conferenceRequest->save();
 
-            $otherRequests = ConferenceRequest::all()
-                ->where('date_start', '=', $conferenceRequest->date_start)
-                ->where('date_end', '=', $conferenceRequest->date_end)
-                ->where('time_start', '=', $conferenceRequest->time_start)
-                ->where('time_end', '=', $conferenceRequest->time_end)
-                ->where('CRoomID', '=', $conferenceRequest->CRoomID)
-                ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                ->where('FormStatus', '=','Pending')
-                ->where('EventStatus', '=','-');
+                $otherRequests = ConferenceRequest::all()
+                    ->where('date_start', '=', $conferenceRequest->date_start)
+                    ->where('date_end', '=', $conferenceRequest->date_end)
+                    ->where('time_start', '=', $conferenceRequest->time_start)
+                    ->where('time_end', '=', $conferenceRequest->time_end)
+                    ->where('CRoomID', '=', $conferenceRequest->CRoomID)
+                    ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
+                    ->where('FormStatus', '=','Pending')
+                    ->where('EventStatus', '=','-');
 
-            foreach ($otherRequests as $otherRequest) {
-                if (
-                    $otherRequest->date_start <= $conferenceRequest->date_end &&
-                    $otherRequest->date_end >= $conferenceRequest->date_start &&
-                    $otherRequest->time_start <= $conferenceRequest->time_end &&
-                    $otherRequest->time_end >= $conferenceRequest->time_start &&
-                    ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
-                    ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
-                ) {
-                    $otherRequest->update(['CAvailability' => false]);
+                foreach ($otherRequests as $otherRequest) {
+                    if (
+                        $otherRequest->date_start <= $conferenceRequest->date_end &&
+                        $otherRequest->date_end >= $conferenceRequest->date_start &&
+                        $otherRequest->time_start <= $conferenceRequest->time_end &&
+                        $otherRequest->time_end >= $conferenceRequest->time_start &&
+                        ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
+                        ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
+                    ) {
+                        $otherRequest->update(['CAvailability' => false]);
+                    }
+                }
+            } elseif ($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') {
+                $conferenceRequest->CAvailability = true;
+                $conferenceRequest->save();
+
+                $otherRequests = ConferenceRequest::all()
+                    ->where('date_start', '=', $conferenceRequest->date_start)
+                    ->where('date_end', '=', $conferenceRequest->date_end)
+                    ->where('time_start', '=', $conferenceRequest->time_start)
+                    ->where('time_end', '=', $conferenceRequest->time_end)
+                    ->where('CRoomID', '=', $conferenceRequest->CRoomID)
+                    ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
+                    ->where('FormStatus', '=','Pending')
+                    ->where('EventStatus', '=','-');
+
+                foreach ($otherRequests as $otherRequest) {
+                    if (
+                        $otherRequest->date_start <= $conferenceRequest->date_end &&
+                        $otherRequest->date_end >= $conferenceRequest->date_start &&
+                        $otherRequest->time_start <= $conferenceRequest->time_end &&
+                        $otherRequest->time_end >= $conferenceRequest->time_start &&
+                        ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
+                        ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
+                    ) {
+                        $otherRequest->update(['CAvailability' => true]);
+                    }
+                }
+            } elseif(($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
+                $conferenceRequest->CAvailability = null;
+                $conferenceRequest->save();
+
+                $otherRequests = ConferenceRequest::all()
+                    ->where('date_start', '=', $conferenceRequest->date_start)
+                    ->where('date_end', '=', $conferenceRequest->date_end)
+                    ->where('time_start', '=', $conferenceRequest->time_start)
+                    ->where('time_end', '=', $conferenceRequest->time_end)
+                    ->where('CRoomID', '=', $conferenceRequest->CRoomID)
+                    ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
+                    ->where('FormStatus', '=','Pending')
+                    ->where('EventStatus', '=','-');
+
+                foreach ($otherRequests as $otherRequest) {
+                    if (
+                        $otherRequest->date_start <= $conferenceRequest->date_end &&
+                        $otherRequest->date_end >= $conferenceRequest->date_start &&
+                        $otherRequest->time_start <= $conferenceRequest->time_end &&
+                        $otherRequest->time_end >= $conferenceRequest->time_start &&
+                        ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
+                        ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
+                    ) {
+                        $otherRequest->update(['CAvailability' => true]);
+                    }
                 }
             }
-        } elseif ($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') {
-            $conferenceRequest->CAvailability = true;
-            $conferenceRequest->save();
 
-            $otherRequests = ConferenceRequest::all()
-                ->where('date_start', '=', $conferenceRequest->date_start)
-                ->where('date_end', '=', $conferenceRequest->date_end)
-                ->where('time_start', '=', $conferenceRequest->time_start)
-                ->where('time_end', '=', $conferenceRequest->time_end)
-                ->where('CRoomID', '=', $conferenceRequest->CRoomID)
-                ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                ->where('FormStatus', '=','Pending')
-                ->where('EventStatus', '=','-');
-
-            foreach ($otherRequests as $otherRequest) {
-                if (
-                    $otherRequest->date_start <= $conferenceRequest->date_end &&
-                    $otherRequest->date_end >= $conferenceRequest->date_start &&
-                    $otherRequest->time_start <= $conferenceRequest->time_end &&
-                    $otherRequest->time_end >= $conferenceRequest->time_start &&
-                    ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
-                    ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
-                ) {
-                    $otherRequest->update(['CAvailability' => true]);
-                }
-            }
-        } elseif(($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
-            $conferenceRequest->CAvailability = null;
-            $conferenceRequest->save();
-
-            $otherRequests = ConferenceRequest::all()
-                ->where('date_start', '=', $conferenceRequest->date_start)
-                ->where('date_end', '=', $conferenceRequest->date_end)
-                ->where('time_start', '=', $conferenceRequest->time_start)
-                ->where('time_end', '=', $conferenceRequest->time_end)
-                ->where('CRoomID', '=', $conferenceRequest->CRoomID)
-                ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                ->where('FormStatus', '=','Pending')
-                ->where('EventStatus', '=','-');
-
-            foreach ($otherRequests as $otherRequest) {
-                if (
-                    $otherRequest->date_start <= $conferenceRequest->date_end &&
-                    $otherRequest->date_end >= $conferenceRequest->date_start &&
-                    $otherRequest->time_start <= $conferenceRequest->time_end &&
-                    $otherRequest->time_end >= $conferenceRequest->time_start &&
-                    ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
-                    ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
-                ) {
-                    $otherRequest->update(['CAvailability' => true]);
-                }
-            }
+            return redirect()->back()->with('success', 'Conference room request updated successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation errors: ', $e->errors());
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error('Conference room request update failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Form update failed. Please try again.');
         }
-
-        return redirect()->back()->with('success', 'Conference room request updated successfully.');
-    } catch (ValidationException $e) {
-        Log::error('Validation errors: ', $e->errors());
-        return redirect()->back()->withErrors($e->errors())->withInput();
-    } catch (Throwable $e) {
-        Log::error('Conference room request update failed: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Form update failed. Please try again.');
     }
-}
-
-    /**
-     * Retrieves the request data for a specific conference request.
-     *
-     * This function fetches the conference request data along with related office and conference room details.
-     * It then returns a view with the retrieved data.
-     *
-     * @param string $CRequestID The ID of the conference request to retrieve.
-     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application The view displaying the conference request details.
-     */
     public function getRequestData(string $CRequestID): View|Factory|Application
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
@@ -412,27 +402,4 @@ public function updateCForm(Request $request): RedirectResponse
 
         return response()->json($conferenceRequests);
     }
-
-/*    public function checkAvailability($CRoomID, $dateStart, $timeStart, $dateEnd, $timeEnd, $CRequestID): string
-    {
-        // Check for overlapping approved requests
-        $overlappingApproved = ConferenceRequest::where('CRoomID', $CRoomID)
-            ->where('FormStatus', 'Approved')
-            ->where('EventStatus', 'Ongoing')
-            ->where('CRequestID', '!=', $CRequestID)
-            ->where(function ($query) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
-                $query->where(function ($q) use ($dateStart, $timeStart, $dateEnd, $timeEnd) {
-                    $q->where('date_start', '<=', $dateEnd)
-                        ->where('date_end', '>=', $dateStart)
-                        ->where('time_start', '<=', $timeEnd)
-                        ->where('time_end', '>=', $timeStart);
-                });
-            })
-            ->exists();
-
-        if ($overlappingApproved) {
-            return 'Available';
-        } else
-            return 'Not Available';
-    }*/
 }
