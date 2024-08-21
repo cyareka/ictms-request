@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\ConferenceRoom;
 use App\Models\ConferenceRequest;
 use App\Helpers\IDGenerator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
@@ -52,9 +53,9 @@ class ConferenceController extends Controller
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
                 'purpose' => 'required|string|max:255',
-                'date_start.*' => 'required|date',
+                'date_start.*' => 'required|date_format:Y-m-d',
                 'date_end' => 'required|array|min:1',
-                'date_end.*' => 'required|date|after_or_equal:date_start.*',
+                'date_end.*' => 'required|date_format:Y-m-d|after_or_equal:date_start.*',
                 'time_start' => 'required|array|min:1',
                 'time_start.*' => 'required|date_format:H:i',
                 'time_end' => 'required|array|min:1',
@@ -85,13 +86,35 @@ class ConferenceController extends Controller
                 if ($request->hasFile('RequesterSignature')) {
                     $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
                 }
+                
+                $existingRequests = ConferenceRequest::query()
+                    ->where('CRoomID', $conferenceRoom->CRoomID)
+                    ->where('FormStatus', 'Approved')
+                    ->get();
 
+                $availability = true;
+
+                foreach ($existingRequests as $existingRequest) {
+                    // Check if there is an overlap with the existing request
+                    if (
+                        $validated['date_start'][$index] <= $existingRequest->date_end &&
+                        $validated['date_end'][$index] >= $existingRequest->date_start &&
+                        $validated['time_start'][$index] <= $existingRequest->time_end &&
+                        $validated['time_end'][$index] >= $existingRequest->time_start
+                    ) {
+                        $availability = false;
+                        break; // No need to check further if we already found an overlap
+                    }
+                }
+
+                // Create the new request with the determined availability
                 ConferenceRequest::create([
                     'CRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
                     'Purpose' => $validated['purpose'],
                     'npersons' => $validated['npersons'],
                     'focalPerson' => $validated['focalPerson'],
+                    'CAvailability' => $availability, // Set availability based on the check
                     'tables' => $validated['tables'],
                     'chairs' => $validated['chairs'],
                     'otherFacilities' => $validated['otherFacilities'],
@@ -104,7 +127,6 @@ class ConferenceController extends Controller
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
                     'time_end' => $validated['time_end'][$index],
-//                    'Availability' => 'Available',
                 ]);
             }
 
@@ -136,6 +158,30 @@ class ConferenceController extends Controller
                 'FormStatus' => $validated['FormStatus'],
                 'EventStatus' => $validated['EventStatus'],
             ]);
+
+            // If the request is approved, update availability and other pending requests
+            if ($validated['FormStatus'] === 'Approved') {
+                $conferenceRequest->CAvailability = true;
+                $conferenceRequest->save();
+
+                $otherRequests = ConferenceRequest::all()->where('FormStatus', 'Pending');
+
+                Log::info('Other requests:', $otherRequests->toArray());
+
+                foreach ($otherRequests as $request) {
+                    ConferenceRequest::query()
+                        ->whereDate('date_start', '=', $request->date_start)
+                        ->whereDate('date_end', '=', $request->date_end)
+                        ->whereTime('time_start', '=', $request->time_start)
+                        ->whereTime('time_end', '=', $request->time_end)
+                        ->where('CRoomID', '=', $request->CRoomID)
+                        ->where('FormStatus', '=', 'Pending')
+                        ->where('CRequestID', '!=', $request->CRequestID);
+                }
+                foreach ($otherRequests as $otherRequest) {
+                    $otherRequest->update(['CAvailability' => false]);
+                }
+            }
 
             return redirect()->back()->with('success', 'Conference room request updated successfully.');
         } catch (ValidationException $e) {
@@ -217,7 +263,7 @@ class ConferenceController extends Controller
         // Get sorting criteria from the request
         $sortBy = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
-    
+
         // Fetch requests based on filters and sorting criteria
         $conferenceRequests = ConferenceRequest::with(['conferenceRoom', 'office']) // Include related models
             ->whereIn('FormStatus', ['Approved', 'Pending'])
@@ -234,13 +280,13 @@ class ConferenceController extends Controller
                     $request->time_end,
                     $request->CRequestID
                 );
-    
+
                 return array_merge($request->toArray(), ['availability' => $availability]);
             });
-    
+
         return response()->json($conferenceRequests);
     }
-    
+
     // Conference Request Logs Filter and Sort
     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -284,7 +330,7 @@ class ConferenceController extends Controller
         return response()->json($conferenceRequests);
     }
 
-    public function checkAvailability($CRoomID, $dateStart, $timeStart, $dateEnd, $timeEnd, $CRequestID): string
+/*    public function checkAvailability($CRoomID, $dateStart, $timeStart, $dateEnd, $timeEnd, $CRequestID): string
     {
         // Check for overlapping approved requests
         $overlappingApproved = ConferenceRequest::where('CRoomID', $CRoomID)
@@ -305,5 +351,5 @@ class ConferenceController extends Controller
             return 'Available';
         } else
             return 'Not Available';
-    }
+    }*/
 }

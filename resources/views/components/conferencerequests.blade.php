@@ -92,31 +92,31 @@
             @endphp
 
             @foreach($filteredRequests as $request)
-                @php
-                    // Determine availability based on the form status
-                    if ($request->FormStatus == 'Approved') {
-                        $availability = 'Available';
-                    } elseif ($request->FormStatus == 'Pending') {
-                        // Check availability against approved and ongoing requests
-                        $checkAv = app('App\Http\Controllers\ConferenceController')->checkAvailability(
-                            $request->CRoomID,
-                            $request->date_start,
-                            $request->time_start,
-                            $request->date_end,
-                            $request->time_end,
-                            $request->CRequestID,
-                        );
+{{--                @php--}}
+{{--                    // Determine availability based on the form status--}}
+{{--                    if ($request->FormStatus == 'Approved') {--}}
+{{--                        $availability = 'Available';--}}
+{{--                    } elseif ($request->FormStatus == 'Pending') {--}}
+{{--                        // Check availability against approved and ongoing requests--}}
+{{--                        $checkAv = app('App\Http\Controllers\ConferenceController')->checkAvailability(--}}
+{{--                            $request->CRoomID,--}}
+{{--                            $request->date_start,--}}
+{{--                            $request->time_start,--}}
+{{--                            $request->date_end,--}}
+{{--                            $request->time_end,--}}
+{{--                            $request->CRequestID,--}}
+{{--                        );--}}
 
-                        if ($checkAv === 'Not Available') {
-                            $availability = 'Not Available';
-                        } else {
-                            $availability = 'Available';
-                        }
-                    } else {
-                        // Default case for other statuses
-                        $availability = 'N/A';
-                    }
-                @endphp
+{{--                        if ($checkAv === 'Not Available') {--}}
+{{--                            $availability = 'Not Available';--}}
+{{--                        } else {--}}
+{{--                            $availability = 'Available';--}}
+{{--                        }--}}
+{{--                    } else {--}}
+{{--                        // Default case for other statuses--}}
+{{--                        $availability = 'N/A';--}}
+{{--                    }--}}
+{{--                @endphp--}}
                 <tr>
                     <th scope="row">{{ $request->CRequestID }}</th>
                     <td>{{ $request->created_at->format('m-d-Y') }}</td>
@@ -124,7 +124,7 @@
                     <td>{{ $request->office->OfficeName }}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
-                    <td>{{ $availability }}</td>
+                    <td>{{ $request->CAvailability }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
@@ -176,7 +176,7 @@ function updateTable(data) {
             <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
             <td>${request.date_start}</td>
             <td>${request.time_start}</td>
-            <td>${request.availability}</td>
+            <td>${request.CAvailability}</td>
             <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
             <td>${request.EventStatus}</td>
             <td>

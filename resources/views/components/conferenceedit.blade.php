@@ -665,7 +665,7 @@
             </div>
             <div class="inline-field">
                 <label for="availability">Availability</label>
-                    <input type="text" id="availability" name="availability" placeholder="-" readonly>
+                    <input type="text" id="CAvailability" name="CAvailability" value="{{ $requestData->CAvailability }}" readonly>
             </div>
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>

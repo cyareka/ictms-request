@@ -39,6 +39,7 @@ class VehicleRequest extends Model
         // to be filled by dispatcher
         'DriverID',
         'VehicleID',
+        'VAvailability',
         'ReceivedBy',
         'Remarks',
 

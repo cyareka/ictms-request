@@ -19,6 +19,7 @@ class ConferenceRequest extends Model
         'Purpose',
         'npersons',
         'focalPerson',
+        'CAvailability',
         'tables',
         'chairs',
         'otherFacilities',
