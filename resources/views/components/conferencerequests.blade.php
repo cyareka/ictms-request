@@ -93,6 +93,7 @@
                 $filteredRequests = App\Models\ConferenceRequest::whereIn('FormStatus', ['Approved', 'Pending'])
                     ->whereIn('EventStatus', ['Ongoing', '-'])
                     ->get();
+
                 function convertAvailability($availability): string
                 {
                     return $availability > 0 ? 'Available' : 'Not Available';
@@ -124,58 +125,58 @@
 <div class="end"></div>
 
 <script>
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder);
-    });
+document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+    e.preventDefault();
+    let order = this.getAttribute('data-order');
+    let newOrder = order === 'asc' ? 'desc' : 'asc';
+    this.setAttribute('data-order', newOrder);
+    fetchSortedData(newOrder);
+});
 
-    function fetchSortedData(order) {
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
+function fetchSortedData(order) {
+    const form = document.getElementById('filterForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
 
-        fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                alert(`An error occurred while fetching data: ${error.message}`);
-            });
-    }
+    fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            alert(`An error occurred while fetching data: ${error.message}`);
+        });
+}
 
-    document.getElementById('filterForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('Error fetching filtered data:', error);
-            });
-    });
+document.getElementById('filterForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData).toString();
+    const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+    fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`)
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('Error fetching filtered data:', error);
+        });
+});
 
-    document.querySelector('.cancelbtn').addEventListener('click', function () {
-        document.getElementById('filterForm').reset();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('Error fetching unfiltered data:', error);
-            });
-    });
+document.querySelector('.cancelbtn').addEventListener('click', function () {
+    document.getElementById('filterForm').reset();
+    const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+    fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`)
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data);
+        })
+        .catch(error => {
+            console.error('Error fetching unfiltered data:', error);
+        });
+});
 
     function updateTable(data) {
         let tbody = document.querySelector('tbody');
@@ -183,7 +184,8 @@
 
         if (Array.isArray(data) && data.length > 0) {
             data.forEach(request => {
-                let availability = request.CAvailability > 0 ? 'Available' : 'Not Available';
+                let availability = request.CAvailability ? 'Available' : 'Not Available';
+                let conferenceRoomName = request.conference_room ? request.conference_room.CRoomName : 'N/A';
                 let row = `<tr>
                 <th scope="row">${request.CRequestID}</th>
                 <td>${new Date(request.created_at).toLocaleDateString('en-US', {
@@ -191,7 +193,7 @@
                     month: '2-digit',
                     day: '2-digit'
                 }).replace(/\//g, '-')}</td>
-                <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
+                <td>${conferenceRoomName}</td>
                 <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
                 <td>${request.date_start}</td>
                 <td>${request.time_start}</td>

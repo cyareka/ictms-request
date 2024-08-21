@@ -170,21 +170,21 @@ class VehicleController extends Controller
         $formStatuses = $request->get('form_statuses', []);
         $startDate = $request->get('date_start');
         $endDate = $request->get('date_end');
-    
+
         $query = VehicleRequest::query();
-    
+
         if ($title) {
             $query->where('Purpose', 'like', "%$title%");
         }
-    
+
         if ($destination) {
             $query->where('Destination', 'like', "%$destination%");
         }
-    
+
         if ($formStatuses) {
             $query->whereIn('FormStatus', $formStatuses);
         }
-    
+
         if ($startDate && $endDate) {
             $query->whereBetween('date_start', [$startDate, $endDate])
                   ->orWhereBetween('date_end', [$startDate, $endDate])
@@ -193,7 +193,23 @@ class VehicleController extends Controller
                         ->where('date_end', '>=', $endDate);
                   });
         }
-    
+
+        // Exclude specific FormStatus and EventStatus combinations
+        $query->where(function ($q) {
+            $q->whereNot(function ($q) {
+                $q->where('FormStatus', 'Not Approved')
+                  ->where('EventStatus', '-');
+            })
+            ->whereNot(function ($q) {
+                $q->where('FormStatus', 'Approved')
+                  ->where('EventStatus', 'Cancelled');
+            })
+            ->whereNot(function ($q) {
+                $q->where('FormStatus', 'Approved')
+                  ->where('EventStatus', 'Finished');
+            });
+        });
+
         $vehicleRequests = $query->get()
             ->map(function ($event) {
                 return [
@@ -204,7 +220,7 @@ class VehicleController extends Controller
                     'Destination' => $event->Destination,
                 ];
             });
-    
+
         return response()->json($vehicleRequests);
     }
 

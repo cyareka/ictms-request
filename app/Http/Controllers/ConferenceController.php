@@ -263,47 +263,63 @@ class ConferenceController extends Controller
     }
 
     public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
-{
-    $title = $request->get('Purpose');
-    $conferenceRoom = $request->get('conference_room');
-    $formStatuses = $request->get('form_statuses', []);
-    $startDate = $request->get('start_date');
-    $endDate = $request->get('end_date');
+    {
+        $title = $request->get('Purpose');
+        $conferenceRoom = $request->get('conference_room');
+        $formStatuses = $request->get('form_statuses', []);
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
 
-    $query = ConferenceRequest::with('conferenceRoom');
+        $query = ConferenceRequest::with('conferenceRoom');
 
-    if ($title) {
-        $query->where('Purpose', 'like', "%$title%");
-    }
+        if ($title) {
+            $query->where('Purpose', 'like', "%$title%");
+        }
 
-    if ($conferenceRoom) {
-        $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
-            $q->where('CRoomName', $conferenceRoom);
+        if ($conferenceRoom) {
+            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+                $q->where('CRoomName', $conferenceRoom);
+            });
+        }
+
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('date_start', [$startDate, $endDate])
+                  ->whereBetween('date_end', [$startDate, $endDate]);
+        }
+
+        // Exclude specific FormStatus and EventStatus combinations
+        $query->where(function ($q) {
+            $q->whereNot(function ($q) {
+                $q->where('FormStatus', 'Not Approved')
+                  ->where('EventStatus', '-');
+            })
+            ->whereNot(function ($q) {
+                $q->where('FormStatus', 'Approved')
+                  ->where('EventStatus', 'Cancelled');
+            })
+            ->whereNot(function ($q) {
+                $q->where('FormStatus', 'Approved')
+                  ->where('EventStatus', 'Finished');
+            });
         });
+
+        $conferenceRequests = $query->get()
+            ->map(function ($event) {
+                return [
+                    'title' => $event->Purpose,
+                    'conferenceRoom' => $event->conferenceRoom ? $event->conferenceRoom->CRoomName : 'N/A',
+                    'start' => $event->date_start . 'T' . $event->time_start,
+                    'end' => $event->date_end . 'T' . $event->time_end,
+                    'EventStatus' => $event->FormStatus,
+                ];
+            });
+
+        return response()->json($conferenceRequests);
     }
-
-    if ($formStatuses) {
-        $query->whereIn('FormStatus', $formStatuses);
-    }
-
-    if ($startDate && $endDate) {
-        $query->whereBetween('date_start', [$startDate, $endDate])
-              ->whereBetween('date_end', [$startDate, $endDate]);
-    }
-
-    $conferenceRequests = $query->get()
-        ->map(function ($event) {
-            return [
-                'title' => $event->Purpose,
-                'conferenceRoom' => $event->conferenceRoom ? $event->conferenceRoom->CRoomName : 'N/A',
-                'start' => $event->date_start . 'T' . $event->time_start,
-                'end' => $event->date_end . 'T' . $event->time_end,
-                'EventStatus' => $event->FormStatus,
-            ];
-        });
-
-    return response()->json($conferenceRequests);
-}
 
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
@@ -312,19 +328,11 @@ class ConferenceController extends Controller
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
 
-        $conferenceRoom = $request->get('conference_room');
-        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
-        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+        $conferenceRoom = $request->input('conference_room');
+        $formStatuses = $request->input('form_statuses', ['Approved', 'Pending']);
+        $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
 
-        Log::info('Filter parameters:', [
-            'sort' => $sort,
-            'order' => $order,
-            'conference_room' => $conferenceRoom,
-            'form_statuses' => $formStatuses,
-            'event_statuses' => $eventStatuses,
-        ]);
-
-        $query = ConferenceRequest::with('office', 'conferenceRoom')
+        $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
             ->orderBy($sort, $order);
 
         if ($conferenceRoom) {
@@ -349,7 +357,7 @@ class ConferenceController extends Controller
     }
 
     // Conference Request Logs Filter and Sort
-     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
+    public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
     {
         $sort = $request->get('sort', 'created_at');
         $order = $request->get('order', 'desc');
@@ -387,6 +395,17 @@ class ConferenceController extends Controller
         if ($filteredStatusPairs) {
             $query->where(function ($q) use ($filteredStatusPairs) {
                 foreach ($filteredStatusPairs as $pair) {
+                    [$formStatus, $eventStatus] = explode(',', $pair);
+                    $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                        $q->where('FormStatus', $formStatus)
+                            ->where('EventStatus', $eventStatus);
+                    });
+                }
+            });
+        } else {
+            // Ensure only allowed status pairs are included if no status pairs are provided
+            $query->where(function ($q) use ($allowedStatusPairs) {
+                foreach ($allowedStatusPairs as $pair) {
                     [$formStatus, $eventStatus] = explode(',', $pair);
                     $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
                         $q->where('FormStatus', $formStatus)
