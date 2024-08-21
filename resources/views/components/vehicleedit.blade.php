@@ -218,6 +218,40 @@
             font-size: 10px;
             margin-left: 10px;
         }
+        #certfile-upload {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            }
+        #certificate-preview-label {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        #certificate-preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            text-align: center;
+        }
+
+        #default-text {
+            font-size: 14px;
+            color: #000;
+        }
+
+        #certificate-preview {
+            font-size: 14px;
+            color: #333;
+        }
 
         @media (max-width: 768px) {
             .form-container {
@@ -503,17 +537,21 @@
                         <label for="ASignatory">Authorized Signatory</label>
                         <input type="text" id="ASignatory" name="ASignatory" value="{{ Auth::user()->name }}" readonly>
                     </div>
-                    <div class="input-field">
-                        <label for="signature">E-Signature <span class="required">*</span></label>
-                        <div class="file-upload">
-                            <input type="file" id="e-signature" name="signature" style="display: none;"
-                                   onchange="previewSignature(event)" required>
-                            <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                                Click to upload e-sign.<br>Maximum file size: 31.46MB
+                    <div class="inline">
+                        <label for="certificate-upload">File Upload</label>
+                        <div class="file-upload" >
+                            <label for="certfile-upload" id="certificate-preview-label" >
+                            <div id="certificate-preview-container">
+                                <div id="default-text">
+                                Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
+                                </div>
+                                <div id="certificate-preview"></div>
                             </div>
-                            <img id="signature-preview" alt="Signature Preview">
+                            </label>
+                            <input type="file" id="certfile-upload" onchange="previewCertificate(event)" style="display: none;">
                         </div>
-                    </div>
+                        </div>
+
                 </div>
             </form>
         </div>
@@ -687,6 +725,38 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+    function previewCertificate(event) {
+  const file = event.target.files[0];
+  const filePreview = document.getElementById('certificate-preview');
+  const defaultText = document.getElementById('default-text');
+
+  // Clear any existing content in the preview box
+  filePreview.innerHTML = '';
+
+  if (file) {
+    // Hide the default text when a file is uploaded
+    defaultText.style.display = 'none';
+
+    // Check if the file is a PDF
+    if (file.type === 'application/pdf') {
+      // Create an anchor element to make the file name clickable
+      const fileLink = document.createElement('a');
+      fileLink.textContent = `${file.name}`;
+      fileLink.style.color = 'green';
+      fileLink.href = URL.createObjectURL(file);
+      fileLink.target = '_blank'; // Open in a new tab
+
+      // Append the clickable file name to the preview area
+      filePreview.appendChild(fileLink);
+    } else {
+      // Display a message if the file is not a PDF
+      filePreview.textContent = 'Please upload a valid PDF file.';
+      filePreview.style.color = 'red';
+    }
+  }
+}
+
+
 
     function toggleDispatcher() {
         var dispatcherForm = document.getElementById("dispatcher-form");
