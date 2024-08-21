@@ -78,7 +78,7 @@
             <button class="dropdown-button" onclick="toggleSection('employee', this)">Browser Sessions</button>
             <button class="dropdown-button" onclick="toggleSection('newad', this)">New Admin</button>
             <button class="dropdown-button" onclick="toggleSection('addVehi', this)">Profile Information</button>
-            <button class="dropdown-button" onclick="toggleSection('conference', this)">Two Factor Authentication</button>
+            <!-- <button class="dropdown-button" onclick="toggleSection('conference', this)">Two Factor Authentication</button> -->
             <button class="dropdown-button" onclick="toggleSection('vehicle', this)">Update Password</button>
         </div>
 
@@ -108,7 +108,7 @@
 
                 <x-section-border />
             @endif
-        </div>
+        </div> 
 
         <div id="employee" class="toggle-section">
         <div class="mt-10 sm:mt-0">

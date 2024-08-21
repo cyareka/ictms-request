@@ -39,12 +39,17 @@
 
             <div class="mt-4">
                 <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
+                <x-input id="input-password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
             </div>
 
             <div class="mt-4">
                 <x-label for="password_confirmation" value="{{ __('Confirm Password') }}" />
-                <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+                <x-input id="input-password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" />
+            </div>
+
+            <div class="flex items-center mt-2">
+                <input type="checkbox" id="show-password" class="mr-2">
+                <label for="show-password" class="text-sm">{{ __('Show Password') }}</label>
             </div>
 
             <div class="flex items-center justify-end mt-4">
@@ -78,7 +83,20 @@
                         emailError.classList.remove('hidden');
                     }
                 });
+
+                document.getElementById('show-password').addEventListener('click', function() {
+                    const passwordInput = document.getElementById('input-password'); // Update ID
+                    const passwordConfirmInput = document.getElementById('input-password_confirmation'); // Update ID
+                    if (this.checked) {
+                        passwordInput.type = 'text';
+                        passwordConfirmInput.type = 'text';
+                    } else {
+                        passwordInput.type = 'password';
+                        passwordConfirmInput.type = 'password';
+                    }
+                });
             });
+
         </script>
     </x-slot>
 </x-action-section>
