@@ -327,8 +327,12 @@ class ConferenceController extends Controller
         // Get sorting criteria from the request
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
-
         $conferenceRoom = $request->input('conference_room');
+
+        Log::info('Sort: ' . $sort);
+        Log::info('Order: ' . $order);
+        Log::info('Conference Room: ' . $conferenceRoom);
+
         $formStatuses = $request->input('form_statuses', ['Approved', 'Pending']);
         $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
 

@@ -131,37 +131,37 @@ class VehicleController extends Controller
         }
     }
 
-    public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $sort = $request->get('sort', 'created_at');
-        $order = $request->get('order', 'desc');
-        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
-        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+        public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
+        {
+            $sort = $request->get('sort', 'created_at');
+            $order = $request->get('order', 'desc');
+            $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+            $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
 
-        Log::info('Filter parameters:', [
-            'sort' => $sort,
-            'order' => $order,
-            'form_statuses' => $formStatuses,
-            'event_statuses' => $eventStatuses,
-        ]);
+            Log::info('Filter parameters:', [
+                'sort' => $sort,
+                'order' => $order,
+                'form_statuses' => $formStatuses,
+                'event_statuses' => $eventStatuses,
+            ]);
 
-        $query = VehicleRequest::with('office')
-            ->orderBy($sort, $order);
+            $query = VehicleRequest::with('office')
+                ->orderBy($sort, $order);
 
-        if ($formStatuses) {
-            $query->whereIn('FormStatus', $formStatuses);
+            if ($formStatuses) {
+                $query->whereIn('FormStatus', $formStatuses);
+            }
+
+            if ($eventStatuses) {
+                $query->whereIn('EventStatus', $eventStatuses);
+            }
+
+            $vehicleRequests = $query->get();
+
+            Log::info('Query results:', $vehicleRequests->toArray());
+
+            return response()->json($vehicleRequests);
         }
-
-        if ($eventStatuses) {
-            $query->whereIn('EventStatus', $eventStatuses);
-        }
-
-        $vehicleRequests = $query->get();
-
-        Log::info('Query results:', $vehicleRequests->toArray());
-
-        return response()->json($vehicleRequests);
-    }
 
     public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
     {

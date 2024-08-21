@@ -14,14 +14,14 @@
                 <i class="bi bi-arrow-right-short" id="iconborder"></i>
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
-                    <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
+                    <form id="filterForm" method="GET" action="{{ route('fetchSortedVRequests') }}">
                         <div class="dropdown-content">
                             <p id="filterlabel">Filter By</p>
                             <hr>
                             <p>Status</p>
                             <a>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="Pending" name="FormStatus[]">
+                                    <input class="form-check-input" type="checkbox" value="Pending" name="form_statuses[]" >
                                     <label class="form-check-label" for="flexCheckDefault">
                                         Pending
                                     </label>
@@ -29,7 +29,7 @@
                             </a>
                             <a>
                                 <div class="form-check" id="margincheck">
-                                    <input class="form-check-input" type="checkbox" value="Approved" name="FormStatus[]">
+                                    <input class="form-check-input" type="checkbox" value="Approved" name="form_statuses[]">
                                     <label class="form-check-label" for="flexCheckDefault">
                                         Approved and Ongoing
                                     </label>
@@ -113,7 +113,7 @@
         const formData = new FormData(form);
         const params = new URLSearchParams(formData).toString();
 
-        fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
+        fetch(`/fetchSortedVRequests?sort=created_at&order=${order}&${params}`)
             .then(response => response.json())
             .then(data => {
                 updateTable(data);
@@ -130,7 +130,7 @@
         const formData = new FormData(form);
         const params = new URLSearchParams(formData).toString();
         const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`)
+        fetch(`/fetchSortedVRequests?sort=created_at&order=${sortOrder}&${params}`)
             .then(response => response.json())
             .then(data => {
                 updateTable(data);
@@ -143,7 +143,7 @@
     document.querySelector('.cancelbtn').addEventListener('click', function () {
         document.getElementById('filterForm').reset();
         const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`)
+        fetch(`/fetchSortedVRequests?sort=created_at&order=${sortOrder}`)
             .then(response => response.json())
             .then(data => {
                 updateTable(data);

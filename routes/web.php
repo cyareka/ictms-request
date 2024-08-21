@@ -59,7 +59,7 @@ Route::middleware([
 
     // Vehicle Table View
     Route::get('/vehicle-requests',
-        [VehicleController::class, 'fetchSortedRequests'])->name('conference.requests');
+        [VehicleController::class, 'fetchSortedRequests'])->name('vehicle.requests');
 
     // Conference Edit
     Route::post('/conference-room/update',
@@ -91,8 +91,8 @@ Route::middleware([
     Route::get('/VehicleTabular', function () {
         return view('VehicleTabular');
     })->name('VehicleTabular');
-    Route::get('/fetchSortedRequests',
-        [VehicleController::class, 'fetchSortedRequests'])->name('fetchSortedRequests');
+    Route::get('/fetchSortedVRequests',
+        [VehicleController::class, 'fetchSortedVRequests'])->name('fetchSortedVRequests');
 
     // Vehicle Edit
     Route::get('/VehicledetailEdit',    function () {
