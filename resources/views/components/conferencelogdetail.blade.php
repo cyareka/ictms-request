@@ -371,7 +371,7 @@
             </div>
             <div class="inline-field">
                 <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities" value="{{ $requestLogData->otherFacilities }}" placeholder="-" readonly>
+                <input type="text" id="otherFacilities" name="otherFacilities" value="{{ $requestLogData->otherFacilities }}" placeholder="N/A" readonly>
             </div>
         </div>
 
@@ -391,7 +391,7 @@
             </div>
             <div class="inline-field">
                 <label for="availability">Availability</label>
-                <input type="text" id="availability" name="availability" value="{{ $requestLogData->conferenceRoom->Availability }}" placeholder="-" readonly>
+                <input type="text" id="availability" name="availability" value="{{ $requestLogData->CAvailability }}" placeholder="N/A" readonly>
             </div>
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
