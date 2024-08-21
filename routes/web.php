@@ -91,6 +91,8 @@ Route::middleware([
     Route::get('/VehicleTabular', function () {
         return view('VehicleTabular');
     })->name('VehicleTabular');
+    Route::get('/fetchSortedRequests',
+        [VehicleController::class, 'fetchSortedRequests'])->name('fetchSortedRequests');
 
     // Vehicle Edit
     Route::get('/VehicledetailEdit',    function () {

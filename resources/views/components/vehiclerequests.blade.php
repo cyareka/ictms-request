@@ -37,7 +37,7 @@
                             </a>
                             <hr>
                             <div class="buttons">
-                                <button type="button" class="cancelbtn">Remove</button>
+                                <button type="button" class="cancelbtn" onclick="resetFilters()">Remove</button>
                                 <button type="submit" class="applybtn">Filter</button>
                             </div>
                         </div>
@@ -109,101 +109,76 @@
     });
 
     function fetchSortedData(order) {
-    const form = document.getElementById('filterForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData).toString();
-    const url = `/fetchSortedRequests?sort=created_at&order=${order}&${params}`;
-    console.log("Fetching data from URL:", url);  // Log the constructed URL
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
 
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Data received:", data);  // Log the response data
-        updateTable(data);
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-        alert(`An error occurred while fetching data: ${error.message}`);
-    });
-}
-
-function updateTable(data) {
-    let tbody = document.querySelector('tbody');
-    tbody.innerHTML = '';
-
-    if (Array.isArray(data) && data.length > 0) {
-        data.forEach(request => {
-            let row = `<tr>
-                <th scope="row">${request.VRequestID}</th>
-                <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
-                <td>${request.Destination}</td>
-                <td>${request.Purpose}</td>
-                <td>${request.officeName}</td>
-                <td>${request.date_start}</td>
-                <td>${request.time_start}</td>
-                <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                <td>${request.EventStatus}</td>
-                <td>
-                    <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
-                </td>
-            </tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
-        });
-    } else {
-        console.log("No requests found or data format is incorrect.");
-        tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+        fetch(`/fetchSortedRequests?sort=created_at&order=${order}&${params}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                alert(`An error occurred while fetching data: ${error.message}`);
+            });
     }
-}
 
-    document.getElementById('filterForm').addEventListener('submit', function(event) {
+    document.getElementById('filterForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const form = event.target;
         const formData = new FormData(form);
         const params = new URLSearchParams(formData).toString();
         const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            updateTable(data);
-        })
-        .catch(error => {
-            console.error('Error fetching filtered data:', error);
-        });
+        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data);
+            })
+            .catch(error => {
+                console.error('Error fetching filtered data:', error);
+            });
     });
 
-    document.querySelector('.cancelbtn').addEventListener('click', function() {
+    document.querySelector('.cancelbtn').addEventListener('click', function () {
         document.getElementById('filterForm').reset();
         const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            updateTable(data);
-        })
-        .catch(error => {
-            console.error('Error fetching unfiltered data:', error);
-        });
+        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data);
+            })
+            .catch(error => {
+                console.error('Error fetching unfiltered data:', error);
+            });
     });
+
+    function updateTable(data) {
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(request => {
+                let row = `<tr>
+                    <th scope="row">${request.VRequestID}</th>
+                    <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
+                    <td>${request.Destination}</td>
+                    <td>${request.Purpose}</td>
+                    <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
+                    <td>${request.date_start}</td>
+                    <td>${request.time_start}</td>
+                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                    <td>${request.EventStatus}</td>
+                    <td>
+                        <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
+                    </td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } else {
+            console.log("No requests found or data format is incorrect.");
+            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+        }
+    }
 </script>
