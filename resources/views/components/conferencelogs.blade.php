@@ -146,12 +146,18 @@
     function updateTable(data) {
         let tbody = document.querySelector('tbody');
         tbody.innerHTML = '';
-        data.forEach(request => {
-            let conferenceRoomName = request.conference_room ? request.conference_room.CRoomName : 'N/A';
-            let officeName = request.office ? request.office.OfficeName : 'N/A';
-            let row = `<tr>
+
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(request => {
+                let conferenceRoomName = request.conference_room ? request.conference_room.CRoomName : 'N/A';
+                let officeName = request.office ? request.office.OfficeName : 'N/A';
+                let row = `<tr>
                 <th scope="row">${request.CRequestID}</th>
-                <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
+                <td>${new Date(request.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).replace(/\//g, '-')}</td>
                 <td>${conferenceRoomName}</td>
                 <td>${officeName}</td>
                 <td>${request.date_start}</td>
@@ -163,8 +169,11 @@
                     <i class="bi bi-download" id="actions"></i>
                 </td>
             </tr>`;
-            tbody.insertAdjacentHTML('beforeend', row);
-        });
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+        }
     }
 
     document.getElementById('filterForm').addEventListener('submit', function(event) {
@@ -173,7 +182,6 @@
         const formData = new FormData(form);
         const params = new URLSearchParams(formData).toString();
         const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-
         fetch(`/fetchSortedLogRequests?sort=created_at&order=${sortOrder}&${params}`)
             .then(response => response.json())
             .then(data => {
