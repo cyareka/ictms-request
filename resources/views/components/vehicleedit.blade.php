@@ -135,6 +135,7 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 16px;
+            margin-right: 50px; /* Add margin to the left side of the cancel button */
         }
 
         .form-footer {
