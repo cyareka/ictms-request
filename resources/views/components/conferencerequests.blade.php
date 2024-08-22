@@ -182,7 +182,7 @@
                 <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
                 <td>${request.EventStatus}</td>
                 <td>
-                    <a href="/conferencerequest/${request.CRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
+                    <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
                     <i class="bi bi-download" id="actions"></i>
                 </td>
             </tr>`;

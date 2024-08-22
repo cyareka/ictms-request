@@ -31,10 +31,10 @@ class NVehicleController extends Controller
         Vehicle::create([
             'VehicleID' => $generatedID,
             'VehicleType' => $request->VehicleType,
-            'Availability' => 'Available',
+//            'Availability' => 'Available',
             'PlateNo' => $request->PlateNo,
             'Capacity' => $request->Capacity,
-            
+
         ]);
 
         return redirect()->back()->with('success', 'Vehicle added successfully!');

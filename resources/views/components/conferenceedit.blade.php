@@ -180,7 +180,7 @@
         }
 
         .submit-btn {
-            background-color: #65558F;
+            background-color: #354e7d;
             color: white;
             padding: 10px 20px;
             border: none;

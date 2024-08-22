@@ -170,7 +170,7 @@
         }
 
         .submit-btn {
-            background-color: #65558F;
+            background-color: #354e7d;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -412,7 +412,7 @@
                 <div class="file-upload">
                     <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;"
                            onchange="previewSignature(event)" required>
-                    <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
+                    <div class="e-signature-text"    onclick="document.getElementById('RequesterSignature').click();">
                         Click to upload e-sign.<br>Maximum file size: 32MB
                     </div>
                     <img id="signature-preview" alt="Signature Preview">

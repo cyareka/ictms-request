@@ -34,7 +34,7 @@ class NDriverController extends Controller
             'DriverName' => $request->DriverName,
             'DriverEmail' => $request->DriverEmail,
             'ContactNo' => $request->ContactNo,
-            'Availability' => 'Available',
+//            'Availability' => 'Available',
         ]);
 
         return redirect()->back()->with('success', 'Driver added successfully!');

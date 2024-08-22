@@ -49,8 +49,8 @@
 
         .input-field {
             display: flex;
-            margin-bottom: 16px;
             width: 48%;
+            margin-bottom: 20px;;
         }
 
         .input-field label {
@@ -136,7 +136,7 @@
         }
 
         .submit-btn {
-            background-color: #65558F;
+            background-color: #354e7d;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -298,6 +298,89 @@
             .input-field select {
                 width: 100%;
             }
+            .row {
+                grid-template-columns: 1fr; /* Change to single column layout */
+            }
+            .passenger-field {
+                flex-direction: column; /* Change to column layout */
+                align-items: flex-start;
+                margin-bottom: -10px;
+
+            }
+            .passenger-field label{
+                margin-left: 0;
+                align-items: flex-start;
+                flex-direction: row;
+            }
+            .passenger-field select {
+                width: 190%; /* Full width on smaller screens */
+                margin-left:0;
+                margin-top: 10px; /* Add margin to separate elements */
+            }
+            #passenger-container {
+                display: flex;
+                flex-direction: column;
+                max-height: 100px; /* Increase max height if needed */
+                overflow-y: auto;
+                margin-left: 0; /* Reset the margin-left for smaller screens */
+                margin-top: 0; /* Add some margin for spacing */
+                width: 100%; /* Ensure it takes the full width in responsive view */
+            }
+            .button-container {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+                justify-content: flex-end; /* Align the button to the right */
+                margin-top: -55px; /* Adjust to align with select field */
+            }
+            #date-time-container {
+                max-height: 200px; /* Set the desired max-height for scrolling */
+                overflow-y: auto; /* Enable scrolling */
+            }
+
+            .datetime-group {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 0;
+            }
+
+            .date-field {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 5px;
+                margin-left: 0px;
+            }
+            #date_start {
+                margin-left: 0;
+            }
+
+            .date-field input,
+            .time-field input {
+                width: 50%;
+                margin-left: 0;
+            }
+
+            .below-label1,
+            .below-label2 {
+                margin-left: 0;
+            }
+
+            input[type="time"] {
+                width: 50%;
+                margin-left: 0;
+                margin-bottom: 0;
+            }
+            .time-button-container{
+                display: flex;
+                flex-direction: row;
+                width: 60%;
+                justify-content: flex-end; /* Align the button to the right */
+                margin-top: -31px; /* Adjust to align with select field */
+            }
+
         }
 
 
@@ -389,7 +472,7 @@
                     <div class="input-field">
                         <label>Time<span class="required">*</span></label>
                         <input type="time" name="time_start[]" value="{{ old('time_start.0') }}" required/>
-                        <div class="button-container">
+                        <div class="time-button-container">
                             <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
                         </div>
                     </div>

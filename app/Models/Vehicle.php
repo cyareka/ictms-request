@@ -15,10 +15,10 @@ class Vehicle extends Model
     protected $fillable = [
         'VehicleID',
         'VehicleType',
-        'Availability',
+//        'Availability',
         'PlateNo',
         'Capacity',
     ];
 
-   
+
 }

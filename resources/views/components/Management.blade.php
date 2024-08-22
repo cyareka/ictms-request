@@ -86,7 +86,7 @@
             font-size: 14px;
             margin-top: 5px;
             position: absolute;
-            bottom: -20px;
+            bottom: -45px;
             left: 0;
         }
         input[type="number"] {
