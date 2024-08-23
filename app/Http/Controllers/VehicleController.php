@@ -107,6 +107,7 @@ class VehicleController extends Controller
                     'AAID' => null,
                     'SOID' => null,
                     'ASignatory' => null,
+                    'certfile-upload' => null,
                     'FormStatus' => 'Pending',
                     'EventStatus' => '-',
                 ]);
@@ -263,6 +264,7 @@ class VehicleController extends Controller
                 'AAID' => 'nullable|string|exists:a_authorities,AAID',
                 'SOID' => 'nullable|string|exists:so_authorities,SOID',
                 'ASignatory' => 'nullable|string|max:50',
+                'ASignatory' => 'nullable',
                 'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);

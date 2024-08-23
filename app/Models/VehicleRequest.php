@@ -49,6 +49,7 @@ class VehicleRequest extends Model
         'SOID',
         'ASignatory',
         'FormStatus',
+        'certfile-upload',
         'EventStatus',
     ];
 

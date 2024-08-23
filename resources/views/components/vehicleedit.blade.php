@@ -114,6 +114,7 @@
             cursor: pointer;
             margin-bottom: 16px;
             width: 100%;
+            
         }
 
         .submit-btn {
@@ -125,6 +126,7 @@
             cursor: pointer;
             font-size: 16px;
             margin-right: 10px; /* Add margin to the right side of the update button */
+            margin-left: 20px;
         }
 
         .cancel-btn {
@@ -136,6 +138,7 @@
             cursor: pointer;
             font-size: 16px;
             margin-right: 50px; /* Add margin to the left side of the cancel button */
+            margin-left: 400px;
         }
 
         .form-footer {
@@ -318,17 +321,101 @@
                 padding: 8px; /* Ensure consistent padding */
                 box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
             }
+
+            /* Ensure the file upload section is clearly defined */
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    border: 2px dashed #5b21b6;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    width: 100%;
+    background-color: #ffffff; /* Light background for better visibility */
+    text-align: center;
+    transition: background-color 0.3s ease; /* Add a transition effect */
+}
+
+.file-upload:hover {
+    background-color: #f0f0f0; /* Slightly darker on hover for feedback */
+}
+
+#certfile-upload {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+#certificate-preview-label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+#certificate-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    text-align: center;
+    color: #5b21b6; /* Text color matching the border */
+}
+
+#default-text {
+    font-size: 14px;
+    color: #5b21b6; /* Text color to match the border */
+}
+
+#certificate-preview {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px; /* Space between the default text and preview text */
+}
+
+
+            
         }
     </style>
 </head>
 <body>
+@if ($errors->any())
+    <script>
+        let errorMessages = [];
+        @foreach ($errors->all() as $error)
+        errorMessages.push("{{ $error }}");
+        @endforeach
+        alert("Updating request failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        alert(" {{ session('error') }}");
+    </script>
+@endif
+
+@if(session('success'))
+    <script>
+        alert(" {{ session('success') }}");
+    </script>
+@endif
 <div class="form-container">
     <h1>Request For Use of Vehicle</h1>
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use. Failure to use the
         vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
     <div class="form-body">
-        <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
+        <form action="/vehicle-request/update" method="POST" enctype="multipart/form-data">
             @csrf
+            <input type="hidden" name="VRequestID" value="{{ $requestData-> VRequestID }}">
             <div class="input-group">
                 <div class="input-field">
                     <label for="officeName">Requesting Office</label>
@@ -551,14 +638,14 @@
                             <input type="file" id="certfile-upload" onchange="previewCertificate(event)" style="display: none;">
                         </div>
                         </div>
-
+                </div>
+                <div class="form-footer">
+                    <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+                    <button class="submit-btn" type="submit">Update</button>
                 </div>
             </form>
         </div>
-        <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
-            <button class="submit-btn" type="submit">Update</button>
-        </div>
+        
     </div>
 </div>
 

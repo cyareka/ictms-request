@@ -101,6 +101,9 @@ Route::middleware([
     Route::get('/vehiclerequest/{VRequestID}/edit',
         [VehicleController::class, 'getRequestData'])->name('VehicledetailEdit');
 
+     Route::post('/vehicle-request/update',
+        [VehicleController::class, 'updateVForm']);
+
     // VEHICLE LOG ROUTES
     Route::get('/VehicleLogs', function () {
         return view('VehicleLogs');
