@@ -185,6 +185,7 @@ class ConferenceController extends Controller
                         ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
                     ) {
                         $otherRequest->update(['CAvailability' => false]);
+                        Log::info($otherRequests);
                     }
                 }
             } elseif ($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') {
