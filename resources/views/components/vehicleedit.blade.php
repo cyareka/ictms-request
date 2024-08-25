@@ -415,6 +415,7 @@
     <div class="form-body">
         <form action="/vehicle-request/update" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <input type="hidden" name="VRequestID" value="{{ $requestData-> VRequestID }}">
             <div class="input-group">
                 <div class="input-field">
@@ -648,7 +649,7 @@
         
     </div>
 </div>
-
+<script src="scripts.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const driverSelect = document.getElementById('tables');
@@ -768,6 +769,11 @@
             EventStatus.value = '-';
         }
     }
+
+    // Add form submission logging
+    document.querySelector('form').addEventListener('submit', function(e) {
+            console.log('Form is being submitted');
+        });
 
     /**
      * Updates the event status based on the selected form status.

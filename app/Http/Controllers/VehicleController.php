@@ -18,9 +18,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
-// ...
-
-
 class VehicleController extends Controller
 {
     private function generateUniqueID(): string
@@ -124,28 +121,36 @@ class VehicleController extends Controller
 
             return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
         } catch (ValidationException $e) {
-            Log::error('Validation errors: ', $e->errors());
+            Log::error('Validation failed in submitVForm:', [
+                'errors' => $e->errors(),
+                'input' => $request->all(),
+            ]);
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Throwable $e) {
-            Log::error('Vehicle request submission failed: ' . $e->getMessage());
+            Log::error('An unexpected error occurred in submitVForm:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
+            ]);
             return redirect()->back()->with('error', 'Form submission failed. Please try again.');
         }
     }
 
-        public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
-        {
-            $sort = $request->get('sort', 'created_at');
-            $order = $request->get('order', 'desc');
-            $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
-            $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+    public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
 
-            Log::info('Filter parameters:', [
-                'sort' => $sort,
-                'order' => $order,
-                'form_statuses' => $formStatuses,
-                'event_statuses' => $eventStatuses,
-            ]);
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
+        ]);
 
+        try {
             $query = VehicleRequest::with('office')
                 ->orderBy($sort, $order);
 
@@ -162,7 +167,14 @@ class VehicleController extends Controller
             Log::info('Query results:', $vehicleRequests->toArray());
 
             return response()->json($vehicleRequests);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching sorted vehicle requests:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch vehicle requests.'], 500);
         }
+    }
 
     public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -172,113 +184,158 @@ class VehicleController extends Controller
         $startDate = $request->get('date_start');
         $endDate = $request->get('date_end');
 
-        $query = VehicleRequest::query();
+        try {
+            $query = VehicleRequest::query();
 
-        if ($title) {
-            $query->where('Purpose', 'like', "%$title%");
-        }
+            if ($title) {
+                $query->where('Purpose', 'like', "%$title%");
+            }
 
-        if ($destination) {
-            $query->where('Destination', 'like', "%$destination%");
-        }
+            if ($destination) {
+                $query->where('Destination', 'like', "%$destination%");
+            }
 
-        if ($formStatuses) {
-            $query->whereIn('FormStatus', $formStatuses);
-        }
+            if ($formStatuses) {
+                $query->whereIn('FormStatus', $formStatuses);
+            }
 
-        if ($startDate && $endDate) {
-            $query->whereBetween('date_start', [$startDate, $endDate])
-                  ->orWhereBetween('date_end', [$startDate, $endDate])
-                  ->orWhere(function ($q) use ($startDate, $endDate) {
-                      $q->where('date_start', '<=', $startDate)
-                        ->where('date_end', '>=', $endDate);
-                  });
-        }
+            if ($startDate && $endDate) {
+                $query->whereBetween('date_start', [$startDate, $endDate])
+                      ->orWhereBetween('date_end', [$startDate, $endDate])
+                      ->orWhere(function ($q) use ($startDate, $endDate) {
+                          $q->where('date_start', '<=', $startDate)
+                            ->where('date_end', '>=', $endDate);
+                      });
+            }
 
-        // Exclude specific FormStatus and EventStatus combinations
-        $query->where(function ($q) {
-            $q->whereNot(function ($q) {
-                $q->where('FormStatus', 'Not Approved')
-                  ->where('EventStatus', '-');
-            })
-            ->whereNot(function ($q) {
-                $q->where('FormStatus', 'Approved')
-                  ->where('EventStatus', 'Cancelled');
-            })
-            ->whereNot(function ($q) {
-                $q->where('FormStatus', 'Approved')
-                  ->where('EventStatus', 'Finished');
-            });
-        });
-
-        $vehicleRequests = $query->get()
-            ->map(function ($event) {
-                return [
-                    'title' => $event->Purpose,
-                    'start' => $event->date_start . 'T' . $event->time_start,
-                    'end' => $event->date_end . 'T' . $event->time_end,
-                    'EventStatus' => $event->FormStatus,
-                    'Destination' => $event->Destination,
-                ];
+            // Exclude specific FormStatus and EventStatus combinations
+            $query->where(function ($q) {
+                $q->whereNot(function ($q) {
+                    $q->where('FormStatus', 'Not Approved')
+                      ->where('EventStatus', '-');
+                })
+                ->whereNot(function ($q) {
+                    $q->where('FormStatus', 'Approved')
+                      ->where('EventStatus', 'Cancelled');
+                })
+                ->whereNot(function ($q) {
+                    $q->where('FormStatus', 'Approved')
+                      ->where('EventStatus', 'Finished');
+                });
             });
 
-        return response()->json($vehicleRequests);
+            $vehicleRequests = $query->get()
+                ->map(function ($event) {
+                    return [
+                        'title' => $event->Purpose,
+                        'start' => $event->date_start . 'T' . $event->time_start,
+                        'end' => $event->date_end . 'T' . $event->time_end,
+                        'EventStatus' => $event->FormStatus,
+                        'Destination' => $event->Destination,
+                    ];
+                });
+
+            return response()->json($vehicleRequests);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching calendar events:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch calendar events.'], 500);
+        }
     }
 
     public function getPassengersByRequestId($VRequestID)
     {
-        // Fetch passengers associated with the given VRequestID
-        $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
-            ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
-            ->select('employees.EmployeeID', 'employees.EmployeeName')
-            ->get();
+        try {
+            // Fetch passengers associated with the given VRequestID
+            $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
+                ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
+                ->select('employees.EmployeeID', 'employees.EmployeeName')
+                ->get();
 
-        Log::info('Passengers fetched:', $passengers->toArray());
+            Log::info('Passengers fetched:', $passengers->toArray());
 
-        return $passengers;
+            return $passengers;
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching passengers:', [
+                'VRequestID' => $VRequestID,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch passengers.'], 500);
+        }
     }
 
     public function getRequestData($VRequestID): View|Factory|Application
     {
-        // Fetch the vehicle request data
-        $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
-        $passengers = $this->getPassengersByRequestId($VRequestID);
+        try {
+            // Fetch the vehicle request data
+            $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
+            $passengers = $this->getPassengersByRequestId($VRequestID);
 
-        // Pass the request data and passengers to the view
-        return view('VehicledetailEdit', ['requestData' => $requestData, 'passengers' => $passengers]);
+            // Pass the request data and passengers to the view
+            return view('VehicledetailEdit', ['requestData' => $requestData, 'passengers' => $passengers]);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching request data:', [
+                'VRequestID' => $VRequestID,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return view('VehicledetailEdit')->with('error', 'Failed to fetch request data.');
+        }
     }
 
     public function updateVForm(Request $request, $VRequestID): RedirectResponse
-    {
-        try {
-            // Fetch the existing vehicle request
-            $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
+{
+    try {
+        // Log the incoming request data
+        Log::info('Request Data:', $request->all());
 
-            // Validate the incoming request data
-            $validated = $request->validate([
-                'DriverID' => 'nullable|string|exists:drivers,DriverID',
-                'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
-                'ReceivedBy' => 'nullable|string|max:50',
-                'Remarks' => 'nullable|string|max:255',
-                'Availability' => 'nullable|string|max:50',
-                'AAID' => 'nullable|string|exists:a_authorities,AAID',
-                'SOID' => 'nullable|string|exists:so_authorities,SOID',
-                'ASignatory' => 'nullable|string|max:50',
-                'ASignatory' => 'nullable',
-                'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
-                'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
-            ]);
+        // Fetch the existing vehicle request
+        $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
 
-            // Update the vehicle request
-            $vehicleRequest->update($validated);
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'DriverID' => 'nullable|string|exists:drivers,DriverID',
+            'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
+            'ReceivedBy' => 'nullable|string|max:50',
+            'Remarks' => 'nullable|string|max:255',
+            'Availability' => 'nullable|string|max:50',
+            'AAID' => 'nullable|string|exists:a_authorities,AAID',
+            'SOID' => 'nullable|string|exists:so_authorities,SOID',
+            'ASignatory' => 'nullable|string|max:50',
+            'certfile-upload' => 'nullable',
+            'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
+            'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
+        ]);
 
-            return redirect()->back()->with('success', 'Vehicle request updated successfully.');
-        } catch (ValidationException $e) {
-            Log::error('Validation errors: ', $e->errors());
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (Throwable $e) {
-            Log::error('Vehicle request update failed: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Update failed. Please try again.');
-        }
+        // Log the validated data
+        Log::info('Validated Data:', $validated);
+
+        // Update the vehicle request
+        $updateResult = $vehicleRequest->update($validated);
+
+        // Log the update result
+        Log::info('Update Result:', ['result' => $updateResult]);
+
+        return redirect()->back()->with('success', 'Vehicle request updated successfully.');
+    } catch (ValidationException $e) {
+        Log::error('Validation failed in updateVForm:', [
+            'errors' => $e->errors(),
+            'input' => $request->all(),
+        ]);
+        return redirect()->back()->withErrors($e->errors())->withInput();
+    } catch (Throwable $e) {
+        Log::error('An unexpected error occurred in updateVForm:', [
+            'VRequestID' => $VRequestID,
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'input' => $request->all(),
+        ]);
+        return redirect()->back()->with('error', 'Update failed. Please try again.');
     }
+}
+
+    
 }

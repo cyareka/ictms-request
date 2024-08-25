@@ -69,7 +69,7 @@ return new class extends Migration
             $table->string('AAID')->nullable()->default(null);
             $table->string('SOID')->nullable()->default(null);
             $table->string('ASignatory')->nullable()->default(null);
-            $table->string('certfile-upload');
+            $table->string('certfile-upload')->nullable()->default(null);
             $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
             $table->enum('EventStatus', ['-', 'Ongoing', 'Finished','Cancelled'])->default('-');
 
