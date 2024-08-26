@@ -138,7 +138,7 @@
             cursor: pointer;
             font-size: 16px;
             margin-right: 50px; /* Add margin to the left side of the cancel button */
-            margin-left: 400px;
+            
         }
 
         .form-footer {
@@ -413,9 +413,9 @@
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use. Failure to use the
         vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
     <div class="form-body">
-        <form action="/vehicle-request/update" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
+    <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST" enctype="multipart/form-data">
+    @csrf
+   
             <input type="hidden" name="VRequestID" value="{{ $requestData-> VRequestID }}">
             <div class="input-group">
                 <div class="input-field">
@@ -503,7 +503,9 @@
             </button>
         </div>
         <div id="dispatcher-form">
-            <form class="row-dispatch">
+        <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="name">Driver Name</label>
@@ -565,7 +567,9 @@
             </button>
         </div>
         <div id="admin-service-form">
-            <form class="row-dispatch">
+        <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="availability">Availability</label>
@@ -640,17 +644,22 @@
                         </div>
                         </div>
                 </div>
-                <div class="form-footer">
-                    <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
-                    <button class="submit-btn" type="submit">Update</button>
-                </div>
+                
             </form>
         </div>
-        
+                 <div class="form-footer">
+                    <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+                    <button class="submit-btn" onclick="submitAllForms()">Update</button>
+                </div>
     </div>
 </div>
 <script src="scripts.js"></script>
 <script>
+    function submitAllForms() {
+        document.querySelectorAll('form').forEach(form => {
+        form.submit();
+        });
+    }
     document.addEventListener('DOMContentLoaded', function() {
         const driverSelect = document.getElementById('tables');
         const contactInput = document.getElementById('ContactNo');

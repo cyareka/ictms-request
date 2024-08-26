@@ -212,11 +212,26 @@
         .error-message{
             margin-left: 173px;
         }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 <div class="form-container">
     <h1>MANAGEMENT</h1>
+    @if (session('success'))
+        <div class="alert alert-success" role="alert">
+            {{ session('success') }}
+        </div>
+    @endif
     <div id="app">
         <div class="dropdown-row">
             <button class="dropdown-button" onclick="toggleSection('addVehi', this)">ADD DRIVER</button>

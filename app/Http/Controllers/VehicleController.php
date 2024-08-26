@@ -287,55 +287,62 @@ class VehicleController extends Controller
     }
 
     public function updateVForm(Request $request, $VRequestID): RedirectResponse
-{
-    try {
-        // Log the incoming request data
-        Log::info('Request Data:', $request->all());
-
-        // Fetch the existing vehicle request
-        $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
-
-        // Validate the incoming request data
-        $validated = $request->validate([
-            'DriverID' => 'nullable|string|exists:drivers,DriverID',
-            'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
-            'ReceivedBy' => 'nullable|string|max:50',
-            'Remarks' => 'nullable|string|max:255',
-            'Availability' => 'nullable|string|max:50',
-            'AAID' => 'nullable|string|exists:a_authorities,AAID',
-            'SOID' => 'nullable|string|exists:so_authorities,SOID',
-            'ASignatory' => 'nullable|string|max:50',
-            'certfile-upload' => 'nullable',
-            'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
-            'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
-        ]);
-
-        // Log the validated data
-        Log::info('Validated Data:', $validated);
-
-        // Update the vehicle request
-        $updateResult = $vehicleRequest->update($validated);
-
-        // Log the update result
-        Log::info('Update Result:', ['result' => $updateResult]);
-
-        return redirect()->back()->with('success', 'Vehicle request updated successfully.');
-    } catch (ValidationException $e) {
-        Log::error('Validation failed in updateVForm:', [
-            'errors' => $e->errors(),
-            'input' => $request->all(),
-        ]);
-        return redirect()->back()->withErrors($e->errors())->withInput();
-    } catch (Throwable $e) {
-        Log::error('An unexpected error occurred in updateVForm:', [
-            'VRequestID' => $VRequestID,
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'input' => $request->all(),
-        ]);
-        return redirect()->back()->with('error', 'Update failed. Please try again.');
+    {
+        try {
+            // Log the incoming request data
+            Log::info('Request Data:', $request->all());
+    
+            // Fetch the existing vehicle request
+            $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
+    
+            // Validate the incoming request data
+            $validated = $request->validate([
+                'DriverID' => 'nullable|string|exists:drivers,DriverID',
+                'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
+                'ReceivedBy' => 'nullable|string|max:50',
+                'Remarks' => 'nullable|string|max:255',
+                'Availability' => 'nullable|string|max:50',
+                'AAID' => 'nullable|string|exists:a_authorities,AAID',
+                'SOID' => 'nullable|string|exists:so_authorities,SOID',
+                'ASignatory' => 'nullable|string|max:50',  // Allow string initially
+                'certfile-upload' => 'nullable',
+                'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
+                'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
+            ]);
+    
+            // Convert the signatory name to an ID
+            if ($validated['ASignatory']) {
+                $signatoryId = \DB::table('users')->where('name', $validated['ASignatory'])->value('id');
+                if (!$signatoryId) {
+                    Log::error('ASignatory name does not exist:', ['ASignatory' => $validated['ASignatory']]);
+                    return redirect()->back()->withErrors(['ASignatory' => 'The selected signatory is invalid.'])->withInput();
+                }
+                $validated['ASignatory'] = $signatoryId;
+            }
+    
+            // Update the vehicle request
+            $updateResult = $vehicleRequest->update($validated);
+    
+            // Log the update result
+            Log::info('Update Result:', ['result' => $updateResult]);
+    
+            return redirect()->back()->with('success', 'Vehicle request updated successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation failed in updateVForm:', [
+                'errors' => $e->errors(),
+                'input' => $request->all(),
+            ]);
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error('An unexpected error occurred in updateVForm:', [
+                'VRequestID' => $VRequestID,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
+            ]);
+            return redirect()->back()->with('error', 'Update failed. Please try again.');
+        }
     }
-}
 
     
 }

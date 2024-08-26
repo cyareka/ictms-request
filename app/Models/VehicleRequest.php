@@ -11,13 +11,17 @@ class VehicleRequest extends Model
     use HasFactory;
     protected $table = 'vehicle_request';
     protected $primaryKey = 'VRequestID';
+    public $timestamps = true;
+
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
     protected static function boot()
     {
         parent::boot();
 
         static::updating(function ($model) {
-            $model->UpdatedAt = now();
+            $model->updated_at = now();
         });
     }
 
