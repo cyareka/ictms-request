@@ -510,10 +510,12 @@
                     <div class="inline">
                         <label for="name">Driver Name</label>
                         <select id="tables" name="driver" required>
+                        <option disabled selected>Select Driver</option>
                             @foreach(App\Models\Driver::all() as $driver)
                                 <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}" data-email="{{ $driver->DriverEmail }}">{{ $driver->DriverName }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" id="DriverID" name="DriverID" value="">
                     </div>
                     <div class="inline">
                         <label for="ContactNo">Contact No.</label>
@@ -528,10 +530,12 @@
                     <div class="inline">
                         <label for="VName">Vehicle Type</label>
                         <select id="VName" name="VName">
+                        <option disabled selected>Select Vehicle</option>
                             @foreach(App\Models\Vehicle::all() as $vehicle)
                                 <option value="{{ $vehicle->VehicleID }}" data-plate="{{ $vehicle->PlateNo }}">{{ $vehicle->VehicleType }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" id="VehicleID" name="VehicleID" value="">
                     </div>
                     <div class="inline">
                         <label for="plate">Plate No.</label>
@@ -869,6 +873,23 @@
         var adminServiceForm = document.getElementById("admin-service-form");
         adminServiceForm.style.display = (adminServiceForm.style.display === "block") ? "none" : "block";
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Driver select change event
+    document.getElementById('driver').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        document.getElementById('DriverID').value = this.value;
+        document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
+        document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
+    });
+
+    // Vehicle select change event
+    document.getElementById('VName').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        document.getElementById('VehicleID').value = this.value;
+        document.getElementById('plate').value = selectedOption.getAttribute('data-plate');
+    });
+});
 
 
 </script>
