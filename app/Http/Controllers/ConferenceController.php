@@ -411,4 +411,25 @@ class ConferenceController extends Controller
 
         return response()->json($conferenceRequests);
     }
+
+    public function fetchStatistics(): \Illuminate\Http\JsonResponse
+    {
+        $statistics = [
+            'pendingRequests' => ConferenceRequest::where('FormStatus', 'Pending')->count(),
+            'dailyRequests' => ConferenceRequest::whereDate('created_at', now()->toDateString())->count(),
+            'monthlyRequests' => ConferenceRequest::whereMonth('created_at', now()->month)->count(),
+            'requestsPerOffice' => ConferenceRequest::select('OfficeID', \DB::raw('count(*) as total'))
+                ->groupBy('OfficeID')
+                ->with('office')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'office' => $item->office->name,
+                        'total' => $item->total,
+                    ];
+                }),
+        ];
+
+        return response()->json($statistics);
+    }
 }
