@@ -142,13 +142,7 @@ class VehicleController extends Controller
         $order = $request->get('order', 'desc');
         $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
         $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
-
-        Log::info('Filter parameters:', [
-            'sort' => $sort,
-            'order' => $order,
-            'form_statuses' => $formStatuses,
-            'event_statuses' => $eventStatuses,
-        ]);
+        $perPage = $request->input('per_page', 5); // Set default items per page to 5
 
         try {
             $query = VehicleRequest::with('office')
@@ -164,9 +158,17 @@ class VehicleController extends Controller
 
             $vehicleRequests = $query->get();
 
-            Log::info('Query results:', $vehicleRequests->toArray());
+            $vehicleRequests = $query->paginate($perPage);
 
-            return response()->json($vehicleRequests);
+            return response()->json([
+                'data' => $vehicleRequests->items(),
+                'pagination' => [
+                    'current_page' => $vehicleRequests->currentPage(),
+                    'last_page' => $vehicleRequests->lastPage(),
+                    'per_page' => $vehicleRequests->perPage(),
+                    'total' => $vehicleRequests->total(),
+                ],
+            ]);
         } catch (Throwable $e) {
             Log::error('An error occurred while fetching sorted vehicle requests:', [
                 'message' => $e->getMessage(),
@@ -291,10 +293,10 @@ class VehicleController extends Controller
         try {
             // Log the incoming request data
             Log::info('Request Data Before Assignment:', $request->all());
-            
+
             // Fetch the existing vehicle request
             $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
-    
+
             // Validate the incoming request data
             $validated = $request->validate([
                 'DriverID' => 'nullable|string|exists:drivers,DriverID',
@@ -309,17 +311,17 @@ class VehicleController extends Controller
                 'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);
-    
+
             // Log request data after validation
             Log::info('Request Data After Validation:', $validated);
-    
+
             // Map the input values to validated data
             $validated['DriverID'] = $request->input('driver'); // Ensure 'driver' is the select field name
             $validated['VehicleID'] = $request->input('VName'); // Ensure 'VName' is the select field name
             $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
             $validated['SOID'] = $request->input('SOName');
-         
-    
+
+
             // Log captured values to debug
             Log::info('Captured Values:', [
                 'DriverID' => $validated['DriverID'],
@@ -328,7 +330,7 @@ class VehicleController extends Controller
                 'SOID' => $validated['SOID'],
 
             ]);
-    
+
             // Convert the signatory name to an ID if it's provided
             if (!empty($validated['ASignatory'])) {
                 $signatoryId = \DB::table('users')->where('name', $validated['ASignatory'])->value('id');
@@ -338,13 +340,13 @@ class VehicleController extends Controller
                 }
                 $validated['ASignatory'] = $signatoryId;
             }
-    
+
             // Update the vehicle request
             $updateResult = $vehicleRequest->update($validated);
-    
+
             // Log the update result
             Log::info('Update Result:', ['result' => $updateResult]);
-    
+
             return redirect()->back()->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation failed in updateVForm:', [
@@ -362,9 +364,9 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', 'Update failed. Please try again.');
         }
     }
-    
-    
 
 
-    
+
+
+
 }
