@@ -434,6 +434,34 @@
             </div>
             <div class="input-group">
                 <div class="input-field">
+                    <label>Requester Name<span class="required">*</span></label>
+                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" required/>
+                </div>
+                <div class="input-field">
+                    <label>Requester Email <span class="required">*</span></label>
+                    <input type="text" name="RequesterEmail" placeholder="Enter Email" value="{{ old('RequesterEmail') }}"  required/>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-field">
+                    <label>Contact No. <span class="required">*</span></label>
+                    <input type="text" name="RequesterContact" placeholder="Enter No." value="{{ old('RequesterContact') }}" required/>
+                </div>
+                <div class="input-field">
+                    <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
+                    <div class="file-upload">
+                        <input type="file" id="e-signature" name="RequesterSignature" style="display: none;"
+                               onchange="previewSignature(event)" required>
+                        <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
+                            Click to upload e-sign.<br>Maximum file size: 31.46MB
+                        </div>
+                        <img id="signature-preview" alt="Signature Preview">
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <div class="input-field">
                     <label>Destination<span class="required">*</span></label>
                     <input type="text" name="Destination" placeholder="Enter Place" value="{{ old('Destination') }}" required/>
                 </div>
@@ -475,35 +503,6 @@
                         <div class="time-button-container">
                             <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <div class="input-field">
-                    <label>Requester Name<span class="required">*</span></label>
-                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" required/>
-                </div>
-                <div class="input-field">
-                    <label>Requester Email <span class="required">*</span></label>
-                    <input type="text" name="RequesterEmail" placeholder="Enter Email" value="{{ old('RequesterEmail') }}"  required/>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <div class="input-field">
-                    <label>Contact No. <span class="required">*</span></label>
-                    <input type="text" name="RequesterContact" placeholder="Enter No." value="{{ old('RequesterContact') }}" required/>
-                </div>
-                <div class="input-field">
-                    <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
-                    <div class="file-upload">
-                        <input type="file" id="e-signature" name="RequesterSignature" style="display: none;"
-                               onchange="previewSignature(event)" required>
-                        <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                            Click to upload e-sign.<br>Maximum file size: 31.46MB
-                        </div>
-                        <img id="signature-preview" alt="Signature Preview">
                     </div>
                 </div>
             </div>
