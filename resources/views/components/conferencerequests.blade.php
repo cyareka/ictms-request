@@ -131,9 +131,10 @@
         return availability > 0 ? 'Available' : 'Not Available';
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     let currentPage = 1;
     const itemsPerPage = 5;
+    let lastPage = 1;
 
     function fetchSortedData(order = 'desc', page = currentPage) {
         const form = document.getElementById('filterForm');
@@ -152,6 +153,7 @@
                 updateTable(data.data);
                 updatePagination(data.pagination);
                 currentPage = data.pagination.current_page;
+                lastPage = data.pagination.last_page;
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
@@ -161,7 +163,7 @@
 
     function updatePagination(pagination) {
         currentPage = pagination.current_page;
-        const lastPage = pagination.last_page;
+        lastPage = pagination.last_page;
 
         document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
         document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
