@@ -141,6 +141,15 @@ class ConferenceController extends Controller
         }
     }
 
+    /**
+     * Approves a conference room request.
+     *
+     * This function updates the FormStatus and EventStatus of a conference request to 'Approved' and 'Ongoing', respectively.
+     * It logs the approval action and redirects back with a success message.
+     *
+     * @param string $CRequestID The ID of the conference request to approve.
+     * @return \Illuminate\Http\RedirectResponse The response object redirecting back to the conference request list with a success message.
+     */
     public function updateCForm(Request $request): RedirectResponse
     {
         try {
@@ -166,26 +175,17 @@ class ConferenceController extends Controller
                 $conferenceRequest->save();
 
                 $otherRequests = ConferenceRequest::all()
-                    ->where('date_start', '=', $conferenceRequest->date_start)
-                    ->where('date_end', '=', $conferenceRequest->date_end)
-                    ->where('time_start', '=', $conferenceRequest->time_start)
-                    ->where('time_end', '=', $conferenceRequest->time_end)
                     ->where('CRoomID', '=', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                    ->where('FormStatus', '=','Pending')
-                    ->where('EventStatus', '=','-');
+                    ->where('FormStatus', '=', 'Pending')
+                    ->where('EventStatus', '=', '-');
 
                 foreach ($otherRequests as $otherRequest) {
                     if (
-                        $otherRequest->date_start <= $conferenceRequest->date_end &&
-                        $otherRequest->date_end >= $conferenceRequest->date_start &&
-                        $otherRequest->time_start <= $conferenceRequest->time_end &&
-                        $otherRequest->time_end >= $conferenceRequest->time_start &&
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
                         ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
                     ) {
                         $otherRequest->update(['CAvailability' => false]);
-                        Log::info($otherRequests);
                     }
                 }
             } elseif ($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') {
@@ -193,21 +193,13 @@ class ConferenceController extends Controller
                 $conferenceRequest->save();
 
                 $otherRequests = ConferenceRequest::all()
-                    ->where('date_start', '=', $conferenceRequest->date_start)
-                    ->where('date_end', '=', $conferenceRequest->date_end)
-                    ->where('time_start', '=', $conferenceRequest->time_start)
-                    ->where('time_end', '=', $conferenceRequest->time_end)
                     ->where('CRoomID', '=', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                    ->where('FormStatus', '=','Pending')
-                    ->where('EventStatus', '=','-');
+                    ->where('FormStatus', '=', 'Pending')
+                    ->where('EventStatus', '=', '-');
 
                 foreach ($otherRequests as $otherRequest) {
                     if (
-                        $otherRequest->date_start <= $conferenceRequest->date_end &&
-                        $otherRequest->date_end >= $conferenceRequest->date_start &&
-                        $otherRequest->time_start <= $conferenceRequest->time_end &&
-                        $otherRequest->time_end >= $conferenceRequest->time_start &&
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
                         ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
                     ) {
@@ -219,21 +211,13 @@ class ConferenceController extends Controller
                 $conferenceRequest->save();
 
                 $otherRequests = ConferenceRequest::all()
-                    ->where('date_start', '=', $conferenceRequest->date_start)
-                    ->where('date_end', '=', $conferenceRequest->date_end)
-                    ->where('time_start', '=', $conferenceRequest->time_start)
-                    ->where('time_end', '=', $conferenceRequest->time_end)
                     ->where('CRoomID', '=', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                    ->where('FormStatus', '=','Pending')
-                    ->where('EventStatus', '=','-');
+                    ->where('FormStatus', '=', 'Pending')
+                    ->where('EventStatus', '=', '-');
 
                 foreach ($otherRequests as $otherRequest) {
                     if (
-                        $otherRequest->date_start <= $conferenceRequest->date_end &&
-                        $otherRequest->date_end >= $conferenceRequest->date_start &&
-                        $otherRequest->time_start <= $conferenceRequest->time_end &&
-                        $otherRequest->time_end >= $conferenceRequest->time_start &&
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
                         ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
                     ) {
@@ -251,6 +235,7 @@ class ConferenceController extends Controller
             return redirect()->back()->with('error', 'Form update failed. Please try again.');
         }
     }
+
     public function getRequestData(string $CRequestID): View|Factory|Application
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
