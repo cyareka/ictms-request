@@ -16,6 +16,7 @@
             }
         }
     </style>
+    <title></title>
 </head>
 <body>
 <section id="content">

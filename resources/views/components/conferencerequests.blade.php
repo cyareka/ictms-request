@@ -10,8 +10,10 @@
         </div>
         <div class="tableactions">
             <div id="divide">
-                <i class="bi bi-arrow-left-short"></i>
-                <i class="bi bi-arrow-right-short" id="iconborder"></i>
+                <div id="pagination-links">
+                    <i class="bi bi-arrow-left-short" id="prev-page"></i>
+                    <i class="bi bi-arrow-right-short" id="next-page"></i>
+                </div>
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
@@ -129,34 +131,40 @@
         return availability > 0 ? 'Available' : 'Not Available';
     }
 
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder);
-    });
+    document.addEventListener('DOMContentLoaded', function () {
+    let currentPage = 1;
+    const itemsPerPage = 5;
 
-    function fetchSortedData(order) {
+    function fetchSortedData(order = 'desc', page = currentPage) {
         const form = document.getElementById('filterForm');
         const formData = new FormData(form);
 
-        // Build query parameters including the sort order
         formData.append('order', order);
         formData.append('sort', 'created_at');
+        formData.append('page', page);
+        formData.append('per_page', itemsPerPage);
 
-        // Construct URL params from formData
         const params = new URLSearchParams(formData).toString();
 
         fetch(`/fetchSortedRequests?${params}`)
             .then(response => response.json())
             .then(data => {
-                updateTable(data);
+                updateTable(data.data);
+                updatePagination(data.pagination);
+                currentPage = data.pagination.current_page;
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
                 alert(`An error occurred while fetching data: ${error.message}`);
             });
+    }
+
+    function updatePagination(pagination) {
+        currentPage = pagination.current_page;
+        const lastPage = pagination.last_page;
+
+        document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
+        document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
     }
 
     function updateTable(data) {
@@ -193,35 +201,36 @@
         }
     }
 
+    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder);
+    });
+
+    document.getElementById('prev-page').addEventListener('click', function () {
+        if (currentPage > 1) {
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1);
+        }
+    });
+
+    document.getElementById('next-page').addEventListener('click', function () {
+        if (currentPage < lastPage) {
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1);
+        }
+    });
 
     document.getElementById('filterForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('Error fetching filtered data:', error);
-            });
+        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
     });
 
     document.querySelector('.cancelbtn').addEventListener('click', function () {
         document.getElementById('filterForm').reset();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-
-        fetch(`/fetchSortedRequests?sort=created_at&order=${sortOrder}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('Error fetching unfiltered data:', error);
-            });
+        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
     });
 
+    fetchSortedData();
+});
 </script>

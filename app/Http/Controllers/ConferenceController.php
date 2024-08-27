@@ -141,6 +141,15 @@ class ConferenceController extends Controller
         }
     }
 
+    /**
+     * Approves a conference room request.
+     *
+     * This function updates the FormStatus and EventStatus of a conference request to 'Approved' and 'Ongoing', respectively.
+     * It logs the approval action and redirects back with a success message.
+     *
+     * @param string $CRequestID The ID of the conference request to approve.
+     * @return \Illuminate\Http\RedirectResponse The response object redirecting back to the conference request list with a success message.
+     */
     public function updateCForm(Request $request): RedirectResponse
     {
         try {
@@ -166,26 +175,17 @@ class ConferenceController extends Controller
                 $conferenceRequest->save();
 
                 $otherRequests = ConferenceRequest::all()
-                    ->where('date_start', '=', $conferenceRequest->date_start)
-                    ->where('date_end', '=', $conferenceRequest->date_end)
-                    ->where('time_start', '=', $conferenceRequest->time_start)
-                    ->where('time_end', '=', $conferenceRequest->time_end)
                     ->where('CRoomID', '=', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                    ->where('FormStatus', '=','Pending')
-                    ->where('EventStatus', '=','-');
+                    ->where('FormStatus', '=', 'Pending')
+                    ->where('EventStatus', '=', '-');
 
                 foreach ($otherRequests as $otherRequest) {
                     if (
-                        $otherRequest->date_start <= $conferenceRequest->date_end &&
-                        $otherRequest->date_end >= $conferenceRequest->date_start &&
-                        $otherRequest->time_start <= $conferenceRequest->time_end &&
-                        $otherRequest->time_end >= $conferenceRequest->time_start &&
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
                         ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
                     ) {
                         $otherRequest->update(['CAvailability' => false]);
-                        Log::info($otherRequests);
                     }
                 }
             } elseif ($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') {
@@ -193,21 +193,13 @@ class ConferenceController extends Controller
                 $conferenceRequest->save();
 
                 $otherRequests = ConferenceRequest::all()
-                    ->where('date_start', '=', $conferenceRequest->date_start)
-                    ->where('date_end', '=', $conferenceRequest->date_end)
-                    ->where('time_start', '=', $conferenceRequest->time_start)
-                    ->where('time_end', '=', $conferenceRequest->time_end)
                     ->where('CRoomID', '=', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                    ->where('FormStatus', '=','Pending')
-                    ->where('EventStatus', '=','-');
+                    ->where('FormStatus', '=', 'Pending')
+                    ->where('EventStatus', '=', '-');
 
                 foreach ($otherRequests as $otherRequest) {
                     if (
-                        $otherRequest->date_start <= $conferenceRequest->date_end &&
-                        $otherRequest->date_end >= $conferenceRequest->date_start &&
-                        $otherRequest->time_start <= $conferenceRequest->time_end &&
-                        $otherRequest->time_end >= $conferenceRequest->time_start &&
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
                         ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
                     ) {
@@ -219,21 +211,13 @@ class ConferenceController extends Controller
                 $conferenceRequest->save();
 
                 $otherRequests = ConferenceRequest::all()
-                    ->where('date_start', '=', $conferenceRequest->date_start)
-                    ->where('date_end', '=', $conferenceRequest->date_end)
-                    ->where('time_start', '=', $conferenceRequest->time_start)
-                    ->where('time_end', '=', $conferenceRequest->time_end)
                     ->where('CRoomID', '=', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
-                    ->where('FormStatus', '=','Pending')
-                    ->where('EventStatus', '=','-');
+                    ->where('FormStatus', '=', 'Pending')
+                    ->where('EventStatus', '=', '-');
 
                 foreach ($otherRequests as $otherRequest) {
                     if (
-                        $otherRequest->date_start <= $conferenceRequest->date_end &&
-                        $otherRequest->date_end >= $conferenceRequest->date_start &&
-                        $otherRequest->time_start <= $conferenceRequest->time_end &&
-                        $otherRequest->time_end >= $conferenceRequest->time_start &&
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
                         ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
                     ) {
@@ -251,6 +235,7 @@ class ConferenceController extends Controller
             return redirect()->back()->with('error', 'Form update failed. Please try again.');
         }
     }
+
     public function getRequestData(string $CRequestID): View|Factory|Application
     {
         $requestData = ConferenceRequest::with('office', 'conferenceRoom')->findOrFail($CRequestID);
@@ -325,17 +310,12 @@ class ConferenceController extends Controller
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
-        // Get sorting criteria from the request
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
         $conferenceRoom = $request->input('conference_room');
-
-        Log::info('Sort: ' . $sort);
-        Log::info('Order: ' . $order);
-        Log::info('Conference Room: ' . $conferenceRoom);
-
         $formStatuses = $request->input('form_statuses', ['Approved', 'Pending']);
         $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
+        $perPage = $request->input('per_page', 5); // Set default items per page to 5
 
         $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
             ->orderBy($sort, $order);
@@ -354,11 +334,17 @@ class ConferenceController extends Controller
             $query->whereIn('EventStatus', $eventStatuses);
         }
 
-        $conferenceRequests = $query->get();
+        $conferenceRequests = $query->paginate($perPage);
 
-        Log::info('Query results:', $conferenceRequests->toArray());
-
-        return response()->json($conferenceRequests);
+        return response()->json([
+            'data' => $conferenceRequests->items(),
+            'pagination' => [
+                'current_page' => $conferenceRequests->currentPage(),
+                'last_page' => $conferenceRequests->lastPage(),
+                'per_page' => $conferenceRequests->perPage(),
+                'total' => $conferenceRequests->total(),
+            ],
+        ]);
     }
 
     // Conference Request Logs Filter and Sort
@@ -425,5 +411,26 @@ class ConferenceController extends Controller
         Log::info('Query results:', $conferenceRequests->toArray());
 
         return response()->json($conferenceRequests);
+    }
+
+    public function fetchStatistics(): \Illuminate\Http\JsonResponse
+    {
+        $statistics = [
+            'pendingRequests' => ConferenceRequest::where('FormStatus', 'Pending')->count(),
+            'dailyRequests' => ConferenceRequest::whereDate('created_at', now()->toDateString())->count(),
+            'monthlyRequests' => ConferenceRequest::whereMonth('created_at', now()->month)->count(),
+            'requestsPerOffice' => ConferenceRequest::select('OfficeID', \DB::raw('count(*) as total'))
+                ->groupBy('OfficeID')
+                ->with('office')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'office' => $item->office->name,
+                        'total' => $item->total,
+                    ];
+                }),
+        ];
+
+        return response()->json($statistics);
     }
 }

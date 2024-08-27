@@ -49,17 +49,13 @@ Route::middleware([
     Route::get('/ConferenceStatistics', function () {
         return view('ConferenceStatistics');
     })->name('ConferenceStatistics');
-
+    Route::get('/api/conference-statistics', [ConferenceController::class, 'fetchStatistics']);
     // Conference Calendar View
     Route::get('/calendar/events', [ConferenceController::class, 'getCalendarEvents']);
-
     // Conference Table View
     Route::get('/conference-requests',
         [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');
 
-    // Vehicle Table View
-    Route::get('/vehicle-requests',
-        [VehicleController::class, 'fetchSortedRequests'])->name('vehicle.requests');
 
     // Conference Edit
     Route::post('/conference-room/update',
@@ -86,6 +82,10 @@ Route::middleware([
         return view('VehiclecalendarView');
     })->name('VehiclecalendarView');
     Route::get('/calendar/events', [VehicleController::class, 'getCalendarEvents']);
+
+    // Vehicle Table View
+    Route::get('/vehicle-requests',
+        [VehicleController::class, 'fetchSortedRequests'])->name('vehicle.requests');
 
     // Vehicle Table View
     Route::get('/VehicleTabular', function () {

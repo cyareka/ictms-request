@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @method static whereDate(string $string, string $toDateString)
+ * @method static where(string $string, string $string1)
+ * @method static whereMonth(string $string, int $month)
+ * @method static select(string $string, $raw)
+ */
 class ConferenceRequest extends Model
 {
     use HasFactory;
