@@ -310,17 +310,12 @@ class ConferenceController extends Controller
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
-        // Get sorting criteria from the request
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
         $conferenceRoom = $request->input('conference_room');
-
-        Log::info('Sort: ' . $sort);
-        Log::info('Order: ' . $order);
-        Log::info('Conference Room: ' . $conferenceRoom);
-
         $formStatuses = $request->input('form_statuses', ['Approved', 'Pending']);
         $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
+        $perPage = $request->input('per_page', 5); // Set default items per page to 5
 
         $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
             ->orderBy($sort, $order);
@@ -339,11 +334,17 @@ class ConferenceController extends Controller
             $query->whereIn('EventStatus', $eventStatuses);
         }
 
-        $conferenceRequests = $query->get();
+        $conferenceRequests = $query->paginate($perPage);
 
-        Log::info('Query results:', $conferenceRequests->toArray());
-
-        return response()->json($conferenceRequests);
+        return response()->json([
+            'data' => $conferenceRequests->items(),
+            'pagination' => [
+                'current_page' => $conferenceRequests->currentPage(),
+                'last_page' => $conferenceRequests->lastPage(),
+                'per_page' => $conferenceRequests->perPage(),
+                'total' => $conferenceRequests->total(),
+            ],
+        ]);
     }
 
     // Conference Request Logs Filter and Sort

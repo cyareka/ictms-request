@@ -58,8 +58,8 @@
 <body>
 <div class="email-container">
     <img src='https://i.imgur.com/YVsL4gX.jpeg' alt='Logo' style='max-width: 300px; margin-bottom: 20px;' />
-    <div class="headerText">Let's sign you up</div>
-    <div class="bodyText">Use this code to sign up. This code will expire in 10 minutes.</div>
+    <div class="headerText">Let's log you in</div>
+    <div class="bodyText">Use this code to log in. This code will expire in 10 minutes.</div>
     <div class="otp">{{ $otp }}</div>
     <div class="footerText">If you didn't request this email, you can safely ignore it.</div>
 </div>
