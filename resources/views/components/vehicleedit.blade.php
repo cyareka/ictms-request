@@ -114,7 +114,7 @@
             cursor: pointer;
             margin-bottom: 16px;
             width: 100%;
-
+            
         }
 
         .submit-btn {
@@ -138,7 +138,7 @@
             cursor: pointer;
             font-size: 16px;
             margin-right: 50px; /* Add margin to the left side of the cancel button */
-
+            
         }
 
         .form-footer {
@@ -221,7 +221,6 @@
             font-size: 10px;
             margin-left: 10px;
         }
-
         #certfile-upload {
             display: none;
             position: absolute;
@@ -231,8 +230,7 @@
             height: 100%;
             opacity: 0;
             cursor: pointer;
-        }
-
+            }
         #certificate-preview-label {
             display: block;
             width: 100%;
@@ -325,65 +323,66 @@
             }
 
             /* Ensure the file upload section is clearly defined */
-            .file-upload {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 16px;
-                border: 2px dashed #5b21b6;
-                border-radius: 15px;
-                cursor: pointer;
-                margin-bottom: 16px;
-                width: 100%;
-                background-color: #ffffff; /* Light background for better visibility */
-                text-align: center;
-                transition: background-color 0.3s ease; /* Add a transition effect */
-            }
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    border: 2px dashed #5b21b6;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    width: 100%;
+    background-color: #ffffff; /* Light background for better visibility */
+    text-align: center;
+    transition: background-color 0.3s ease; /* Add a transition effect */
+}
 
-            .file-upload:hover {
-                background-color: #f0f0f0; /* Slightly darker on hover for feedback */
-            }
+.file-upload:hover {
+    background-color: #f0f0f0; /* Slightly darker on hover for feedback */
+}
 
-            #certfile-upload {
-                display: none;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                cursor: pointer;
-            }
+#certfile-upload {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
 
-            #certificate-preview-label {
-                display: block;
-                width: 100%;
-                height: 100%;
-                cursor: pointer;
-            }
+#certificate-preview-label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
 
-            #certificate-preview-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 50px;
-                text-align: center;
-                color: #5b21b6; /* Text color matching the border */
-            }
+#certificate-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    text-align: center;
+    color: #5b21b6; /* Text color matching the border */
+}
 
-            #default-text {
-                font-size: 14px;
-                color: #5b21b6; /* Text color to match the border */
-            }
+#default-text {
+    font-size: 14px;
+    color: #5b21b6; /* Text color to match the border */
+}
 
-            #certificate-preview {
-                font-size: 14px;
-                color: #333;
-                margin-top: 10px; /* Space between the default text and preview text */
-            }
+#certificate-preview {
+    font-size: 14px;
+    color: #333;
+    margin-top: 10px; /* Space between the default text and preview text */
+}
 
 
+            
         }
     </style>
 </head>
@@ -414,36 +413,32 @@
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use. Failure to use the
         vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
     <div class="form-body">
-        <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
-              enctype="multipart/form-data">
-            @csrf
-
+    <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST" enctype="multipart/form-data">
+    @csrf
+   
             <input type="hidden" name="VRequestID" value="{{ $requestData-> VRequestID }}">
             <div class="input-group">
                 <div class="input-field">
                     <label for="officeName">Requesting Office</label>
-                    <input type="text" id="officeName" name="officeName"
-                           value="{{ $requestData->office->OfficeName ?? '' }}" placeholder="-" readonly>
+                    <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName ?? '' }}" placeholder="-" readonly>
                 </div>
                 <div class="input-field">
                     <label>Purpose</label>
                     <input type="text" id="purpose" name="purpose" value="{{ $requestData->Purpose }}" placeholder="-"
-                           readonly>
+                    readonly>
                 </div>
             </div>
             <div class="input-group">
                 <div class="input-field">
                     <label>Destination</label>
-                    <input type="text" name="Destination" placeholder="Enter Place"
-                           value="{{ $requestData->Destination }}" readonly/>
+                    <input type="text" name="Destination" placeholder="Enter Place" value="{{ $requestData->Destination }}" readonly/>
                 </div>
                 <div class="input-field">
                     <label>Passenger/s</label>
                     <ul>
                         @if(isset($passengers) && $passengers->isNotEmpty())
                             @foreach($passengers as $passenger)
-                                <li id="passengers" name="passengers[]"
-                                    value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</li>
+                                <li id="passengers" name="passengers[]" value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</li>
                             @endforeach
                         @else
                             <li>No passengers found</li>
@@ -459,13 +454,11 @@
                     <div class="input-field">
                         <label>Date</label>
                         <div class="date-field">
-                            <input type="date" id="date_start" name="date_start[]"
-                                   value="{{ $requestData->date_start }}" readonly/>
+                            <input type="date" id="date_start" name="date_start[]" value="{{ $requestData->date_start }}" readonly/>
                             <label for="date_start" class="below-label1">Start</label>
                         </div>
                         <div class="date-field">
-                            <input type="date" id="date_end" name="date_end[]" value="{{ $requestData->date_end }}"
-                                   readonly/>
+                            <input type="date" id="date_end" name="date_end[]" value="{{ $requestData->date_end }}" readonly/>
                             <label for="date_end" class="below-label2">End</label>
                         </div>
                     </div>
@@ -478,20 +471,17 @@
             <div class="input-group">
                 <div class="input-field">
                     <label>Requester Name</label>
-                    <input type="text" name="RequesterName" placeholder="Enter Name"
-                           value="{{ $requestData->RequesterName }}" required/>
+                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ $requestData->RequesterName }}" required/>
                 </div>
                 <div class="input-field">
                     <label>Requester Email</label>
-                    <input type="text" name="RequesterEmail" placeholder="Enter Email"
-                           value="{{ $requestData->RequesterEmail }}" readonly/>
+                    <input type="text" name="RequesterEmail" placeholder="Enter Email" value="{{ $requestData->RequesterEmail }}" readonly/>
                 </div>
             </div>
             <div class="input-group">
                 <div class="input-field">
                     <label>Contact No.</label>
-                    <input type="text" name="RequesterContact" placeholder="Enter No."
-                           value="{{ $requestData->RequesterContact }}" readonly/>
+                    <input type="text" name="RequesterContact" placeholder="Enter No." value="{{ $requestData->RequesterContact }}" readonly/>
                 </div>
                 <div class="input-field">
                     <label for="RequesterSignature">E-Signature</label>
@@ -499,8 +489,7 @@
                         <img id="signature-preview"
                              src="{{ $requestData->RequesterSignature ? asset('storage/' . $requestData->RequesterSignature) : '' }}"
                              alt="Signature Preview"
-                             style="{{ $requestData->RequesterSignature ? 'display: block;' : 'display: none;' }}"
-                             readonly>
+                             style="{{ $requestData->RequesterSignature ? 'display: block;' : 'display: none;' }}" readonly>
                     </div>
                 </div>
             </div>
@@ -514,20 +503,19 @@
             </button>
         </div>
         <div id="dispatcher-form">
-            <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
-                  enctype="multipart/form-data">
-                @csrf
-
+        <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        
                 <div class="row-dispatch">
                     <div class="inline">
-                        <label for="driver">Driver Name</label>
-                        <select id="DriverID" name="DriverID" required>
-                            <option disabled selected>Select Driver</option>
+                        <label for="name">Driver Name</label>
+                        <select id="tables" name="driver" required>
+                        <option disabled selected>Select Driver</option>
                             @foreach(App\Models\Driver::all() as $driver)
-                                <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}"
-                                        data-email="{{ $driver->DriverEmail }}">{{ $driver->DriverName }}</option>
+                                <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}" data-email="{{ $driver->DriverEmail }}">{{ $driver->DriverName }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" id="DriverID" name="DriverID" value="">
                     </div>
                     <div class="inline">
                         <label for="ContactNo">Contact No.</label>
@@ -540,14 +528,14 @@
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
-                        <label for="vehicle">Vehicle Type</label>
-                        <select id="vehicle" id="VehicleID" name="VehicleID">
-                            <option disabled selected>Select Vehicle</option>
+                        <label for="VName">Vehicle Type</label>
+                        <select id="VName" name="VName">
+                        <option disabled selected>Select Vehicle</option>
                             @foreach(App\Models\Vehicle::all() as $vehicle)
-                                <option value="{{ $vehicle->VehicleID }}"
-                                        data-plate="{{ $vehicle->PlateNo }}">{{ $vehicle->VehicleType }}</option>
+                                <option value="{{ $vehicle->VehicleID }}" data-plate="{{ $vehicle->PlateNo }}">{{ $vehicle->VehicleType }}</option>
                             @endforeach
                         </select>
+                        <input type="hidden" id="VehicleID" name="VehicleID" value="">
                     </div>
                     <div class="inline">
                         <label for="plate">Plate No.</label>
@@ -583,10 +571,9 @@
             </button>
         </div>
         <div id="admin-service-form">
-            <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
-                  enctype="multipart/form-data">
-                @csrf
-
+        <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="availability">Availability</label>
@@ -595,16 +582,9 @@
                     <div class="inline">
                         <label for="FormStatus">Form Status</label>
                         <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                            <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>
-                                Pending
-                            </option>
-                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
-                                Approved
-                            </option>
-                            <option
-                                value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
-                                Not Approved
-                            </option>
+                            <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
+                            <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
                         </select>
                     </div>
                     <div class="inline">
@@ -612,15 +592,9 @@
                         <select id="EventStatus" name="EventStatus" onchange="updateFormStatus()">
                             <option disabled selected>Select Event Status</option>
                             <option value="-" {{ $requestData->EventStatus == '-' ? 'selected' : '' }}>-</option>
-                            <option value="Ongoing" {{ $requestData->EventStatus == 'Ongoing' ? 'selected' : '' }}>
-                                Ongoing
-                            </option>
-                            <option value="Finished" {{ $requestData->EventStatus == 'Finished' ? 'selected' : '' }}>
-                                Finished
-                            </option>
-                            <option value="Cancelled" {{ $requestData->EventStatus == 'Cancelled' ? 'selected' : '' }}>
-                                Cancelled
-                            </option>
+                            <option value="Ongoing" {{ $requestData->EventStatus == 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
+                            <option value="Finished" {{ $requestData->EventStatus == 'Finished' ? 'selected' : '' }}>Finished</option>
+                            <option value="Cancelled" {{ $requestData->EventStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
                     </div>
                 </div>
@@ -628,10 +602,9 @@
                     <div class="inline">
                         <label for="AAuth">Approving Authority</label>
                         <select id="AAuth" name="AAuth" required>
-                            <option disabled {{ $requestData->AAID ? '' : 'selected' }}>Select Authority</option>
+                            <option disabled selected>Select Authority</option>
                             @foreach(App\Models\AAuthority::all() as $AAuth)
-                                <option value="{{ $AAuth->AAID }}"
-                                        data-position="{{ $AAuth->AAPosition }}">{{ $AAuth->AAName }}</option>
+                                <option value="{{ $AAuth->AAID }}" data-position="{{ $AAuth->AAPosition }}">{{ $AAuth->AAName }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -644,10 +617,9 @@
                     <div class="inline">
                         <label for="SOAuthority">SO Approving Authority</label>
                         <select id="SOAuthority" name="SOName" required>
-                            <option disabled {{ $requestData->SOID ? '' : 'selected' }}>Select Authority</option>
+                            <option disabled selected>Select Authority</option>
                             @foreach(App\Models\SOAuthority::all() as $SOAuth)
-                                <option value="{{ $SOAuth->SOID }}"
-                                        data-position="{{ $SOAuth->SOPosition }}">{{ $SOAuth->SOName }}</option>
+                                <option value="{{ $SOAuth->SOID }}" data-position="{{ $SOAuth->SOPosition }}">{{ $SOAuth->SOName }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -663,44 +635,36 @@
                     </div>
                     <div class="inline">
                         <label for="certificate-upload">File Upload</label>
-                        <div class="file-upload">
-                            <label for="certfile-upload" id="certificate-preview-label">
-                                <div id="certificate-preview-container">
-                                    @if($requestData->certfile)
-                                        <div id="current-file">
-                                            Current file: <a href="{{ asset('storage/app/public/uploads/vehicle_request/files' . $requestData->certfile) }}" target="_blank">View Certificate</a>
-                                        </div>
-                                    @else
-                                        <div id="default-text">
-                                            Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
-                                        </div>
-                                    @endif
-                                    <div id="certificate-preview"></div>
+                        <div class="file-upload" >
+                            <label for="certfile-upload" id="certificate-preview-label" >
+                            <div id="certificate-preview-container">
+                                <div id="default-text">
+                                Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
                                 </div>
+                                <div id="certificate-preview"></div>
+                            </div>
                             </label>
-                            <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf" onchange="previewCertificate(event)"
-                                   style="display: none;">
+                            <input type="file" id="certfile-upload" onchange="previewCertificate(event)" style="display: none;">
                         </div>
-                    </div>
+                        </div>
                 </div>
-
+                
             </form>
         </div>
-        <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
-            <button class="submit-btn" onclick="submitAllForms()">Update</button>
-        </div>
+                 <div class="form-footer">
+                    <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+                    <button class="submit-btn" onclick="submitAllForms()">Update</button>
+                </div>
     </div>
 </div>
+<script src="scripts.js"></script>
 <script>
     function submitAllForms() {
-        console.log('Submitting all forms');
         document.querySelectorAll('form').forEach(form => {
-            console.log('Submitting form:', form);
-            form.submit();
+        form.submit();
         });
     }
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const driverSelect = document.getElementById('tables');
         const contactInput = document.getElementById('ContactNo');
         const emailInput = document.getElementById('DriverEmail');
@@ -719,8 +683,8 @@
         updateDriverFields();
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const vehicleSelect = document.getElementById('vehicle');
+    document.addEventListener('DOMContentLoaded', function() {
+        const vehicleSelect = document.getElementById('VName');
         const plateInput = document.getElementById('plate');
 
         function updateVehicleFields() {
@@ -735,7 +699,7 @@
         updateVehicleFields();
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const soAuthSelect = document.getElementById('SOAuthority');
         const soPositionInput = document.getElementById('SOPosition');
 
@@ -751,7 +715,7 @@
         updateSOAuthorityFields();
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const aaAuthSelect = document.getElementById('AAuth');
         const aaPositionInput = document.getElementById('AAPosition');
 
@@ -767,7 +731,7 @@
         updateAAAuthorityFields();
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('date').value = new Date().toISOString().split('T')[0];
 
         const now = new Date();
@@ -775,7 +739,9 @@
         const minutes = String(now.getMinutes()).padStart(2, '0');
         document.getElementById('dtime').value = `${hours}:${minutes}`;
     });
-
+    /**
+     * Sets up form change detection and handles the cancel action with a confirmation prompt.
+     */
     function setupFormChangeDetectionAndCancel() {
         let formChanged = false;
 
@@ -800,6 +766,8 @@
         // Attach the cancelForm function to the cancel button
         document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
     }
+
+    // Call the setup function to initialize everything
     setupFormChangeDetectionAndCancel();
 
     function updateEventStatus() {
@@ -815,20 +783,28 @@
         }
     }
 
-    document.querySelector('form').addEventListener('submit', function (e) {
-        console.log('Form is being submitted');
-    });
+    // Add form submission logging
+    document.querySelector('form').addEventListener('submit', function(e) {
+            console.log('Form is being submitted');
+        });
 
+    /**
+     * Updates the event status based on the selected form status.
+     *
+     * This function is triggered when the form status select element changes.
+     * It sets the event status to 'Ongoing' if the form status is 'Approved'.
+     * Otherwise, it sets the event status to '-'.
+     */
     function updateFormStatus() {
         const EventStatus = document.getElementById('EventStatus').value;
         const FormStatus = document.getElementById('FormStatus');
 
-        switch (EventStatus) {
+        switch(EventStatus) {
             case 'Ongoing':
                 FormStatus.value = 'Approved';
                 break;
             case 'Finished':
-                FormStatus.value = 'Approved';
+                FormStatus.value= 'Approved';
                 break;
             case 'Cancelled':
                 FormStatus.value = 'Approved';
@@ -855,37 +831,37 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-
     function previewCertificate(event) {
-        const file = event.target.files[0];
-        const filePreview = document.getElementById('certificate-preview');
-        const defaultText = document.getElementById('default-text');
+  const file = event.target.files[0];
+  const filePreview = document.getElementById('certificate-preview');
+  const defaultText = document.getElementById('default-text');
 
-        // Clear any existing content in the preview box
-        filePreview.innerHTML = '';
+  // Clear any existing content in the preview box
+  filePreview.innerHTML = '';
 
-        if (file) {
-            // Hide the default text when a file is uploaded
-            defaultText.style.display = 'none';
+  if (file) {
+    // Hide the default text when a file is uploaded
+    defaultText.style.display = 'none';
 
-            // Check if the file is a PDF
-            if (file.type === 'application/pdf') {
-                // Create an anchor element to make the file name clickable
-                const fileLink = document.createElement('a');
-                fileLink.textContent = `${file.name}`;
-                fileLink.style.color = 'green';
-                fileLink.href = URL.createObjectURL(file);
-                fileLink.target = '_blank'; // Open in a new tab
+    // Check if the file is a PDF
+    if (file.type === 'application/pdf') {
+      // Create an anchor element to make the file name clickable
+      const fileLink = document.createElement('a');
+      fileLink.textContent = `${file.name}`;
+      fileLink.style.color = 'green';
+      fileLink.href = URL.createObjectURL(file);
+      fileLink.target = '_blank'; // Open in a new tab
 
-                // Append the clickable file name to the preview area
-                filePreview.appendChild(fileLink);
-            } else {
-                // Display a message if the file is not a PDF
-                filePreview.textContent = 'Please upload a valid PDF file.';
-                filePreview.style.color = 'red';
-            }
-        }
+      // Append the clickable file name to the preview area
+      filePreview.appendChild(fileLink);
+    } else {
+      // Display a message if the file is not a PDF
+      filePreview.textContent = 'Please upload a valid PDF file.';
+      filePreview.style.color = 'red';
     }
+  }
+}
+
 
 
     function toggleDispatcher() {
@@ -898,22 +874,22 @@
         adminServiceForm.style.display = (adminServiceForm.style.display === "block") ? "none" : "block";
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Driver select change event
-        document.getElementById('DriverID').addEventListener('change', function () {
-            var selectedOption = this.options[this.selectedIndex];
-            document.getElementById('DriverID').value = this.value;
-            document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
-            document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
-        });
-
-        // Vehicle select change event
-        document.getElementById('vehicle').addEventListener('change', function () {
-            var selectedOption = this.options[this.selectedIndex];
-            document.getElementById('VehicleID').value = this.value;
-            document.getElementById('plate').value = selectedOption.getAttribute('data-plate');
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+    // Driver select change event
+    document.getElementById('driver').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        document.getElementById('DriverID').value = this.value;
+        document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
+        document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
     });
+
+    // Vehicle select change event
+    document.getElementById('VName').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        document.getElementById('VehicleID').value = this.value;
+        document.getElementById('plate').value = selectedOption.getAttribute('data-plate');
+    });
+});
 
 
 </script>
