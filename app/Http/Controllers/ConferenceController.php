@@ -414,24 +414,48 @@ class ConferenceController extends Controller
         return response()->json($conferenceRequests);
     }
 
-    public function fetchStatistics(): \Illuminate\Http\JsonResponse
-    {
-        $statistics = [
-            'pendingRequests' => ConferenceRequest::where('FormStatus', 'Pending')->count(),
-            'dailyRequests' => ConferenceRequest::whereDate('created_at', now()->toDateString())->count(),
-            'monthlyRequests' => ConferenceRequest::whereMonth('created_at', now()->month)->count(),
-            'requestsPerOffice' => ConferenceRequest::select('OfficeID', \DB::raw('count(*) as total'))
-                ->groupBy('OfficeID')
-                ->with('office')
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'office' => $item->office->name,
-                        'total' => $item->total,
-                    ];
-                }),
-        ];
+        public function fetchStatistics(): \Illuminate\Http\JsonResponse
+        {
+            $statistics = [
+                'pendingRequests' => ConferenceRequest::where('FormStatus', 'Pending')->count(),
+                'dailyRequests' => ConferenceRequest::whereDate('created_at', now()->toDateString())->count(),
+                'monthlyRequests' => ConferenceRequest::whereMonth('created_at', now()->month)->count(),
+                'requestsPerOffice' => ConferenceRequest::select('OfficeID', \DB::raw('count(*) as total'))
+                    ->groupBy('OfficeID')
+                    ->with('office')
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'office' => $item->office->OfficeName,
+                            'total' => $item->total,
+                        ];
+                    }),
+            ];
 
-        return response()->json($statistics);
+            return response()->json($statistics);
+        }
+
+            public function getConferenceRoomUsage()
+    {
+        // Fetch monthly usage data for MAGITING
+        $magitingUsage = DB::table('conference_rooms')
+            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('count(*) as total'))
+            ->where('CRoomName', 'Magiting')
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->pluck('total', 'month');
+
+        // Fetch monthly usage data for MAAGAP
+        $maagapUsage = DB::table('conference_rooms')
+            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('count(*) as total'))
+            ->where('CRoomName', 'Maagap')
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->pluck('total', 'month');
+
+        return response()->json([
+            'magitingUsage' => $magitingUsage,
+            'maagapUsage' => $maagapUsage
+        ]);
     }
-}
+
+            
+    }

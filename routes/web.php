@@ -202,3 +202,6 @@ Route::post('/login', function (Request $request) {
         'email' => 'The provided credentials do not match our records.',
     ])->onlyInput('email');
 })->middleware(['guest'])->name('login');
+
+    //stats
+    Route::get('/api/conference-room-usage', [ConferenceController::class, 'getConferenceRoomUsage']);

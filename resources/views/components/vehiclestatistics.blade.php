@@ -25,23 +25,23 @@
             <li>
                 <i class='bx bxs-group'></i>
                 <span class="text">
-                     <h3>1020</h3>
-                     <p>Pending Requests</p>
-                  </span>
+                    <h3 id="pending-requests">0</h3>
+                    <p>Pending Requests</p>
+                </span>
             </li>
             <li>
                 <i class='bx bxs-group'></i>
                 <span class="text">
-                     <h3>2834</h3>
-                     <p>Daily Requests</p>
-                  </span>
+                    <h3 id="daily-requests">0</h3>
+                    <p>Daily Requests</p>
+                </span>
             </li>
             <li>
                 <i class='bx bxs-group'></i>
                 <span class="text">
-                     <h3>20543</h3>
-                     <p>Monthly Requests</p>
-                  </span>
+                    <h3 id="monthly-requests">0</h3>
+                    <p>Monthly Requests</p>
+                </span>
             </li>
         </ul>
     </main>
@@ -49,6 +49,7 @@
 <div class="bar-chart-wrapper">
     <h1>Total Requests per Office</h1>
     <div class="simple-bar-chart">
+
         <div class="item" style="--clr: #5EB344; --val: 80">
             <div class="label">RRCY</div>
             <div class="value">80%</div>
