@@ -316,8 +316,8 @@ class VehicleController extends Controller
             }
 
             // Map the input values to validated data
-            $validated['DriverID'] = $request->input('driver'); // Ensure 'driver' is the select field name
-            $validated['VehicleID'] = $request->input('VName'); // Ensure 'VName' is the select field name
+            // $validated['DriverID'] = $request->input('driver'); // Ensure 'driver' is the select field name
+            // $validated['VehicleID'] = $request->input('VName'); // Ensure 'VName' is the select field name
             $validated['DriverID'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
             $validated['VehicleID'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
             $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name

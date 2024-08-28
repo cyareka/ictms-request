@@ -523,9 +523,9 @@
                         <label for="driver">Driver Name</label>
                         <select id="DriverID" name="DriverID" required>
                             <option disabled selected>Select Driver</option>
-                            @foreach(App\Models\Driver::all() as $driver)
-                                <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}"
-                                        data-email="{{ $driver->DriverEmail }}">{{ $driver->DriverName }}</option>
+                            @foreach(App\Models\Driver::all() as $DriverID)
+                                <option value="{{ $DriverID->DriverID }}" data-contact="{{ $DriverID->ContactNo }}"
+                                        data-email="{{ $DriverID->DriverEmail }}">{{ $DriverID->DriverName }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -541,17 +541,18 @@
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="vehicle">Vehicle Type</label>
-                        <select id="vehicle" id="VehicleID" name="VehicleID">
+                        <select id="VehicleID" name="VehicleID">
                             <option disabled selected>Select Vehicle</option>
-                            @foreach(App\Models\Vehicle::all() as $vehicle)
-                                <option value="{{ $vehicle->VehicleID }}"
-                                        data-plate="{{ $vehicle->PlateNo }}">{{ $vehicle->VehicleType }}</option>
+                            @foreach(App\Models\Vehicle::all() as $Vehicle)
+                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}">
+                                    {{ $Vehicle->VehicleType }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="inline">
-                        <label for="plate">Plate No.</label>
-                        <input type="text" id="plate" name="plate" placeholder="N/A" readonly>
+                        <label for="PlateNo">Plate No.</label>
+                        <input type="text" id="PlateNo" name="PlateNo" placeholder="N/A" readonly>
                     </div>
                     <div class="inline">
                         {{-- depends on admin logged in --}}
@@ -916,21 +917,19 @@ function previewCertificate(event) {
     document.addEventListener('DOMContentLoaded', setInitialFormState);
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Driver select change event
-        document.getElementById('DriverID').addEventListener('change', function () {
-            var selectedOption = this.options[this.selectedIndex];
-            document.getElementById('DriverID').value = this.value;
-            document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
-            document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
-        });
-
-        // Vehicle select change event
-        document.getElementById('vehicle').addEventListener('change', function () {
-            var selectedOption = this.options[this.selectedIndex];
-            document.getElementById('VehicleID').value = this.value;
-            document.getElementById('plate').value = selectedOption.getAttribute('data-plate');
-        });
+    // Driver select change event
+    document.getElementById('DriverID').addEventListener('change', function () {
+        var selectedOption = this.options[this.selectedIndex];
+        document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
+        document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
     });
+
+    // Vehicle select change event
+    document.getElementById('VehicleID').addEventListener('change', function () {
+        var selectedOption = this.options[this.selectedIndex];
+        document.getElementById('PlateNo').value = selectedOption.getAttribute('data-plate');
+    });
+});
 
 
 </script>
