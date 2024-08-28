@@ -108,15 +108,15 @@ class VehicleController extends Controller
                     'FormStatus' => 'Pending',
                     'EventStatus' => '-',
                 ]);
-            }
 
-            foreach ($passengers as $passenger) {
-                $VRPassID = $this->generateUniqueVRPassID();
-                DB::table('vrequest_passenger')->insert([
-                    'VRPassID' => $VRPassID,
-                    'VRequestID' => $generatedID,
-                    'EmployeeID' => $passenger,
-                ]);
+                foreach ($passengers as $passenger) {
+                    $VRPassID = $this->generateUniqueVRPassID();
+                    DB::table('vrequest_passenger')->insert([
+                        'VRPassID' => $VRPassID,
+                        'VRequestID' => $generatedID,
+                        'EmployeeID' => $passenger,
+                    ]);
+                }
             }
 
             return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
@@ -142,13 +142,7 @@ class VehicleController extends Controller
         $order = $request->get('order', 'desc');
         $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
         $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
-
-        Log::info('Filter parameters:', [
-            'sort' => $sort,
-            'order' => $order,
-            'form_statuses' => $formStatuses,
-            'event_statuses' => $eventStatuses,
-        ]);
+        $perPage = $request->input('per_page', 5); // Set default items per page to 5
 
         try {
             $query = VehicleRequest::with('office')
@@ -164,9 +158,17 @@ class VehicleController extends Controller
 
             $vehicleRequests = $query->get();
 
-            Log::info('Query results:', $vehicleRequests->toArray());
+            $vehicleRequests = $query->paginate($perPage);
 
-            return response()->json($vehicleRequests);
+            return response()->json([
+                'data' => $vehicleRequests->items(),
+                'pagination' => [
+                    'current_page' => $vehicleRequests->currentPage(),
+                    'last_page' => $vehicleRequests->lastPage(),
+                    'per_page' => $vehicleRequests->perPage(),
+                    'total' => $vehicleRequests->total(),
+                ],
+            ]);
         } catch (Throwable $e) {
             Log::error('An error occurred while fetching sorted vehicle requests:', [
                 'message' => $e->getMessage(),
@@ -201,27 +203,27 @@ class VehicleController extends Controller
 
             if ($startDate && $endDate) {
                 $query->whereBetween('date_start', [$startDate, $endDate])
-                      ->orWhereBetween('date_end', [$startDate, $endDate])
-                      ->orWhere(function ($q) use ($startDate, $endDate) {
-                          $q->where('date_start', '<=', $startDate)
+                    ->orWhereBetween('date_end', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('date_start', '<=', $startDate)
                             ->where('date_end', '>=', $endDate);
-                      });
+                    });
             }
 
             // Exclude specific FormStatus and EventStatus combinations
             $query->where(function ($q) {
                 $q->whereNot(function ($q) {
                     $q->where('FormStatus', 'Not Approved')
-                      ->where('EventStatus', '-');
+                        ->where('EventStatus', '-');
                 })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Cancelled');
-                })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Finished');
-                });
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Cancelled');
+                    })
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Finished');
+                    });
             });
 
             $vehicleRequests = $query->get()
@@ -290,42 +292,71 @@ class VehicleController extends Controller
     {
         try {
             // Log the incoming request data
-            Log::info('Request Data:', $request->all());
-    
+            Log::info('Request Data Before Assignment:', $request->all());
+
             // Fetch the existing vehicle request
             $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
-    
+
             // Validate the incoming request data
             $validated = $request->validate([
-                'DriverID' => 'nullable|string|exists:drivers,DriverID',
-                'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
+                'DriverID' => 'nullable|string|exists:driver,DriverID',
+                'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
                 'Availability' => 'nullable|string|max:50',
-                'AAID' => 'nullable|string|exists:a_authorities,AAID',
-                'SOID' => 'nullable|string|exists:so_authorities,SOID',
-                'ASignatory' => 'nullable|string|max:50',  // Allow string initially
-                'certfile-upload' => 'nullable',
+                'AAID' => 'nullable|string|exists:AAName,AAID',
+                'SOID' => 'nullable|string|exists:SOName,SOID',
+                'ASignatory' => 'nullable|string|max:50',
+                'certfile-upload' => 'nullable|file|mimes:pdf', // Validate the file if needed
                 'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);
-    
-            // Convert the signatory name to an ID
-            if ($validated['ASignatory']) {
-                $signatoryId = \DB::table('users')->where('name', $validated['ASignatory'])->value('id');
+
+            // Log request data after validation
+            Log::info('Request Data After Validation:', $validated);
+
+            if ($request->hasFile('certfile-upload')) {
+                $file = $request->file('certfile-upload')->store('uploads/vehicle_request/files', 'public');
+                $validated['certfile-upload'] = $file; // Store the path in the database
+            }
+
+            // Map the input values to validated data
+            $validated['DriverID'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
+            $validated['VehicleID'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
+            $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
+            $validated['SOID'] = $request->input('SOName');
+
+            // Log captured values to debug
+            Log::info('Captured Values:', [
+                'DriverID' => $validated['DriverID'],
+                'VehicleID' => $validated['VehicleID'],
+                'AAID' => $validated['AAID'],
+                'SOID' => $validated['SOID'],
+            ]);
+
+            // Convert the signatory name to an ID if it's provided
+            if (!empty($validated['ASignatory'])) {
+                $signatoryId = DB::table('users')->where('name', $validated['ASignatory'])->value('id');
                 if (!$signatoryId) {
                     Log::error('ASignatory name does not exist:', ['ASignatory' => $validated['ASignatory']]);
                     return redirect()->back()->withErrors(['ASignatory' => 'The selected signatory is invalid.'])->withInput();
                 }
                 $validated['ASignatory'] = $signatoryId;
             }
-    
+
+            if (!empty($validated['ReceivedBy'])) {
+                $receivedBy = DB::table('users')->where('name', $validated['ReceivedBy'])->value('id');
+                if (!$receivedBy) {
+                    Log::error('ReceivedBy name does not exist:', ['ReceivedBy' => $validated['ReceivedBy']]);
+                    return redirect()->back()->withErrors(['ReceivedBy' => 'The selected signatory is invalid.'])->withInput();
+                }
+                $validated['ReceivedBy'] = $receivedBy;
+            }
+
             // Update the vehicle request
-            $updateResult = $vehicleRequest->update($validated);
-    
-            // Log the update result
-            Log::info('Update Result:', ['result' => $updateResult]);
-    
+            $vehicleRequest->update($validated);
+
+
             return redirect()->back()->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation failed in updateVForm:', [
@@ -343,28 +374,4 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', 'Update failed. Please try again.');
         }
     }
-
-    public function fetchStatistics(): \Illuminate\Http\JsonResponse
-    {
-        $statistics = [
-            'pendingRequests' => VehicleRequest::where('FormStatus', 'Pending')->count(),
-            'dailyRequests' => VehicleRequest::whereDate('created_at', now()->toDateString())->count(),
-            'monthlyRequests' => VehicleRequest::whereMonth('created_at', now()->month)->count(),
-            'requestsPerOffice' => VehicleRequest::select('OfficeID', \DB::raw('count(*) as total'))
-                ->groupBy('OfficeID')
-                ->with('office')
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'office' => $item->office->name,
-                        'total' => $item->total,
-                    ];
-                }),
-        ];
-
-        return response()->json($statistics);
-    }
 }
-
-
-
