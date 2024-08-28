@@ -306,7 +306,7 @@ class VehicleController extends Controller
                 'SOID' => 'nullable|string|exists:so_authorities,SOID',
                 'ASignatory' => 'nullable|string|max:50',  // Allow string initially
                 'certfile-upload' => 'nullable|file|mimes:pdf',
-                'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
+                'FormStatus' => 'nullable|string|in:Pending,For Approval,Approved,Not Approved',
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);
 
