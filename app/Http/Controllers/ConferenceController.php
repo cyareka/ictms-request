@@ -216,14 +216,14 @@ class ConferenceController extends Controller
                     ->where('FormStatus', '=', 'Pending')
                     ->where('EventStatus', '=', '-');
 
-                foreach ($otherRequests as $otherRequest) {
-                    if (
-                        ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
-                        ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
-                    ) {
-                        $otherRequest->update(['CAvailability' => true]);
+                    foreach ($otherRequests as $otherRequest) {
+                        if (
+                            ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
+                            ($otherRequest->time_start <= $conferenceRequest->time_end && $otherRequest->time_end >= $conferenceRequest->time_start)
+                        ) {
+                            $otherRequest->update(['CAvailability' => true]);
+                        }
                     }
-                }
             }
 
             return redirect()->back()->with('success', 'Conference room request updated successfully.');

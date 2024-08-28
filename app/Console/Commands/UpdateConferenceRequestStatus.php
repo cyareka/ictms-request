@@ -1,6 +1,5 @@
 <?php
 
-// Create a new command for the scheduled task
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -10,7 +9,7 @@ use Carbon\Carbon;
 class UpdateConferenceRequestStatus extends Command
 {
     protected $signature = 'conference:update-status';
-    protected $description = 'Update the status of conference requests based on the current date and time';
+    protected $description = 'Update the status and availability of conference requests based on the current date and time and conference room';
 
     public function handle(): void
     {
@@ -26,6 +25,13 @@ class UpdateConferenceRequestStatus extends Command
                 $request->update([
                     'EventStatus' => 'Finished'
                 ]);
+
+                // Update availability of other requests with the same date, time, and conference room
+                ConferenceRequest::where('conference_room_id', $request->conference_room_id)
+                    ->where('date_start', $request->date_start)
+                    ->where('time_start', $request->time_start)
+                    ->where('id', '!=', $request->id)
+                    ->update(['CAvailability' => 1]);
             }
         }
 
@@ -40,6 +46,7 @@ class UpdateConferenceRequestStatus extends Command
                 ]);
             }
         }
-        $this->info('Conference request statuses updated successfully.');
+
+        $this->info('Conference request statuses and availability updated successfully.');
     }
 }

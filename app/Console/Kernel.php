@@ -1,6 +1,5 @@
 <?php
 
-// Register the command in the `Kernel.php` file
 namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
@@ -17,5 +16,10 @@ class Kernel extends ConsoleKernel
     protected function commands(): void
     {
         $this->load(__DIR__ . '/Commands');
+
+        // Register the command
+        $this->commands([
+            \App\Console\Commands\UpdateConferenceRequestStatus::class,
+        ]);
     }
 }
