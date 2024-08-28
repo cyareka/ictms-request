@@ -290,8 +290,8 @@ class VehicleController extends Controller
     {
         try {
             // Log the incoming request data
-            Log::info('Request Data Before Assignment:', $request->all());
-            
+            Log::info('Request Data:', $request->all());
+    
             // Fetch the existing vehicle request
             $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
     
@@ -302,35 +302,16 @@ class VehicleController extends Controller
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
                 'Availability' => 'nullable|string|max:50',
-                'AAID' => 'nullable|string|exists:AAName,AAID',
-                'SOID' => 'nullable|string|exists:SOName,SOID',
-                'ASignatory' => 'nullable|string|max:50',
-                'certfile-upload' => 'nullable|file', // Validate the file if needed
+                'AAID' => 'nullable|string|exists:a_authorities,AAID',
+                'SOID' => 'nullable|string|exists:so_authorities,SOID',
+                'ASignatory' => 'nullable|string|max:50',  // Allow string initially
+                'certfile-upload' => 'nullable',
                 'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);
     
-            // Log request data after validation
-            Log::info('Request Data After Validation:', $validated);
-    
-            // Map the input values to validated data
-            $validated['DriverID'] = $request->input('driver'); // Ensure 'driver' is the select field name
-            $validated['VehicleID'] = $request->input('VName'); // Ensure 'VName' is the select field name
-            $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
-            $validated['SOID'] = $request->input('SOName');
-         
-    
-            // Log captured values to debug
-            Log::info('Captured Values:', [
-                'DriverID' => $validated['DriverID'],
-                'VehicleID' => $validated['VehicleID'],
-                'AAID' => $validated['AAID'],
-                'SOID' => $validated['SOID'],
-
-            ]);
-    
-            // Convert the signatory name to an ID if it's provided
-            if (!empty($validated['ASignatory'])) {
+            // Convert the signatory name to an ID
+            if ($validated['ASignatory']) {
                 $signatoryId = \DB::table('users')->where('name', $validated['ASignatory'])->value('id');
                 if (!$signatoryId) {
                     Log::error('ASignatory name does not exist:', ['ASignatory' => $validated['ASignatory']]);
@@ -362,9 +343,28 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', 'Update failed. Please try again.');
         }
     }
-    
-    
 
+    public function fetchStatistics(): \Illuminate\Http\JsonResponse
+    {
+        $statistics = [
+            'pendingRequests' => VehicleRequest::where('FormStatus', 'Pending')->count(),
+            'dailyRequests' => VehicleRequest::whereDate('created_at', now()->toDateString())->count(),
+            'monthlyRequests' => VehicleRequest::whereMonth('created_at', now()->month)->count(),
+            'requestsPerOffice' => VehicleRequest::select('OfficeID', \DB::raw('count(*) as total'))
+                ->groupBy('OfficeID')
+                ->with('office')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'office' => $item->office->name,
+                        'total' => $item->total,
+                    ];
+                }),
+        ];
 
-    
+        return response()->json($statistics);
+    }
 }
+
+
+
