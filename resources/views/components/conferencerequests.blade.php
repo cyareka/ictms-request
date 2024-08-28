@@ -85,7 +85,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">
                     <a href="#" id="sort-date-requested" data-order="desc">
-                        Date Requested
+                        Date/Time Requested
                     </a>
                 </th>
                 <th scope="col">Conference Room</th>
@@ -113,7 +113,7 @@
             @foreach($filteredRequests as $request)
                 <tr>
                     <th scope="row">{{ $request->CRequestID }}</th>
-                    <td>{{ $request->created_at->format('m-d-Y') }}</td>
+                    <td>{{ $request->created_at->format('m/d/Y (h:i A)') }}</td>
                     <td>{{ $request->conferenceRoom->CRoomName }}</td>
                     <td>{{ $request->office->OfficeName }}</td>
                     <td>{{ $request->date_start }}</td>
@@ -186,11 +186,19 @@
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
                     let row = `<tr>
                     <th scope="row">${request.CRequestID}</th>
-                    <td>${new Date(request.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                    }).replace(/\//g, '-')}</td>
+                    <td>
+                        ${new Date(request.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        })}
+                        <br>
+                        ${new Date(request.created_at).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        })}
+                    </td>
                     <td>${conferenceRoomName}</td>
                     <td>${officeName}</td>
                     <td>${request.date_start}</td>
