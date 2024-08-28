@@ -57,7 +57,7 @@
                 <th scope="col">ID</th>
                 <th scope="col">
                     <a href="#" id="sort-date-requested" data-order="desc">
-                        Date Requested
+                        Date/Time Requested
                     </a>
                 </th>
                 <th scope="col">Destination</th>
@@ -80,7 +80,7 @@
             @foreach($filteredRequests as $request)
                 <tr>
                     <th scope="row">{{ $request->VRequestID }}</th>
-                    <td>{{ $request->created_at->format('m-d-Y') }}</td>
+                    <td>{{ $request->created_at->format('m/d/Y (h:i A)') }}</td>
                     <td>{{ $request->Destination }}</td>
                     <td>{{ $request->Purpose }}</td>
                     <td>{{ $request->office->OfficeName }}</td>
