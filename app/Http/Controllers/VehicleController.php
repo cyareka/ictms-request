@@ -344,5 +344,27 @@ class VehicleController extends Controller
         }
     }
 
-    
+    public function fetchStatistics(): \Illuminate\Http\JsonResponse
+    {
+        $statistics = [
+            'pendingRequests' => VehicleRequest::where('FormStatus', 'Pending')->count(),
+            'dailyRequests' => VehicleRequest::whereDate('created_at', now()->toDateString())->count(),
+            'monthlyRequests' => VehicleRequest::whereMonth('created_at', now()->month)->count(),
+            'requestsPerOffice' => VehicleRequest::select('OfficeID', \DB::raw('count(*) as total'))
+                ->groupBy('OfficeID')
+                ->with('office')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'office' => $item->office->name,
+                        'total' => $item->total,
+                    ];
+                }),
+        ];
+
+        return response()->json($statistics);
+    }
 }
+
+
+
