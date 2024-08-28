@@ -10,9 +10,8 @@
         </div>
         <div class="tableactions">
             <div id="divide">
-                <div id="pagination-links">
-                    <i class="bi bi-arrow-left-short" id="prev-page"></i>
-                    <i class="bi bi-arrow-right-short" id="next-page"></i></div>
+                <i class="bi bi-arrow-left-short"></i>
+                <i class="bi bi-arrow-right-short" id="iconborder"></i>
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <form id="filterForm" method="GET" action="{{ route('fetchSortedVRequests') }}">
@@ -101,51 +100,66 @@
 <div class="end"></div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let currentPage = 1;
-        const itemsPerPage = 5;
-        let lastPage = 1;
+    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder);
+    });
 
-        function fetchSortedData(order = 'desc', page = currentPage) {
-            const form = document.getElementById('filterForm');
-            const formData = new FormData(form);
+    function fetchSortedData(order) {
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
 
-            formData.append('order', order);
-            formData.append('sort', 'created_at');
-            formData.append('page', page);
-            formData.append('per_page', itemsPerPage);
+        fetch(`/fetchSortedVRequests?sort=created_at&order=${order}&${params}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                alert(`An error occurred while fetching data: ${error.message}`);
+            });
+    }
 
-            const params = new URLSearchParams(formData).toString();
+    document.getElementById('filterForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const params = new URLSearchParams(formData).toString();
+        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+        fetch(`/fetchSortedVRequests?sort=created_at&order=${sortOrder}&${params}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data);
+            })
+            .catch(error => {
+                console.error('Error fetching filtered data:', error);
+            });
+    });
 
-            fetch(`/fetchSortedVRequests?${params}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateTable(data.data);
-                    updatePagination(data.pagination);
-                    currentPage = data.pagination.current_page;
-                    lastPage = data.pagination.last_page;
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                    alert(`An error occurred while fetching data: ${error.message}`);
-                });
-        }
+    document.querySelector('.cancelbtn').addEventListener('click', function () {
+        document.getElementById('filterForm').reset();
+        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+        fetch(`/fetchSortedVRequests?sort=created_at&order=${sortOrder}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data);
+            })
+            .catch(error => {
+                console.error('Error fetching unfiltered data:', error);
+            });
+    });
 
-        function updatePagination(pagination) {
-            currentPage = pagination.current_page;
-            lastPage = pagination.last_page;
+    function updateTable(data) {
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
 
-            document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
-            document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
-        }
-
-        function updateTable(data) {
-            let tbody = document.querySelector('tbody');
-            tbody.innerHTML = '';
-
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(request => {
-                    let row = `<tr>
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(request => {
+                let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>
                     <td>${new Date(request.created_at).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}</td>
                     <td>${request.Destination}</td>
@@ -160,43 +174,11 @@
                         <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>`;
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
-            }
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } else {
+            console.log("No requests found or data format is incorrect.");
+            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
         }
-
-        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-            e.preventDefault();
-            let order = this.getAttribute('data-order');
-            let newOrder = order === 'asc' ? 'desc' : 'asc';
-            this.setAttribute('data-order', newOrder);
-            fetchSortedData(newOrder);
-        });
-
-        document.getElementById('prev-page').addEventListener('click', function () {
-            if (currentPage > 1) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1);
-            }
-        });
-
-        document.getElementById('next-page').addEventListener('click', function () {
-            if (currentPage < lastPage) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1);
-            }
-        });
-
-        document.getElementById('filterForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-        });
-
-        document.querySelector('.cancelbtn').addEventListener('click', function () {
-            document.getElementById('filterForm').reset();
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-        });
-
-        fetchSortedData();
-    });
+    }
 </script>

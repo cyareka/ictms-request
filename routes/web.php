@@ -44,20 +44,18 @@ Route::middleware([
 //    Route::post('/register',
 //        [AdminController::class, 'register'])->name('register');
 
-
     // CONFERENCE ROUTES
     // Conference Statistics
     Route::get('/ConferenceStatistics', function () {
         return view('ConferenceStatistics');
     })->name('ConferenceStatistics');
     Route::get('/api/conference-statistics', [ConferenceController::class, 'fetchStatistics']);
-
     // Conference Calendar View
     Route::get('/calendar/events', [ConferenceController::class, 'getCalendarEvents']);
-
     // Conference Table View
     Route::get('/conference-requests',
         [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');
+
 
     // Conference Edit
     Route::post('/conference-room/update',
