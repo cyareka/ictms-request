@@ -628,7 +628,7 @@
                     <div class="inline">
                         <label for="AAuth">Approving Authority</label>
                         <select id="AAuth" name="AAuth" required>
-                            <option disabled selected>Select Authority</option>
+                            <option disabled {{ $requestData->AAID ? '' : 'selected' }}>Select Authority</option>
                             @foreach(App\Models\AAuthority::all() as $AAuth)
                                 <option value="{{ $AAuth->AAID }}"
                                         data-position="{{ $AAuth->AAPosition }}">{{ $AAuth->AAName }}</option>
@@ -644,7 +644,7 @@
                     <div class="inline">
                         <label for="SOAuthority">SO Approving Authority</label>
                         <select id="SOAuthority" name="SOName" required>
-                            <option disabled selected>Select Authority</option>
+                            <option disabled {{ $requestData->SOID ? '' : 'selected' }}>Select Authority</option>
                             @foreach(App\Models\SOAuthority::all() as $SOAuth)
                                 <option value="{{ $SOAuth->SOID }}"
                                         data-position="{{ $SOAuth->SOPosition }}">{{ $SOAuth->SOName }}</option>
@@ -666,9 +666,15 @@
                         <div class="file-upload">
                             <label for="certfile-upload" id="certificate-preview-label">
                                 <div id="certificate-preview-container">
-                                    <div id="default-text">
-                                        Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
-                                    </div>
+                                    @if($requestData->certfile)
+                                        <div id="current-file">
+                                            Current file: <a href="{{ asset('storage/app/public/uploads/vehicle_request/files' . $requestData->certfile) }}" target="_blank">View Certificate</a>
+                                        </div>
+                                    @else
+                                        <div id="default-text">
+                                            Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
+                                        </div>
+                                    @endif
                                     <div id="certificate-preview"></div>
                                 </div>
                             </label>

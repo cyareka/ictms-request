@@ -316,7 +316,8 @@ class VehicleController extends Controller
             Log::info('Request Data After Validation:', $validated);
 
             if ($request->hasFile('certfile-upload')) {
-                $file = $request->file('certfile-upload')->store('uploads/vehicle_request/files', 'public');;
+                $file = $request->file('certfile-upload')->store('uploads/vehicle_request/files', 'public');
+                $validated['certfile-upload'] = $file; // Store the path in the database
             }
 
             // Map the input values to validated data
@@ -324,7 +325,6 @@ class VehicleController extends Controller
             $validated['VehicleID'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
             $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
             $validated['SOID'] = $request->input('SOName');
-            $validated['certfile-upload'] = $request->file('certfile-upload');
 
             // Log captured values to debug
             Log::info('Captured Values:', [
