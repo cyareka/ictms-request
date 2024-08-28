@@ -98,6 +98,60 @@
                 background-color: #02225d;
                 color: white;
             }
+
+            /* Responsive Styles */
+            @media (max-width: 768px) {
+                body {
+                    background-image: none;
+                    background-color: #eeeeef;
+                }
+                header {
+                    flex-direction: row;
+                    justify-content: space-between;
+                    padding: 10px 20px;
+                }
+                header img {
+                    width: 150px;
+                }
+                nav {
+                    display: flex;
+                    align-items: center;
+                    padding: 0;
+                    margin: 0;
+                }
+                nav a {
+                    color: black;
+                }
+                .text {
+                    margin-left: 0;
+                    align-items: center;
+                    text-align: center;
+                }
+                .left-text {
+                    font-size: 30px;
+                    text-align: center;
+                    margin-bottom: 15px;
+                }
+                .request {
+                    font-size: 2.5em;
+                }
+                .use {
+                    font-size: 1em;
+                }
+                .buttons {
+                    flex-direction: row;
+                    justify-content: center;
+                    margin: 0;
+                }
+                .buttons button {
+                    margin-right: 10px;
+                    margin-top: 40px;
+                    padding: 20px;
+                    font-size: 18px;
+                    width: 190px;
+
+                }
+            }
         </style>
     </head>
     <body>

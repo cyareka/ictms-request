@@ -338,6 +338,58 @@
                 <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" value="{{ old('purpose') }}" required>
             </div>
         </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="conferenceRoom">Conference Room</label>
+                <select id="conferenceRoom" name="conferenceRoom" required>
+                    <option disabled selected>Select Room</option>
+                    @foreach(App\Models\ConferenceRoom::all() as $room)
+                        <option value="{{ $room->CRoomID }}" {{ old('conferenceRoom') == $room->CRoomID ? 'selected' : '' }}>
+                            {{ $room->CRoomName }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="inline-field">
+                <label for="focalPerson">Focal Person</label>
+                <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person" value="{{ old('purpose') }}" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="inline-field">
+                <label for="requesterName">Requester Name</label>
+                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester" value="{{ old('requesterName') }}" required>
+            </div>
+            <div class="inline-field">
+                <label for="RequesterSignature">E-Signature</label>
+                <div class="file-upload">
+                    <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;"
+                           onchange="previewSignature(event)" required>
+                    <div class="e-signature-text"    onclick="document.getElementById('RequesterSignature').click();">
+                        Click to upload e-sign.<br>Maximum file size: 32MB
+                    </div>
+                    <img id="signature-preview" alt="Signature Preview">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="tb">
+                <label for="persons">No. of Persons</label>
+                <input type="number" id="npersons" name="npersons" min="0" value="{{ old('npersons', 0) }}" step="1">
+                <div class="tb">
+                    <label for="tables">Tables</label>
+                    <input type="number" id="tables" name="tables" min="0" value="{{ old('tables', 0) }}" step="1">
+                    <div class="tb">
+                        <label for="chairs">Chairs</label>
+                        <input type="number" id="chairs" name="chairs" min="0" value="{{ old('chairs', 0) }}" step="1">
+                    </div>
+                </div>
+            </div>
+            <div class="fac">
+                <label for="otherFacilities">Other Facilities</label>
+                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others" value="{{ old('otherFacilities') }}">
+            </div>
+        </div>
         <div class="row-group-container">
             @foreach (old('date_start', [date('Y-m-d')]) as $index => $date_start)
                 <div class="row-group">
@@ -367,62 +419,9 @@
                 </div>
             @endforeach
         </div>
-        <div class="row">
-            <div class="inline-field">
-                <label for="conferenceRoom">Select Conference Room</label>
-                <select id="conferenceRoom" name="conferenceRoom" required>
-                    <option disabled selected>Select Room</option>
-                    @foreach(App\Models\ConferenceRoom::all() as $room)
-                        <option value="{{ $room->CRoomID }}" {{ old('conferenceRoom') == $room->CRoomID ? 'selected' : '' }}>
-                            {{ $room->CRoomName }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="inline-field">
-                <label for="focalPerson">Focal Person</label>
-                <input type="text" id="focalPerson" name="focalPerson" placeholder="Enter Focal Person" value="{{ old('purpose') }}" required>
-            </div>
-        </div>
-        <div class="row">
-            <div class="tb">
-                <label for="persons">No. of Persons</label>
-                <input type="number" id="npersons" name="npersons" min="0" value="{{ old('npersons', 0) }}" step="1">
-                <div class="tb">
-                    <label for="tables">Tables</label>
-                    <input type="number" id="tables" name="tables" min="0" value="{{ old('tables', 0) }}" step="1">
-                    <div class="tb">
-                        <label for="chairs">Chairs</label>
-                        <input type="number" id="chairs" name="chairs" min="0" value="{{ old('chairs', 0) }}" step="1">
-                    </div>
-                </div>
-            </div>
-            <div class="fac">
-                <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others" value="{{ old('otherFacilities') }}">
-            </div>
-        </div>
-        <div class="row">
-            <div class="inline-field">
-                <label for="requesterName">Requester Name</label>
-                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester" value="{{ old('requesterName') }}" required>
-            </div>
-            <div class="inline-field">
-                <label for="RequesterSignature">E-Signature</label>
-                <div class="file-upload">
-                    <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;"
-                           onchange="previewSignature(event)" required>
-                    <div class="e-signature-text"    onclick="document.getElementById('RequesterSignature').click();">
-                        Click to upload e-sign.<br>Maximum file size: 32MB
-                    </div>
-                    <img id="signature-preview" alt="Signature Preview">
-                </div>
-            </div>
-        </div>
         <div class="form-footer">
             <button class="submit-btn" type="submit">Submit</button>
         </div>
-
     </form>
 </div>
 <script>

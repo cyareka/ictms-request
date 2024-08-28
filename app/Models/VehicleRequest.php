@@ -55,6 +55,11 @@ class VehicleRequest extends Model
         'FormStatus',
         'certfile-upload',
         'EventStatus',
+        'ContactNo',
+        'DriverEmail',
+        'plate',
+        'AAPosition',
+        'SOPosition',
     ];
 
     protected $casts = [
