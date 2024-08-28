@@ -176,7 +176,8 @@ class ConferenceController extends Controller
 
                 $otherRequests = ConferenceRequest::all()
                     ->where('CRoomID', '=', $conferenceRequest->CRoomID)
-                    ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
+                    ->where('CRequestID', '!=+
+                    ', $conferenceRequest->CRequestID)
                     ->where('FormStatus', '=', 'Pending')
                     ->where('EventStatus', '=', '-');
 

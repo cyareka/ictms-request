@@ -108,15 +108,15 @@ class VehicleController extends Controller
                     'FormStatus' => 'Pending',
                     'EventStatus' => '-',
                 ]);
-            }
 
-            foreach ($passengers as $passenger) {
-                $VRPassID = $this->generateUniqueVRPassID();
-                DB::table('vrequest_passenger')->insert([
-                    'VRPassID' => $VRPassID,
-                    'VRequestID' => $generatedID,
-                    'EmployeeID' => $passenger,
-                ]);
+                foreach ($passengers as $passenger) {
+                    $VRPassID = $this->generateUniqueVRPassID();
+                    DB::table('vrequest_passenger')->insert([
+                        'VRPassID' => $VRPassID,
+                        'VRequestID' => $generatedID,
+                        'EmployeeID' => $passenger,
+                    ]);
+                }
             }
 
             return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
@@ -203,27 +203,27 @@ class VehicleController extends Controller
 
             if ($startDate && $endDate) {
                 $query->whereBetween('date_start', [$startDate, $endDate])
-                      ->orWhereBetween('date_end', [$startDate, $endDate])
-                      ->orWhere(function ($q) use ($startDate, $endDate) {
-                          $q->where('date_start', '<=', $startDate)
+                    ->orWhereBetween('date_end', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('date_start', '<=', $startDate)
                             ->where('date_end', '>=', $endDate);
-                      });
+                    });
             }
 
             // Exclude specific FormStatus and EventStatus combinations
             $query->where(function ($q) {
                 $q->whereNot(function ($q) {
                     $q->where('FormStatus', 'Not Approved')
-                      ->where('EventStatus', '-');
+                        ->where('EventStatus', '-');
                 })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Cancelled');
-                })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Finished');
-                });
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Cancelled');
+                    })
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Finished');
+                    });
             });
 
             $vehicleRequests = $query->get()
@@ -299,15 +299,15 @@ class VehicleController extends Controller
 
             // Validate the incoming request data
             $validated = $request->validate([
-                'DriverID' => 'nullable|string|exists:drivers,DriverID',
-                'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
+                'DriverID' => 'nullable|string|exists:driver,DriverID',
+                'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
                 'Availability' => 'nullable|string|max:50',
                 'AAID' => 'nullable|string|exists:AAName,AAID',
                 'SOID' => 'nullable|string|exists:SOName,SOID',
                 'ASignatory' => 'nullable|string|max:50',
-                'certfile-upload' => 'nullable|file', // Validate the file if needed
+                'certfile-upload' => 'nullable|file|mimes:pdf', // Validate the file if needed
                 'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);
@@ -315,12 +315,16 @@ class VehicleController extends Controller
             // Log request data after validation
             Log::info('Request Data After Validation:', $validated);
 
+            if ($request->hasFile('certfile-upload')) {
+                $file = $request->file('certfile-upload')->store('uploads/vehicle_request/files', 'public');;
+            }
+
             // Map the input values to validated data
-            $validated['DriverID'] = $request->input('driver'); // Ensure 'driver' is the select field name
-            $validated['VehicleID'] = $request->input('VName'); // Ensure 'VName' is the select field name
+            $validated['DriverID'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
+            $validated['VehicleID'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
             $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
             $validated['SOID'] = $request->input('SOName');
-
+            $validated['certfile-upload'] = $request->file('certfile-upload');
 
             // Log captured values to debug
             Log::info('Captured Values:', [
@@ -328,12 +332,11 @@ class VehicleController extends Controller
                 'VehicleID' => $validated['VehicleID'],
                 'AAID' => $validated['AAID'],
                 'SOID' => $validated['SOID'],
-
             ]);
 
             // Convert the signatory name to an ID if it's provided
             if (!empty($validated['ASignatory'])) {
-                $signatoryId = \DB::table('users')->where('name', $validated['ASignatory'])->value('id');
+                $signatoryId = DB::table('users')->where('name', $validated['ASignatory'])->value('id');
                 if (!$signatoryId) {
                     Log::error('ASignatory name does not exist:', ['ASignatory' => $validated['ASignatory']]);
                     return redirect()->back()->withErrors(['ASignatory' => 'The selected signatory is invalid.'])->withInput();
@@ -341,11 +344,18 @@ class VehicleController extends Controller
                 $validated['ASignatory'] = $signatoryId;
             }
 
-            // Update the vehicle request
-            $updateResult = $vehicleRequest->update($validated);
+            if (!empty($validated['ReceivedBy'])) {
+                $receivedBy = DB::table('users')->where('name', $validated['ReceivedBy'])->value('id');
+                if (!$receivedBy) {
+                    Log::error('ReceivedBy name does not exist:', ['ReceivedBy' => $validated['ReceivedBy']]);
+                    return redirect()->back()->withErrors(['ReceivedBy' => 'The selected signatory is invalid.'])->withInput();
+                }
+                $validated['ReceivedBy'] = $receivedBy;
+            }
 
-            // Log the update result
-            Log::info('Update Result:', ['result' => $updateResult]);
+            // Update the vehicle request
+            $vehicleRequest->update($validated);
+
 
             return redirect()->back()->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
@@ -364,9 +374,4 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', 'Update failed. Please try again.');
         }
     }
-
-
-
-
-
 }
