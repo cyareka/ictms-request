@@ -70,7 +70,7 @@ return new class extends Migration
             $table->string('SOID')->nullable()->default(null);
             $table->string('ASignatory')->nullable()->default(null);
             $table->string('certfile-upload')->nullable()->default(null);
-            $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
+            $table->enum('FormStatus', ['Pending', 'For Approval', 'Approved', 'Not Approved'])->default('Pending');
             $table->enum('EventStatus', ['-', 'Ongoing', 'Finished','Cancelled'])->default('-');
 
             // Adding foreign keys

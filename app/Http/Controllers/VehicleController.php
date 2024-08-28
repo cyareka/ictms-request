@@ -291,25 +291,37 @@ class VehicleController extends Controller
         try {
             // Log the incoming request data
             Log::info('Request Data:', $request->all());
-    
+
             // Fetch the existing vehicle request
             $vehicleRequest = VehicleRequest::findOrFail($VRequestID);
-    
+
             // Validate the incoming request data
             $validated = $request->validate([
-                'DriverID' => 'nullable|string|exists:drivers,DriverID',
-                'VehicleID' => 'nullable|string|exists:vehicles,VehicleID',
+                'DriverID' => 'nullable|string|exists:driver,DriverID',
+                'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
                 'Availability' => 'nullable|string|max:50',
                 'AAID' => 'nullable|string|exists:a_authorities,AAID',
                 'SOID' => 'nullable|string|exists:so_authorities,SOID',
                 'ASignatory' => 'nullable|string|max:50',  // Allow string initially
-                'certfile-upload' => 'nullable',
+                'certfile-upload' => 'nullable|file|mimes:pdf',
                 'FormStatus' => 'nullable|string|in:Pending,Approved,Not Approved',
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);
-    
+
+            if ($request->hasFile('certfile-upload')) {
+                $file = $request->file('certfile-upload')->store('uploads/vehicle_request/files', 'public');;
+            }
+
+            // Map the input values to validated data
+            $validated['DriverID'] = $request->input('driver'); // Ensure 'driver' is the select field name
+            $validated['VehicleID'] = $request->input('VName'); // Ensure 'VName' is the select field name
+            $validated['DriverID'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
+            $validated['VehicleID'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
+            $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
+            $validated['SOID'] = $request->input('SOName');
+
             // Convert the signatory name to an ID
             if ($validated['ASignatory']) {
                 $signatoryId = \DB::table('users')->where('name', $validated['ASignatory'])->value('id');
@@ -319,13 +331,18 @@ class VehicleController extends Controller
                 }
                 $validated['ASignatory'] = $signatoryId;
             }
-    
-            // Update the vehicle request
-            $updateResult = $vehicleRequest->update($validated);
-    
-            // Log the update result
-            Log::info('Update Result:', ['result' => $updateResult]);
-    
+
+            if (!empty($validated['ASignatory'])) {
+                $signatoryId = DB::table('users')->where('name', $validated['ASignatory'])->value('id');
+                if (!$signatoryId) {
+                    Log::error('ASignatory name does not exist:', ['ASignatory' => $validated['ASignatory']]);
+                    return redirect()->back()->withErrors(['ASignatory' => 'The selected signatory is invalid.'])->withInput();
+                }
+                $validated['ASignatory'] = $signatoryId;
+            }
+
+            $vehicleRequest->update($validated);
+
             return redirect()->back()->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation failed in updateVForm:', [

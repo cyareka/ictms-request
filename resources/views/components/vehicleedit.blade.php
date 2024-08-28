@@ -598,6 +598,9 @@
                             <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>
                                 Pending
                             </option>
+                            <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
+                                For Approval
+                            </option>
                             <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
                                 Approved
                             </option>
