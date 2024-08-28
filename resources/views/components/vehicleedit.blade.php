@@ -853,47 +853,67 @@
         }
     }
 
-    function previewCertificate(event) {
-        const file = event.target.files[0];
-        const filePreview = document.getElementById('certificate-preview');
-        const defaultText = document.getElementById('default-text');
+// JavaScript: Update the previewCertificate function
+function previewCertificate(event) {
+    const file = event.target.files[0];
+    const filePreview = document.getElementById('certificate-preview');
+    const defaultText = document.getElementById('default-text');
+    const filePathInput = document.getElementById('certfile-path');
 
-        // Clear any existing content in the preview box
-        filePreview.innerHTML = '';
+    // Clear any existing content in the preview box
+    filePreview.innerHTML = '';
 
-        if (file) {
-            // Hide the default text when a file is uploaded
-            defaultText.style.display = 'none';
+    if (file) {
+        // Hide the default text when a file is uploaded
+        defaultText.style.display = 'none';
 
-            // Check if the file is a PDF
-            if (file.type === 'application/pdf') {
-                // Create an anchor element to make the file name clickable
-                const fileLink = document.createElement('a');
-                fileLink.textContent = `${file.name}`;
-                fileLink.style.color = 'green';
-                fileLink.href = URL.createObjectURL(file);
-                fileLink.target = '_blank'; // Open in a new tab
+        // Check if the file is a PDF
+        if (file.type === 'application/pdf') {
+            // Create an anchor element to make the file name clickable
+            const fileLink = document.createElement('a');
+            fileLink.textContent = `${file.name}`;
+            fileLink.style.color = 'green';
+            fileLink.href = URL.createObjectURL(file);
+            fileLink.target = '_blank'; // Open in a new tab
 
-                // Append the clickable file name to the preview area
-                filePreview.appendChild(fileLink);
-            } else {
-                // Display a message if the file is not a PDF
-                filePreview.textContent = 'Please upload a valid PDF file.';
-                filePreview.style.color = 'red';
-            }
+            // Append the clickable file name to the preview area
+            filePreview.appendChild(fileLink);
+
+            // Store the file path in the hidden input field
+            filePathInput.value = file.name;
+        } else {
+            // Display a message if the file is not a PDF
+            filePreview.textContent = 'Please upload a valid PDF file.';
+            filePreview.style.color = 'red';
         }
     }
+}
 
 
     function toggleDispatcher() {
         var dispatcherForm = document.getElementById("dispatcher-form");
-        dispatcherForm.style.display = (dispatcherForm.style.display === "block") ? "none" : "block";
+        var isOpen = dispatcherForm.style.display === "block";
+        dispatcherForm.style.display = isOpen ? "none" : "block";
+        localStorage.setItem('dispatcherFormOpen', !isOpen);
     }
 
     function toggleAdminService() {
         var adminServiceForm = document.getElementById("admin-service-form");
-        adminServiceForm.style.display = (adminServiceForm.style.display === "block") ? "none" : "block";
+        var isOpen = adminServiceForm.style.display === "block";
+        adminServiceForm.style.display = isOpen ? "none" : "block";
+        localStorage.setItem('adminServiceFormOpen', !isOpen);
     }
+
+    function setInitialFormState() {
+        var dispatcherFormOpen = localStorage.getItem('dispatcherFormOpen') === 'true';
+        var adminServiceFormOpen = localStorage.getItem('adminServiceFormOpen') === 'true';
+
+        document.getElementById("dispatcher-form").style.display = dispatcherFormOpen ? "block" : "none";
+        document.getElementById("admin-service-form").style.display = adminServiceFormOpen ? "block" : "none";
+    }
+
+    // Set the initial state of the forms on page load
+    document.addEventListener('DOMContentLoaded', setInitialFormState);
 
     document.addEventListener('DOMContentLoaded', function () {
         // Driver select change event
