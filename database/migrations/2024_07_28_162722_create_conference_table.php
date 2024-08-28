@@ -37,7 +37,7 @@ return new class extends Migration
             $table->string('CRoomID');
             $table->string('RequesterName', 50);
             $table->string('RequesterSignature');
-            $table->enum('FormStatus', ['Pending', 'Approved', 'Not Approved'])->default('Pending');
+            $table->enum('FormStatus', ['Pending', 'For Approval', 'Approved', 'Not Approved'])->default('Pending');
             $table->enum('EventStatus', ['-', 'Ongoing', 'Cancelled', 'Finished'])->default('-');
             $table->timestamps();
 

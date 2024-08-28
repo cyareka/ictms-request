@@ -188,7 +188,7 @@ class ConferenceController extends Controller
                         $otherRequest->update(['CAvailability' => false]);
                     }
                 }
-            } elseif ($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') {
+            } elseif (($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'For Approval' && $validated['EventStatus'] === '-')) {
                 $conferenceRequest->CAvailability = true;
                 $conferenceRequest->save();
 
@@ -456,5 +456,5 @@ class ConferenceController extends Controller
         ]);
     }
 
-            
+
     }

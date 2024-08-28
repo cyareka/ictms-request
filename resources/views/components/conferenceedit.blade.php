@@ -677,7 +677,8 @@
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
                 <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending</option>
+                    <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For Approval</option>
                     <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
                     <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
                 </select>
@@ -686,12 +687,7 @@
         <div class="row">
             <div class="inline-field">
                 <label for="EventStatus">Event Status</label>
-                <select id="EventStatus" name="EventStatus" onchange="updateFormStatus()">
-                    <option value="-" {{ $requestData->EventStatus == '-' ? 'selected' : '' }}>-</option>
-                    <option value="Ongoing" {{ $requestData->EventStatus == 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
-                    <option value="Finished" {{ $requestData->EventStatus == 'Finished' ? 'selected' : '' }}>Finished</option>
-                    <option value="Cancelled" {{ $requestData->EventStatus == 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
-                </select>
+                <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}" readonly>
             </div>
         </div>
         <div class="form-footer">
@@ -743,12 +739,16 @@
         const FormStatus = document.getElementById('FormStatus').value;
         const EventStatus = document.getElementById('EventStatus');
 
-        if (FormStatus === 'Approved') {
-            EventStatus.value = 'Ongoing';
-        } else if (FormStatus === 'Not Approved') {
-            EventStatus.value = '-';
-        } else {
-            EventStatus.value = '-';
+        if (FormStatus === 'Pending' || FormStatus === 'For Approval' || FormStatus === 'Not Approved') {
+            EventStatus.outerHTML = `<input type="text" id="EventStatus" name="EventStatus" value="-" readonly>`;
+        } else if (FormStatus === 'Approved') {
+            if (EventStatus.value !== 'Cancelled') {
+                EventStatus.outerHTML = `
+                <select id="EventStatus" name="EventStatus">
+                    <option value="Ongoing" selected>Ongoing</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>`;
+            }
         }
     }
 
