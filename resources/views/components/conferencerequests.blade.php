@@ -50,10 +50,18 @@
                                 </div>
                             </a>
                             <a>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="form_statuses[]" value="For Approval" id="flexCheckDefault2">
+                                    <label class="form-check-label" for="flexCheckDefault2">
+                                        For Approval
+                                    </label>
+                                </div>
+                            </a>
+                            <a>
                                 <div class="form-check" id="margincheck">
                                     <input class="form-check-input" type="checkbox" name="form_statuses[]"
                                            value="Approved" id="flexCheckDefault2">
-                                    <label class="form-check-label" for="flexCheckDefault2">
+                                    <label class="form-check-label" for="flexCheckDefault3">
                                         Approved and Ongoing
                                     </label>
                                 </div>
@@ -92,7 +100,7 @@
             </thead>
             <tbody>
             @php
-                $filteredRequests = App\Models\ConferenceRequest::whereIn('FormStatus', ['Approved', 'Pending'])
+                $filteredRequests = App\Models\ConferenceRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
                     ->whereIn('EventStatus', ['Ongoing', '-'])
                     ->get();
 
@@ -114,8 +122,7 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil"
-                                                                                               id="actions"></i></a>
+                        <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
                         <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>

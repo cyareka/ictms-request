@@ -156,7 +156,7 @@ class ConferenceController extends Controller
             // Validate only the formStatus and eventStatus fields
             $validated = $request->validate([
                 'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
-                'FormStatus' => 'required|string|in:Pending,Approved,Not Approved',
+                'FormStatus' => 'required|string|in:Pending,For Approval,Approved,Not Approved',
                 'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
             ]);
 
@@ -313,7 +313,7 @@ class ConferenceController extends Controller
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
         $conferenceRoom = $request->input('conference_room');
-        $formStatuses = $request->input('form_statuses', ['Approved', 'Pending']);
+        $formStatuses = $request->input('form_statuses', ['Approved', 'Pending', 'For Approval']);
         $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
         $perPage = $request->input('per_page', 5); // Set default items per page to 5
 
