@@ -237,6 +237,7 @@
             <button class="dropdown-button" onclick="toggleSection('addVehi', this)">ADD DRIVER</button>
             <button class="dropdown-button" onclick="toggleSection('vehicle', this)">ADD VEHICLE</button>
             <button class="dropdown-button" onclick="toggleSection('conference', this)">CONFERENCE ROOM</button>
+            <button class="dropdown-button" onclick="toggleSection('porpose', this)">PURPOSE</button>
             <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button>
         </div>
 
@@ -309,6 +310,31 @@
                         <input type="number" id="Capacity" name="Capacity" min="1" value="0" required>
                     </div>
                 </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('conferenceForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="porpose" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" id="conferenceForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="Location">Select Request</label>
+                        <select id="Location" name="Location" required>
+                            <option disabled selected>Request</option>
+                            <option value="Vehicle">Vehicle</option>
+                            <option value="Conference Room">Conference Room</option>
+                        </select>
+                    </div>
+                    <div class="inline-field">
+                        <label for="CRoomName">Purpose</label>
+                        <input type="text" id="CRoomName" name="CRoomName" placeholder="Enter Name" required>
+                    </div>
+                    
+                </div>
+                
                 <div class="form-footer">
                     <button class="submit-btn" type="button" onclick="setCurrentForm('conferenceForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
