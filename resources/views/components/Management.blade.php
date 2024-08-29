@@ -315,32 +315,31 @@
                 </div>
             </form>
         </div>
-
+ 
         <div id="porpose" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" id="conferenceForm">
+            <form class="row-dispatch" method="POST" action="{{ route('porpose.store') }}" id="RequestPform">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
-                        <label for="Location">Select Request</label>
-                        <select id="Location" name="Location" required>
-                            <option disabled selected>Request</option>
+                        <label for="request_p">Request Form</label>
+                        <select id="request_p" name="request_p" required>
+                            <option disabled selected>Select Form </option>
                             <option value="Vehicle">Vehicle</option>
                             <option value="Conference Room">Conference Room</option>
                         </select>
                     </div>
                     <div class="inline-field">
-                        <label for="CRoomName">Purpose</label>
-                        <input type="text" id="CRoomName" name="CRoomName" placeholder="Enter Name" required>
+                        <label for="purpose">Purpose</label>
+                        <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" required>
                     </div>
-                    
                 </div>
                 
                 <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('conferenceForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('RequestPform')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
-
+ 
         <div id="employee" class="toggle-section">
             <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" id="employeeForm">
                 @csrf

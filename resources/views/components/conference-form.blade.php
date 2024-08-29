@@ -365,19 +365,20 @@
                     @endforeach
                 </select>
             </div>
+            <!-- Purpose -->
             <div class="inline-field">
-        <label for="purpose">Purpose</label>
-        <select id="purposeSelect" name="purpose" required>
-            <option disabled selected>Select Purpose</option>
-            <option value="Meeting">Meeting</option>
-            <option value="Training">Training</option>
-            <!-- Add other purposes here -->
-        </select>
-        <input type="text" id="purposeInput" name="purpose" style="display:none;" placeholder="Enter Purpose">
-        <div class="checkbox">
-            <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')">
-        </div>
-    </div>
+                <label for="purpose">Purpose</label>
+                <select id="purposeSelect" name="purposeSelect" required>
+                    <option disabled selected>Select Purpose</option>
+                    <option value="Meeting" {{ old('purposeSelect') == 'Meeting' ? 'selected' : '' }}>Meeting</option>
+                    <option value="Training" {{ old('purposeSelect') == 'Training' ? 'selected' : '' }}>Training</option>
+                    <!-- Add other purposes here -->
+                </select>
+                <input type="text" id="purposeInput" name="purposeInput" style="display:none;" placeholder="Enter Purpose" value="{{ old('purposeInput') }}">
+                <div class="checkbox">
+                    <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="inline-field">
@@ -391,17 +392,18 @@
                     @endforeach
                 </select>
             </div>
+            <!-- Focal Person -->
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
-                <select id="focalPersonSelect" name="focalPerson" required>
+                <select id="focalPersonSelect" name="focalPersonSelect" required>
                     <option disabled selected>Select Focal Person</option>
-                    <option value="Person1">Person 1</option>
-                    <option value="Person2">Person 2</option>
+                    <option value="Person1" {{ old('focalPersonSelect') == 'Person1' ? 'selected' : '' }}>Jane Doe</option>
+                    <option value="Person2" {{ old('focalPersonSelect') == 'Person2' ? 'selected' : '' }}>John Doe</option>
                     <!-- Add other focal persons here -->
                 </select>
-                <input type="text" id="focalPersonInput" name="focalPerson" style="display:none;" placeholder="Enter Focal Person">
+                <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
                 <div class="checkbox">
-                    <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')">
+                    <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
                 </div>
             </div>
         </div>
