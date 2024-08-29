@@ -166,12 +166,12 @@
                             // Determine border color based on event status
                             let borderColor = '#ddd'; // Default border color
                             if (event.EventStatus === 'Pending') {
-                                borderColor = 'yellow';
+                                borderColor = 'gray';
                             } else if (event.EventStatus === 'Approved') {
                                 borderColor = 'blue';
                             }
                             else if (event.EventStatus === 'For Approval') {
-                                borderColor = 'orange';
+                                borderColor = 'yellow';
                             }
 
                             modalContent.innerHTML += `
@@ -267,6 +267,8 @@
             </form>
         </div>
     </div>
+    <div class="end"></div>
+    
     <!-- The Modal -->
     <div id="eventModal" class="modal">
         <div class="modal-content" id="modalContent">

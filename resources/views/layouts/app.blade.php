@@ -187,7 +187,7 @@
             border-radius: 5px;
         }
 
-        .disapproved {
+        .not-approved {
             padding: 4px 13px;
             background-color: #ff6961;
             color: white;
@@ -198,8 +198,17 @@
 
         .pending {
             padding: 4px 13px;
-            background-color: #FFF3DD;
-            color: #aa8345;
+            background-color: #D3D3D3; /* Light gray */
+            color: #666666; /* Darker gray for text */
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .for-approval {
+            padding: 4px 13px;
+            background-color: #FFF3DD; /* Same as previous Pending */
+            color: #aa8345; /* Same as previous Pending text color */
             font-size: 12px;
             font-weight: bold;
             border-radius: 5px;

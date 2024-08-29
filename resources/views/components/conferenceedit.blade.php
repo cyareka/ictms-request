@@ -131,18 +131,6 @@
             background-color: #cc0000;
         }
 
-        .file-upload {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 16px;
-            border: 2px dashed #5b21b6;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
         .inline-field {
             display: flex;
             align-items: center;
@@ -226,6 +214,63 @@
             opacity: 1;
             visibility: visible;
         }
+        .file-upload {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 16px;
+                border: 2px dashed #5b21b6;
+                border-radius: 15px;
+                cursor: pointer;
+                margin-bottom: 16px;
+                width: 100%;
+                background-color: #ffffff; /* Light background for better visibility */
+                text-align: center;
+                transition: background-color 0.3s ease; /* Add a transition effect */
+            }
+
+            .file-upload:hover {
+                background-color: #f0f0f0; /* Slightly darker on hover for feedback */
+            }
+
+            #certfile-upload {
+                display: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            #certificate-preview-label {
+                display: block;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+            }
+
+            #certificate-preview-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 50px;
+                text-align: center;
+                color: #5b21b6; /* Text color matching the border */
+            }
+
+            #default-text {
+                font-size: 14px;
+                color: #000; /* Text color to match the border */
+            }
+
+            #certificate-preview {
+                font-size: 14px;
+                color: #333;
+                margin-top: 10px; /* Space between the default text and preview text */
+            }
 
         @media (max-width: 768px) {
             .container {
@@ -689,6 +734,21 @@
                 <label for="EventStatus">Event Status</label>
                 <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}" readonly>
             </div>
+            <div class="inline-field">
+                        <label for="certificate-upload">File Upload</label>
+                        <div class="file-upload">
+                            <label for="certfile-upload" id="certificate-preview-label">
+                                <div id="certificate-preview-container">
+                                    <div id="default-text">
+                                        Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
+                                    </div>
+                                    <div id="certificate-preview"></div>
+                                </div>
+                            </label>
+                            <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf" onchange="previewCertificate(event)"
+                                   style="display: none;">
+                        </div>
+                    </div>
         </div>
         <div class="form-footer">
             <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>

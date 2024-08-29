@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -167,9 +166,11 @@
                             // Determine border color based on event status
                             let borderColor = '#ddd'; // Default border color
                             if (event.EventStatus === 'Pending') {
-                                borderColor = 'yellow';
+                                borderColor = 'gray';
                             } else if (event.EventStatus === 'Approved') {
                                 borderColor = 'blue';
+                            } else if (event.EventStatus === 'For Approval') {
+                                borderColor = 'yellow';
                             }
 
                             modalContent.innerHTML += `
@@ -232,9 +233,15 @@
                         </div>
                     </a>
                     <a>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="form_statuses[]" value="For Approval" id="flexCheckDefault3">
+                            <label class="form-check-label" for="flexCheckDefault3">For Approval</label>
+                        </div>
+                    </a>
+                    <a>
                         <div class="form-check" id="margincheck">
                             <input class="form-check-input" type="checkbox" name="form_statuses[]" value="Approved" id="flexCheckDefault2">
-                            <label class="form-check-label" for="flexCheckDefault2">Approved and Ongoing</label>
+                            <label class="form-check-label" for="flexCheckDefault2">Approved</label>
                         </div>
                     </a>
                     <hr>
@@ -242,16 +249,14 @@
                         <button class="cancelbtn" type="button" onclick="resetFilters()">Remove</button>
                         <button class="applybtn" type="submit">Filter</button>
                     </div>
-                </div>
             </form>
         </div>
     </div>
-    <!-- The Modal for event details -->
-    <div id="eventModal" class="modal">
-        <div class="modal-content" id="modalContent">
-            <!-- Event details will be injected here -->
-        </div>
-    </div>
     <div class="end"></div>
+
+    <!-- Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
 </body>
 </html>
