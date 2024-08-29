@@ -382,6 +382,37 @@
             }
 
         }
+        .checkbox {
+            margin-left: 5px;
+            position: relative;
+        }
+
+        .checkbox:hover::after {
+            content: " Please Specify";
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background-color: #65558F;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        #purposeTextBox {
+            width: 40%;
+            right: 20px;
+            padding: 10px;
+            border: 1px solid rgba(60, 54, 51, 0.5);
+            border-radius: 15px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        .checkbox input[type="checkbox"]:checked + #purposeTextBox {
+            display: block;
+        }
 
 
     </style>
@@ -428,9 +459,18 @@
                     </select>
                 </div>
                 <div class="input-field">
-                    <label>Purpose<span class="required">*</span></label>
-                    <input type="text" name="Purpose" placeholder="Enter Purpose" value="{{ old('Purpose') }}" required/>
+                <label for="purpose">Purpose</label>
+                <select id="purposeSelect" name="purpose" required>
+                    <option disabled selected>Select Purpose</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Training">Training</option>
+                    <!-- Add other purposes here -->
+                </select>
+                <input type="text" id="purposeInput" name="purpose" style="display:none;" placeholder="Enter Purpose">
+                <div class="checkbox">
+                    <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')">
                 </div>
+            </div>
             </div>
             <div class="input-group">
                 <div class="input-field">
@@ -654,7 +694,28 @@
         }
         return true;
     }
+     /**
+     * Toggles between a select and an input field when a checkbox is clicked.
+     * 
+     * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
+     */
+    function toggleInputField(fieldName) {
+        const selectField = document.getElementById(`${fieldName}Select`);
+        const inputField = document.getElementById(`${fieldName}Input`);
+        const checkbox = document.getElementById(`${fieldName}Checkbox`);
 
+        if (checkbox.checked) {
+            selectField.style.display = 'none';
+            inputField.style.display = 'block';
+            inputField.required = true;
+            selectField.required = false;
+        } else {
+            selectField.style.display = 'block';
+            inputField.style.display = 'none';
+            inputField.required = false;
+            selectField.required = true;
+        }
+    }
 
 </script>
 </body>
