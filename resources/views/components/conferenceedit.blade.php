@@ -864,6 +864,41 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+    // JavaScript: Update the previewCertificate function
+function previewCertificate(event) {
+    const file = event.target.files[0];
+    const filePreview = document.getElementById('certificate-preview');
+    const defaultText = document.getElementById('default-text');
+    const filePathInput = document.getElementById('certfile-path');
+
+    // Clear any existing content in the preview box
+    filePreview.innerHTML = '';
+
+    if (file) {
+        // Hide the default text when a file is uploaded
+        defaultText.style.display = 'none';
+
+        // Check if the file is a PDF
+        if (file.type === 'application/pdf') {
+            // Create an anchor element to make the file name clickable
+            const fileLink = document.createElement('a');
+            fileLink.textContent = `${file.name}`;
+            fileLink.style.color = 'green';
+            fileLink.href = URL.createObjectURL(file);
+            fileLink.target = '_blank'; // Open in a new tab
+
+            // Append the clickable file name to the preview area
+            filePreview.appendChild(fileLink);
+
+            // Store the file path in the hidden input field
+            filePathInput.value = file.name;
+        } else {
+            // Display a message if the file is not a PDF
+            filePreview.textContent = 'Please upload a valid PDF file.';
+            filePreview.style.color = 'red';
+        }
+    }
+}
 </script>
 </body>
 </html>
