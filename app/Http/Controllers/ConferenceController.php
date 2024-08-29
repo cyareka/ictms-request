@@ -255,28 +255,28 @@ class ConferenceController extends Controller
         $formStatuses = $request->get('form_statuses', []);
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
-
+    
         $query = ConferenceRequest::with('conferenceRoom');
-
+    
         if ($title) {
             $query->where('Purpose', 'like', "%$title%");
         }
-
+    
         if ($conferenceRoom) {
             $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
                 $q->where('CRoomName', $conferenceRoom);
             });
         }
-
+    
         if ($formStatuses) {
             $query->whereIn('FormStatus', $formStatuses);
         }
-
+    
         if ($startDate && $endDate) {
             $query->whereBetween('date_start', [$startDate, $endDate])
                   ->whereBetween('date_end', [$startDate, $endDate]);
         }
-
+    
         // Exclude specific FormStatus and EventStatus combinations
         $query->where(function ($q) {
             $q->whereNot(function ($q) {
@@ -292,7 +292,7 @@ class ConferenceController extends Controller
                   ->where('EventStatus', 'Finished');
             });
         });
-
+    
         $conferenceRequests = $query->get()
             ->map(function ($event) {
                 return [
@@ -303,49 +303,67 @@ class ConferenceController extends Controller
                     'EventStatus' => $event->FormStatus,
                 ];
             });
-
+    
         return response()->json($conferenceRequests);
     }
 
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $sort = $request->input('sort', 'created_at');
-        $order = $request->input('order', 'desc');
-        $conferenceRoom = $request->input('conference_room');
-        $formStatuses = $request->input('form_statuses', ['Approved', 'Pending', 'For Approval']);
-        $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
-        $perPage = $request->input('per_page', 5); // Set default items per page to 5
+{
+    $sort = $request->input('sort', 'created_at');
+    $order = $request->input('order', 'desc');
+    $conferenceRoom = $request->input('conference_room');
+    $formStatuses = $request->input('form_statuses', ['Approved', 'Pending',  'For Approval']);
+    $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
+    $perPage = $request->input('per_page', 5);
+    $search = $request->input('search', '');
 
-        $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
-            ->orderBy($sort, $order);
+    $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
+        ->orderBy($sort, $order);
 
-        if ($conferenceRoom) {
-            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
-                $q->where('CRoomName', $conferenceRoom);
-            });
-        }
-
-        if ($formStatuses) {
-            $query->whereIn('FormStatus', $formStatuses);
-        }
-
-        if ($eventStatuses) {
-            $query->whereIn('EventStatus', $eventStatuses);
-        }
-
-        $conferenceRequests = $query->paginate($perPage);
-
-        return response()->json([
-            'data' => $conferenceRequests->items(),
-            'pagination' => [
-                'current_page' => $conferenceRequests->currentPage(),
-                'last_page' => $conferenceRequests->lastPage(),
-                'per_page' => $conferenceRequests->perPage(),
-                'total' => $conferenceRequests->total(),
-            ],
-        ]);
+    if ($conferenceRoom) {
+        $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+            $q->where('CRoomName', $conferenceRoom);
+        });
     }
+
+    if ($formStatuses) {
+        $query->whereIn('FormStatus', $formStatuses);
+    }
+
+    if ($eventStatuses) {
+        $query->whereIn('EventStatus', $eventStatuses);
+    }
+
+    if ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('CRequestID', 'like', '%' . $search . '%')
+                ->orWhereHas('conferenceRoom', function ($q) use ($search) {
+                    $q->where('CRoomName', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('office', function ($q) use ($search) {
+                    $q->where('OfficeName', 'like', '%' . $search . '%');
+                })
+                ->orWhere('date_start', 'like', '%' . $search . '%')
+                ->orWhere('time_start', 'like', '%' . $search . '%')
+                ->orWhere('EventStatus', 'like', '%' . $search . '%')
+                ->orWhere('FormStatus', 'like', '%' . $search . '%');
+                
+        });
+    }
+
+    $conferenceRequests = $query->paginate($perPage);
+
+    return response()->json([
+        'data' => $conferenceRequests->items(),
+        'pagination' => [
+            'current_page' => $conferenceRequests->currentPage(),
+            'last_page' => $conferenceRequests->lastPage(),
+            'per_page' => $conferenceRequests->perPage(),
+            'total' => $conferenceRequests->total(),
+        ],
+    ]);
+}
 
     // Conference Request Logs Filter and Sort
     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse

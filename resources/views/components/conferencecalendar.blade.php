@@ -13,7 +13,7 @@
             margin-top: 20px;
             background-color: white;
             box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
-            z-index:2;
+            z-index: 2;
         }
         /* Responsive design adjustments for smaller screens */
         @media (max-width: 768px) {
@@ -56,13 +56,17 @@
             margin: auto;
             padding: 30px;
             border: 1px solid #ccc;
-            width: 60%;
+            width: 40%;
             max-width: 800px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             position: relative;
-            overflow-y: auto; /* Ensure scrolling if content overflows */
-            max-height: 80vh; /* Limit height to viewport */
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        .modal-header {
+            font-size: 24px;
+            margin-bottom: 20px;
         }
         .close {
             color: #aaa;
@@ -134,7 +138,7 @@
 
                             // Create calendar events showing the total number of events per day
                             const events = Object.keys(eventsByDate).map(date => ({
-                                title: `${eventsByDate[date].length} events`,
+                                title: `${eventsByDate[date].length} Event(s)`,
                                 start: date,
                                 extendedProps: { events: eventsByDate[date] } // Store all events for that date
                             }));
@@ -151,13 +155,27 @@
                     const modalContent = document.getElementById("modalContent");
 
                     // Clear previous content
-                    modalContent.innerHTML = '<span class="close">&times;</span>';
+                    modalContent.innerHTML = `
+                        <span class="close">&times;</span>
+                        <div class="modal-header">${info.event.startStr} Events</div>
+                    `;
 
                     // Display all events for the clicked date
                     if (info.event.extendedProps.events) {
                         info.event.extendedProps.events.forEach(event => {
+                            // Determine border color based on event status
+                            let borderColor = '#ddd'; // Default border color
+                            if (event.EventStatus === 'Pending') {
+                                borderColor = 'yellow';
+                            } else if (event.EventStatus === 'Approved') {
+                                borderColor = 'blue';
+                            }
+                            else if (event.EventStatus === 'For Approval') {
+                                borderColor = 'orange';
+                            }
+
                             modalContent.innerHTML += `
-                                <div class="event-container">
+                                <div class="event-container" style="border-left: 5px solid ${borderColor};">
                                     <h2>${event.title}</h2>
                                     <p><strong>Conference Room:</strong> ${event.conferenceRoom || 'N/A'}</p>
                                     <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
@@ -230,12 +248,17 @@
                         </div>
                     </a>
                     <a>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="form_statuses[]" value="For Approval" id="flexCheckDefault3">
+                            <label class="form-check-label" for="flexCheckDefault3">For Approval</label>
+                        </div>
+                    </a>
+                    <a>
                         <div class="form-check" id="margincheck">
                             <input class="form-check-input" type="checkbox" name="form_statuses[]" value="Approved" id="flexCheckDefault2">
                             <label class="form-check-label" for="flexCheckDefault2">Approved</label>
                         </div>
                     </a>
-                    <hr>
                     <div class="buttons">
                         <button class="cancelbtn" type="button" onclick="resetFilters()">Remove</button>
                         <button class="applybtn" type="submit">Filter</button>
@@ -244,13 +267,11 @@
             </form>
         </div>
     </div>
-    <!-- The Modal for event details -->
+    <!-- The Modal -->
     <div id="eventModal" class="modal">
         <div class="modal-content" id="modalContent">
-            <span class="close">&times;</span>
-            <!-- Event details will be injected here -->
+            <!-- Content will be dynamically inserted here -->
         </div>
     </div>
-    <div class="end"></div>
 </body>
 </html>

@@ -321,7 +321,7 @@ class VehicleController extends Controller
             $validated['DriverID'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
             $validated['VehicleID'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
             $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
-            $validated['SOID'] = $request->input('SOName');
+            $validated['SOID'] = $request->input('SOAuth');
 
             // Convert the signatory name to an ID
             if (!empty($validated['ASignatory'])) {

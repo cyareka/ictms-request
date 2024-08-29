@@ -647,7 +647,7 @@
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="SOAuthority">SO Approving Authority</label>
-                        <select id="SOAuthority" name="SOName" required>
+                        <select id="SOAuth" name="SOAuth" required>
                             <option disabled selected>Select Authority</option>
                             @foreach(App\Models\SOAuthority::all() as $SOAuth)
                                 <option value="{{ $SOAuth->SOID }}"
