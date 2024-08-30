@@ -7,7 +7,8 @@ use App\Http\Controllers\NVehicleController;
 use App\Http\Controllers\NDriverController;
 use App\Http\Controllers\NConferenceRController;
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\PurposeController;  
+use App\Http\Controllers\PurposeController;
+use App\Http\Controllers\FocalPController;  
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -132,6 +133,8 @@ Route::middleware([
         [PurposeController::class, 'store'])->name('porpose.store');
     Route::post('/employee',
         [EmployeeController::class, 'store'])->name('employee.store');
+    Route::post('/focalP',
+        [FocalPController::class, 'store'])->name('focalP.store');
 });
 
 // USER ROUTES

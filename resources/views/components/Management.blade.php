@@ -239,6 +239,7 @@
             <button class="dropdown-button" onclick="toggleSection('conference', this)">CONFERENCE ROOM</button>
             <button class="dropdown-button" onclick="toggleSection('porpose', this)">PURPOSE</button>
             <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button>
+            <button class="dropdown-button" onclick="toggleSection('focalP', this)">FOCAL PERSON</button>
         </div>
 
         <div id="addVehi" class="toggle-section">
@@ -370,6 +371,32 @@
                 </div>
             </form>
         </div>
+
+        <div id="focalP" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('focalP.store') }}" id="focalPForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="FPName">Name</label>
+                        <input type="text" id="FPName" name="FPName" placeholder="Enter Name" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="officeName">Assigned Office</label>
+                        <select id="officeName" name="officeName" required>
+                            <option disabled selected>Select Office</option>
+                            @foreach(App\Models\Office::all() as $office)
+                                <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('focalPForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
 
