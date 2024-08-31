@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Models\PurposeRequest;
 use App\Helpers\IDGenerator;
 
-class PurposeController extends Controller
+class NPurposeController extends Controller
 {
     private function generateUniqueID(): string
     {

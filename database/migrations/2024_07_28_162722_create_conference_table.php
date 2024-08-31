@@ -45,10 +45,10 @@ return new class extends Migration
             $table->foreign('CRoomID')->references('CRoomID')->on('conference_rooms')->onDelete('cascade');
             $table->foreign('OfficeID')->references('OfficeID')->on('offices')->onDelete('cascade');
             $table->foreign('PurposeID')->references('PurposeID')->on('purpose')->onDelete('cascade');
-
+            $table->foreign('focalPerson')->references('FocalPID')->on('focal_person')->onDelete('cascade');
         });
     }
-    
+
     /**
      * Reverse the migrations.
      */

@@ -44,7 +44,7 @@ return new class extends Migration
             // initial form
             $table->string('VRequestID', 10)->primary();
             $table->string('OfficeID');
-            $table->string('Purpose', 50);
+            $table->string('PurposeID', 50);
             $table->string('date_start', 10);
             $table->string('date_end', 10);
             $table->string('time_start', 9);
@@ -81,6 +81,7 @@ return new class extends Migration
             $table->foreign('SOID')->references('SOID')->on('SOAuthority');
             $table->foreign('ReceivedBy')->references('id')->on('users');
             $table->foreign('ASignatory')->references('id')->on('users');
+            $table->foreign('PurposeID')->references('PurposeID')->on('purpose')->onDelete('cascade');
         });
 
         Schema::create('vrequest_passenger', function (Blueprint $table) {

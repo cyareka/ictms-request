@@ -15,14 +15,13 @@ use Illuminate\Support\Facades\Schema;
     {
         Schema::create('focal_person', function (Blueprint $table) {
             $table->string('FocalPID', 3)->primary();
-            $table->string('FPName')->nullable();  // Name of the focal point
-            $table->string('OfficeID');  // Foreign key to the offices table
-            $table->timestamps();  // Created at and Updated at timestamps
+            $table->string('FPName')->nullable();
+            $table->string('OfficeID');
+            $table->boolean('is_custom')->default(false);
+            $table->timestamps();
 
             $table->foreign('OfficeID')->references('OfficeID')->on('offices');
         });
-
-
     }
 
     /**

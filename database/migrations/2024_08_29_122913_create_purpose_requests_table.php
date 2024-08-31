@@ -17,6 +17,8 @@ class CreatePurposeRequestsTable extends Migration
             $table->string('PurposeID', 3)->primary();
             $table->string('request_p')->nullable();
             $table->string('purpose')->nullable();
+            $table->boolean('is_custom')->default(false);
+
             $table->timestamps();
         });
     }

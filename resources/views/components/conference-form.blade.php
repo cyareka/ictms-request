@@ -370,9 +370,11 @@
                 <label for="purpose">Purpose</label>
                 <select id="purposeSelect" name="purposeSelect" required>
                     <option disabled selected>Select Purpose</option>
-                    <option value="Meeting" {{ old('purposeSelect') == 'Meeting' ? 'selected' : '' }}>Meeting</option>
-                    <option value="Training" {{ old('purposeSelect') == 'Training' ? 'selected' : '' }}>Training</option>
-                    <!-- Add other purposes here -->
+                    @foreach(App\Models\PurposeRequest::all() as $purpose)
+                        <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>
+                            {{ $purpose->PurposeName }}
+                        </option>
+                    @endforeach
                 </select>
                 <input type="text" id="purposeInput" name="purposeInput" style="display:none;" placeholder="Enter Purpose" value="{{ old('purposeInput') }}">
                 <div class="checkbox">
@@ -395,16 +397,18 @@
             <!-- Focal Person -->
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
-                <select id="focalPersonSelect" name="focalPersonSelect" required>
+                <select id="focalPersonSelect" name="focalPersonSelect">
                     <option disabled selected>Select Focal Person</option>
-                    <option value="Person1" {{ old('focalPersonSelect') == 'Person1' ? 'selected' : '' }}>Jane Doe</option>
-                    <option value="Person2" {{ old('focalPersonSelect') == 'Person2' ? 'selected' : '' }}>John Doe</option>
-                    <!-- Add other focal persons here -->
+                    @foreach(App\Models\FocalPerson::all() as $fp)
+                        <option value="{{ $fp->FocalPID }}" {{ old('focalPersonSelect') == $fp->FocalPID ? 'selected' : '' }}>
+                            {{ $fp->FPName }}
+                        </option>
+                    @endforeach
+                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
+                    <div class="checkbox">
+                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
+                    </div>
                 </select>
-                <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
-                <div class="checkbox">
-                    <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
-                </div>
             </div>
         </div>
         <div class="row">
@@ -619,7 +623,7 @@
     }
     /**
      * Toggles between a select and an input field when a checkbox is clicked.
-     * 
+     *
      * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
      */
     function toggleInputField(fieldName) {
@@ -629,14 +633,14 @@
 
         if (checkbox.checked) {
             selectField.style.display = 'none';
+            selectField.required = false;
             inputField.style.display = 'block';
             inputField.required = true;
-            selectField.required = false;
         } else {
             selectField.style.display = 'block';
+            selectField.required = true;
             inputField.style.display = 'none';
             inputField.required = false;
-            selectField.required = true;
         }
     }
 </script>

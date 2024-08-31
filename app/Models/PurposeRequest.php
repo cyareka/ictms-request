@@ -14,5 +14,10 @@ class PurposeRequest extends Model
     protected $primaryKey = 'PurposeID';
 
     // Define the fillable attributes
-    protected $fillable = ['request_p','PurposeID','purpose'];
+    protected $fillable = [
+        'request_p',
+        'PurposeID',
+        'purpose',
+        'is_custom'
+        ];
 }

@@ -53,7 +53,8 @@ class ConferenceController extends Controller
         try {
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
-                'purpose' => 'required|string|max:255',
+                'purposeSelect' => 'required_without:purposeInput|string|max:255',
+                'purposeInput' => 'required_without:purposeSelect|string|max:255',
                 'date_start.*' => 'required|date_format:Y-m-d',
                 'date_end' => 'required|array|min:1',
                 'date_end.*' => 'required|date_format:Y-m-d|after_or_equal:date_start.*',
@@ -62,7 +63,8 @@ class ConferenceController extends Controller
                 'time_end' => 'required|array|min:1',
                 'time_end.*' => 'required|date_format:H:i|after:time_start.*',
                 'npersons' => 'required|integer',
-                'focalPerson' => 'required|string|max:50',
+                'focalPersonSelect' => 'required_without:focalPersonInput|max:50|exists:focal_person,FocalPID',
+                'focalPersonInput' => 'required_without:focalPersonSelect|max:50',
                 'tables' => 'nullable|integer',
                 'chairs' => 'nullable|integer',
                 'otherFacilities' => 'nullable|string|max:50',
@@ -70,6 +72,14 @@ class ConferenceController extends Controller
                 'requesterName' => 'required|string|max:50',
                 'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
             ]);
+
+            $purpose = $request->has('purposeCheckbox') ? $validated['purposeInput'] : $validated['purposeSelect'];
+            $focalPerson = $request->has('focalPersonCheckbox') ? $validated['focalPersonInput'] : $validated['focalPersonSelect'];
+
+            // Check if the focal person exists in the database if focalPersonSelect is used
+            if (!$request->has('focalPersonCheckbox') && !DB::table('focal_person')->where('FocalPID', $focalPerson)->exists()) {
+                throw ValidationException::withMessages(['focalPersonSelect' => 'The selected focal person is invalid.']);
+            }
 
             // Custom validation for duplicate dates
             $dates = $validated['date_start'];
@@ -112,9 +122,9 @@ class ConferenceController extends Controller
                 ConferenceRequest::create([
                     'CRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
-                    'Purpose' => $validated['purpose'],
+                    'Purpose' => $purpose,
                     'npersons' => $validated['npersons'],
-                    'focalPerson' => $validated['focalPerson'],
+                    'focalPerson' => $focalPerson,
                     'CAvailability' => $availability, // Set availability based on the check
                     'tables' => $validated['tables'],
                     'chairs' => $validated['chairs'],
@@ -437,7 +447,7 @@ class ConferenceController extends Controller
             'pendingRequests' => ConferenceRequest::where('FormStatus', 'Pending')->count(),
             'dailyRequests' => ConferenceRequest::whereDate('created_at', now()->toDateString())->count(),
             'monthlyRequests' => ConferenceRequest::whereMonth('created_at', now()->month)->count(),
-            'requestsPerOffice' => ConferenceRequest::select('OfficeID', \DB::raw('count(*) as total'))
+            'requestsPerOffice' => ConferenceRequest::select('OfficeID', DB::raw('count(*) as total'))
                 ->groupBy('OfficeID')
                 ->with('office')
                 ->get()

@@ -9,7 +9,7 @@ use App\Helpers\IDGenerator;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
-class FocalPController extends Controller
+class NFocalPController extends Controller
 {
     private function generateUniqueID(): string
     {
