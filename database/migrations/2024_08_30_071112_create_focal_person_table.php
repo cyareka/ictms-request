@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Schema;
             $table->string('FocalPID', 3)->primary();
             $table->string('FPName')->nullable();
             $table->string('OfficeID');
-            $table->boolean('is_custom')->default(false);
             $table->timestamps();
 
             $table->foreign('OfficeID')->references('OfficeID')->on('offices');

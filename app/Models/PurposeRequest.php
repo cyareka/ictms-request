@@ -18,6 +18,5 @@ class PurposeRequest extends Model
         'request_p',
         'PurposeID',
         'purpose',
-        'is_custom'
         ];
 }

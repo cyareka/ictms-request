@@ -44,7 +44,9 @@ return new class extends Migration
             // initial form
             $table->string('VRequestID', 10)->primary();
             $table->string('OfficeID');
-            $table->string('PurposeID', 50);
+            $table->string('PurposeID', 50)->nullable();
+            $table->string('PurposeOthers')->nullable()->default(null);
+            $table->boolean('PurposeCustom')->default(false);
             $table->string('date_start', 10);
             $table->string('date_end', 10);
             $table->string('time_start', 9);
@@ -81,7 +83,7 @@ return new class extends Migration
             $table->foreign('SOID')->references('SOID')->on('SOAuthority');
             $table->foreign('ReceivedBy')->references('id')->on('users');
             $table->foreign('ASignatory')->references('id')->on('users');
-            $table->foreign('PurposeID')->references('PurposeID')->on('purpose')->onDelete('cascade');
+            $table->foreign('PurposeID')->references('PurposeID')->on('purpose_requests')->onDelete('cascade');
         });
 
         Schema::create('vrequest_passenger', function (Blueprint $table) {

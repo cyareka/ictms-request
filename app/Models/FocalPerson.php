@@ -17,7 +17,6 @@ class FocalPerson extends Model
         'FocalPID',
         'FPName',
         'OfficeID',
-        'is_custom'
     ];
 
     public function office(): BelongsTo

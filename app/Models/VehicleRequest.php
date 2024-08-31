@@ -28,7 +28,8 @@ class VehicleRequest extends Model
     protected $fillable = [
         'VRequestID',
         'OfficeID',
-        'Purpose',
+        'PurposeID',
+        'PurposeOthers',
         'passengers',
         'date_start',
         'date_end',
@@ -72,6 +73,11 @@ class VehicleRequest extends Model
     public function office(): BelongsTo
     {
         return $this->belongsTo(Office::class, 'OfficeID');
+    }
+
+    public function purpose_request(): BelongsTo
+    {
+        return $this->belongsTo(PurposeRequest::class, 'PurposeID');
     }
 
     public function driver(): BelongsTo

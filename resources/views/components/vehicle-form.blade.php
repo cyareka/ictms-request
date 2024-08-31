@@ -460,13 +460,14 @@
                 </div>
                 <div class="input-field">
                 <label for="purpose">Purpose</label>
-                <select id="purposeSelect" name="purpose" required>
-                    <option disabled selected>Select Purpose</option>
-                    <option value="Meeting">Meeting</option>
-                    <option value="Training">Training</option>
-                    <!-- Add other purposes here -->
+                <select id="purposeSelect" name="purposeSelect">
+                    <option value="" disabled selected>Select Purpose</option>
+                    @foreach(App\Models\PurposeRequest::all() as $purpose)
+                        <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>{{ $purpose->purpose }}
+                        </option>
+                    @endforeach
                 </select>
-                <input type="text" id="purposeInput" name="purpose" style="display:none;" placeholder="Enter Purpose">
+                <input type="text" id="purposeInput" name="purposeInput" value="{{ old('purposeInput') }}" style="display:none;" placeholder="Enter Purpose">
                 <div class="checkbox">
                     <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')">
                 </div>
@@ -515,7 +516,6 @@
                             </option>
                         @endforeach
                     </select>
-
                 </div>
                 <div class="button-container">
                     <button class="add-passenger-btn" type="button" onclick="addPassenger()">+</button>
@@ -638,82 +638,100 @@
     });
 
 
-    function validateForm() {
-        let isValid = true;
-        let errorMessages = [];
+function validateForm() {
+    let isValid = true;
+    let errorMessages = [];
 
-        // Check required fields
-        document.querySelectorAll('input[required], select[required]').forEach(function (element) {
-            if (!element.value) {
-                isValid = false;
-                let errorMessage = element.previousElementSibling.textContent + " is required.";
-                errorMessages.push(errorMessage);
-                console.error(errorMessage);  // Log the error to the console
-            }
-        });
-
-        // Check dynamic passenger fields
-        const passengerSelects = document.querySelectorAll('select[name="passengers[]"]');
-        const passengerValues = Array.from(passengerSelects).map(select => select.value).filter(value => value !== '');
-
-        if (passengerValues.length === 0) {
+    // Check required fields
+    document.querySelectorAll('input[required], select[required]').forEach(function (element) {
+        if (!element.value) {
             isValid = false;
-            errorMessages.push("At least one passenger must be selected.");
-            console.error("At least one passenger must be selected.");
-        }
-
-        // Check if passengers are unique
-        if (new Set(passengerValues).size !== passengerValues.length) {
-            isValid = false;
-            errorMessages.push("Duplicate passengers are not allowed.");
-            console.error("Duplicate passengers are not allowed.");
-        }
-
-        // Check date fields
-        document.querySelectorAll('input[type="date"]').forEach(function (input) {
-            if (!input.value) {
-                isValid = false;
-                let errorMessage = "All date fields must be filled.";
-                errorMessages.push(errorMessage);
-                console.error(errorMessage);  // Log the error to the console
-            }
-        });
-
-        // Check file size
-        let signatureFile = document.getElementById('RequesterSignature').files[0];
-        if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
-            isValid = false;
-            let errorMessage = "Signature file size must be less than 32MB.";
+            let errorMessage = element.previousElementSibling.textContent + " is required.";
             errorMessages.push(errorMessage);
             console.error(errorMessage);  // Log the error to the console
         }
+    });
 
-        if (!isValid) {
-            alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
-            return false;
-        }
-        return true;
+    // Check dynamic passenger fields
+    const passengerSelects = document.querySelectorAll('select[name="passengers[]"]');
+    const passengerValues = Array.from(passengerSelects).map(select => select.value).filter(value => value !== '');
+
+    if (passengerValues.length === 0) {
+        isValid = false;
+        errorMessages.push("At least one passenger must be selected.");
+        console.error("At least one passenger must be selected.");
     }
-     /**
-     * Toggles between a select and an input field when a checkbox is clicked.
-     * 
-     * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
-     */
+
+    // Check if passengers are unique
+    if (new Set(passengerValues).size !== passengerValues.length) {
+        isValid = false;
+        errorMessages.push("Duplicate passengers are not allowed.");
+        console.error("Duplicate passengers are not allowed.");
+    }
+
+    // Check date fields
+    document.querySelectorAll('input[type="date"]').forEach(function (input) {
+        if (!input.value) {
+            isValid = false;
+            let errorMessage = "All date fields must be filled.";
+            errorMessages.push(errorMessage);
+            console.error(errorMessage);  // Log the error to the console
+        }
+    });
+
+    // Check file size
+    let signatureFile = document.getElementById('RequesterSignature').files[0];
+    if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
+        isValid = false;
+        let errorMessage = "Signature file size must be less than 32MB.";
+        errorMessages.push(errorMessage);
+        console.error(errorMessage);  // Log the error to the console
+    }
+
+    // Check purpose field
+    const purposeCheckbox = document.getElementById('purposeCheckbox');
+    if (purposeCheckbox.checked) {
+        const purposeInput = document.getElementById('purposeInput');
+        if (!purposeInput.value) {
+            isValid = false;
+            let errorMessage = "Purpose input is required.";
+            errorMessages.push(errorMessage);
+            console.error(errorMessage);  // Log the error to the console
+        } else {
+            console.debug("Purpose input value:", purposeInput.value);
+        }
+    } else {
+        const purposeSelect = document.getElementById('purposeSelect');
+        if (!purposeSelect.value) {
+            isValid = false;
+            let errorMessage = "Purpose select is required.";
+            errorMessages.push(errorMessage);
+            console.error(errorMessage);  // Log the error to the console
+        } else {
+            console.debug("Purpose select value:", purposeSelect.value);
+        }
+    }
+
+    if (!isValid) {
+        alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
+        return false;
+    }
+    return true;
+}
+
     function toggleInputField(fieldName) {
+        const checkbox = document.getElementById(`${fieldName}Checkbox`);
         const selectField = document.getElementById(`${fieldName}Select`);
         const inputField = document.getElementById(`${fieldName}Input`);
-        const checkbox = document.getElementById(`${fieldName}Checkbox`);
 
         if (checkbox.checked) {
             selectField.style.display = 'none';
             inputField.style.display = 'block';
-            inputField.required = true;
-            selectField.required = false;
+            checkbox.value = 'on'; // Update the checkbox value
         } else {
             selectField.style.display = 'block';
             inputField.style.display = 'none';
-            inputField.required = false;
-            selectField.required = true;
+            checkbox.value = ''; // Update the checkbox value
         }
     }
 
