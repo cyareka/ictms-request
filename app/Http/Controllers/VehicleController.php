@@ -24,7 +24,7 @@ class VehicleController extends Controller
     {
         $idGenerator = new IDGenerator();
         do {
-            $generatedID = $idGenerator->generateID_10();
+            $generatedID = $idGenerator->generateID_VR();
         } while (VehicleRequest::query()->where('VRequestID', $generatedID)->exists());
 
         return $generatedID;
@@ -140,8 +140,10 @@ class VehicleController extends Controller
     {
         $sort = $request->get('sort', 'created_at');
         $order = $request->get('order', 'desc');
-        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending']);
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending','For Approval']);
         $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+        $perPage = $request->get('per_page', 5);
+        $page = $request->get('page', 1);
 
         Log::info('Filter parameters:', [
             'sort' => $sort,
@@ -162,11 +164,19 @@ class VehicleController extends Controller
                 $query->whereIn('EventStatus', $eventStatuses);
             }
 
-            $vehicleRequests = $query->get();
+            $vehicleRequests = $query->paginate($perPage, ['*'], 'page', $page);
 
             Log::info('Query results:', $vehicleRequests->toArray());
 
-            return response()->json($vehicleRequests);
+            return response()->json([
+                'data' => $vehicleRequests->items(),
+                'pagination' => [
+                    'current_page' => $vehicleRequests->currentPage(),
+                    'last_page' => $vehicleRequests->lastPage(),
+                    'per_page' => $vehicleRequests->perPage(),
+                    'total' => $vehicleRequests->total(),
+                ],
+            ]);
         } catch (Throwable $e) {
             Log::error('An error occurred while fetching sorted vehicle requests:', [
                 'message' => $e->getMessage(),
@@ -334,12 +344,12 @@ class VehicleController extends Controller
             }
 
             if (!empty($validated['ReceivedBy'])) {
-                $receivedBy = DB::table('users')->where('name', $validated['ReceivedBy'])->value('id');
-                if (!$receivedBy) {
+                $receivedById = DB::table('users')->where('name', $validated['ReceivedBy'])->value('id');
+                if (!$receivedById) {
                     Log::error('ReceivedBy name does not exist:', ['ReceivedBy' => $validated['ReceivedBy']]);
                     return redirect()->back()->withErrors(['ReceivedBy' => 'The selected received by is invalid.'])->withInput();
                 }
-                $validated['ReceivedBy'] = $receivedBy;
+                $validated['ReceivedBy'] = $receivedById;
             }
 
 

@@ -734,7 +734,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        const soAuthSelect = document.getElementById('SOAuthority');
+        const soAuthSelect = document.getElementById('SOAuth');
         const soPositionInput = document.getElementById('SOPosition');
 
         function updateSOAuthorityFields() {

@@ -58,7 +58,6 @@ Route::middleware([
     Route::get('/conference-requests',
         [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');
 
-
     // Conference Edit
     Route::post('/conference-room/update',
         [ConferenceController::class, 'updateCForm']);
@@ -86,15 +85,10 @@ Route::middleware([
     Route::get('/calendar/events', [VehicleController::class, 'getCalendarEvents']);
 
     // Vehicle Table View
-    Route::get('/vehicle-requests',
-        [VehicleController::class, 'fetchSortedRequests'])->name('vehicle.requests');
-
-    // Vehicle Table View
     Route::get('/VehicleTabular', function () {
         return view('VehicleTabular');
     })->name('VehicleTabular');
-    Route::get('/fetchSortedVRequests',
-        [VehicleController::class, 'fetchSortedVRequests'])->name('fetchSortedVRequests');
+    Route::get('/fetchSortedVRequests', [VehicleController::class, 'fetchSortedVRequests'])->middleware('auth')->name('fetchSortedVRequests');
 
     // Vehicle Edit
     Route::get('/VehicledetailEdit',    function () {
@@ -103,8 +97,7 @@ Route::middleware([
     Route::get('/vehiclerequest/{VRequestID}/edit',
         [VehicleController::class, 'getRequestData'])->name('VehicledetailEdit');
 
-    //  Route::post('/vehicle-request/update',
-    //     [VehicleController::class, 'updateVForm']);
+//    Route::get('/fetchSortedVRequests', [VehicleController::class, 'fetchSortedVRequests'])->name('fetchSortedVehicleRequests');
 
     Route::post('/vehicle-request/update/{VRequestID}', [VehicleController::class, 'updateVForm']);
 

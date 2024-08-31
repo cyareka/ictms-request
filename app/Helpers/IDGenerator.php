@@ -9,6 +9,16 @@ class IDGenerator
     }
 
     // generate IDs for Office, Employee, Conference Room, Conference Request, and Vehicle Request
+    public function generateID_CR(): string
+    {
+        $currentYear = date('Y');
+        do {
+            $randomNumber = str_pad(mt_rand(10, 9999), 4, '0', STR_PAD_LEFT);
+        } while (preg_match('/^0[1-9]/', $randomNumber));
+
+        return 'CR' . $currentYear . $randomNumber;
+    }
+
     public function generateID_10(): string
     {
         $currentYear = date('Y');
@@ -16,6 +26,16 @@ class IDGenerator
         $randomNumber = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
 
         return $currentYear . $currentMonth . $randomNumber;
+    }
+
+    public function generateID_VR(): string
+    {
+        $currentYear = date('Y');
+        do {
+            $randomNumber = str_pad(mt_rand(10, 9999), 4, '0', STR_PAD_LEFT);
+        } while (preg_match('/^0[1-9]/', $randomNumber));
+
+        return 'VR' . $currentYear . $randomNumber;
     }
 
     // generate IDs for Vehicle
