@@ -44,9 +44,8 @@ return new class extends Migration
             // initial form
             $table->string('VRequestID', 10)->primary();
             $table->string('OfficeID');
-            $table->string('PurposeID', 50)->nullable();
+            $table->string('PurposeID', 50)->nullable()->default(null);
             $table->string('PurposeOthers')->nullable()->default(null);
-            $table->boolean('PurposeCustom')->default(false);
             $table->string('date_start', 10);
             $table->string('date_end', 10);
             $table->string('time_start', 9);

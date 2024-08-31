@@ -23,7 +23,8 @@ return new class extends Migration
         Schema::create('conference_room_requests', function (Blueprint $table) {
             $table->string('CRequestID', 10)->primary();
             $table->string('OfficeID');
-            $table->string('PurposeID', 100);
+            $table->string('PurposeID', 100)->nullable()->default(null);
+            $table->string('PurposeOthers')->nullable()->default(null);
             $table->string('date_start', 10);
             $table->string('date_end', 10);
             $table->string('time_start', 9);
@@ -44,7 +45,7 @@ return new class extends Migration
             // Foreign keys
             $table->foreign('CRoomID')->references('CRoomID')->on('conference_rooms')->onDelete('cascade');
             $table->foreign('OfficeID')->references('OfficeID')->on('offices')->onDelete('cascade');
-            $table->foreign('PurposeID')->references('PurposeID')->on('purpose')->onDelete('cascade');
+            $table->foreign('PurposeID')->references('PurposeID')->on('purpose_requests')->onDelete('cascade');
             $table->foreign('focalPerson')->references('FocalPID')->on('focal_person')->onDelete('cascade');
         });
     }

@@ -67,10 +67,6 @@ public function submitVForm(Request $request): RedirectResponse
 
         Log::debug('Validation passed', ['validated' => $validated]);
 
-        // Debugging purpose
-        Log::debug('Purpose Input:', ['purposeInput' => $validated['purposeInput']]);
-        Log::debug('Purpose Select:', ['purposeSelect' => $validated['purposeSelect']]);
-
         $passengers = $validated['passengers'];
         if (count($passengers) !== count(array_unique($passengers))) {
             throw ValidationException::withMessages(['passengers' => 'Duplicate passengers are not allowed.']);
@@ -83,14 +79,15 @@ public function submitVForm(Request $request): RedirectResponse
 
         $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
 
-        $purposeSelect = null;
-        $purposeInput = null;
-
-        if ($request->has('purposeCheckbox')) {
+        if ($request->has('purposeCheckbox') && $request->input('purposeCheckbox') === 'on') {
+            Log::debug('Purpose checkbox is checked.');
             $purposeInput = $request->input('purposeInput');
+            Log::debug('Purpose input value:', ['purposeInput' => $purposeInput]);
             $purposeSelect = null;
         } else {
-            $purposeSelect = $request->input('purposeSelect');
+            Log::debug('Purpose checkbox is not checked.');
+            $purposeSelect = $validated['purposeSelect'];
+            Log::debug('Purpose select value:', ['purposeSelect' => $purposeSelect]);
             $purposeInput = null;
         }
 

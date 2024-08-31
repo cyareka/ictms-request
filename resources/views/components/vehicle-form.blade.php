@@ -462,7 +462,7 @@
                 <label for="purpose">Purpose</label>
                 <select id="purposeSelect" name="purposeSelect">
                     <option value="" disabled selected>Select Purpose</option>
-                    @foreach(App\Models\PurposeRequest::all() as $purpose)
+                    @foreach(App\Models\PurposeRequest::where('request_p', 'Vehicle')->get() as $purpose)
                         <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>{{ $purpose->purpose }}
                         </option>
                     @endforeach
