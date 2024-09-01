@@ -77,7 +77,7 @@ public function submitCForm(Request $request): RedirectResponse
 
         Log::info('Validated data:', $validated);
 
-        $purpose = $validated['purposeInput'] ?? $validated['purposeSelect'];
+        $purpose = $validated['purposeInput'] ?? null;
         $focalPerson = $validated['focalPersonInput'] ?? $validated['focalPersonSelect'];
         $otherFacilities = $validated['otherFacilities'] ?? null;
         // $otherFacilities = $validated['otherFacilitiesInput'] ?: $validated['otherFacilitiesSelect'];
@@ -143,7 +143,8 @@ public function submitCForm(Request $request): RedirectResponse
             ConferenceRequest::create([
                 'CRequestID' => $generatedID,
                 'OfficeID' => $office->OfficeID,
-                'PurposeID' => $validated['purposeSelect'],
+                'PurposeID' => $validated['purposeSelect']?? null,
+                'PurposeOthers' => $purpose,
                 'npersons' => $validated['npersons'],
                 'focalPerson' => $focalPerson,
                 'CAvailability' => $availability,
@@ -348,7 +349,7 @@ public function submitCForm(Request $request): RedirectResponse
         $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search', '');
-
+    
         $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
             ->orderBy($sort, $order);
 
@@ -383,15 +384,17 @@ public function submitCForm(Request $request): RedirectResponse
             });
         }
 
-        $conferenceRequests = $query->paginate($perPage);
+        $results = $query->paginate($perPage);
 
+        \Log::info('Query results:', $results->toArray());
+    
         return response()->json([
-            'data' => $conferenceRequests->items(),
+            'data' => $results->items(),
             'pagination' => [
-                'current_page' => $conferenceRequests->currentPage(),
-                'last_page' => $conferenceRequests->lastPage(),
-                'per_page' => $conferenceRequests->perPage(),
-                'total' => $conferenceRequests->total(),
+                'total' => $results->total(),
+                'per_page' => $results->perPage(),
+                'current_page' => $results->currentPage(),
+                'last_page' => $results->lastPage(),
             ],
         ]);
     }

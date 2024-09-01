@@ -96,7 +96,7 @@
 
                 @foreach($filteredRequests as $request)
                     <tr>
-                        <th scope="row">{{ $request->CRequestID }}</th>
+                        <td scope="row">{{ $request->CRequestID }}</td>
                         <td>{{ $request->created_at->format('m/d/Y (h:i A)') }}</td>
                         <td>{{ $request->conferenceRoom->CRoomName }}</td>
                         <td>{{ $request->office->OfficeName }}</td>
@@ -141,6 +141,7 @@
                 fetch(`/fetchSortedRequests?${params}`)
                     .then(response => response.json())
                     .then(data => {
+                        console.log(data);
                         updateTable(data.data);
                         updatePagination(data.pagination);
                         currentPage = data.pagination.current_page;
@@ -166,6 +167,9 @@
 
                 if (Array.isArray(data) && data.length > 0) {
                     data.forEach(request => {
+                        console.log("Full request object:", request);
+                        console.log("Processing CRequestID:", request.CRequestID);
+                        
                         let formStatusClass = '';
                         switch(request.FormStatus.toLowerCase()) {
                             case 'approved':
@@ -180,7 +184,7 @@
                         }
 
                         let row = `<tr>
-                            <th scope="row">${request.CRequestID}</th>
+                            <td scope="row">${request.CRequestID}</td>
                             <td>
                                 ${new Date(request.created_at).toLocaleDateString('en-US', {
                                     year: 'numeric',

@@ -23,6 +23,7 @@ class ConferenceRequest extends Model
         'CRequestID',
         'OfficeID',
         'PurposeID',
+        'PurposeOthers',
         'npersons',
         'focalPerson',
         'CAvailability',
