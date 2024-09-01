@@ -22,7 +22,7 @@ class ConferenceRequest extends Model
     protected $fillable = [
         'CRequestID',
         'OfficeID',
-        'Purpose',
+        'PurposeID',
         'npersons',
         'focalPerson',
         'CAvailability',
@@ -56,5 +56,8 @@ class ConferenceRequest extends Model
     public function conferenceRoom(): BelongsTo
     {
         return $this->belongsTo(ConferenceRoom::class, 'CRoomID');
+    }
+    public function purposeRequest() {
+        return $this->belongsTo(PurposeRequest::class, 'PurposeID',); // Adjust as necessary
     }
 }

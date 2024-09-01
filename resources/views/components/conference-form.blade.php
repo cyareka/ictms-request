@@ -370,9 +370,9 @@
                 <label for="purpose">Purpose</label>
                 <select id="purposeSelect" name="purposeSelect" required>
                     <option disabled selected>Select Purpose</option>
-                    @foreach(App\Models\PurposeRequest::all() as $purpose)
+                    @foreach(App\Models\PurposeRequest::where('request_p', 'Conference Room')->get() as $purpose)
                         <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>
-                            {{ $purpose->PurposeName }}
+                            {{ $purpose->purpose }}
                         </option>
                     @endforeach
                 </select>
@@ -626,23 +626,26 @@
      *
      * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
      */
-    function toggleInputField(fieldName) {
-        const selectField = document.getElementById(`${fieldName}Select`);
-        const inputField = document.getElementById(`${fieldName}Input`);
-        const checkbox = document.getElementById(`${fieldName}Checkbox`);
+      function toggleInputField(fieldName) {
+    const selectField = document.getElementById(`${fieldName}Select`);
+    const inputField = document.getElementById(`${fieldName}Input`);
+    const checkbox = document.getElementById(`${fieldName}Checkbox`);
 
-        if (checkbox.checked) {
-            selectField.style.display = 'none';
-            selectField.required = false;
-            inputField.style.display = 'block';
-            inputField.required = true;
-        } else {
-            selectField.style.display = 'block';
-            selectField.required = true;
-            inputField.style.display = 'none';
-            inputField.required = false;
-        }
+    if (checkbox.checked) {
+        selectField.style.display = 'none';
+        inputField.style.display = 'block';
+        inputField.required = true;
+        selectField.required = false;
+        selectField.value = ''; // Clear the select value to avoid conflicts
+    } else {
+        selectField.style.display = 'block';
+        inputField.style.display = 'none';
+        inputField.required = false;
+        selectField.required = true;
+        inputField.value = ''; // Clear the input value to avoid conflicts
     }
+}
+
 </script>
 </body>
 </html>

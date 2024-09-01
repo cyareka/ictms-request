@@ -15,8 +15,8 @@ class PurposeRequest extends Model
 
     // Define the fillable attributes
     protected $fillable = [
-        'request_p',
         'PurposeID',
+        'request_p',
         'purpose',
         ];
 }

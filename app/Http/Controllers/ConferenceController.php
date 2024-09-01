@@ -55,8 +55,8 @@ public function submitCForm(Request $request): RedirectResponse
     try {
         $validated = $request->validate([
             'officeName' => 'required|string|exists:offices,OfficeID',
-            'purposeInput' => 'nullable|string|max:255|required_without:purposeSelect',
-            'purposeSelect' => 'nullable|string|max:255|required_without:purposeInput',
+            'purposeSelect' => 'nullable|string|exists:purpose_requests,PurposeID',
+            'purposeInput' => 'nullable|string|max:50',
             'date_start.*' => 'required|date_format:Y-m-d',
             'date_end' => 'required|array|min:1',
             'date_end.*' => 'required|date_format:Y-m-d|after_or_equal:date_start.*',
@@ -65,8 +65,8 @@ public function submitCForm(Request $request): RedirectResponse
             'time_end' => 'required|array|min:1',
             'time_end.*' => 'required|date_format:H:i|after:time_start.*',
             'npersons' => 'required|integer',
-            'focalPersonInput' => 'nullable|string|max:50|required_without:focalPersonSelect',
-            'focalPersonSelect' => 'nullable|string|max:50|required_without:focalPersonInput',
+            'focalPersonSelect' => 'nullable|string|exists:focal_person,FocalPID',
+            'focalPersonInput' => 'nullable|string|max:50',
             'tables' => 'nullable|integer',
             'chairs' => 'nullable|integer',
             'otherFacilities' => 'nullable|string|max:50',
@@ -79,7 +79,8 @@ public function submitCForm(Request $request): RedirectResponse
 
         $purpose = $validated['purposeInput'] ?? $validated['purposeSelect'];
         $focalPerson = $validated['focalPersonInput'] ?? $validated['focalPersonSelect'];
-        $otherFacilities = $validated['otherFacilitiesInput'] ?: $validated['otherFacilitiesSelect'];
+        $otherFacilities = $validated['otherFacilities'] ?? null;
+        // $otherFacilities = $validated['otherFacilitiesInput'] ?: $validated['otherFacilitiesSelect'];
 
         $dates = $validated['date_start'];
         if (count($dates) !== count(array_unique($dates))) {
@@ -121,7 +122,7 @@ public function submitCForm(Request $request): RedirectResponse
             Log::info('Creating conference request:', [
                 'CRequestID' => $generatedID,
                 'OfficeID' => $office->OfficeID,
-                'Purpose' => $purpose,
+                'PurposeID' => $purpose,
                 'npersons' => $validated['npersons'],
                 'focalPerson' => $focalPerson,
                 'CAvailability' => $availability,
@@ -142,13 +143,13 @@ public function submitCForm(Request $request): RedirectResponse
             ConferenceRequest::create([
                 'CRequestID' => $generatedID,
                 'OfficeID' => $office->OfficeID,
-                'Purpose' => $purpose,
+                'PurposeID' => $validated['purposeSelect'],
                 'npersons' => $validated['npersons'],
                 'focalPerson' => $focalPerson,
                 'CAvailability' => $availability,
                 'tables' => $validated['tables'],
                 'chairs' => $validated['chairs'],
-                'otherFacilities' => $otherFacilities,
+                'otherFacilities' => $validated['otherFacilities'],
                 'CRoomID' => $conferenceRoom->CRoomID,
                 'FormStatus' => 'Pending',
                 'EventStatus' => '-',
