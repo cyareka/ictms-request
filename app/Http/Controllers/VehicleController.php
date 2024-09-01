@@ -44,124 +44,112 @@ class VehicleController extends Controller
     /**
      * @throws ValidationException
      */
-public function submitVForm(Request $request): RedirectResponse
-{
-    try {
-        $validated = $request->validate([
-            'officeName' => 'required|string|exists:offices,OfficeID',
-            'purposeInput' => 'nullable|string|max:255|required_without:purposeSelect',
-            'purposeSelect' => 'nullable|string|max:255|required_without:purposeInput|exists:purpose_requests,PurposeID',
-            'passengers' => 'required|array',
-            'passengers.*' => 'string|exists:employees,EmployeeID',
-            'date_start.*' => 'required|date',
-            'date_end' => 'required|array|min:1',
-            'date_end.*' => 'required|date|after_or_equal:date_start.*',
-            'time_start' => 'required|array|min:1',
-            'time_start.*' => 'required|date_format:H:i',
-            'Destination' => 'required|string|max:50',
-            'RequesterName' => 'required|string|max:50',
-            'RequesterEmail' => 'required|email|max:50',
-            'RequesterContact' => 'required|string|max:13',
-            'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
-        ]);
+    public function submitVForm(Request $request): RedirectResponse
+    {
+        try {
+            $validated = $request->validate([
+                'officeName' => 'required|string|exists:offices,OfficeID',
+                'purposeInput' => 'nullable|string|max:50',
+                'purposeSelect' => 'nullable|string|max:255|required_without:purposeInput|exists:purpose_requests,PurposeID',
+                'passengers' => 'required|array',
+                'passengers.*' => 'string|exists:employees,EmployeeID',
+                'date_start.*' => 'required|date',
+                'date_end' => 'required|array|min:1',
+                'date_end.*' => 'required|date|after_or_equal:date_start.*',
+                'time_start' => 'required|array|min:1',
+                'time_start.*' => 'required|date_format:H:i',
+                'Destination' => 'required|string|max:50',
+                'RequesterName' => 'required|string|max:50',
+                'RequesterEmail' => 'required|email|max:50',
+                'RequesterContact' => 'required|string|max:13',
+                'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
+            ]);
 
-        Log::debug('Validation passed', ['validated' => $validated]);
+            Log::debug('Validation passed', ['validated' => $validated]);
 
-        $passengers = $validated['passengers'];
-        if (count($passengers) !== count(array_unique($passengers))) {
-            throw ValidationException::withMessages(['passengers' => 'Duplicate passengers are not allowed.']);
-        }
-
-        $dates = $validated['date_start'];
-        if (count($dates) !== count(array_unique($dates))) {
-            throw ValidationException::withMessages(['date_start' => 'Duplicate dates are not allowed.']);
-        }
-
-        $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
-
-        if ($request->has('purposeCheckbox') && $request->input('purposeCheckbox') === 'on') {
-            Log::debug('Purpose checkbox is checked.');
-            $purposeInput = $request->input('purposeInput');
-            Log::debug('Purpose input value:', ['purposeInput' => $purposeInput]);
-            $purposeSelect = null;
-        } else {
-            Log::debug('Purpose checkbox is not checked.');
-            $purposeSelect = $validated['purposeSelect'];
-            Log::debug('Purpose select value:', ['purposeSelect' => $purposeSelect]);
-            $purposeInput = null;
-        }
-
-        foreach ($validated['date_start'] as $index => $dateStart) {
-            $generatedID = $this->generateUniqueID();
-            Log::debug('Generated unique ID:', ['generatedID' => $generatedID]);
-
-            $requesterSignaturePath = null;
-            if ($request->hasFile('RequesterSignature')) {
-                $requesterSignaturePath = $request->file('RequesterSignature')->store('signatures', 'public');
-                Log::debug('Requester signature stored at:', ['path' => $requesterSignaturePath]);
-                $validated['RequesterSignature'] = $requesterSignaturePath;
+            $passengers = $validated['passengers'];
+            if (count($passengers) !== count(array_unique($passengers))) {
+                throw ValidationException::withMessages(['passengers' => 'Duplicate passengers are not allowed.']);
             }
 
-            VehicleRequest::create([
-                'VRequestID' => $generatedID,
-                'OfficeID' => $office->OfficeID,
-                'purposeSelect' => $purposeSelect,
-                'purposeInput' => $purposeInput,
-                'date_start' => $dateStart,
-                'date_end' => $validated['date_end'][$index],
-                'time_start' => $validated['time_start'][$index],
-                'Destination' => $validated['Destination'],
-                'RequesterName' => $validated['RequesterName'],
-                'RequesterContact' => $validated['RequesterContact'],
-                'RequesterEmail' => $validated['RequesterEmail'],
-                'RequesterSignature' => $requesterSignaturePath,
-                'IPAddress' => $request->ip(),
-                'DriverID' => null,
-                'VehicleID' => null,
-                'ReceivedBy' => null,
-                'Remarks' => null,
-                'AAID' => null,
-                'SOID' => null,
-                'ASignatory' => null,
-                'certfile-upload' => null,
-                'FormStatus' => 'Pending',
-                'EventStatus' => '-',
+            $dates = $validated['date_start'];
+            if (count($dates) !== count(array_unique($dates))) {
+                throw ValidationException::withMessages(['date_start' => 'Duplicate dates are not allowed.']);
+            }
+
+            $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
+
+            foreach ($validated['date_start'] as $index => $dateStart) {
+                $generatedID = $this->generateUniqueID();
+                Log::debug('Generated unique ID:', ['generatedID' => $generatedID]);
+
+                $requesterSignaturePath = null;
+                if ($request->hasFile('RequesterSignature')) {
+                    $requesterSignaturePath = $request->file('RequesterSignature')->store('signatures', 'public');
+                    Log::debug('Requester signature stored at:', ['path' => $requesterSignaturePath]);
+                    $validated['RequesterSignature'] = $requesterSignaturePath;
+                }
+
+                VehicleRequest::create([
+                    'VRequestID' => $generatedID,
+                    'OfficeID' => $office->OfficeID,
+                    'PurposeID' => $validated['purposeSelect']?? null,
+                    'purposeInput' => $validated['purposeInput'] ?? null,
+                    'date_start' => $dateStart,
+                    'date_end' => $validated['date_end'][$index],
+                    'time_start' => $validated['time_start'][$index],
+                    'Destination' => $validated['Destination'],
+                    'RequesterName' => $validated['RequesterName'],
+                    'RequesterContact' => $validated['RequesterContact'],
+                    'RequesterEmail' => $validated['RequesterEmail'],
+                    'RequesterSignature' => $requesterSignaturePath,
+                    'IPAddress' => $request->ip(),
+                    'DriverID' => null,
+                    'VehicleID' => null,
+                    'ReceivedBy' => null,
+                    'Remarks' => null,
+                    'AAID' => null,
+                    'SOID' => null,
+                    'ASignatory' => null,
+                    'certfile-upload' => null,
+                    'FormStatus' => 'Pending',
+                    'EventStatus' => '-',
+                ]);
+                Log::debug('Vehicle request created for date start:', ['dateStart' => $dateStart]);
+            }
+
+            foreach ($passengers as $passenger) {
+                $VRPassID = $this->generateUniqueVRPassID();
+                Log::debug('Generated unique VRPassID:', ['VRPassID' => $VRPassID]);
+
+                DB::table('vrequest_passenger')->insert([
+                    'VRPassID' => $VRPassID,
+                    'VRequestID' => $generatedID,
+                    'EmployeeID' => $passenger,
+                ]);
+                Log::debug('Passenger inserted:', ['passenger' => $passenger]);
+            }
+
+            return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation failed in submitVForm:', [
+                'errors' => $e->errors(),
+                'input' => $request->all(),
             ]);
-            Log::debug('Vehicle request created for date start:', ['dateStart' => $dateStart]);
-        }
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            $errorMessage = 'Form submission failed. Please try again.';
+            $detailedErrorMessage = $e->getMessage();
 
-        foreach ($passengers as $passenger) {
-            $VRPassID = $this->generateUniqueVRPassID();
-            Log::debug('Generated unique VRPassID:', ['VRPassID' => $VRPassID]);
-
-            DB::table('vrequest_passenger')->insert([
-                'VRPassID' => $VRPassID,
-                'VRequestID' => $generatedID,
-                'EmployeeID' => $passenger,
+            Log::error('An unexpected error occurred in submitVForm:', [
+                'message' => $detailedErrorMessage,
+                'trace' => $e->getTraceAsString(),
+                'input' => $request->all(),
             ]);
-            Log::debug('Passenger inserted:', ['passenger' => $passenger]);
+
+            return redirect()->back()->with('error', $errorMessage . ' Error details: ' . $detailedErrorMessage);
         }
-
-        return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
-    } catch (ValidationException $e) {
-        Log::error('Validation failed in submitVForm:', [
-            'errors' => $e->errors(),
-            'input' => $request->all(),
-        ]);
-        return redirect()->back()->withErrors($e->errors())->withInput();
-    } catch (Throwable $e) {
-        $errorMessage = 'Form submission failed. Please try again.';
-        $detailedErrorMessage = $e->getMessage();
-
-        Log::error('An unexpected error occurred in submitVForm:', [
-            'message' => $detailedErrorMessage,
-            'trace' => $e->getTraceAsString(),
-            'input' => $request->all(),
-        ]);
-
-        return redirect()->back()->with('error', $errorMessage . ' Error details: ' . $detailedErrorMessage);
     }
-}
 
     public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
     {
