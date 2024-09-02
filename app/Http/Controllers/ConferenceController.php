@@ -48,133 +48,133 @@ class ConferenceController extends Controller
      * @param \Illuminate\Http\Request $request The HTTP request object containing form data.
      * @return \Illuminate\Http\RedirectResponse The response object redirecting back to the form with a success or error message.
      */
-public function submitCForm(Request $request): RedirectResponse
-{
-    Log::info('Incoming request data:', $request->all());
+    public function submitCForm(Request $request): RedirectResponse
+    {
+        Log::info('Incoming request data:', $request->all());
 
-    try {
-        $validated = $request->validate([
-            'officeName' => 'required|string|exists:offices,OfficeID',
-            'purposeSelect' => 'nullable|string|exists:purpose_requests,PurposeID',
-            'purposeInput' => 'nullable|string|max:50',
-            'date_start.*' => 'required|date_format:Y-m-d',
-            'date_end' => 'required|array|min:1',
-            'date_end.*' => 'required|date_format:Y-m-d|after_or_equal:date_start.*',
-            'time_start' => 'required|array|min:1',
-            'time_start.*' => 'required|date_format:H:i',
-            'time_end' => 'required|array|min:1',
-            'time_end.*' => 'required|date_format:H:i|after:time_start.*',
-            'npersons' => 'required|integer',
-            'focalPersonSelect' => 'nullable|string|exists:focal_person,FocalPID',
-            'focalPersonInput' => 'nullable|string|max:50',
-            'tables' => 'nullable|integer',
-            'chairs' => 'nullable|integer',
-            'otherFacilities' => 'nullable|string|max:50',
-            'conferenceRoom' => 'required|string|exists:conference_rooms,CRoomID',
-            'requesterName' => 'required|string|max:50',
-            'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
-        ]);
+        try {
+            $validated = $request->validate([
+                'officeName' => 'required|string|exists:offices,OfficeID',
+                'purposeSelect' => 'nullable|string|exists:purpose_requests,PurposeID',
+                'purposeInput' => 'nullable|string|max:50',
+                'date_start.*' => 'required|date_format:Y-m-d',
+                'date_end' => 'required|array|min:1',
+                'date_end.*' => 'required|date_format:Y-m-d|after_or_equal:date_start.*',
+                'time_start' => 'required|array|min:1',
+                'time_start.*' => 'required|date_format:H:i',
+                'time_end' => 'required|array|min:1',
+                'time_end.*' => 'required|date_format:H:i|after:time_start.*',
+                'npersons' => 'required|integer',
+                'focalPersonSelect' => 'nullable|string|exists:focal_person,FocalPID',
+                'focalPersonInput' => 'nullable|string|max:50',
+                'tables' => 'nullable|integer',
+                'chairs' => 'nullable|integer',
+                'otherFacilities' => 'nullable|string|max:50',
+                'conferenceRoom' => 'required|string|exists:conference_rooms,CRoomID',
+                'requesterName' => 'required|string|max:50',
+                'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
+            ]);
 
-        Log::info('Validated data:', $validated);
+            Log::info('Validated data:', $validated);
 
-        $purpose = $validated['purposeInput'] ?? null;
-        $focalPerson = $validated['focalPersonInput'] ?? null;
-        $otherFacilities = $validated['otherFacilities'] ?? null;
-        // $otherFacilities = $validated['otherFacilitiesInput'] ?: $validated['otherFacilitiesSelect'];
+            $purpose = $validated['purposeInput'] ?? null;
+            $focalPerson = $validated['focalPersonInput'] ?? null;
+            $otherFacilities = $validated['otherFacilities'] ?? null;
+            // $otherFacilities = $validated['otherFacilitiesInput'] ?: $validated['otherFacilitiesSelect'];
 
-        $dates = $validated['date_start'];
-        if (count($dates) !== count(array_unique($dates))) {
-            throw ValidationException::withMessages(['date_start' => 'Duplicate dates are not allowed.']);
-        }
-
-        $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
-        $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
-        // $purposes = PurposeRequest::query()->where('PurposeID', $validated['purposeSelect'])->firstOrFail();
-        // $focal = FocalPerson::query()->where('FocalPID', $validated['focalPersonSelect'])->firstOrFail();
-
-        foreach ($validated['date_start'] as $index => $dateStart) {
-            Log::info('Processing date start:', ['date_start' => $dateStart, 'index' => $index]);
-
-            $generatedID = $this->generateUniqueID();
-            $requesterSignaturePath = null;
-
-            if ($request->hasFile('RequesterSignature')) {
-                $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
+            $dates = $validated['date_start'];
+            if (count($dates) !== count(array_unique($dates))) {
+                throw ValidationException::withMessages(['date_start' => 'Duplicate dates are not allowed.']);
             }
 
-            $existingRequests = ConferenceRequest::query()
-                ->where('CRoomID', $conferenceRoom->CRoomID)
-                ->where('FormStatus', 'Approved')
-                ->get();
+            $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
+            $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
+            // $purposes = PurposeRequest::query()->where('PurposeID', $validated['purposeSelect'])->firstOrFail();
+            // $focal = FocalPerson::query()->where('FocalPID', $validated['focalPersonSelect'])->firstOrFail();
 
-            $availability = true;
+            foreach ($validated['date_start'] as $index => $dateStart) {
+                Log::info('Processing date start:', ['date_start' => $dateStart, 'index' => $index]);
 
-            foreach ($existingRequests as $existingRequest) {
-                if (
-                    $validated['date_start'][$index] <= $existingRequest->date_end &&
-                    $validated['date_end'][$index] >= $existingRequest->date_start &&
-                    $validated['time_start'][$index] <= $existingRequest->time_end &&
-                    $validated['time_end'][$index] >= $existingRequest->time_start
-                ) {
-                    $availability = false;
-                    break;
+                $generatedID = $this->generateUniqueID();
+                $requesterSignaturePath = null;
+
+                if ($request->hasFile('RequesterSignature')) {
+                    $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
                 }
+
+                $existingRequests = ConferenceRequest::query()
+                    ->where('CRoomID', $conferenceRoom->CRoomID)
+                    ->where('FormStatus', 'Approved')
+                    ->get();
+
+                $availability = true;
+
+                foreach ($existingRequests as $existingRequest) {
+                    if (
+                        $validated['date_start'][$index] <= $existingRequest->date_end &&
+                        $validated['date_end'][$index] >= $existingRequest->date_start &&
+                        $validated['time_start'][$index] <= $existingRequest->time_end &&
+                        $validated['time_end'][$index] >= $existingRequest->time_start
+                    ) {
+                        $availability = false;
+                        break;
+                    }
+                }
+
+    /*            Log::info('Creating conference request:', [
+                    'CRequestID' => $generatedID,
+                    'OfficeID' => $office->OfficeID,
+                    'PurposeID' => $purpose,
+                    'npersons' => $validated['npersons'],
+                    'focalPerson' => $focalPerson,
+                    'CAvailability' => $availability,
+                    'tables' => $validated['tables'],
+                    'chairs' => $validated['chairs'],
+                    'otherFacilities' => $otherFacilities,
+                    'CRoomID' => $conferenceRoom->CRoomID,
+                    'FormStatus' => 'Pending',
+                    'EventStatus' => '-',
+                    'RequesterSignature' => $requesterSignaturePath,
+                    'RequesterName' => $validated['requesterName'],
+                    'date_start' => $dateStart,
+                    'date_end' => $validated['date_end'][$index],
+                    'time_start' => $validated['time_start'][$index],
+                    'time_end' => $validated['time_end'][$index],
+                ]);*/
+
+                ConferenceRequest::create([
+                    'CRequestID' => $generatedID,
+                    'OfficeID' => $office->OfficeID,
+                    'PurposeID' => $validated['purposeSelect']?? null,
+                    'PurposeOthers' => $purpose,
+                    'npersons' => $validated['npersons'],
+                    'FocalPID' => $validated['focalPersonSelect'] ?? null,
+                    'FPOthers'  => $focalPerson,
+                    'CAvailability' => $availability,
+                    'tables' => $validated['tables'],
+                    'chairs' => $validated['chairs'],
+                    'otherFacilities' => $validated['otherFacilities'],
+                    'CRoomID' => $conferenceRoom->CRoomID,
+                    'FormStatus' => 'Pending',
+                    'EventStatus' => '-',
+                    'RequesterSignature' => $requesterSignaturePath,
+                    'RequesterName' => $validated['requesterName'],
+                    'date_start' => $dateStart,
+                    'date_end' => $validated['date_end'][$index],
+                    'time_start' => $validated['time_start'][$index],
+                    'time_end' => $validated['time_end'][$index],
+                ]);
             }
 
-            Log::info('Creating conference request:', [
-                'CRequestID' => $generatedID,
-                'OfficeID' => $office->OfficeID,
-                'PurposeID' => $purpose,
-                'npersons' => $validated['npersons'],
-                'focalPerson' => $focalPerson,
-                'CAvailability' => $availability,
-                'tables' => $validated['tables'],
-                'chairs' => $validated['chairs'],
-                'otherFacilities' => $otherFacilities,
-                'CRoomID' => $conferenceRoom->CRoomID,
-                'FormStatus' => 'Pending',
-                'EventStatus' => '-',
-                'RequesterSignature' => $requesterSignaturePath,
-                'RequesterName' => $validated['requesterName'],
-                'date_start' => $dateStart,
-                'date_end' => $validated['date_end'][$index],
-                'time_start' => $validated['time_start'][$index],
-                'time_end' => $validated['time_end'][$index],
-            ]);
-
-            ConferenceRequest::create([
-                'CRequestID' => $generatedID,
-                'OfficeID' => $office->OfficeID,
-                'PurposeID' => $validated['purposeSelect']?? null,
-                'PurposeOthers' => $purpose,
-                'npersons' => $validated['npersons'],
-                'FocalPID' => $validated['focalPersonSelect'] ?? null,
-                'FPOthers'  => $focalPerson,
-                'CAvailability' => $availability,
-                'tables' => $validated['tables'],
-                'chairs' => $validated['chairs'],
-                'otherFacilities' => $validated['otherFacilities'],
-                'CRoomID' => $conferenceRoom->CRoomID,
-                'FormStatus' => 'Pending',
-                'EventStatus' => '-',
-                'RequesterSignature' => $requesterSignaturePath,
-                'RequesterName' => $validated['requesterName'],
-                'date_start' => $dateStart,
-                'date_end' => $validated['date_end'][$index],
-                'time_start' => $validated['time_start'][$index],
-                'time_end' => $validated['time_end'][$index],
-            ]);
+            return redirect()->back()->with('success', 'Conference room request submitted successfully.');
+        } catch (ValidationException $e) {
+            Log::error('Validation errors:', $e->errors());
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error('Conference room request submission failed:', ['error' => $e->getMessage()]);
+            return redirect()->back()->with('error', 'Form submission failed. Please try again.');
         }
-
-        return redirect()->back()->with('success', 'Conference room request submitted successfully.');
-    } catch (ValidationException $e) {
-        Log::error('Validation errors:', $e->errors());
-        return redirect()->back()->withErrors($e->errors())->withInput();
-    } catch (Throwable $e) {
-        Log::error('Conference room request submission failed:', ['error' => $e->getMessage()]);
-        return redirect()->back()->with('error', 'Form submission failed. Please try again.');
     }
-}
 
     /**
      * Approves a conference room request.
@@ -352,7 +352,7 @@ public function submitCForm(Request $request): RedirectResponse
         $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search', '');
-    
+
         $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
             ->orderBy($sort, $order);
 
@@ -390,7 +390,7 @@ public function submitCForm(Request $request): RedirectResponse
         $results = $query->paginate($perPage);
 
         \Log::info('Query results:', $results->toArray());
-    
+
         return response()->json([
             'data' => $results->items(),
             'pagination' => [
@@ -510,6 +510,4 @@ public function submitCForm(Request $request): RedirectResponse
             'maagapUsage' => $maagapUsage
         ]);
     }
-
-
 }

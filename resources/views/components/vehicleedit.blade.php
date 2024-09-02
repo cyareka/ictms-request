@@ -427,7 +427,9 @@
                 </div>
                 <div class="input-field">
                     <label>Purpose</label>
-                    <input type="text" id="purpose" name="purpose" value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}" placeholder="-"
+                    <input type="text" id="purpose" name="purpose"
+                           value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}"
+                           placeholder="-"
                            readonly>
                 </div>
             </div>
@@ -441,6 +443,7 @@
                     <label>Passenger/s</label>
                     <ul>
                         @if(isset($passengers) && $passengers->isNotEmpty())
+                            <p>Total Passengers: {{ $passengers->count() }}</p>
                             @foreach($passengers as $passenger)
                                 <li id="passengers" name="passengers[]"
                                     value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</li>
@@ -545,7 +548,7 @@
                             <option disabled selected>Select Vehicle</option>
                             @foreach(App\Models\Vehicle::all() as $Vehicle)
                                 <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}">
-                                    {{ $Vehicle->VehicleType }}
+                                    {{ $Vehicle->VehicleType }} - Capacity: {{ $Vehicle->Capacity }}
                                 </option>
                             @endforeach
                         </select>
@@ -599,7 +602,8 @@
                             <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>
                                 Pending
                             </option>
-                            <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
+                            <option
+                                value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
                                 For Approval
                             </option>
                             <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
@@ -676,7 +680,8 @@
                                     <div id="certificate-preview"></div>
                                 </div>
                             </label>
-                            <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf" onchange="previewCertificate(event)"
+                            <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf"
+                                   onchange="previewCertificate(event)"
                                    style="display: none;">
                         </div>
                     </div>
@@ -698,6 +703,7 @@
             form.submit();
         });
     }
+
     document.addEventListener('DOMContentLoaded', function () {
         const driverSelect = document.getElementById('tables');
         const contactInput = document.getElementById('ContactNo');
@@ -798,6 +804,7 @@
         // Attach the cancelForm function to the cancel button
         document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
     }
+
     setupFormChangeDetectionAndCancel();
 
     function updateEventStatus() {
@@ -854,41 +861,41 @@
         }
     }
 
-// JavaScript: Update the previewCertificate function
-function previewCertificate(event) {
-    const file = event.target.files[0];
-    const filePreview = document.getElementById('certificate-preview');
-    const defaultText = document.getElementById('default-text');
-    const filePathInput = document.getElementById('certfile-path');
+    // JavaScript: Update the previewCertificate function
+    function previewCertificate(event) {
+        const file = event.target.files[0];
+        const filePreview = document.getElementById('certificate-preview');
+        const defaultText = document.getElementById('default-text');
+        const filePathInput = document.getElementById('certfile-path');
 
-    // Clear any existing content in the preview box
-    filePreview.innerHTML = '';
+        // Clear any existing content in the preview box
+        filePreview.innerHTML = '';
 
-    if (file) {
-        // Hide the default text when a file is uploaded
-        defaultText.style.display = 'none';
+        if (file) {
+            // Hide the default text when a file is uploaded
+            defaultText.style.display = 'none';
 
-        // Check if the file is a PDF
-        if (file.type === 'application/pdf') {
-            // Create an anchor element to make the file name clickable
-            const fileLink = document.createElement('a');
-            fileLink.textContent = `${file.name}`;
-            fileLink.style.color = 'green';
-            fileLink.href = URL.createObjectURL(file);
-            fileLink.target = '_blank'; // Open in a new tab
+            // Check if the file is a PDF
+            if (file.type === 'application/pdf') {
+                // Create an anchor element to make the file name clickable
+                const fileLink = document.createElement('a');
+                fileLink.textContent = `${file.name}`;
+                fileLink.style.color = 'green';
+                fileLink.href = URL.createObjectURL(file);
+                fileLink.target = '_blank'; // Open in a new tab
 
-            // Append the clickable file name to the preview area
-            filePreview.appendChild(fileLink);
+                // Append the clickable file name to the preview area
+                filePreview.appendChild(fileLink);
 
-            // Store the file path in the hidden input field
-            filePathInput.value = file.name;
-        } else {
-            // Display a message if the file is not a PDF
-            filePreview.textContent = 'Please upload a valid PDF file.';
-            filePreview.style.color = 'red';
+                // Store the file path in the hidden input field
+                filePathInput.value = file.name;
+            } else {
+                // Display a message if the file is not a PDF
+                filePreview.textContent = 'Please upload a valid PDF file.';
+                filePreview.style.color = 'red';
+            }
         }
     }
-}
 
 
     function toggleDispatcher() {
@@ -917,19 +924,19 @@ function previewCertificate(event) {
     document.addEventListener('DOMContentLoaded', setInitialFormState);
 
     document.addEventListener('DOMContentLoaded', function () {
-    // Driver select change event
-    document.getElementById('DriverID').addEventListener('change', function () {
-        var selectedOption = this.options[this.selectedIndex];
-        document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
-        document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
-    });
+        // Driver select change event
+        document.getElementById('DriverID').addEventListener('change', function () {
+            var selectedOption = this.options[this.selectedIndex];
+            document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
+            document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
+        });
 
-    // Vehicle select change event
-    document.getElementById('VehicleID').addEventListener('change', function () {
-        var selectedOption = this.options[this.selectedIndex];
-        document.getElementById('PlateNo').value = selectedOption.getAttribute('data-plate');
+        // Vehicle select change event
+        document.getElementById('VehicleID').addEventListener('change', function () {
+            var selectedOption = this.options[this.selectedIndex];
+            document.getElementById('PlateNo').value = selectedOption.getAttribute('data-plate');
+        });
     });
-});
 
 
 </script>

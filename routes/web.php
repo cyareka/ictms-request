@@ -77,6 +77,7 @@ Route::middleware([
     Route::get('/VehicleStatistics', function () {
         return view('VehicleStatistics');
     })->name('VehicleStatistics');
+    Route::get('/api/vehicle-statistics', [VehicleController::class, 'fetchVStatistics']);
 
     // Vehicle Calendar View
     Route::get('/VehiclecalendarView', function () {

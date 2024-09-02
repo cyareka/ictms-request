@@ -469,7 +469,7 @@
                 </select>
                 <input type="text" id="purposeInput" name="purposeInput" value="{{ old('purposeInput') }}" style="display:none;" placeholder="Enter Purpose">
                 <div class="checkbox">
-                    <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')">
+                    <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
                 </div>
             </div>
             </div>

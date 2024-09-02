@@ -7,6 +7,7 @@ use App\Models\Driver;
 use App\Models\Employee;
 use App\Models\Office;
 use App\Models\PurposeRequest;
+use App\Models\Vehicle;
 use App\Models\VRequestPassenger;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -49,8 +50,8 @@ class VehicleController extends Controller
         try {
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
-                'purposeInput' => 'nullable|string|max:50',
                 'purposeSelect' => 'nullable|string|max:255|required_without:purposeInput|exists:purpose_requests,PurposeID',
+                'purposeInput' => 'nullable|string|max:50',
                 'passengers' => 'required|array',
                 'passengers.*' => 'string|exists:employees,EmployeeID',
                 'date_start.*' => 'required|date',
@@ -65,7 +66,7 @@ class VehicleController extends Controller
                 'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
             ]);
 
-            Log::debug('Validation passed', ['validated' => $validated]);
+            $purpose = $validated['purposeInput'] ?? null;
 
             $passengers = $validated['passengers'];
             if (count($passengers) !== count(array_unique($passengers))) {
@@ -81,20 +82,17 @@ class VehicleController extends Controller
 
             foreach ($validated['date_start'] as $index => $dateStart) {
                 $generatedID = $this->generateUniqueID();
-                Log::debug('Generated unique ID:', ['generatedID' => $generatedID]);
-
                 $requesterSignaturePath = null;
+
                 if ($request->hasFile('RequesterSignature')) {
-                    $requesterSignaturePath = $request->file('RequesterSignature')->store('signatures', 'public');
-                    Log::debug('Requester signature stored at:', ['path' => $requesterSignaturePath]);
-                    $validated['RequesterSignature'] = $requesterSignaturePath;
+                    $requesterSignaturePath = $request->file('RequesterSignature')->store('/uploads/signatures', 'public');
                 }
 
                 VehicleRequest::create([
                     'VRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
                     'PurposeID' => $validated['purposeSelect']?? null,
-                    'purposeInput' => $validated['purposeInput'] ?? null,
+                    'PurposeOthers' => $purpose,
                     'date_start' => $dateStart,
                     'date_end' => $validated['date_end'][$index],
                     'time_start' => $validated['time_start'][$index],
@@ -388,7 +386,7 @@ class VehicleController extends Controller
         }
     }
 
-    public function fetchStatistics(): \Illuminate\Http\JsonResponse
+    public function fetchVStatistics(): \Illuminate\Http\JsonResponse
     {
         $statistics = [
             'pendingRequests' => VehicleRequest::where('FormStatus', 'Pending')->count(),

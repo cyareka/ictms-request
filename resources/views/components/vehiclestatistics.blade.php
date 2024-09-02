@@ -16,7 +16,7 @@
             }
         }
     </style>
-    <title></title>
+    <title>Vehicle Statistics</title>
 </head>
 <body>
 <section id="content">
@@ -48,74 +48,52 @@
 </section>
 <div class="bar-chart-wrapper">
     <h1>Total Requests per Office</h1>
-    <div class="simple-bar-chart">
-
-        <div class="item" style="--clr: #5EB344; --val: 80">
-            <div class="label">RRCY</div>
-            <div class="value">80%</div>
-        </div>
-        <div class="item" style="--clr: #FCB72A; --val: 50">
-            <div class="label">CASH</div>
-            <div class="value">50%</div>
-        </div>
-        <div class="item" style="--clr: #F8821A; --val: 100">
-            <div class="label">HR</div>
-            <div class="value">100%</div>
-        </div>
-        <div class="item" style="--clr: #E0393E; --val: 15">
-            <div class="label">AICS</div>
-            <div class="value">15%</div>
-        </div>
-        <div class="item" style="--clr: #963D97; --val: 60">
-            <div class="label">SOCPEN</div>
-            <div class="value">60%</div>
-        </div>
-        <div class="item" style="--clr: #069CDB; --val: 90">
-            <div class="label">ICTMS</div>
-            <div class="value">90%</div>
-        </div>
-        <div class="item" style="--clr: #6234CE; --val: 60">
-            <div class="label">DRRMD</div>
-            <div class="value">60%</div>
-        </div>
-        <div class="item" style="--clr: #06934A; --val: 40">
-            <div class="label">PPD</div>
-            <div class="value">40%</div>
-        </div>
-    </div>
-</div>
-
-<!-- First Chart Container -->
-<div class="chart-container">
-    <div id="chartContainer1" style="height: 500px;"></div>
+    <div class="simple-bar-chart"></div>
 </div>
 
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script>
-    window.onload = function() {
-        // First Chart
-        var chart1 = new CanvasJS.Chart("chartContainer1", {
-            backgroundColor: "#F2F2F2",
-            animationEnabled: true,
-            title: {
-                text: "Vehicle Type Usage"
-            },
-            data: [{
-                type: "pie",
-                startAngle: 240,
-                yValueFormatString: "##0.00\"%\"",
-                indexLabel: "{label} {y}",
-                dataPoints: [
-                    {y: 79.45, label: "Toyota Hiace"},
-                    {y: 7.31, label: "Suzuki Mini Van"},
-                    {y: 7.06, label: "Hilux"},
-                    {y: 4.91, label: "L300"},
-                    {y: 1.26, label: "Truck"}
-                ]
-            }]
-        });
-        chart1.render();
+    document.addEventListener('DOMContentLoaded', function() {
+    fetchStatistics();
+
+    function fetchStatistics() {
+        fetch('/api/vehicle-statistics')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('pending-requests').textContent = data.pendingRequests;
+                document.getElementById('daily-requests').textContent = data.dailyRequests;
+                document.getElementById('monthly-requests').textContent = data.monthlyRequests;
+
+                const requestsPerOfficeContainer = document.querySelector('.simple-bar-chart');
+                requestsPerOfficeContainer.innerHTML = ''; // Clear existing items
+
+                data.requestsPerOffice.forEach(office => {
+                    const item = document.createElement('div');
+                    item.className = 'item';
+                    item.style.setProperty('--clr', getRandomColor());
+                    item.style.setProperty('--val', office.total);
+
+                    const label = document.createElement('div');
+                    label.className = 'label';
+                    label.textContent = office.office;
+
+                    const value = document.createElement('div');
+                    value.className = 'value';
+                    value.textContent = `${office.total}%`;
+
+                    item.appendChild(label);
+                    item.appendChild(value);
+                    requestsPerOfficeContainer.appendChild(item);
+                });
+            })
+            .catch(error => console.error('Error fetching statistics:', error));
     }
+
+    function getRandomColor() {
+        const colors = ['#5EB344', '#FCB72A', '#F8821A', '#E0393E', '#963D97', '#069CDB', '#6234CE', '#06934A'];
+        return colors[Math.floor(Math.random() * colors.length)];
+    }
+});
 </script>
 </body>
 </html>
