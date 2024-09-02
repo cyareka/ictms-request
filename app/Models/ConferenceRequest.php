@@ -39,6 +39,7 @@ class ConferenceRequest extends Model
         'EventStatus',
         'RequesterSignature',
         'RequesterName',
+        'certfile-upload',
         'date_start',
         'date_end',
         'time_start',
