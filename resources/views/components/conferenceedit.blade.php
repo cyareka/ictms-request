@@ -214,63 +214,64 @@
             opacity: 1;
             visibility: visible;
         }
+
         .file-upload {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 16px;
-                border: 2px dashed #5b21b6;
-                border-radius: 15px;
-                cursor: pointer;
-                margin-bottom: 16px;
-                width: 100%;
-                background-color: #ffffff; /* Light background for better visibility */
-                text-align: center;
-                transition: background-color 0.3s ease; /* Add a transition effect */
-            }
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px;
+            border: 2px dashed #5b21b6;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-bottom: 16px;
+            width: 100%;
+            background-color: #ffffff; /* Light background for better visibility */
+            text-align: center;
+            transition: background-color 0.3s ease; /* Add a transition effect */
+        }
 
-            .file-upload:hover {
-                background-color: #f0f0f0; /* Slightly darker on hover for feedback */
-            }
+        .file-upload:hover {
+            background-color: #f0f0f0; /* Slightly darker on hover for feedback */
+        }
 
-            #certfile-upload {
-                display: none;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                cursor: pointer;
-            }
+        #certfile-upload {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
 
-            #certificate-preview-label {
-                display: block;
-                width: 100%;
-                height: 100%;
-                cursor: pointer;
-            }
+        #certificate-preview-label {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
 
-            #certificate-preview-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 50px;
-                text-align: center;
-                color: #5b21b6; /* Text color matching the border */
-            }
+        #certificate-preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            text-align: center;
+            color: #5b21b6; /* Text color matching the border */
+        }
 
-            #default-text {
-                font-size: 14px;
-                color: #000; /* Text color to match the border */
-            }
+        #default-text {
+            font-size: 14px;
+            color: #000; /* Text color to match the border */
+        }
 
-            #certificate-preview {
-                font-size: 14px;
-                color: #333;
-                margin-top: 10px; /* Space between the default text and preview text */
-            }
+        #certificate-preview {
+            font-size: 14px;
+            color: #333;
+            margin-top: 10px; /* Space between the default text and preview text */
+        }
 
         @media (max-width: 768px) {
             .container {
@@ -551,6 +552,7 @@
                         flex-direction: column;
                         align-items: flex-start;
                     }
+
                     #npersons {
                         width: 19%; /* Make the input take full width */
                         box-sizing: border-box; /* Ensure padding and border are included in the width */
@@ -628,13 +630,14 @@
         <div class="row">
             <div class="inline-field">
                 <label for="officeName">Requesting Office</label>
-                <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName }}" placeholder="-" readonly>
+                <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName }}"
+                       placeholder="-" readonly>
             </div>
             <div class="inline-field">
                 <label for="purpose">Purpose</label>
-                <input type="text" id="purpose" name="purpose" 
-                    value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}" 
-                    placeholder="-" readonly>
+                <input type="text" id="purpose" name="purpose"
+                       value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}"
+                       placeholder="-" readonly>
             </div>
         </div>
         <div class="row-group-container">
@@ -666,16 +669,17 @@
         <div class="row">
             <div class="inline-field">
                 <label for="conferenceRoom">Conference Room</label>
-                <input type="text" id="conferenceRoom" name="conferenceRoom" value="{{ $requestData->conferenceRoom->CRoomName }}" placeholder="-" readonly>
+                <input type="text" id="conferenceRoom" name="conferenceRoom"
+                       value="{{ $requestData->conferenceRoom->CRoomName }}" placeholder="-" readonly>
             </div>
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
-                <input type="text" id="focalPerson" name="focalPerson" 
-                value="{{ optional(App\Models\FocalPerson::find($requestData->FocalPID))->FPName ??  $requestData->FPOthers }}" 
-                placeholder="Enter Focal Person" readonly>
+                <input type="text" id="focalPerson" name="focalPerson"
+                       value="{{ optional(App\Models\FocalPerson::find($requestData->FocalPID))->FPName ??  $requestData->FPOthers }}"
+                       placeholder="Enter Focal Person" readonly>
             </div>
-        <div class="row">
-        </div>
+            <div class="row">
+            </div>
         </div>
         <div class="row">
             <div class="inline-field">
@@ -684,23 +688,27 @@
                        readonly>
                 <div class="tb">
                     <label for="tables">Tables</label>
-                    <input type="number" id="tables" name="tables" value="{{ $requestData->tables }}" placeholder="0" readonly>
+                    <input type="number" id="tables" name="tables" value="{{ $requestData->tables }}" placeholder="0"
+                           readonly>
                     <div class="tb">
                         <label for="chairs">Chairs</label>
-                        <input type="number" id="chairs" name="chairs" value="{{ $requestData->chairs }}" placeholder="0" readonly>
+                        <input type="number" id="chairs" name="chairs" value="{{ $requestData->chairs }}"
+                               placeholder="0" readonly>
                     </div>
                 </div>
             </div>
             <div class="inline-field">
                 <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities" value="{{ $requestData->otherFacilities }}" placeholder="-" readonly>
+                <input type="text" id="otherFacilities" name="otherFacilities"
+                       value="{{ $requestData->otherFacilities }}" placeholder="-" readonly>
             </div>
         </div>
 
         <div class="row">
             <div class="inline-field">
                 <label for="requesterName">Requester Name</label>
-                <input type="text" id="requesterName" name="requesterName" value="{{ $requestData->RequesterName }}" placeholder="-" readonly   >
+                <input type="text" id="requesterName" name="requesterName" value="{{ $requestData->RequesterName }}"
+                       placeholder="-" readonly>
             </div>
             <div class="inline-field">
                 <label for="RequesterSignature">E-Signature</label>
@@ -720,15 +728,23 @@
                 @endphp
 
                 <label for="availability">Availability</label>
-                    <input type="text" id="CAvailability" name="CAvailability" value="{{ convertAvailability($requestData->CAvailability) }}" readonly>
+                <input type="text" id="CAvailability" name="CAvailability"
+                       value="{{ convertAvailability($requestData->CAvailability) }}" readonly>
             </div>
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
                 <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending</option>
-                    <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For Approval</option>
-                    <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
-                    <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
+                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
+                        Pending
+                    </option>
+                    <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For
+                        Approval
+                    </option>
+                    <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved
+                    </option>
+                    <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not
+                        Approved
+                    </option>
                 </select>
             </div>
         </div>
@@ -738,20 +754,21 @@
                 <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}" readonly>
             </div>
             <div class="inline-field">
-                        <label for="certificate-upload">File Upload</label>
-                        <div class="file-upload">
-                            <label for="certfile-upload" id="certificate-preview-label">
-                                <div id="certificate-preview-container">
-                                    <div id="default-text">
-                                        Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
-                                    </div>
-                                    <div id="certificate-preview"></div>
-                                </div>
-                            </label>
-                            <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf" onchange="previewCertificate(event)"
-                                   style="display: none;">
+                <label for="certificate-upload">File Upload</label>
+                <div class="file-upload">
+                    <label for="certfile-upload" id="certificate-preview-label">
+                        <div id="certificate-preview-container">
+                            <div id="default-text">
+                                Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
+                            </div>
+                            <div id="certificate-preview"></div>
                         </div>
-                    </div>
+                    </label>
+                    <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf"
+                           onchange="previewCertificate(event)"
+                           style="display: none;">
+                </div>
+            </div>
         </div>
         <div class="form-footer">
             <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
@@ -774,15 +791,15 @@
         });
 
         // Define the cancelForm function
-    function cancelForm() {
-        if (formChanged) {
-            const confirmDiscard = confirm("You have unsaved changes. Do you really want to go back? Changes will be discarded.");
-            if (!confirmDiscard) {
-                return;
+        function cancelForm() {
+            if (formChanged) {
+                const confirmDiscard = confirm("You have unsaved changes. Do you really want to go back? Changes will be discarded.");
+                if (!confirmDiscard) {
+                    return;
+                }
             }
+            window.location.href = '/dashboard';
         }
-        window.location.href = '/dashboard';
-    }
 
         // Attach the cancelForm function to the cancel button
         document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
@@ -826,12 +843,12 @@
         const EventStatus = document.getElementById('EventStatus').value;
         const FormStatus = document.getElementById('FormStatus');
 
-        switch(EventStatus) {
+        switch (EventStatus) {
             case 'Ongoing':
                 FormStatus.value = 'Approved';
                 break;
             case 'Finished':
-                FormStatus.value= 'Approved';
+                FormStatus.value = 'Approved';
                 break;
             case 'Cancelled':
                 FormStatus.value = 'Approved';
@@ -867,41 +884,42 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
     // JavaScript: Update the previewCertificate function
-function previewCertificate(event) {
-    const file = event.target.files[0];
-    const filePreview = document.getElementById('certificate-preview');
-    const defaultText = document.getElementById('default-text');
-    const filePathInput = document.getElementById('certfile-path');
+    function previewCertificate(event) {
+        const file = event.target.files[0];
+        const filePreview = document.getElementById('certificate-preview');
+        const defaultText = document.getElementById('default-text');
+        const filePathInput = document.getElementById('certfile-path');
 
-    // Clear any existing content in the preview box
-    filePreview.innerHTML = '';
+        // Clear any existing content in the preview box
+        filePreview.innerHTML = '';
 
-    if (file) {
-        // Hide the default text when a file is uploaded
-        defaultText.style.display = 'none';
+        if (file) {
+            // Hide the default text when a file is uploaded
+            defaultText.style.display = 'none';
 
-        // Check if the file is a PDF
-        if (file.type === 'application/pdf') {
-            // Create an anchor element to make the file name clickable
-            const fileLink = document.createElement('a');
-            fileLink.textContent = `${file.name}`;
-            fileLink.style.color = 'green';
-            fileLink.href = URL.createObjectURL(file);
-            fileLink.target = '_blank'; // Open in a new tab
+            // Check if the file is a PDF
+            if (file.type === 'application/pdf') {
+                // Create an anchor element to make the file name clickable
+                const fileLink = document.createElement('a');
+                fileLink.textContent = `${file.name}`;
+                fileLink.style.color = 'green';
+                fileLink.href = URL.createObjectURL(file);
+                fileLink.target = '_blank'; // Open in a new tab
 
-            // Append the clickable file name to the preview area
-            filePreview.appendChild(fileLink);
+                // Append the clickable file name to the preview area
+                filePreview.appendChild(fileLink);
 
-            // Store the file path in the hidden input field
-            filePathInput.value = file.name;
-        } else {
-            // Display a message if the file is not a PDF
-            filePreview.textContent = 'Please upload a valid PDF file.';
-            filePreview.style.color = 'red';
+                // Store the file path in the hidden input field
+                filePathInput.value = file.name;
+            } else {
+                // Display a message if the file is not a PDF
+                filePreview.textContent = 'Please upload a valid PDF file.';
+                filePreview.style.color = 'red';
+            }
         }
     }
-}
 </script>
 </body>
 </html>

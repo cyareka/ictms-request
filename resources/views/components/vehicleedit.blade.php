@@ -524,13 +524,15 @@
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="driver">Driver Name</label>
-                        <select id="DriverID" name="DriverID" required>
-                            <option disabled selected>Select Driver</option>
-                            @foreach(App\Models\Driver::all() as $DriverID)
-                                <option value="{{ $DriverID->DriverID }}" data-contact="{{ $DriverID->ContactNo }}"
-                                        data-email="{{ $DriverID->DriverEmail }}">{{ $DriverID->DriverName }}</option>
-                            @endforeach
-                        </select>
+                            <select id="DriverID" name="DriverID" required>
+                                <option disabled {{ !$requestData->DriverID ? 'selected' : '' }}>Select Driver</option>
+                                @foreach(App\Models\Driver::all() as $driver)
+                                    <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}"
+                                            data-email="{{ $driver->DriverEmail }}" {{ $requestData->DriverID == $driver->DriverID ? 'selected' : '' }}>
+                                        {{ $driver->DriverName }}
+                                    </option>
+                                @endforeach
+                            </select>
                     </div>
                     <div class="inline">
                         <label for="ContactNo">Contact No.</label>
@@ -545,9 +547,9 @@
                     <div class="inline">
                         <label for="vehicle">Vehicle Type</label>
                         <select id="VehicleID" name="VehicleID">
-                            <option disabled selected>Select Vehicle</option>
+                            <option disabled {{ !$requestData->VehicleID ? 'selected' : '' }}>Select Vehicle</option>
                             @foreach(App\Models\Vehicle::all() as $Vehicle)
-                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}">
+                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}" data-capacity="{{ $Vehicle->Capacity }}">
                                     {{ $Vehicle->VehicleType }} - Capacity: {{ $Vehicle->Capacity }}
                                 </option>
                             @endforeach
@@ -599,47 +601,28 @@
                     <div class="inline">
                         <label for="FormStatus">Form Status</label>
                         <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                            <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }}>
-                                Pending
-                            </option>
-                            <option
-                                value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
-                                For Approval
-                            </option>
-                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
-                                Approved
-                            </option>
-                            <option
-                                value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
-                                Not Approved
-                            </option>
+                            <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending</option>
+                            <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For Approval</option>
+                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
+                            <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
                         </select>
                     </div>
                     <div class="inline">
                         <label for="EventStatus">Event Status</label>
-                        <select id="EventStatus" name="EventStatus" onchange="updateFormStatus()">
-                            <option disabled selected>Select Event Status</option>
-                            <option value="-" {{ $requestData->EventStatus == '-' ? 'selected' : '' }}>-</option>
-                            <option value="Ongoing" {{ $requestData->EventStatus == 'Ongoing' ? 'selected' : '' }}>
-                                Ongoing
-                            </option>
-                            <option value="Finished" {{ $requestData->EventStatus == 'Finished' ? 'selected' : '' }}>
-                                Finished
-                            </option>
-                            <option value="Cancelled" {{ $requestData->EventStatus == 'Cancelled' ? 'selected' : '' }}>
-                                Cancelled
-                            </option>
-                        </select>
+                        <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="AAuth">Approving Authority</label>
                         <select id="AAuth" name="AAuth" required>
-                            <option disabled selected>Select Authority</option>
+                            <option disabled {{ !$requestData->AAID ? 'selected' : '' }}>Select Authority</option>
                             @foreach(App\Models\AAuthority::all() as $AAuth)
                                 <option value="{{ $AAuth->AAID }}"
-                                        data-position="{{ $AAuth->AAPosition }}">{{ $AAuth->AAName }}</option>
+                                        data-position="{{ $AAuth->AAPosition }}"
+                                    {{ $requestData->AAID == $AAuth->AAID ? 'selected' : '' }}>
+                                    {{ $AAuth->AAName }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -652,10 +635,13 @@
                     <div class="inline">
                         <label for="SOAuthority">SO Approving Authority</label>
                         <select id="SOAuth" name="SOAuth" required>
-                            <option disabled selected>Select Authority</option>
+                            <option disabled {{ !$requestData->SOID ? 'selected' : '' }}>Select Authority</option>
                             @foreach(App\Models\SOAuthority::all() as $SOAuth)
                                 <option value="{{ $SOAuth->SOID }}"
-                                        data-position="{{ $SOAuth->SOPosition }}">{{ $SOAuth->SOName }}</option>
+                                        data-position="{{ $SOAuth->SOPosition }}"
+                                    {{ $requestData->SOID == $SOAuth->SOID ? 'selected' : '' }}>
+                                    {{ $SOAuth->SOName }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -696,6 +682,19 @@
     </div>
 </div>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const vehicleSelect = document.getElementById('VehicleID');
+        const passengerCount = {{ $passengers->count() }}; // Assuming you have the passenger count available
+
+        // Filter vehicle options based on capacity
+        Array.from(vehicleSelect.options).forEach(option => {
+            const vehicleCapacity = parseInt(option.getAttribute('data-capacity'), 10);
+            if (vehicleCapacity < passengerCount) {
+                option.style.display = 'none';
+            }
+        });
+    });
+
     function submitAllForms() {
         console.log('Submitting all forms');
         document.querySelectorAll('form').forEach(form => {
@@ -811,12 +810,16 @@
         const FormStatus = document.getElementById('FormStatus').value;
         const EventStatus = document.getElementById('EventStatus');
 
-        if (FormStatus === 'Approved') {
-            EventStatus.value = 'Ongoing';
-        } else if (FormStatus === 'Not Approved') {
-            EventStatus.value = '-';
-        } else {
-            EventStatus.value = '-';
+        if (FormStatus === 'Pending' || FormStatus === 'For Approval' || FormStatus === 'Not Approved') {
+            EventStatus.outerHTML = `<input type="text" id="EventStatus" name="EventStatus" value="-" readonly>`;
+        } else if (FormStatus === 'Approved') {
+            if (EventStatus.value !== 'Cancelled') {
+                EventStatus.outerHTML = `
+                <select id="EventStatus" name="EventStatus">
+                    <option value="Ongoing" selected>Ongoing</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>`;
+            }
         }
     }
 

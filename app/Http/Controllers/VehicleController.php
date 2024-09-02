@@ -321,7 +321,7 @@ class VehicleController extends Controller
             // Validate the incoming request data
             $validated = $request->validate([
                 'DriverID' => 'nullable|string|exists:driver,DriverID',
-                'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
+                'VName' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
                 'Availability' => 'nullable|string|max:50',
@@ -339,32 +339,21 @@ class VehicleController extends Controller
             }
 
             // Map the input values to validated data
-            // $validated['DriverID'] = $request->input('driver'); // Ensure 'driver' is the select field name
-            // $validated['VehicleID'] = $request->input('VName'); // Ensure 'VName' is the select field name
             $validated['DriverID'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
-            $validated['VehicleID'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
+            $validated['VName'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
             $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
             $validated['SOID'] = $request->input('SOAuth');
 
             // Convert the signatory name to an ID
-            if (!empty($validated['ASignatory'])) {
-                $signatoryId = DB::table('users')->where('name', $validated['ASignatory'])->value('id');
-                if (!$signatoryId) {
-                    Log::error('ASignatory name does not exist:', ['ASignatory' => $validated['ASignatory']]);
-                    return redirect()->back()->withErrors(['ASignatory' => 'The selected signatory is invalid.'])->withInput();
+            if (!empty($validated['ASignatory']) || !empty($validated['ReceivedBy'])) {
+                $userId = DB::table('users')->where('name', $validated['ASignatory'] ?? $validated['ReceivedBy'])->value('id');
+                if (!$userId) {
+                    Log::error('User name does not exist:', ['User' => $validated['ASignatory'] ?? $validated['ReceivedBy']]);
+                    return redirect()->back()->withErrors(['User' => 'The selected user is invalid.'])->withInput();
                 }
-                $validated['ASignatory'] = $signatoryId;
+                $validated['ASignatory'] = $userId;
+                $validated['ReceivedBy'] = $userId;
             }
-
-            if (!empty($validated['ReceivedBy'])) {
-                $receivedById = DB::table('users')->where('name', $validated['ReceivedBy'])->value('id');
-                if (!$receivedById) {
-                    Log::error('ReceivedBy name does not exist:', ['ReceivedBy' => $validated['ReceivedBy']]);
-                    return redirect()->back()->withErrors(['ReceivedBy' => 'The selected received by is invalid.'])->withInput();
-                }
-                $validated['ReceivedBy'] = $receivedById;
-            }
-
 
             $vehicleRequest->update($validated);
 
