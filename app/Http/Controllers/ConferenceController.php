@@ -188,12 +188,19 @@ class ConferenceController extends Controller
     public function updateCForm(Request $request): RedirectResponse
     {
         try {
+            Log::info('Request Data:', $request->all());
             // Validate only the formStatus and eventStatus fields
             $validated = $request->validate([
                 'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
+                'certfile-upload' => 'required|file|mimes:pdf',
                 'FormStatus' => 'required|string|in:Pending,For Approval,Approved,Not Approved',
                 'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
             ]);
+
+            if ($request->hasFile('certfile-upload')) {
+                $file = $request->file('certfile-upload')->store('uploads/confe_request/files', 'public');
+                $validated['certfile-upload'] = $file;
+            }
 
             // Retrieve the conference request using Eloquent ORM
             $conferenceRequest = ConferenceRequest::with('conferenceRoom')->where('CRequestID', $validated['CRequestID'])->firstOrFail();
@@ -202,6 +209,7 @@ class ConferenceController extends Controller
             $conferenceRequest->update([
                 'FormStatus' => $validated['FormStatus'],
                 'EventStatus' => $validated['EventStatus'],
+                'certfile-upload' => $validated['certfile-upload'],
             ]);
 
             // If the request is approved, update availability and other pending requests
