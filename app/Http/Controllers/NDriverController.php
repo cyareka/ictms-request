@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -18,7 +19,6 @@ class NDriverController extends Controller
         return $generatedID;
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
@@ -27,14 +27,22 @@ class NDriverController extends Controller
             'ContactNo' => 'required|string|max:13',
         ]);
 
+        // Remove leading zero from ContactNo
+        $contactNo = preg_replace('/^0/', '', $request->ContactNo);
+
+        // Add +63 to the beginning of ContactNo
+        $contactNo = '+63' . $contactNo;
+
+        // Convert DriverName to uppercase at the start of each word
+        $driverName = ucwords(strtolower($request->DriverName));
+
         $generatedID = $this->generateUniqueID();
 
         Driver::create([
             'DriverID' => $generatedID,
-            'DriverName' => $request->DriverName,
+            'DriverName' => $driverName,
             'DriverEmail' => $request->DriverEmail,
-            'ContactNo' => $request->ContactNo,
-//            'Availability' => 'Available',
+            'ContactNo' => $contactNo,
         ]);
 
         return redirect()->back()->with('success', 'Driver added successfully!');

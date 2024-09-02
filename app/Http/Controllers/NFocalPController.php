@@ -29,6 +29,9 @@ class NFocalPController extends Controller
                 'officeName' => 'required|string|exists:offices,OfficeID',
             ]);
 
+            // Convert FPName to uppercase for the first letter of each word
+            $validated['FPName'] = ucwords(strtolower($validated['FPName']));
+
             $generatedID = $this->generateUniqueID();
             $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
 

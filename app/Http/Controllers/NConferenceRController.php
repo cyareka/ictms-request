@@ -25,17 +25,29 @@ class NConferenceRController extends Controller
         $request->validate([
             'CRoomName' => 'required|string|max:30',
             'Location' => 'required|string|max:30',
-            'Capacity' => 'required|integer|min:1',
+            'Capacity' => 'required|integer|min:1|not_in:0',
+        ], [
+            'CRoomName.required' => 'The conference room name is required.',
+            'CRoomName.max' => 'The conference room name must not exceed 30 characters.',
+            'Location.required' => 'The location is required.',
+            'Location.max' => 'The location must not exceed 30 characters.',
+            'Capacity.required' => 'The capacity is required.',
+            'Capacity.integer' => 'The capacity must be an integer.',
+            'Capacity.min' => 'The capacity must be at least 1.',
+            'Capacity.not_in' => 'The capacity cannot be zero.',
         ]);
 
         try {
+            // Convert CRoomName and Location to uppercase per word
+            $CRoomName = ucwords(strtolower($request->CRoomName));
+            $Location = ucwords(strtolower($request->Location));
+
             $generatedID = $this->generateUniqueID();  // Generate the unique ID
 
             $conferenceRoom = ConferenceRoom::create([
                 'CRoomID' => $generatedID,
-                'Availability' => 'Available',
-                'CRoomName' => $request->CRoomName,
-                'Location' => $request->Location,
+                'CRoomName' => $CRoomName,
+                'Location' => $Location,
                 'Capacity' => $request->Capacity,
             ]);
 

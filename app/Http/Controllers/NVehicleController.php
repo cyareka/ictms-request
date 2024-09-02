@@ -26,12 +26,12 @@ class NVehicleController extends Controller
             'Capacity' => 'required|integer|min:0',
         ]);
 
+        $vehicleType = ucwords(strtolower($request->VehicleType));
         $generatedID = $this->generateUniqueID();
 
         Vehicle::create([
             'VehicleID' => $generatedID,
-            'VehicleType' => $request->VehicleType,
-//            'Availability' => 'Available',
+            'VehicleType' => $vehicleType,
             'PlateNo' => $request->PlateNo,
             'Capacity' => $request->Capacity,
 

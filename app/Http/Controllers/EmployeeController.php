@@ -30,12 +30,15 @@ class EmployeeController extends Controller
                 'officeName' => 'required|string|exists:offices,OfficeID',
             ]);
 
+            // Convert EmployeeName to uppercase at the start of each word
+            $employeeName = ucwords(strtolower($validated['EmployeeName']));
+
             $generatedID = $this->generateUniqueID();
             $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
 
             Employee::create([
                 'EmployeeID' => $generatedID,
-                'EmployeeName' => $validated['EmployeeName'],
+                'EmployeeName' => $employeeName,
                 'EmployeeEmail' => $validated['EmployeeEmail'],
                 'OfficeID' => $office->OfficeID,
             ]);

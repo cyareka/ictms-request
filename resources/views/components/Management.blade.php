@@ -6,6 +6,16 @@
     <title>Vehicle Edit Form</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
         a,a:hover{
             text-decoration:none;
         }
@@ -110,6 +120,9 @@
         .toggle-section {
             display: none;
             width: 100%;
+        }
+        .phone-prefix {
+            padding: 10px;
         }
         @media (max-width: 768px) {
             .form-container {
@@ -232,14 +245,19 @@
             {{ session('success') }}
         </div>
     @endif
+    @if (session('error'))
+        <div class="alert alert-error" role="alert">
+            {{ session('error') }}
+        </div>
+    @endif
     <div id="app">
         <div class="dropdown-row">
+            <button class="dropdown-button" onclick="toggleSection('conference', this)">ADD CONFERENCE ROOM</button>
+            <button class="dropdown-button" onclick="toggleSection('focalP', this)">ADD FOCAL PERSON</button>
+            <button class="dropdown-button" onclick="toggleSection('porpose', this)">ADD PURPOSE</button>
             <button class="dropdown-button" onclick="toggleSection('addVehi', this)">ADD DRIVER</button>
             <button class="dropdown-button" onclick="toggleSection('vehicle', this)">ADD VEHICLE</button>
-            <button class="dropdown-button" onclick="toggleSection('conference', this)">CONFERENCE ROOM</button>
-            <button class="dropdown-button" onclick="toggleSection('porpose', this)">PURPOSE</button>
-            <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button>
-            <button class="dropdown-button" onclick="toggleSection('focalP', this)">FOCAL PERSON</button>
+            <button class="dropdown-button" onclick="toggleSection('employee', this)">ADD EMPLOYEE</button>
         </div>
 
         <div id="addVehi" class="toggle-section">
@@ -258,7 +276,8 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="ContactNo">Contact No.</label>
-                        <input type="tel" id="ContactNo" name="ContactNo" placeholder="Enter Contact No." required>
+                            <span class="phone-prefix">+63</span>
+                            <input type="tel" id="ContactNo" name="ContactNo" placeholder="Enter Contact No." required maxlength="10">
                     </div>
                 </div>
                 <div class="form-footer">
@@ -277,13 +296,13 @@
                     </div>
                     <div class="inline-field">
                         <label for="PlateNo">Plate No.</label>
-                        <input type="text" id="PlateNo" name="PlateNo" required maxlength="15">
+                        <input type="text" id="PlateNo" name="PlateNo" required maxlength="15" placeholder="Enter Plate No.">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="Capacity">Capacity</label>
-                        <input type="number" id="Capacity" name="Capacity" min="1" value="0" required>
+                        <input type="number" id="Capacity" name="Capacity" min="1" value="1" required>
                     </div>
                 </div>
                 <div class="form-footer">
@@ -308,7 +327,7 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="Capacity">Capacity</label>
-                        <input type="number" id="Capacity" name="Capacity" min="1" value="0" required>
+                        <input type="number" id="Capacity" name="Capacity" min="1" value="1" required>
                     </div>
                 </div>
                 <div class="form-footer">
@@ -316,7 +335,7 @@
                 </div>
             </form>
         </div>
- 
+
         <div id="porpose" class="toggle-section">
             <form class="row-dispatch" method="POST" action="{{ route('porpose.store') }}" id="RequestPform">
                 @csrf
@@ -334,13 +353,13 @@
                         <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" required>
                     </div>
                 </div>
-                
+
                 <div class="form-footer">
                     <button class="submit-btn" type="button" onclick="setCurrentForm('RequestPform')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
- 
+
         <div id="employee" class="toggle-section">
             <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" id="employeeForm">
                 @csrf
@@ -390,7 +409,7 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="form-footer">
                     <button class="submit-btn" type="button" onclick="setCurrentForm('focalPForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
@@ -463,18 +482,47 @@ function validateEmail() {
 }
 
 function submitForm() {
-    const emailInput = document.getElementById('EmployeeEmail');
+    if (currentForm) {
+        if (currentForm.id === 'employeeForm') {
+            validateEmail();
+            const emailInput = document.getElementById('EmployeeEmail');
+            if (!emailInput.checkValidity()) {
+                emailInput.reportValidity();
+                return;
+            }
+        }
 
-    if (currentForm.id === 'employeeForm') {
-        validateEmail();
-        if (emailInput.checkValidity()) {
+        if (validateForm(currentForm)) {
             currentForm.submit();
         } else {
-            emailInput.reportValidity();
+            alert('Please fill in all required fields.');
         }
-    } else {
-        currentForm.submit();
     }
+}
+
+function displayAlert(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger';
+    alertDiv.textContent = message;
+    document.querySelector('.form-container').prepend(alertDiv);
+
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 3000);
+}
+
+function validateForm(form) {
+    let isValid = true;
+    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+    inputs.forEach(input => {
+        if (!input.value.trim()) {
+            isValid = false;
+            input.classList.add('is-invalid');
+        } else {
+            input.classList.remove('is-invalid');
+        }
+    });
+    return isValid;
 }
 </script>
 
