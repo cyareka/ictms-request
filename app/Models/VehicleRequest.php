@@ -12,6 +12,8 @@ class VehicleRequest extends Model
     protected $table = 'vehicle_request';
     protected $primaryKey = 'VRequestID';
     public $timestamps = true;
+    public $incrementing = false; 
+    protected $keyType = 'string'; 
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';

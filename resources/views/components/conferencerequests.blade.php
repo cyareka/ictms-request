@@ -96,7 +96,7 @@
 
                 @foreach($filteredRequests as $request)
                     <tr>
-                        <td scope="row">{{ $request->CRequestID }}</td>
+                        <th scope="row">{{ $request->CRequestID }}</th>
                         <td>{{ $request->created_at->format('m/d/Y (h:i A)') }}</td>
                         <td>{{ $request->conferenceRoom->CRoomName }}</td>
                         <td>{{ $request->office->OfficeName }}</td>
@@ -184,7 +184,7 @@
                         }
 
                         let row = `<tr>
-                            <td scope="row">${request.CRequestID}</td>
+                            <th scope="row">${request.CRequestID}</th>
                             <td>
                                 ${new Date(request.created_at).toLocaleDateString('en-US', {
                                     year: 'numeric',

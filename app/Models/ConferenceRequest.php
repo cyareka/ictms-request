@@ -18,6 +18,8 @@ class ConferenceRequest extends Model
 
     protected $table = 'conference_room_requests';
     protected $primaryKey = 'CRequestID';
+    public $incrementing = false; 
+    protected $keyType = 'string'; 
 
     protected $fillable = [
         'CRequestID',
