@@ -427,7 +427,7 @@
                 </div>
                 <div class="input-field">
                     <label>Purpose</label>
-                    <input type="text" id="purpose" name="purpose" value="{{ $requestData->Purpose }}" placeholder="-"
+                    <input type="text" id="purpose" name="purpose" value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}" placeholder="-"
                            readonly>
                 </div>
             </div>

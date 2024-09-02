@@ -89,6 +89,8 @@ public function submitCForm(Request $request): RedirectResponse
 
         $office = Office::query()->where('OfficeID', $validated['officeName'])->firstOrFail();
         $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
+        // $purposes = PurposeRequest::query()->where('PurposeID', $validated['purposeSelect'])->firstOrFail();
+        // $focal = FocalPerson::query()->where('FocalPID', $validated['focalPersonSelect'])->firstOrFail();
 
         foreach ($validated['date_start'] as $index => $dateStart) {
             Log::info('Processing date start:', ['date_start' => $dateStart, 'index' => $index]);

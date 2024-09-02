@@ -630,10 +630,11 @@
                 <label for="officeName">Requesting Office</label>
                 <input type="text" id="officeName" name="officeName" value="{{ $requestData->office->OfficeName }}" placeholder="-" readonly>
             </div>
-            <div class="inline-field ">
+            <div class="inline-field">
                 <label for="purpose">Purpose</label>
-                <input type="text" id="purpose" name="purpose" value="{{ $requestData->Purpose }}" placeholder="-"
-                       readonly>
+                <input type="text" id="purpose" name="purpose" 
+                    value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}" 
+                    placeholder="-" readonly>
             </div>
         </div>
         <div class="row-group-container">
@@ -669,8 +670,10 @@
             </div>
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
-                <input type="text" id="focalPerson" name="focalPerson" value="{{ $requestData->focalPerson }}" placeholder="Enter Focal Person" readonly>
-        </div>
+                <input type="text" id="focalPerson" name="focalPerson" 
+                value="{{ optional(App\Models\FocalPerson::find($requestData->FocalPID))->FPName ??  $requestData->FPOthers }}" 
+                placeholder="Enter Focal Person" readonly>
+            </div>
         <div class="row">
         </div>
         </div>
