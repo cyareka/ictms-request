@@ -78,7 +78,7 @@ public function submitCForm(Request $request): RedirectResponse
         Log::info('Validated data:', $validated);
 
         $purpose = $validated['purposeInput'] ?? null;
-        $focalPerson = $validated['focalPersonInput'] ?? $validated['focalPersonSelect'];
+        $focalPerson = $validated['focalPersonInput'] ?? null;
         $otherFacilities = $validated['otherFacilities'] ?? null;
         // $otherFacilities = $validated['otherFacilitiesInput'] ?: $validated['otherFacilitiesSelect'];
 
@@ -146,7 +146,8 @@ public function submitCForm(Request $request): RedirectResponse
                 'PurposeID' => $validated['purposeSelect']?? null,
                 'PurposeOthers' => $purpose,
                 'npersons' => $validated['npersons'],
-                'focalPerson' => $focalPerson,
+                'FocalPID' => $validated['focalPersonSelect'] ?? null,
+                'FPOthers'  => $focalPerson,
                 'CAvailability' => $availability,
                 'tables' => $validated['tables'],
                 'chairs' => $validated['chairs'],
