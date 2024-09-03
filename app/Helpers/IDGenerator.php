@@ -41,8 +41,11 @@ class IDGenerator
     // generate IDs for Vehicle
     public function generateID_3(): string
     {
-        $randomNumber = str_pad(mt_rand(1, 999), 3, '0', STR_PAD_LEFT);
-        return substr($randomNumber, 0, 3);
+        do {
+            $randomNumber = str_pad(mt_rand(1, 999), 3, '0', STR_PAD_LEFT);
+        } while ($randomNumber[0] === '0');
+
+        return $randomNumber;
     }
 
     public function generateID_8(): string

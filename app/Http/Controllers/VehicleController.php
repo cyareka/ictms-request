@@ -155,6 +155,7 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', $errorMessage . ' Error details: ' . $detailedErrorMessage);
         }
     }
+
     public function updateVForm(Request $request, $VRequestID): RedirectResponse
     {
         try {
@@ -170,7 +171,7 @@ class VehicleController extends Controller
                 'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
-                'availability' => 'nullable|string|max:50',
+                'Availability' => 'nullable|string|max:50',
                 'AAID' => 'nullable|string|exists:a_authorities,AAID',
                 'SOID' => 'nullable|string|exists:so_authorities,SOID',
                 'ASignatory' => 'nullable|string|max:50',  // Allow string initially
@@ -184,14 +185,17 @@ class VehicleController extends Controller
                 $validated['certfile-upload'] = $file;
             }
 
-            // Map the input values to validated data
+            Log::info('Request Data:', $request->all());
+
             $validated['driver'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
             $validated['VName'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
-            $validated['remarks'] = $request->input('Remarks');
-            $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
-            $validated['SOID'] = $request->input('SOAuth');
+            Log::info('Validated Data:', $validated);
 
-            Log::info('FormStatus after update:', ['FormStatus' => $vehicleRequest->FormStatus]);
+            Log::info('AAID Input:', ['AAuth' => $request->input('AAuth')]);
+            $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
+
+            Log::info('SOID Input:', ['SOAuth' => $request->input('SOAuth')]);
+            $validated['SOID'] = $request->input('SOAuth');
 
             // Convert the signatory name to an ID
             if (!empty($validated['ASignatory']) || !empty($validated['ReceivedBy'])) {
@@ -206,7 +210,7 @@ class VehicleController extends Controller
 
             $vehicleRequest->update($validated);
 
-           if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
+            if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
                 $vehicleRequest->VAvailability = true;
                 $vehicleRequest->save();
 
@@ -221,11 +225,15 @@ class VehicleController extends Controller
                         ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
                         ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
                     ) {
-                        $otherRequest->update(['Availability' => false]);
+                        $otherRequest->update([
+                            'FormStatus' => 'Not Approved',
+                            'EventStatus' => '-',
+                            'VAvailability' => null
+                        ]);
                     }
                 }
             } elseif (($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'For Approval' && $validated['EventStatus'] === '-')) {
-                $vehicleRequest->Availability = true;
+                $vehicleRequest->VAvailability = null;
                 $vehicleRequest->save();
 
                 $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
@@ -239,11 +247,11 @@ class VehicleController extends Controller
                         ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
                         ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
                     ) {
-                        $otherRequest->update(['Availability' => true]);
+                        $otherRequest->update(['VAvailability' => true]);
                     }
                 }
             } elseif (($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
-                $vehicleRequest->Availability = null;
+                $vehicleRequest->VAvailability = null;
                 $vehicleRequest->save();
 
                 $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
@@ -257,7 +265,11 @@ class VehicleController extends Controller
                         ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
                         ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
                     ) {
-                        $otherRequest->update(['Availability' => true]);
+                        $otherRequest->update([
+                            'FormStatus' => 'Pending',
+                            'EventStatus' => '-',
+                            'VAvailability' => true
+                        ]);
                     }
                 }
             }
@@ -270,12 +282,6 @@ class VehicleController extends Controller
             ]);
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Throwable $e) {
-            Log::error('An unexpected error occurred in updateVForm:', [
-                'VRequestID' => $VRequestID,
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'input' => $request->all(),
-            ]);
             return redirect()->back()->with('error', 'Update failed. Please try again.');
         }
     }
@@ -284,7 +290,7 @@ class VehicleController extends Controller
     {
         $sort = $request->get('sort', 'created_at');
         $order = $request->get('order', 'desc');
-        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending','For Approval']);
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending', 'For Approval']);
         $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
         $perPage = $request->get('per_page', 5);
         $page = $request->get('page', 1);
@@ -368,27 +374,27 @@ class VehicleController extends Controller
 
             if ($startDate && $endDate) {
                 $query->whereBetween('date_start', [$startDate, $endDate])
-                      ->orWhereBetween('date_end', [$startDate, $endDate])
-                      ->orWhere(function ($q) use ($startDate, $endDate) {
-                          $q->where('date_start', '<=', $startDate)
+                    ->orWhereBetween('date_end', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('date_start', '<=', $startDate)
                             ->where('date_end', '>=', $endDate);
-                      });
+                    });
             }
 
             // Exclude specific FormStatus and EventStatus combinations
             $query->where(function ($q) {
                 $q->whereNot(function ($q) {
                     $q->where('FormStatus', 'Not Approved')
-                      ->where('EventStatus', '-');
+                        ->where('EventStatus', '-');
                 })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Cancelled');
-                })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Finished');
-                });
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Cancelled');
+                    })
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Finished');
+                    });
             });
 
             $vehicleRequests = $query->get()
@@ -478,13 +484,13 @@ class VehicleController extends Controller
         return response()->json($statistics);
     }
 
-    public function getLogData($VRequestID): View|Factory|Application
+    public function getVLogData($VRequestID): View|Factory|Application
     {
         // Initialize variables with default values
         $requestLogData = null;
         $passengers = collect(); // Empty collection
         $error = null;
-    
+
         try {
             // Fetch the vehicle request data
             $requestLogData = VehicleRequest::with('office')->findOrFail($VRequestID);
@@ -495,12 +501,10 @@ class VehicleController extends Controller
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-    
+
             $error = 'Failed to fetch request data.';
         }
-    
-        // Pass the request data, passengers, and error to the view
-        return view('vehiclelogdetail', compact('requestLogData', 'passengers', 'error'));
+        return view('vehiclelogDetail', ['requestLogData' => $requestLogData, 'passengers' => $passengers]);
     }
 }
 

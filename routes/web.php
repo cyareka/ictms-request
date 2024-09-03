@@ -111,10 +111,8 @@ Route::middleware([
         return view('VehicleDownload');
     })->name('VehicleDownload');
 
-    Route::get('/VehiclelogDetail', function () {
-        return view('VehiclelogDetail');
-    })->name('VehiclelogDetail');
-
+    Route::get('/vehiclerequest/{VRequestID}/log',
+        [VehicleController::class, 'getVLogData'])->name('vehiclelogDetail');
 
     // MANAGEMENT ROUTES
     Route::post('/add-driver',

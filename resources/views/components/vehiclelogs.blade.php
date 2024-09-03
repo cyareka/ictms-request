@@ -94,7 +94,7 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('VehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
+                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
                         <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
                 <td>${request.EventStatus}</td>
                 <td>
-                    <a href="{{ route('VehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
+                    <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
                     <i class="bi bi-download" id="actions"></i>
                 </td>
             </tr>`;

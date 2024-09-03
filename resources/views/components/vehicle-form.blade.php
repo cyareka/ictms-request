@@ -461,7 +461,7 @@
                 <div class="input-field">
                 <label for="purpose">Purpose</label>
                 <select id="purposeSelect" name="purposeSelect">
-                    <option value="" disabled selected>Select Purpose</option>
+                    <option disabled selected>Select Purpose</option>
                     @foreach(App\Models\PurposeRequest::where('request_p', 'Vehicle')->get() as $purpose)
                         <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>{{ $purpose->purpose }}
                         </option>
@@ -511,7 +511,11 @@
                     <label>Passenger Name/s<span class="required">*</span></label>
                     <select name="passengers[]" required>
                         <option disabled selected>Select a passenger</option>
-                        @foreach(App\Models\Employee::all() as $passenger)
+                        @php
+                            $employees = App\Models\Employee::all()->sortBy('EmployeeName');
+                        @endphp
+
+                        @foreach($employees as $passenger)
                             <option value="{{ $passenger->EmployeeID }}" {{ in_array($passenger->EmployeeID, old('passengers', [])) ? 'selected' : '' }}>
                                 {{ $passenger->EmployeeName }}
                             </option>
@@ -555,6 +559,61 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passengerContainer = document.getElementById('passenger-container');
+        const passengerSelects = document.querySelectorAll('select[name="passengers[]"]');
+
+        function updatePassengerOptions() {
+            const selectedPassengers = Array.from(passengerSelects)
+                .map(select => select.value)
+                .filter(value => value !== '');
+
+            passengerSelects.forEach(select => {
+                const currentValue = select.value;
+                const options = Array.from(select.options);
+
+                options.forEach(option => {
+                    if (selectedPassengers.includes(option.value) && option.value !== currentValue) {
+                        option.style.display = 'none';
+                    } else {
+                        option.style.display = 'block';
+                    }
+                });
+            });
+        }
+
+        passengerSelects.forEach(select => {
+            select.addEventListener('change', updatePassengerOptions);
+        });
+
+        function addPassenger() {
+            const passengerField = document.createElement('div');
+            passengerField.className = 'input-field passenger-field';
+            passengerField.innerHTML = `
+            <select name="passengers[]" required>
+                <option disabled selected>Select a passenger</option>
+                @foreach(App\Models\Employee::all() as $passenger)
+            <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
+                @endforeach
+            </select>
+            <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
+        `;
+            passengerContainer.appendChild(passengerField);
+
+            const newSelect = passengerField.querySelector('select');
+            newSelect.addEventListener('change', updatePassengerOptions);
+            updatePassengerOptions();
+        }
+
+        function removePassenger(button) {
+            const passengerField = button.parentElement;
+            passengerField.remove();
+            updatePassengerOptions();
+        }
+
+        updatePassengerOptions();
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(function(input) {

@@ -60,7 +60,7 @@ return new class extends Migration
             // To be filled by dispatcher
             $table->string('DriverID')->nullable()->default(null);
             $table->string('VehicleID')->nullable()->default(null);
-            $table->boolean('VAvailability')->default(true);
+            $table->boolean('VAvailability')->nullable()->default(null);
             $table->string('ReceivedBy')->nullable()->default(null);
             $table->string('Remarks')->nullable()->default(null);
 

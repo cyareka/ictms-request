@@ -86,9 +86,12 @@
                     ->get();
 
                 function convertAvailability($availability): string
-                    {
-                        return $availability > 0 ? 'Available' : 'Not Available';
+                {
+                    if (is_null($availability)) {
+                        return '-';
                     }
+                    return $availability > 0 ? 'Available' : 'Not Available';
+                }
             @endphp
 
             @foreach($filteredRequests as $request)
