@@ -962,19 +962,31 @@
     document.addEventListener('DOMContentLoaded', setInitialFormState);
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Driver select change event
-        document.getElementById('DriverID').addEventListener('change', function () {
-            var selectedOption = this.options[this.selectedIndex];
-            document.getElementById('ContactNo').value = selectedOption.getAttribute('data-contact');
-            document.getElementById('DriverEmail').value = selectedOption.getAttribute('data-email');
-        });
+    // Function to update driver contact and email
+    function updateDriverInfo() {
+        var driverSelect = document.getElementById('DriverID');
+        var selectedDriver = driverSelect.options[driverSelect.selectedIndex];
+        document.getElementById('ContactNo').value = selectedDriver.getAttribute('data-contact') || 'N/A';
+        document.getElementById('DriverEmail').value = selectedDriver.getAttribute('data-email') || 'N/A';
+    }
 
-        // Vehicle select change event
-        document.getElementById('VehicleID').addEventListener('change', function () {
-            var selectedOption = this.options[this.selectedIndex];
-            document.getElementById('PlateNo').value = selectedOption.getAttribute('data-plate');
-        });
-    });
+    // Function to update vehicle plate number
+    function updateVehicleInfo() {
+        var vehicleSelect = document.getElementById('VehicleID');
+        var selectedVehicle = vehicleSelect.options[vehicleSelect.selectedIndex];
+        document.getElementById('PlateNo').value = selectedVehicle.getAttribute('data-plate') || 'N/A';
+    }
+
+    // Initial update on page load
+    updateDriverInfo();
+    updateVehicleInfo();
+
+    // Driver select change event
+    document.getElementById('DriverID').addEventListener('change', updateDriverInfo);
+
+    // Vehicle select change event
+    document.getElementById('VehicleID').addEventListener('change', updateVehicleInfo);
+});
 
 
 </script>
