@@ -170,7 +170,7 @@ class VehicleController extends Controller
                 'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
-                'Availability' => 'nullable|string|max:50',
+                'availability' => 'nullable|string|max:50',
                 'AAID' => 'nullable|string|exists:a_authorities,AAID',
                 'SOID' => 'nullable|string|exists:so_authorities,SOID',
                 'ASignatory' => 'nullable|string|max:50',  // Allow string initially
@@ -187,8 +187,11 @@ class VehicleController extends Controller
             // Map the input values to validated data
             $validated['driver'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
             $validated['VName'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
+            $validated['remarks'] = $request->input('Remarks');
             $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
             $validated['SOID'] = $request->input('SOAuth');
+
+            Log::info('FormStatus after update:', ['FormStatus' => $vehicleRequest->FormStatus]);
 
             // Convert the signatory name to an ID
             if (!empty($validated['ASignatory']) || !empty($validated['ReceivedBy'])) {
@@ -203,6 +206,62 @@ class VehicleController extends Controller
 
             $vehicleRequest->update($validated);
 
+           if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
+                $vehicleRequest->VAvailability = true;
+                $vehicleRequest->save();
+
+                $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
+                    ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
+                    ->where('FormStatus', 'Pending')
+                    ->where('EventStatus', '-')
+                    ->get();
+
+                foreach ($otherRequests as $otherRequest) {
+                    if (
+                        ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
+                        ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
+                    ) {
+                        $otherRequest->update(['Availability' => false]);
+                    }
+                }
+            } elseif (($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'For Approval' && $validated['EventStatus'] === '-')) {
+                $vehicleRequest->Availability = true;
+                $vehicleRequest->save();
+
+                $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
+                    ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
+                    ->where('FormStatus', 'Pending')
+                    ->where('EventStatus', '-')
+                    ->get();
+
+                foreach ($otherRequests as $otherRequest) {
+                    if (
+                        ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
+                        ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
+                    ) {
+                        $otherRequest->update(['Availability' => true]);
+                    }
+                }
+            } elseif (($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
+                $vehicleRequest->Availability = null;
+                $vehicleRequest->save();
+
+                $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
+                    ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
+                    ->where('FormStatus', 'Pending')
+                    ->where('EventStatus', '-')
+                    ->get();
+
+                foreach ($otherRequests as $otherRequest) {
+                    if (
+                        ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
+                        ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
+                    ) {
+                        $otherRequest->update(['Availability' => true]);
+                    }
+                }
+            }
+
             return redirect()->back()->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation failed in updateVForm:', [
@@ -212,7 +271,6 @@ class VehicleController extends Controller
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Throwable $e) {
             Log::error('An unexpected error occurred in updateVForm:', [
-                'DriverID' => $DriverID,
                 'VRequestID' => $VRequestID,
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
@@ -279,16 +337,16 @@ class VehicleController extends Controller
         $formStatuses = $request->get('form_statuses', []);
         $startDate = $request->get('date_start');
         $endDate = $request->get('date_end');
-    
+
         try {
             $query = VehicleRequest::query();
-    
+
             if ($title) {
                 // Check if the title is a PurposeID
                 $purposeName = DB::table('purpose_requests')
                     ->where('PurposeID', $title)
                     ->value('purpose'); // Assume 'purpose' is the column for the purpose name
-    
+
                 if ($purposeName) {
                     // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
                     $query->where('PurposeID', $title);
@@ -299,15 +357,15 @@ class VehicleController extends Controller
                     });
                 }
             }
-    
+
             if ($destination) {
                 $query->where('Destination', 'like', "%$destination%");
             }
-    
+
             if ($formStatuses) {
                 $query->whereIn('FormStatus', $formStatuses);
             }
-    
+
             if ($startDate && $endDate) {
                 $query->whereBetween('date_start', [$startDate, $endDate])
                       ->orWhereBetween('date_end', [$startDate, $endDate])
@@ -316,7 +374,7 @@ class VehicleController extends Controller
                             ->where('date_end', '>=', $endDate);
                       });
             }
-    
+
             // Exclude specific FormStatus and EventStatus combinations
             $query->where(function ($q) {
                 $q->whereNot(function ($q) {
@@ -332,12 +390,12 @@ class VehicleController extends Controller
                       ->where('EventStatus', 'Finished');
                 });
             });
-    
+
             $vehicleRequests = $query->get()
                 ->map(function ($event) {
                     // Fetch the purpose name based on PurposeID
                     $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
-    
+
                     return [
                         'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
                         'start' => $event->date_start . 'T' . $event->time_start,
@@ -346,7 +404,7 @@ class VehicleController extends Controller
                         'Destination' => $event->Destination,
                     ];
                 });
-    
+
             return response()->json($vehicleRequests);
         } catch (Throwable $e) {
             Log::error('An error occurred while fetching calendar events:', [

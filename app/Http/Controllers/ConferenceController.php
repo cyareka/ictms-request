@@ -121,27 +121,6 @@ class ConferenceController extends Controller
                     }
                 }
 
-    /*            Log::info('Creating conference request:', [
-                    'CRequestID' => $generatedID,
-                    'OfficeID' => $office->OfficeID,
-                    'PurposeID' => $purpose,
-                    'npersons' => $validated['npersons'],
-                    'focalPerson' => $focalPerson,
-                    'CAvailability' => $availability,
-                    'tables' => $validated['tables'],
-                    'chairs' => $validated['chairs'],
-                    'otherFacilities' => $otherFacilities,
-                    'CRoomID' => $conferenceRoom->CRoomID,
-                    'FormStatus' => 'Pending',
-                    'EventStatus' => '-',
-                    'RequesterSignature' => $requesterSignaturePath,
-                    'RequesterName' => $validated['requesterName'],
-                    'date_start' => $dateStart,
-                    'date_end' => $validated['date_end'][$index],
-                    'time_start' => $validated['time_start'][$index],
-                    'time_end' => $validated['time_end'][$index],
-                ]);*/
-
                 ConferenceRequest::create([
                     'CRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
@@ -189,7 +168,7 @@ class ConferenceController extends Controller
     {
         try {
             Log::info('Request Data:', $request->all());
-    
+
             // Validate only the formStatus and eventStatus fields
             $validated = $request->validate([
                 'CRequestID' => 'required|string|exists:conference_room_requests,CRequestID',
@@ -197,42 +176,42 @@ class ConferenceController extends Controller
                 'FormStatus' => 'required|string|in:Pending,For Approval,Approved,Not Approved',
                 'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
             ]);
-    
+
             if ($request->hasFile('certfile-upload')) {
                 $file = $request->file('certfile-upload')->store('uploads/confe_request/files', 'public');
                 $validated['certfile-upload'] = $file;
             }
-    
+
             // Retrieve the conference request using Eloquent ORM
             $conferenceRequest = ConferenceRequest::with('conferenceRoom')
                 ->where('CRequestID', $validated['CRequestID'])
                 ->firstOrFail();
-    
+
             // Prepare the data to be updated
             $updateData = [
                 'FormStatus' => $validated['FormStatus'],
                 'EventStatus' => $validated['EventStatus'],
             ];
-    
+
             // Add certfile-upload to the update data if a file was uploaded
             if (isset($validated['certfile-upload'])) {
                 $updateData['certfile-upload'] = $validated['certfile-upload'];
             }
-    
+
             // Update the conference request
             $conferenceRequest->update($updateData);
-    
+
             // If the request is approved and ongoing, mark the room as available and adjust other requests
             if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
                 $conferenceRequest->CAvailability = true;
                 $conferenceRequest->save();
-    
+
                 $otherRequests = ConferenceRequest::where('CRoomID', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
                     ->where('FormStatus', 'Pending')
                     ->where('EventStatus', '-')
                     ->get();
-    
+
                 foreach ($otherRequests as $otherRequest) {
                     if (
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
@@ -244,13 +223,13 @@ class ConferenceController extends Controller
             } elseif (($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'For Approval' && $validated['EventStatus'] === '-')) {
                 $conferenceRequest->CAvailability = true;
                 $conferenceRequest->save();
-    
+
                 $otherRequests = ConferenceRequest::where('CRoomID', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
                     ->where('FormStatus', 'Pending')
                     ->where('EventStatus', '-')
                     ->get();
-    
+
                 foreach ($otherRequests as $otherRequest) {
                     if (
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
@@ -262,13 +241,13 @@ class ConferenceController extends Controller
             } elseif (($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
                 $conferenceRequest->CAvailability = null;
                 $conferenceRequest->save();
-    
+
                 $otherRequests = ConferenceRequest::where('CRoomID', $conferenceRequest->CRoomID)
                     ->where('CRequestID', '!=', $conferenceRequest->CRequestID)
                     ->where('FormStatus', 'Pending')
                     ->where('EventStatus', '-')
                     ->get();
-    
+
                 foreach ($otherRequests as $otherRequest) {
                     if (
                         ($otherRequest->date_start <= $conferenceRequest->date_end && $otherRequest->date_end >= $conferenceRequest->date_start) &&
@@ -308,15 +287,15 @@ class ConferenceController extends Controller
         $formStatuses = $request->get('form_statuses', []);
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
-    
+
         $query = ConferenceRequest::with(['conferenceRoom', 'purposeRequest']);
-    
+
         if ($title) {
             // Check if the title is a PurposeID
             $purposeName = DB::table('purpose_requests')
                 ->where('PurposeID', $title)
                 ->value('purpose'); // Assume 'purpose' is the column for the purpose name
-    
+
             if ($purposeName) {
                 // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
                 $query->where('PurposeID', $title);
@@ -332,22 +311,22 @@ class ConferenceController extends Controller
                 });
             }
         }
-    
+
         if ($conferenceRoom) {
             $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
                 $q->where('CRoomName', $conferenceRoom);
             });
         }
-    
+
         if ($formStatuses) {
             $query->whereIn('FormStatus', $formStatuses);
         }
-    
+
         if ($startDate && $endDate) {
             $query->whereBetween('date_start', [$startDate, $endDate])
                   ->whereBetween('date_end', [$startDate, $endDate]);
         }
-    
+
         // Exclude specific FormStatus and EventStatus combinations
         $query->where(function ($q) {
             $q->whereNot(function ($q) {
@@ -363,11 +342,11 @@ class ConferenceController extends Controller
                     ->where('EventStatus', 'Finished');
               });
         });
-    
+
         $conferenceRequests = $query->get()
             ->map(function ($event) {
                 $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
-    
+
                 return [
                     'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
                     'conferenceRoom' => $event->conferenceRoom ? $event->conferenceRoom->CRoomName : 'N/A',
@@ -376,7 +355,7 @@ class ConferenceController extends Controller
                     'EventStatus' => $event->FormStatus,
                 ];
             });
-    
+
         return response()->json($conferenceRequests);
     }
 
@@ -426,8 +405,6 @@ class ConferenceController extends Controller
         }
 
         $results = $query->paginate($perPage);
-
-        \Log::info('Query results:', $results->toArray());
 
         return response()->json([
             'data' => $results->items(),

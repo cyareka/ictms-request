@@ -596,7 +596,7 @@
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="availability">Availability</label>
-                        <input type="text" id="availability" name="availability" placeholder="-" readonly>
+                        <input type="text" id="availability" name="availability" placeholder="-" value="{{ $requestData->VAvailability === 1 ? 'Available' : ($requestData->VAvailability === 0 ? 'Not Available' : '-') }}" readonly>
                     </div>
                     <div class="inline">
                         <label for="FormStatus">Form Status</label>

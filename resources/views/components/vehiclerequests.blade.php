@@ -73,6 +73,7 @@
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date Needed</th>
                 <th scope="col">Time Needed</th>
+                <th scope="col">Availability</th>
                 <th scope="col">Form Status</th>
                 <th scope="col">Event Status</th>
                 <th scope="col"></th>
@@ -83,6 +84,11 @@
                 $filteredRequests = App\Models\VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
                     ->whereIn('EventStatus', ['Ongoing', '-'])
                     ->get();
+
+                function convertAvailability($availability): string
+                    {
+                        return $availability > 0 ? 'Available' : 'Not Available';
+                    }
             @endphp
 
             @foreach($filteredRequests as $request)
@@ -94,11 +100,11 @@
                     <td>{{ $request->office->OfficeName }}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
+                    <td>{{ convertAvailability($request->VAvailability) }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil"
-                                                                                            id="actions"></i></a>
+                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
                         <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>
