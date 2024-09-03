@@ -66,7 +66,14 @@ class VehicleController extends Controller
                 'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
             ]);
 
-            $purpose = $validated['purposeInput'] ?? null;
+            // Capitalize the first letter of specific fields
+            $purpose = ucwords($validated['purposeInput'] ?? '');
+            $validated['Destination'] = ucwords($validated['Destination']);
+            $validated['RequesterName'] = ucwords($validated['RequesterName']);
+
+            // Format the contact number
+            $contactNo = preg_replace('/^0/', '', $validated['RequesterContact']);
+            $validated['RequesterContact'] = '+63' . $contactNo;
 
             $passengers = $validated['passengers'];
             if (count($passengers) !== count(array_unique($passengers))) {
@@ -91,7 +98,7 @@ class VehicleController extends Controller
                 VehicleRequest::create([
                     'VRequestID' => $generatedID,
                     'OfficeID' => $office->OfficeID,
-                    'PurposeID' => $validated['purposeSelect']?? null,
+                    'PurposeID' => $validated['purposeSelect'] ?? null,
                     'PurposeOthers' => $purpose,
                     'date_start' => $dateStart,
                     'date_end' => $validated['date_end'][$index],
@@ -148,183 +155,6 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', $errorMessage . ' Error details: ' . $detailedErrorMessage);
         }
     }
-
-    public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $sort = $request->get('sort', 'created_at');
-        $order = $request->get('order', 'desc');
-        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending','For Approval']);
-        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
-        $perPage = $request->get('per_page', 5);
-        $page = $request->get('page', 1);
-
-        Log::info('Filter parameters:', [
-            'sort' => $sort,
-            'order' => $order,
-            'form_statuses' => $formStatuses,
-            'event_statuses' => $eventStatuses,
-        ]);
-
-        try {
-            $query = VehicleRequest::with('office')
-                ->orderBy($sort, $order);
-
-            if ($formStatuses) {
-                $query->whereIn('FormStatus', $formStatuses);
-            }
-
-            if ($eventStatuses) {
-                $query->whereIn('EventStatus', $eventStatuses);
-            }
-
-            $vehicleRequests = $query->paginate($perPage, ['*'], 'page', $page);
-
-            Log::info('Query results:', $vehicleRequests->toArray());
-
-            return response()->json([
-                'data' => $vehicleRequests->items(),
-                'pagination' => [
-                    'current_page' => $vehicleRequests->currentPage(),
-                    'last_page' => $vehicleRequests->lastPage(),
-                    'per_page' => $vehicleRequests->perPage(),
-                    'total' => $vehicleRequests->total(),
-                ],
-            ]);
-        } catch (Throwable $e) {
-            Log::error('An error occurred while fetching sorted vehicle requests:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return response()->json(['error' => 'Failed to fetch vehicle requests.'], 500);
-        }
-    }
-
-    public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $title = $request->get('Purpose');
-        $destination = $request->get('Destination');
-        $formStatuses = $request->get('form_statuses', []);
-        $startDate = $request->get('date_start');
-        $endDate = $request->get('date_end');
-    
-        try {
-            $query = VehicleRequest::query();
-    
-            if ($title) {
-                // Check if the title is a PurposeID
-                $purposeName = DB::table('purpose_requests')
-                    ->where('PurposeID', $title)
-                    ->value('purpose'); // Assume 'purpose' is the column for the purpose name
-    
-                if ($purposeName) {
-                    // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
-                    $query->where('PurposeID', $title);
-                } else {
-                    // Title is not a PurposeID, so check if it's in PurposeOthers
-                    $query->where(function ($q) use ($title) {
-                        $q->where('PurposeOthers', 'like', "%$title%");
-                    });
-                }
-            }
-    
-            if ($destination) {
-                $query->where('Destination', 'like', "%$destination%");
-            }
-    
-            if ($formStatuses) {
-                $query->whereIn('FormStatus', $formStatuses);
-            }
-    
-            if ($startDate && $endDate) {
-                $query->whereBetween('date_start', [$startDate, $endDate])
-                      ->orWhereBetween('date_end', [$startDate, $endDate])
-                      ->orWhere(function ($q) use ($startDate, $endDate) {
-                          $q->where('date_start', '<=', $startDate)
-                            ->where('date_end', '>=', $endDate);
-                      });
-            }
-    
-            // Exclude specific FormStatus and EventStatus combinations
-            $query->where(function ($q) {
-                $q->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Not Approved')
-                      ->where('EventStatus', '-');
-                })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Cancelled');
-                })
-                ->whereNot(function ($q) {
-                    $q->where('FormStatus', 'Approved')
-                      ->where('EventStatus', 'Finished');
-                });
-            });
-    
-            $vehicleRequests = $query->get()
-                ->map(function ($event) {
-                    // Fetch the purpose name based on PurposeID
-                    $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
-    
-                    return [
-                        'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
-                        'start' => $event->date_start . 'T' . $event->time_start,
-                        'end' => $event->date_end . 'T' . $event->time_end,
-                        'EventStatus' => $event->FormStatus,
-                        'Destination' => $event->Destination,
-                    ];
-                });
-    
-            return response()->json($vehicleRequests);
-        } catch (Throwable $e) {
-            Log::error('An error occurred while fetching calendar events:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return response()->json(['error' => 'Failed to fetch calendar events.'], 500);
-        }
-    }
-
-    public function getPassengersByRequestId($VRequestID)
-    {
-        try {
-            // Fetch passengers associated with the given VRequestID
-            $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
-                ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
-                ->select('employees.EmployeeID', 'employees.EmployeeName')
-                ->get();
-
-            Log::info('Passengers fetched:', $passengers->toArray());
-
-            return $passengers;
-        } catch (Throwable $e) {
-            Log::error('An error occurred while fetching passengers:', [
-                'VRequestID' => $VRequestID,
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return response()->json(['error' => 'Failed to fetch passengers.'], 500);
-        }
-    }
-
-    public function getRequestData($VRequestID): View|Factory|Application
-    {
-        try {
-            // Fetch the vehicle request data
-            $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
-            $passengers = $this->getPassengersByRequestId($VRequestID);
-
-            // Pass the request data and passengers to the view
-            return view('VehicledetailEdit', ['requestData' => $requestData, 'passengers' => $passengers]);
-        } catch (Throwable $e) {
-            Log::error('An error occurred while fetching request data:', [
-                'VRequestID' => $VRequestID,
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return view('VehicledetailEdit')->with('error', 'Failed to fetch request data.');
-        }
-    }
-
     public function updateVForm(Request $request, $VRequestID): RedirectResponse
     {
         try {
@@ -391,6 +221,183 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', 'Update failed. Please try again.');
         }
     }
+
+    public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending','For Approval']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+        $perPage = $request->get('per_page', 5);
+        $page = $request->get('page', 1);
+
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
+        ]);
+
+        try {
+            $query = VehicleRequest::with('office')
+                ->orderBy($sort, $order);
+
+            if ($formStatuses) {
+                $query->whereIn('FormStatus', $formStatuses);
+            }
+
+            if ($eventStatuses) {
+                $query->whereIn('EventStatus', $eventStatuses);
+            }
+
+            $vehicleRequests = $query->paginate($perPage, ['*'], 'page', $page);
+
+            Log::info('Query results:', $vehicleRequests->toArray());
+
+            return response()->json([
+                'data' => $vehicleRequests->items(),
+                'pagination' => [
+                    'current_page' => $vehicleRequests->currentPage(),
+                    'last_page' => $vehicleRequests->lastPage(),
+                    'per_page' => $vehicleRequests->perPage(),
+                    'total' => $vehicleRequests->total(),
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching sorted vehicle requests:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch vehicle requests.'], 500);
+        }
+    }
+
+    public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $title = $request->get('Purpose');
+        $destination = $request->get('Destination');
+        $formStatuses = $request->get('form_statuses', []);
+        $startDate = $request->get('date_start');
+        $endDate = $request->get('date_end');
+
+        try {
+            $query = VehicleRequest::query();
+
+            if ($title) {
+                // Check if the title is a PurposeID
+                $purposeName = DB::table('purpose_requests')
+                    ->where('PurposeID', $title)
+                    ->value('purpose'); // Assume 'purpose' is the column for the purpose name
+
+                if ($purposeName) {
+                    // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
+                    $query->where('PurposeID', $title);
+                } else {
+                    // Title is not a PurposeID, so check if it's in PurposeOthers
+                    $query->where(function ($q) use ($title) {
+                        $q->where('PurposeOthers', 'like', "%$title%");
+                    });
+                }
+            }
+
+            if ($destination) {
+                $query->where('Destination', 'like', "%$destination%");
+            }
+
+            if ($formStatuses) {
+                $query->whereIn('FormStatus', $formStatuses);
+            }
+
+            if ($startDate && $endDate) {
+                $query->whereBetween('date_start', [$startDate, $endDate])
+                      ->orWhereBetween('date_end', [$startDate, $endDate])
+                      ->orWhere(function ($q) use ($startDate, $endDate) {
+                          $q->where('date_start', '<=', $startDate)
+                            ->where('date_end', '>=', $endDate);
+                      });
+            }
+
+            // Exclude specific FormStatus and EventStatus combinations
+            $query->where(function ($q) {
+                $q->whereNot(function ($q) {
+                    $q->where('FormStatus', 'Not Approved')
+                      ->where('EventStatus', '-');
+                })
+                ->whereNot(function ($q) {
+                    $q->where('FormStatus', 'Approved')
+                      ->where('EventStatus', 'Cancelled');
+                })
+                ->whereNot(function ($q) {
+                    $q->where('FormStatus', 'Approved')
+                      ->where('EventStatus', 'Finished');
+                });
+            });
+
+            $vehicleRequests = $query->get()
+                ->map(function ($event) {
+                    // Fetch the purpose name based on PurposeID
+                    $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
+
+                    return [
+                        'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
+                        'start' => $event->date_start . 'T' . $event->time_start,
+                        'end' => $event->date_end . 'T' . $event->time_end,
+                        'EventStatus' => $event->FormStatus,
+                        'Destination' => $event->Destination,
+                    ];
+                });
+
+            return response()->json($vehicleRequests);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching calendar events:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch calendar events.'], 500);
+        }
+    }
+
+    public function getPassengersByRequestId($VRequestID)
+    {
+        try {
+            // Fetch passengers associated with the given VRequestID
+            $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
+                ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
+                ->select('employees.EmployeeID', 'employees.EmployeeName')
+                ->get();
+
+            Log::info('Passengers fetched:', $passengers->toArray());
+
+            return $passengers;
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching passengers:', [
+                'VRequestID' => $VRequestID,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch passengers.'], 500);
+        }
+    }
+
+    public function getRequestData($VRequestID): View|Factory|Application
+    {
+        try {
+            // Fetch the vehicle request data
+            $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
+            $passengers = $this->getPassengersByRequestId($VRequestID);
+
+            // Pass the request data and passengers to the view
+            return view('VehicledetailEdit', ['requestData' => $requestData, 'passengers' => $passengers]);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching request data:', [
+                'VRequestID' => $VRequestID,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return view('VehicledetailEdit')->with('error', 'Failed to fetch request data.');
+        }
+    }
+
 
     public function fetchVStatistics(): \Illuminate\Http\JsonResponse
     {

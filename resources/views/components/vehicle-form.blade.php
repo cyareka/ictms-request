@@ -476,7 +476,7 @@
             <div class="input-group">
                 <div class="input-field">
                     <label>Requester Name<span class="required">*</span></label>
-                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" required/>
+                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" autocapitalize="words" required/>
                 </div>
                 <div class="input-field">
                     <label>Requester Email <span class="required">*</span></label>
@@ -486,8 +486,9 @@
 
             <div class="input-group">
                 <div class="input-field">
-                    <label>Contact No. <span class="required">*</span></label>
-                    <input type="text" name="RequesterContact" placeholder="Enter No." value="{{ old('RequesterContact') }}" required/>
+                    <label for="ContactNo">Contact No.<span class="required">*</span></label>
+                    <span class="phone-prefix">+63</span>
+                    <input type="tel" id="ContactNo" name="RequesterContact" placeholder="Enter Contact No." value="{{ old('RequesterContact') }}" required maxlength="10">
                 </div>
                 <div class="input-field">
                     <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
@@ -504,7 +505,7 @@
             <div class="input-group">
                 <div class="input-field">
                     <label>Destination<span class="required">*</span></label>
-                    <input type="text" name="Destination" placeholder="Enter Place" value="{{ old('Destination') }}" required/>
+                    <input type="text" name="Destination" placeholder="Enter Place" value="{{ old('Destination') }}" autocapitalize="words" required/>
                 </div>
                 <div class="passenger-field">
                     <label>Passenger Name/s<span class="required">*</span></label>

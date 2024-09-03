@@ -576,7 +576,7 @@
                     </div>
                     <div class="inline">
                         <label for="remark">Remarks</label>
-                        <input type="text" id="remark" name="remark" placeholder="Enter Remark">
+                        <input type="text" id="remark" name="remark" placeholder="Enter Remark" autocapitalize="sentences">
                     </div>
                 </div>
             </form>
@@ -699,13 +699,13 @@
     // Get the forms
     const dispatcherForm = document.getElementById('dispatcherForm');
     const adminServiceForm = document.getElementById('adminServiceForm');
-    
+
     // Check if forms are present
     if (dispatcherForm && adminServiceForm) {
         // Create a FormData object for both forms
         const dispatcherFormData = new FormData(dispatcherForm);
         const adminServiceFormData = new FormData(adminServiceForm);
-        
+
         // Submit the Dispatcher Form
         fetch(dispatcherForm.action, {
             method: 'POST',
