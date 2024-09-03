@@ -301,64 +301,84 @@ class ConferenceController extends Controller
         return view('ConferencelogDetail', compact('requestLogData'));
     }
 
-public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
-{
-    $title = $request->get('Purpose');
-    $conferenceRoom = $request->get('conference_room');
-    $formStatuses = $request->get('form_statuses', []);
-    $startDate = $request->get('start_date');
-    $endDate = $request->get('end_date');
-
-    $query = ConferenceRequest::with('conferenceRoom');
-
-    if ($title) {
-        $query->where('PurposeOthers', 'like', "%$title%");
-    }
-
-    if ($conferenceRoom) {
-        $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
-            $q->where('CRoomName', $conferenceRoom);
+    public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $title = $request->get('Purpose');
+        $conferenceRoom = $request->get('conference_room');
+        $formStatuses = $request->get('form_statuses', []);
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+    
+        $query = ConferenceRequest::with(['conferenceRoom', 'purposeRequest']);
+    
+        if ($title) {
+            // Check if the title is a PurposeID
+            $purposeName = DB::table('purpose_requests')
+                ->where('PurposeID', $title)
+                ->value('purpose'); // Assume 'purpose' is the column for the purpose name
+    
+            if ($purposeName) {
+                // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
+                $query->where('PurposeID', $title);
+            } else {
+                // Title is not a PurposeID, so check if it's in PurposeOthers
+                $query->where(function ($q) use ($title) {
+                    $q->where('PurposeOthers', 'like', "%$title%")
+                      ->orWhere(function ($q) use ($title) {
+                          $q->whereHas('purposeRequest', function ($q) use ($title) {
+                              $q->where('PurposeID', $title);
+                          });
+                      });
+                });
+            }
+        }
+    
+        if ($conferenceRoom) {
+            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+                $q->where('CRoomName', $conferenceRoom);
+            });
+        }
+    
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
+    
+        if ($startDate && $endDate) {
+            $query->whereBetween('date_start', [$startDate, $endDate])
+                  ->whereBetween('date_end', [$startDate, $endDate]);
+        }
+    
+        // Exclude specific FormStatus and EventStatus combinations
+        $query->where(function ($q) {
+            $q->whereNot(function ($q) {
+                $q->where('FormStatus', 'Not Approved')
+                  ->where('EventStatus', '-');
+            })
+              ->whereNot(function ($q) {
+                  $q->where('FormStatus', 'Approved')
+                    ->where('EventStatus', 'Cancelled');
+              })
+              ->whereNot(function ($q) {
+                  $q->where('FormStatus', 'Approved')
+                    ->where('EventStatus', 'Finished');
+              });
         });
+    
+        $conferenceRequests = $query->get()
+            ->map(function ($event) {
+                $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
+    
+                return [
+                    'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
+                    'conferenceRoom' => $event->conferenceRoom ? $event->conferenceRoom->CRoomName : 'N/A',
+                    'start' => $event->date_start . 'T' . $event->time_start,
+                    'end' => $event->date_end . 'T' . $event->time_end,
+                    'EventStatus' => $event->FormStatus,
+                ];
+            });
+    
+        return response()->json($conferenceRequests);
     }
-
-    if ($formStatuses) {
-        $query->whereIn('FormStatus', $formStatuses);
-    }
-
-    if ($startDate && $endDate) {
-        $query->whereBetween('date_start', [$startDate, $endDate])
-              ->whereBetween('date_end', [$startDate, $endDate]);
-    }
-
-    // Exclude specific FormStatus and EventStatus combinations
-    $query->where(function ($q) {
-        $q->whereNot(function ($q) {
-            $q->where('FormStatus', 'Not Approved')
-              ->where('EventStatus', '-');
-        })
-          ->whereNot(function ($q) {
-              $q->where('FormStatus', 'Approved')
-                ->where('EventStatus', 'Cancelled');
-          })
-          ->whereNot(function ($q) {
-              $q->where('FormStatus', 'Approved')
-                ->where('EventStatus', 'Finished');
-          });
-    });
-
-    $conferenceRequests = $query->get()
-        ->map(function ($event) {
-            return [
-                'title' => $event->PurposeOthers, // Ensure correct field here
-                'conferenceRoom' => $event->conferenceRoom ? $event->conferenceRoom->CRoomName : 'N/A',
-                'start' => $event->date_start . 'T' . $event->time_start,
-                'end' => $event->date_end . 'T' . $event->time_end,
-                'EventStatus' => $event->FormStatus,
-            ];
-        });
-
-    return response()->json($conferenceRequests);
-}
 
     // Conference Request Main Filter and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse

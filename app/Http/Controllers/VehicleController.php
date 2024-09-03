@@ -279,16 +279,16 @@ class VehicleController extends Controller
         $formStatuses = $request->get('form_statuses', []);
         $startDate = $request->get('date_start');
         $endDate = $request->get('date_end');
-
+    
         try {
             $query = VehicleRequest::query();
-
+    
             if ($title) {
                 // Check if the title is a PurposeID
                 $purposeName = DB::table('purpose_requests')
                     ->where('PurposeID', $title)
                     ->value('purpose'); // Assume 'purpose' is the column for the purpose name
-
+    
                 if ($purposeName) {
                     // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
                     $query->where('PurposeID', $title);
@@ -299,15 +299,15 @@ class VehicleController extends Controller
                     });
                 }
             }
-
+    
             if ($destination) {
                 $query->where('Destination', 'like', "%$destination%");
             }
-
+    
             if ($formStatuses) {
                 $query->whereIn('FormStatus', $formStatuses);
             }
-
+    
             if ($startDate && $endDate) {
                 $query->whereBetween('date_start', [$startDate, $endDate])
                       ->orWhereBetween('date_end', [$startDate, $endDate])
@@ -316,7 +316,7 @@ class VehicleController extends Controller
                             ->where('date_end', '>=', $endDate);
                       });
             }
-
+    
             // Exclude specific FormStatus and EventStatus combinations
             $query->where(function ($q) {
                 $q->whereNot(function ($q) {
@@ -332,12 +332,12 @@ class VehicleController extends Controller
                       ->where('EventStatus', 'Finished');
                 });
             });
-
+    
             $vehicleRequests = $query->get()
                 ->map(function ($event) {
                     // Fetch the purpose name based on PurposeID
                     $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
-
+    
                     return [
                         'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
                         'start' => $event->date_start . 'T' . $event->time_start,
@@ -346,7 +346,7 @@ class VehicleController extends Controller
                         'Destination' => $event->Destination,
                     ];
                 });
-
+    
             return response()->json($vehicleRequests);
         } catch (Throwable $e) {
             Log::error('An error occurred while fetching calendar events:', [
