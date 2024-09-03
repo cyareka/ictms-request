@@ -321,7 +321,7 @@ class VehicleController extends Controller
             // Validate the incoming request data
             $validated = $request->validate([
                 'DriverID' => 'nullable|string|exists:driver,DriverID',
-                'VName' => 'nullable|string|exists:vehicle,VehicleID',
+                'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
                 'Availability' => 'nullable|string|max:50',

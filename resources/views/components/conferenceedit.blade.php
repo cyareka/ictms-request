@@ -734,17 +734,15 @@
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
                 <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
-                        Pending
-                    </option>
-                    <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For
-                        Approval
-                    </option>
-                    <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved
-                    </option>
-                    <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not
-                        Approved
-                    </option>
+                    @if ($requestData->CAvailability == '0')
+                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved
+                        </option>
+                    @else
+                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending</option>
+                        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For Approval</option>
+                        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
+                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
+                    @endif
                 </select>
             </div>
         </div>
