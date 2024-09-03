@@ -517,7 +517,7 @@
             </button>
         </div>
         <div id="dispatcher-form">
-            <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
+            <form id="dispatcherForm" action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
 
@@ -589,7 +589,7 @@
             </button>
         </div>
         <div id="admin-service-form">
-            <form action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
+            <form id="adminServiceForm" action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
 
@@ -677,7 +677,7 @@
         </div>
         <div class="form-footer">
             <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
-            <button class="submit-btn" onclick="submitAllForms()">Update</button>
+            <button class="submit-btn" type="button" onclick="submitAllForms()">Update</button>
         </div>
     </div>
 </div>
@@ -696,12 +696,47 @@
     });
 
     function submitAllForms() {
-        console.log('Submitting all forms');
-        document.querySelectorAll('form').forEach(form => {
-            console.log('Submitting form:', form);
-            form.submit();
+    // Get the forms
+    const dispatcherForm = document.getElementById('dispatcherForm');
+    const adminServiceForm = document.getElementById('adminServiceForm');
+    
+    // Check if forms are present
+    if (dispatcherForm && adminServiceForm) {
+        // Create a FormData object for both forms
+        const dispatcherFormData = new FormData(dispatcherForm);
+        const adminServiceFormData = new FormData(adminServiceForm);
+        
+        // Submit the Dispatcher Form
+        fetch(dispatcherForm.action, {
+            method: 'POST',
+            body: dispatcherFormData,
+            headers: {
+                'X-CSRF-TOKEN': dispatcherForm.querySelector('input[name="_token"]').value
+            }
+        })
+        .then(response => response.ok ? response.text() : Promise.reject(response))
+        .then(() => {
+            // Submit the Administrative Service Form
+            return fetch(adminServiceForm.action, {
+                method: 'POST',
+                body: adminServiceFormData,
+                headers: {
+                    'X-CSRF-TOKEN': adminServiceForm.querySelector('input[name="_token"]').value
+                }
+            });
+        })
+        .then(response => response.ok ? response.text() : Promise.reject(response))
+        .then(() => {
+            alert('Both forms submitted successfully');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the forms');
         });
+    } else {
+        alert('Forms not found');
     }
+}
 
     document.addEventListener('DOMContentLoaded', function () {
         const driverSelect = document.getElementById('tables');
