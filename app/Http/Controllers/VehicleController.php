@@ -477,6 +477,31 @@ class VehicleController extends Controller
 
         return response()->json($statistics);
     }
+
+    public function getLogData($VRequestID): View|Factory|Application
+    {
+        // Initialize variables with default values
+        $requestLogData = null;
+        $passengers = collect(); // Empty collection
+        $error = null;
+    
+        try {
+            // Fetch the vehicle request data
+            $requestLogData = VehicleRequest::with('office')->findOrFail($VRequestID);
+            $passengers = $this->getPassengersByRequestId($VRequestID);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching request data:', [
+                'VRequestID' => $VRequestID,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+    
+            $error = 'Failed to fetch request data.';
+        }
+    
+        // Pass the request data, passengers, and error to the view
+        return view('vehiclelogdetail', compact('requestLogData', 'passengers', 'error'));
+    }
 }
 
 

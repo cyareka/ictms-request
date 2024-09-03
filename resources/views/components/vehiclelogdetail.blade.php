@@ -258,91 +258,96 @@
   <div class="form-body">
     <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
       @csrf
-      <div class="input-group">
-        <div class="input-field">
-          <label for="officeName">Name of Requesting Office</label>
-          <select id="officeName" name="officeName" placeholder="Enter Purpose" disabled>
-            <option disabled selected>Select Office</option>
-            <option>Office of the Regional Director</option>
-            <option>Administrative Division</option>
-            <option>Finance Division</option>
-            <option>Planning Division</option>
-            <option>Technical Division</option>
-          </select>
-        </div>
-        <div class="input-field">
-          <label>Purpose of Trip</label>
-          <input type="text" name="purpose" placeholder="Enter Purpose" readonly/>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-field">
-          <label>Place of Travel</label>
-          <input type="text" name="place_of_travel" placeholder="Enter Place" readonly/>
-        </div>
-        <div class="input-field">
-          <label>Name of Passenger</label>
-          <select name="passengers[]" disabled>
-            <option disabled selected>Select a passenger</option>
-            <option>Rea May Manlunas</option>
-            <option>Sheardeeh Zurrielle Fernandez</option>
-            <option>Inalyn Kim Tamayo</option>
-            <option>Beverly Consolacion</option>
-            <option>Ryu Colita</option>
-            <option>Justin Misajon</option>
-            <option>Elmer John Catalan</option>
-          </select>
-        </div>
-      </div>
-      <div id="passenger-container">
-        <!-- New passenger fields will be appended here -->
-      </div>
-      <div id="date-time-container">
-        <div class="input-group datetime-group">
-          <div class="input-field">
-            <label>Date</label>
-            <div class="date-field">
-              <input type="date" id="date_start" name="date_start[]" disabled/>
-              <label for="date_start" class="below-label1">Start</label>
+      <input type="hidden" name="VRequestID" value="{{ $requestLogData-> VRequestID }}">
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="officeName">Requesting Office</label>
+                    <input type="text" id="officeName" name="officeName"
+                           value="{{ $requestLogData->office->OfficeName ?? '' }}" placeholder="-" readonly>
+                </div>
+                <div class="input-field">
+                    <label>Purpose</label>
+                    <input type="text" id="purpose" name="purpose"
+                           value="{{ optional(App\Models\PurposeRequest::find($requestLogData->PurposeID))->purpose ?? $requestLogData->PurposeOthers }}"
+                           placeholder="-"
+                           readonly>
+                </div>
             </div>
-            <div class="date-field">
-              <input type="date" id="date_end" name="date_end[]" disabled/>
-              <label for="date_end" class="below-label2">End</label>
+            <div class="input-group">
+                <div class="input-field">
+                    <label>Destination</label>
+                    <input type="text" name="Destination" placeholder="Enter Place"
+                           value="{{ $requestLogData->Destination }}" readonly/>
+                </div>
+                <div class="input-field">
+                    <label>Passenger/s</label>
+                    <ul>
+                        @if(isset($passengers) && $passengers->isNotEmpty())
+                            <p>Total Passengers: {{ $passengers->count() }}</p>
+                            @foreach($passengers as $passenger)
+                                <li id="passengers" name="passengers[]"
+                                    value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</li>
+                            @endforeach
+                        @else
+                            <li>No passengers found</li>
+                        @endif
+                    </ul>
+                </div>
             </div>
-          </div>
-          <div class="input-field">
-            <label>Time Needed</label>
-            <input type="time" name="time_start[]" disabled/>
-          </div>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-field">
-          <label>Requested By</label>
-          <input type="text" name="requested_by" placeholder="Enter Name" readonly/>
-        </div>
-        <div class="input-field">
-          <label>Email Requester</label>
-          <input type="text" name="email_requester" placeholder="Enter Email" readonly/>
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="input-field">
-          <label>Contact No.</label>
-          <input type="text" name="contact_no" placeholder="Enter No." readonly/>
-        </div>
-        <div class="input-field">
-          <label for="e-signature">E-Signature</label>
-          <div class="file-upload" style="pointer-events: none;">
-            <input type="file" id="e-signature" name="e-signature" style="display: none;" disabled>
-            <div class="e-signature-text">
-              Click to upload e-sign.<br>Maximum file size: 31.46MB
+            <div id="passenger-container">
+                <!-- New passenger fields will be appended here -->
             </div>
-            <img id="signature-preview" alt="Signature Preview">
-          </div>
-        </div>
-      </div>
-    </form>
+            <div id="date-time-container">
+                <div class="input-group datetime-group">
+                    <div class="input-field">
+                        <label>Date</label>
+                        <div class="date-field">
+                            <input type="date" id="date_start" name="date_start[]"
+                                   value="{{ $requestLogData->date_start }}" readonly/>
+                            <label for="date_start" class="below-label1">Start</label>
+                        </div>
+                        <div class="date-field">
+                            <input type="date" id="date_end" name="date_end[]" value="{{ $requestLogData->date_end }}"
+                                   readonly/>
+                            <label for="date_end" class="below-label2">End</label>
+                        </div>
+                    </div>
+                    <div class="input-field">
+                        <label>Time</label>
+                        <input type="time" name="time_start[]" value="{{ $requestLogData->time_start }}" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group">
+                <div class="input-field">
+                    <label>Requester Name</label>
+                    <input type="text" name="RequesterName" placeholder="Enter Name"
+                           value="{{ $requestLogData->RequesterName }}" required/>
+                </div>
+                <div class="input-field">
+                    <label>Requester Email</label>
+                    <input type="text" name="RequesterEmail" placeholder="Enter Email"
+                           value="{{ $requestLogData->RequesterEmail }}" readonly/>
+                </div>
+            </div>
+            <div class="input-group">
+                <div class="input-field">
+                    <label>Contact No.</label>
+                    <input type="text" name="RequesterContact" placeholder="Enter No."
+                           value="{{ $requestLogData->RequesterContact }}" readonly/>
+                </div>
+                <div class="input-field">
+                    <label for="RequesterSignature">E-Signature</label>
+                    <div class="file-upload">
+                        <img id="signature-preview"
+                             src="{{ $requestLogData->RequesterSignature ? asset('storage/' . $requestLogData->RequesterSignature) : '' }}"
+                             alt="Signature Preview"
+                             style="{{ $requestLogData->RequesterSignature ? 'display: block;' : 'display: none;' }}"
+                             readonly>
+                    </div>
+                </div>
+            </div>
+        </form>
   </div>
   <div id="app">
     <!-- Dispatcher Section -->
@@ -514,9 +519,20 @@
       </form>
     </div>
   </div>
+        <div class="form-footer">
+            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+        </div>
 </div>
 
 <script>
+function cancelForm() {
+        window.location.href = '/VehicleLogs';
+    }
+
+    // Attach the cancelForm function to the cancel button
+    document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
+
+
   function showDispatcher() {
     var dispatcherForm = document.getElementById("dispatcher-form");
     dispatcherForm.style.display = "block";
