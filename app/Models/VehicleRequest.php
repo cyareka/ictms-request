@@ -106,4 +106,14 @@ class VehicleRequest extends Model
     {
         return $this->belongsTo(User::class, 'ReceivedBy');
     }
+
+    public function vehicle(): BelongsTo
+{
+    return $this->belongsTo(Vehicle::class, 'VehicleID');
+}
+
+    public function asignatory(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'ASignatory');
+    }
 }

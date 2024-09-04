@@ -393,7 +393,7 @@
             </button>
         </div>
         <div id="dispatcher-form">
-            <form class="row-dispatch">
+        <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="name">Driver Name</label>
@@ -424,18 +424,18 @@
                     </div>
                     <div class="inline">
                         <label for="CkName">Received by</label>
-                        <input type="text" id="CkName" name="CkName" value="{{ $requestLogData->ReceivedBy  ?? '-' }}"
+                        <input type="text" id="CkName" name="CkName" value="{{ $requestLogData->receivedBy->name  ?? '-' }}"
                                placeholder="Enter Office" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="date">Date Start</label>
-                        <input type="date" id="date" name="date[]" readonly>
+                        <input type="date" id="date" name="date[]" value="{{ $requestLogData-> date_start ?? '-'}}" readonly>
                     </div>
                     <div class="inline">
                         <label for="time">Time</label>
-                        <input type="time" id="dtime" name="time[]" readonly>
+                        <input type="time" id="dtime" name="time[]" value="{{ $requestLogData->time_start }}" readonly>
                     </div>
                     <div class="inline">
                         <label for="remark">Remarks</label>
@@ -452,7 +452,7 @@
             </button>
         </div>
         <div id="admin-service-form">
-            <form class="row-dispatch">
+             <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="availability">Availability</label>
@@ -471,29 +471,29 @@
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="VName">Approving Authority</label>
-                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->AAuthority->AAName ?? '-' }}"
+                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->AAuth->AAName ?? '-' }}"
                                placeholder="Enter Authority" readonly>
                     </div>
                     <div class="inline">
                         <label for="VName">Approving Authority Position</label>
-                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->AAuthority->AAPosition  ?? '-' }}" placeholder="Enter Position" readonly>
+                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->AAuth->AAPosition  ?? '-' }}" placeholder="Enter Position" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="VName">SO Approving Authority</label>
-                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->SOAuthority->SOName ?? '-' }}" placeholder="Enter Authority" readonly>
+                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->SOAuth->SOName ?? '-' }}" placeholder="Enter Authority" readonly>
                     </div>
                     <div class="inline">
                         <label for="VName">SO Approving Authority Position</label>
                         <input type="text" id="VName" name="VName"
-                               value="{{ $requestLogData->SOAuthority->SOPosition  ?? '-' }}" placeholder="Enter Position" readonly>
+                               value="{{ $requestLogData->SOAuth->SOPosition  ?? '-' }}" placeholder="Enter Position" readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="VName">Authorized Signatory</label>
-                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->authorizedSignatory }}"
+                        <input type="text" id="VName" name="VName" value="{{ $requestLogData->asignatory->name ?? '-'}}"
                                placeholder="Enter Signatory" readonly>
                     </div>
                     <div class="inline">
