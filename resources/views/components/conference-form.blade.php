@@ -626,26 +626,37 @@
      *
      * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
      */
-      function toggleInputField(fieldName) {
-    const selectField = document.getElementById(`${fieldName}Select`);
-    const inputField = document.getElementById(`${fieldName}Input`);
-    const checkbox = document.getElementById(`${fieldName}Checkbox`);
-
-    if (checkbox.checked) {
-        selectField.style.display = 'none';
-        inputField.style.display = 'block';
-        inputField.required = true;
-        selectField.required = false;
-        selectField.value = ''; // Clear the select value to avoid conflicts
-    } else {
-        selectField.style.display = 'block';
-        inputField.style.display = 'none';
-        inputField.required = false;
-        selectField.required = true;
-        inputField.value = ''; // Clear the input value to avoid conflicts
+  
+     document.addEventListener('DOMContentLoaded', function () {
+    // Check if there is old input for the focal person and toggle the input field accordingly
+    if ("{{ old('focalPersonInput') }}") {
+        document.getElementById('focalPersonInput').style.display = 'block';
+        document.getElementById('focalPersonSelect').style.display = 'none';
+        document.getElementById('focalPersonCheckbox').checked = true;
     }
-}
 
+    // Check if there is old input for the purpose and toggle the input field accordingly
+    if ("{{ old('purposeInput') }}") {
+        document.getElementById('purposeInput').style.display = 'block';
+        document.getElementById('purposeSelect').style.display = 'none';
+        document.getElementById('purposeCheckbox').checked = true;
+    }
+
+    // Function to toggle the input field for focal person and purpose
+    window.toggleInputField = function (field) {
+        var inputField = document.getElementById(field + 'Input');
+        var selectField = document.getElementById(field + 'Select');
+        var checkbox = document.getElementById(field + 'Checkbox');
+
+        if (checkbox.checked) {
+            inputField.style.display = 'block';
+            selectField.style.display = 'none';
+        } else {
+            inputField.style.display = 'none';
+            selectField.style.display = 'block';
+        }
+    };
+});
 </script>
 </body>
 </html>

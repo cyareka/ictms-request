@@ -779,21 +779,29 @@ function validateForm() {
     return true;
 }
 
-    function toggleInputField(fieldName) {
-        const checkbox = document.getElementById(`${fieldName}Checkbox`);
-        const selectField = document.getElementById(`${fieldName}Select`);
-        const inputField = document.getElementById(`${fieldName}Input`);
-
-        if (checkbox.checked) {
-            selectField.style.display = 'none';
-            inputField.style.display = 'block';
-            checkbox.value = 'on'; // Update the checkbox value
-        } else {
-            selectField.style.display = 'block';
-            inputField.style.display = 'none';
-            checkbox.value = ''; // Update the checkbox value
+document.addEventListener('DOMContentLoaded', function () {
+        // Check if there is old input for the purpose and toggle the input field accordingly
+        if ("{{ old('purposeInput') }}") {
+            document.getElementById('purposeInput').style.display = 'block';
+            document.getElementById('purposeSelect').style.display = 'none';
+            document.getElementById('purposeCheckbox').checked = true;
         }
-    }
+
+        // Function to toggle the input field for purpose
+        window.toggleInputField = function (field) {
+            var inputField = document.getElementById(field + 'Input');
+            var selectField = document.getElementById(field + 'Select');
+            var checkbox = document.getElementById(field + 'Checkbox');
+
+            if (checkbox.checked) {
+                inputField.style.display = 'block';
+                selectField.style.display = 'none';
+            } else {
+                inputField.style.display = 'none';
+                selectField.style.display = 'block';
+            }
+        };
+    });
 
 </script>
 </body>
