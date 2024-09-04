@@ -180,21 +180,11 @@ class VehicleController extends Controller
                 'EventStatus' => 'nullable|string|in:-,Ongoing,Finished,Cancelled',
             ]);
 
-            if ($request->hasFile('certfile-upload')) {
-                $file = $request->file('certfile-upload')->store('uploads/vehicle_request/files', 'public');
-                $validated['certfile-upload'] = $file;
-            }
-
             Log::info('Request Data:', $request->all());
 
-            $validated['driver'] = $request->input('DriverID'); // Ensure 'driver' is the select field name
-            $validated['VName'] = $request->input('VehicleID'); // Ensure 'VName' is the select field name
-            Log::info('Validated Data:', $validated);
-
-            Log::info('AAID Input:', ['AAuth' => $request->input('AAuth')]);
-            $validated['AAID'] = $request->input('AAuth'); // Ensure 'AAuth' is the correct input name
-
-            Log::info('SOID Input:', ['SOAuth' => $request->input('SOAuth')]);
+            $validated['driver'] = $request->input('DriverID');
+            $validated['VName'] = $request->input('VehicleID');
+            $validated['AAID'] = $request->input('AAuth');
             $validated['SOID'] = $request->input('SOAuth');
 
             // Convert the signatory name to an ID
@@ -206,6 +196,19 @@ class VehicleController extends Controller
                 }
                 $validated['ASignatory'] = $userId;
                 $validated['ReceivedBy'] = $userId;
+            }
+
+
+            if ($request->hasFile('certfile-upload')) {
+                $VRequestID = $request->input('VRequestID');
+                $ReceivedBy = $request->input('ReceivedBy');
+                $FormStatus = $request->input('FormStatus');
+                $EventStatus = $request->input('EventStatus');
+                $currentDate = now()->format('mdY');
+
+                $newFileName = "{$VRequestID}_{$ReceivedBy}_{$currentDate}_{$FormStatus}_{$EventStatus}." . $request->file('certfile-upload')->getClientOriginalExtension();
+                $file = $request->file('certfile-upload')->storeAs('uploads/vehicle_request/files', $newFileName, 'public');
+                $validated['certfile-upload'] = $file;
             }
 
             $vehicleRequest->update($validated);
@@ -274,7 +277,7 @@ class VehicleController extends Controller
                 }
             }
 
-            return redirect()->back()->with('success', 'Vehicle request updated successfully.');
+            return redirect()->route('VehicledetailEdit', ['VRequestID' => $VRequestID])->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
             Log::error('Validation failed in updateVForm:', [
                 'errors' => $e->errors(),

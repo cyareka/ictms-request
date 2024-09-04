@@ -660,9 +660,7 @@
                         <div class="file-upload">
                             <label for="certfile-upload" id="certificate-preview-label">
                                 <div id="certificate-preview-container">
-                                    <div id="default-text">
-                                        Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
-                                    </div>
+                                    <div id="default-text">No file uploaded</div>
                                     <div id="certificate-preview"></div>
                                 </div>
                             </label>
@@ -935,6 +933,57 @@
         }
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
+    const existingFilePath = '{{ $requestData["certfile-upload"] ?? "" }}';
+    const filePreview = document.getElementById('certificate-preview');
+    const defaultText = document.getElementById('default-text');
+    const filePathInput = document.getElementById('certfile-path');
+
+    // Function to preview the file
+    function previewFile(file) {
+        filePreview.innerHTML = '';
+
+        if (file.type === 'application/pdf') {
+            const fileLink = document.createElement('a');
+            fileLink.textContent = `${file.name}`;
+            fileLink.style.color = 'green';
+            fileLink.href = URL.createObjectURL(file);
+            fileLink.target = '_blank';
+            filePreview.appendChild(fileLink);
+        } else if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.style.maxWidth = '100px';
+            img.style.maxHeight = '100px';
+            filePreview.appendChild(img);
+        } else {
+            filePreview.textContent = 'Please upload a valid PDF or image file.';
+            filePreview.style.color = 'red';
+        }
+
+        filePathInput.value = file.name;
+    }
+
+    // Display existing file if present
+    if (existingFilePath) {
+        defaultText.style.display = 'none';
+        const fileLink = document.createElement('a');
+        fileLink.textContent = existingFilePath.split('/').pop();
+        fileLink.style.color = 'green';
+        fileLink.href = `{{ asset('storage/' . $requestData['certfile-upload']) }}`;
+        fileLink.target = '_blank';
+        filePreview.appendChild(fileLink);
+    }
+
+    // Event listener for file upload
+    document.getElementById('certfile-upload').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            defaultText.style.display = 'none';
+            previewFile(file);
+        }
+    });
+});
 
     function toggleDispatcher() {
         var dispatcherForm = document.getElementById("dispatcher-form");
@@ -987,8 +1036,6 @@
     // Vehicle select change event
     document.getElementById('VehicleID').addEventListener('change', updateVehicleInfo);
 });
-
-
 </script>
 </body>
 </html>
