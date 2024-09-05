@@ -107,9 +107,11 @@
                         <td>{{ $request->EventStatus }}</td>
                         <td>
                             <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
-                            <a href="{{ route('downloadCRequestPDF', $request->CRequestID) }}">
-                                <i class="bi bi-download" id="actions"></i>
-                            </a>
+                            @if($request->FormStatus !== 'Pending')
+                                <a href="{{ route('downloadCRequestPDF', $request->CRequestID) }}">
+                                    <i class="bi bi-download" id="actions"></i>
+                                </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
@@ -209,7 +211,7 @@
                             <td>${request.EventStatus}</td>
                             <td>
                                 <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                                <a href="/conferencerequest/${request.CRequestID}/view-pdf"><i class="bi bi-download" id="actions" data-request-id="{{ $request->CRequestID }}"></i></a>
+                                ${request.FormStatus !== 'Pending' ? `<a href="/conferencerequest/${request.CRequestID}/view-pdf"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>` : ''}
                             </td>
                         </tr>`;
                         tbody.insertAdjacentHTML('beforeend', row);
