@@ -107,7 +107,9 @@
                         <td>{{ $request->EventStatus }}</td>
                         <td>
                             <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
-                            <i class="bi bi-download" id="actions"></i>
+                            <a href="{{ route('downloadCRequestPDF', $request->CRequestID) }}">
+                                <i class="bi bi-download" id="actions"></i>
+                            </a>
                         </td>
                     </tr>
                 @endforeach
@@ -169,7 +171,7 @@
                     data.forEach(request => {
                         console.log("Full request object:", request);
                         console.log("Processing CRequestID:", request.CRequestID);
-                        
+
                         let formStatusClass = '';
                         switch(request.FormStatus.toLowerCase()) {
                             case 'approved':
@@ -207,7 +209,7 @@
                             <td>${request.EventStatus}</td>
                             <td>
                                 <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                                <i class="bi bi-download" id="actions"></i>
+                                <a href="/conferencerequest/${request.CRequestID}/view-pdf"><i class="bi bi-download" id="actions" data-request-id="{{ $request->CRequestID }}"></i></a>
                             </td>
                         </tr>`;
                         tbody.insertAdjacentHTML('beforeend', row);

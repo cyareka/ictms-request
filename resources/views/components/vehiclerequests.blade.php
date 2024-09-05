@@ -108,7 +108,7 @@
                     <td>{{ $request->EventStatus }}</td>
                     <td>
                         <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
+                        <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
                     </td>
                 </tr>
             @endforeach
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td>${request.EventStatus}</td>
                 <td>
                     <a href="/vehicledetail/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
+                    <i class="bi bi-download" id="actions" data-request-id="${request.VRequestID}"></i>
                 </td>
             </tr>`;
                 tbody.insertAdjacentHTML('beforeend', row);

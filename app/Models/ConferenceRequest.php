@@ -18,8 +18,8 @@ class ConferenceRequest extends Model
 
     protected $table = 'conference_room_requests';
     protected $primaryKey = 'CRequestID';
-    public $incrementing = false; 
-    protected $keyType = 'string'; 
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'CRequestID',
@@ -62,7 +62,13 @@ class ConferenceRequest extends Model
     {
         return $this->belongsTo(ConferenceRoom::class, 'CRoomID');
     }
-    public function purposeRequest() {
-        return $this->belongsTo(PurposeRequest::class, 'PurposeID',); // Adjust as necessary
+    public function purposeRequest(): BelongsTo
+    {
+        return $this->belongsTo(PurposeRequest::class, 'PurposeID',);
+    }
+
+    public function focalPerson(): BelongsTo
+    {
+        return $this->belongsTo(FocalPerson::class, 'FocalPID',);
     }
 }

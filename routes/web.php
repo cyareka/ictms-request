@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\ConferenceController;
+use App\Http\Controllers\DownloadsController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
@@ -127,6 +128,9 @@ Route::middleware([
         [EmployeeController::class, 'store'])->name('employee.store');
     Route::post('/focalP',
         [NFocalPController::class, 'store'])->name('focalP.store');
+
+    // Downloads
+    Route::get('/conferencerequest/{CRequestID}/view-pdf', [DownloadsController::class, 'downloadCRequestPDF'])->name('downloadCRequestPDF');
 });
 
 // USER ROUTES
