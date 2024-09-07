@@ -171,7 +171,6 @@ class VehicleController extends Controller
                 'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
                 'Remarks' => 'nullable|string|max:255',
-                'Availability' => 'nullable|string|max:50',
                 'AAID' => 'nullable|string|exists:a_authorities,AAID',
                 'SOID' => 'nullable|string|exists:so_authorities,SOID',
                 'ASignatory' => 'nullable|string|max:50',  // Allow string initially
@@ -198,7 +197,6 @@ class VehicleController extends Controller
                 $validated['ReceivedBy'] = $userId;
             }
 
-
             if ($request->hasFile('certfile-upload')) {
                 $VRequestID = $request->input('VRequestID');
                 $ReceivedBy = $request->input('ReceivedBy');
@@ -213,7 +211,7 @@ class VehicleController extends Controller
 
             $vehicleRequest->update($validated);
 
-            if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
+/*            if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
                 $vehicleRequest->VAvailability = true;
                 $vehicleRequest->save();
 
@@ -275,7 +273,7 @@ class VehicleController extends Controller
                         ]);
                     }
                 }
-            }
+            }*/
 
             return redirect()->route('VehicledetailEdit', ['VRequestID' => $VRequestID])->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
@@ -464,7 +462,6 @@ class VehicleController extends Controller
             return view('VehicledetailEdit')->with('error', 'Failed to fetch request data.');
         }
     }
-
 
     public function fetchVStatistics(): \Illuminate\Http\JsonResponse
     {

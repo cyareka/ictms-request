@@ -7,6 +7,7 @@ use App\Models\VehicleRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException;
 use setasign\Fpdi\PdfParser\Filter\FilterException;
@@ -101,7 +102,7 @@ class DownloadsController extends Controller
             }
 
             // I instead of F to output the PDF to the browser
-            $pdf->Output('I', 'demo.pdf');
+            $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Request.pdf');
         } catch (Throwable $e) {
             Log::error('Error in downloadCRequestPDF method.', [
                 'exception' => $e->getMessage(),
@@ -111,6 +112,27 @@ class DownloadsController extends Controller
                 'error' => 'An error occurred while generating the PDF.',
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function downloadFinalCRequestPDF(Request $request, $CRequestID)
+    {
+        $conferenceRequest = ConferenceRequest::with('conferenceRoom', 'purposeRequest', 'focalPerson')
+            ->where('CRequestID', $CRequestID)
+            ->firstOrFail();
+
+        $certFilePath = $conferenceRequest['certfile-upload'];
+
+        if (Storage::disk('public')->exists($certFilePath)) {
+            $fileContents = Storage::disk('public')->get($certFilePath);
+            Log::info('File contents retrieved.', ['fileContents' => $fileContents]);
+
+            return response($fileContents, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="' . basename($certFilePath) . '"');
+        } else {
+            Log::error('File not found.', ['filePath' => $certFilePath]);
+            return response()->json(['error' => 'File not found'], 404);
         }
     }
 }

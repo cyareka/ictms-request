@@ -103,7 +103,6 @@
                     <td>{{ $request->office->OfficeName }}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
-                    <td>{{ convertAvailability($request->VAvailability) }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>

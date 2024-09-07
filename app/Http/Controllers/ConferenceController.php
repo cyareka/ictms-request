@@ -178,7 +178,14 @@ class ConferenceController extends Controller
             ]);
 
             if ($request->hasFile('certfile-upload')) {
-                $file = $request->file('certfile-upload')->store('uploads/confe_request/files', 'public');
+                $CRequestID = $request->input('CRequestID');
+                $ReceivedBy = $request->input('ReceivedBy');
+                $FormStatus = $request->input('FormStatus');
+                $EventStatus = $request->input('EventStatus');
+                $currentDate = now()->format('mdY');
+
+                $newFileName = "{$CRequestID}_{$ReceivedBy}_{$currentDate}_{$FormStatus}_{$EventStatus}." . $request->file('certfile-upload')->getClientOriginalExtension();
+                $file = $request->file('certfile-upload')->storeAs('uploads/confe_request/files', $newFileName, 'public');
                 $validated['certfile-upload'] = $file;
             }
 
