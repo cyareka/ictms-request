@@ -105,6 +105,7 @@ class ConferenceController extends Controller
                 $existingRequests = ConferenceRequest::query()
                     ->where('CRoomID', $conferenceRoom->CRoomID)
                     ->where('FormStatus', 'Approved')
+                    ->where('EventStatus', 'Ongoing')
                     ->get();
 
                 $availability = true;

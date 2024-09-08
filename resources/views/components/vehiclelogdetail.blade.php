@@ -454,11 +454,11 @@
         <div id="admin-service-form">
              <form action="/vehicle-request" method="POST" enctype="multipart/form-data">
                 <div class="row-dispatch">
-                    <div class="inline">
-                        <label for="availability">Availability</label>
-                        <input type="text" id="availability" name="availability"
-                               value="{{ $requestLogData->VAvailability }}" placeholder="Enter Availability" readonly>
-                    </div>
+{{--                    <div class="inline">--}}
+{{--                        <label for="availability">Availability</label>--}}
+{{--                        <input type="text" id="availability" name="availability"--}}
+{{--                               value="{{ $requestLogData->VAvailability }}" placeholder="Enter Availability" readonly>--}}
+{{--                    </div>--}}
                     <div class="inline">
                         <label for="formStatus">Form Status</label>
                         <input type="text" id="formStatus" name="formStatus" value="{{ $requestLogData->FormStatus }}" placeholder="Enter Form Status" readonly>
@@ -497,14 +497,14 @@
                                placeholder="Enter Signatory" readonly>
                     </div>
                     <div class="inline">
-                        <label for="e-signature">File Upload</label>
-                        <div class="file-upload" style="pointer-events: none;">
-                            <input type="file" id="e-signature" name="e-signature" style="display: none;" disabled>
-                            <div class="e-signature-text">
-                                Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB
-                            </div>
-                            <img id="signature-preview" alt="Signature Preview">
-                        </div>
+{{--                        <label for="e-signature">File Upload</label>--}}
+{{--                        <div class="file-upload" style="pointer-events: none;">--}}
+{{--                            <input type="file" id="e-signature" name="e-signature" style="display: none;" disabled>--}}
+{{--                            <div class="e-signature-text">--}}
+{{--                                Click to Upload Certificate of Non-Availability<br>Maximum file size: 31.46MB--}}
+{{--                            </div>--}}
+{{--                            <img id="signature-preview" alt="Signature Preview">--}}
+{{--                        </div>--}}
                     </div>
                 </div>
             </form>

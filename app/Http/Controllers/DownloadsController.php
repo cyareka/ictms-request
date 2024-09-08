@@ -232,4 +232,31 @@ class DownloadsController extends Controller
             ], 500);
         }
     }
+
+    public function downloadRangeVRequestPDF(Request $request, $VRequestID)
+    {
+        $validated = $request->validate([
+            'VRequestID' => 'string|exists:conference_room_requests,CRequestID',
+        ]);
+        Log::info('Validation successful.', ['validated' => $validated]);
+
+        $vehicleRequest = ConferenceRequest::with('conferenceRoom', 'purposeRequest', 'focalPerson')
+            ->where('CRequestID', $VRequestID)
+            ->firstOrFail();
+
+        $pdf = new Fpdi();
+        $pdf->AddPage();
+        $sourceFile = public_path('storage/uploads/templates/croom_forms/CR_req_for_use.pdf');
+
+        if (!file_exists($sourceFile)) {
+            Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
+            return response()->json(['error' => 'Source file does not exist.'], 500);
+        }
+
+        $pdf->setSourceFile($sourceFile);
+        $tplIdx = $pdf->importPage(1);
+        $pdf->useTemplate($tplIdx, 0, 0, 210);
+
+        $pdf->SetTextColor(0, 0, 0);
+    }
 }

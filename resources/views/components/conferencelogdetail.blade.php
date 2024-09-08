@@ -313,8 +313,9 @@
             </div>
             <div class="inline-field ">
                 <label for="purpose">Purpose</label>
-                <input type="text" id="purpose" name="purpose" value="{{ $requestLogData->Purpose }}" placeholder="-"
-                       readonly>
+                <input type="text" id="purpose" name="purpose"
+                       value="{{ optional(App\Models\PurposeRequest::find($requestLogData->PurposeID))->purpose ?? $requestLogData->PurposeOthers }}"
+                       placeholder="-" readonly>
             </div>
         </div>
         <div class="row-group-container">
