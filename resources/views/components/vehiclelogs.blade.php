@@ -1,31 +1,21 @@
 <style>
-    .modal {
-        position: fixed; /* Stay in place */
-        z-index: 1000; /* Increased z-index to ensure it appears in front */
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 100%; /* Full width */
-        height: 100%; /* Full height */
-        overflow: auto; /* Enable scroll if needed */
-        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+     .modal-container {
         display: flex;
         justify-content: center;
         align-items: center;
+        position: fixed;
+        top: -10%;
+        left: 73%;
+        width: 20%;
+        height: 100%;
     }
 
     .modal-content {
-        background-color: #fefefe;
+        background-color: #fff;
         padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 500px; /* Max width for the modal */
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        border-radius: 10px;
-        position: relative;
-        z-index: 1001; /* Ensure modal content is above the modal background */
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-
     .close {
         color: #aaa;
         position: absolute;
@@ -92,6 +82,7 @@
                 <a href="javascript:void(0);" id="downloadLink"><i class="bi bi-download"
                                                                    style="font-size:16px; margin-right:14px;"></i></a>
                 <div id="dateRangeModal" class="modal" style="display: none;">
+                <div class="modal-container">
                     <div class="modal-content">
                         <span class="close">&times;</span>
                         <h2>Select Date Range</h2>
@@ -109,6 +100,7 @@
                             </div>
                         </form>
                     </div>
+                </div>
                 </div>
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
