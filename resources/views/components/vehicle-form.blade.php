@@ -55,7 +55,7 @@
 
         .input-field label {
             margin-right: 10px;
-            width: 150px;
+            width: 169px;
         }
 
         .input-field input,
@@ -383,7 +383,6 @@
 
         }
         .checkbox {
-            margin-left: 5px;
             position: relative;
         }
 
@@ -397,23 +396,22 @@
             padding: 3px 6px;
             border-radius: 5px;
             font-size: 12px;
-            white-space: nowrap;
+            /* white-space: nowrap; */
         }
 
-        #purposeTextBox {
-            width: 40%;
-            right: 20px;
-            padding: 10px;
+        #purposeCheckbox {
+            width: 100%;
+            height: 19px;
+            padding: 5px;
             border: 1px solid rgba(60, 54, 51, 0.5);
-            border-radius: 15px;
+            border-radius: 1px;
             box-sizing: border-box;
-            margin-top: 5px;
+            margin-left: 5px;
         }
 
         .checkbox input[type="checkbox"]:checked + #purposeTextBox {
             display: block;
         }
-
 
     </style>
 </head>
@@ -459,8 +457,8 @@
                     </select>
                 </div>
                 <div class="input-field">
-                <label for="purpose">Purpose</label>
-                <select id="purposeSelect" name="purposeSelect">
+                <label for="purpose">Purpose <span class="required">*</span></label>
+                <select id="purposeSelect" name="purposeSelect" required>
                     <option disabled selected>Select Purpose</option>
                     @foreach(App\Models\PurposeRequest::where('request_p', 'Vehicle')->get() as $purpose)
                         <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>{{ $purpose->purpose }}
