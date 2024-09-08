@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         // Register the command
         $this->commands([
             \App\Console\Commands\UpdateConferenceRequestStatus::class,
+            \App\Console\Commands\ClearLogs::class,
         ]);
     }
 }

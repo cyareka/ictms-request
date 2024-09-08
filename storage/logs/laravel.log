@@ -1,0 +1,33 @@
+[2024-09-08 14:37:45] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:37:45] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" between ? and ? or \"date_end\" between ? and ?) or (\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:37:45] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:37:52] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:37:52] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" between ? and ? or \"date_end\" between ? and ?) or (\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:37:52] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:38:01] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:38:01] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" between ? and ? or \"date_end\" between ? and ?) or (\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:38:01] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:39:20] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:39:20] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:39:32] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:39:32] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:40:30] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:40:30] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((strftime('%Y-%m-%d', \"date_start\") >= cast(? as text) and strftime('%Y-%m-%d', \"date_start\") <= cast(? as text) or (strftime('%Y-%m-%d', \"date_end\") >= cast(? as text) and strftime('%Y-%m-%d', \"date_end\") <= cast(? as text))) or (strftime('%Y-%m-%d', \"date_start\") <= cast(? as text) and strftime('%Y-%m-%d', \"date_end\") >= cast(? as text)))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:40:30] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:41:17] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:41:17] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((strftime('%Y-%m-%d', \"date_start\") >= cast(? as text) and strftime('%Y-%m-%d', \"date_start\") <= cast(? as text) or (strftime('%Y-%m-%d', \"date_end\") >= cast(? as text) and strftime('%Y-%m-%d', \"date_end\") <= cast(? as text))) or (strftime('%Y-%m-%d', \"date_start\") <= cast(? as text) and strftime('%Y-%m-%d', \"date_end\") >= cast(? as text)))","bindings":["2024-09-01 00:00:00","2024-09-30 23:59:59","2024-09-01 00:00:00","2024-09-30 23:59:59","2024-09-30 23:59:59","2024-09-01 00:00:00"]} 
+[2024-09-08 14:41:17] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:42:16] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:42:16] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((strftime('%Y-%m-%d', \"date_start\") >= cast(? as text) and strftime('%Y-%m-%d', \"date_start\") <= cast(? as text) or (strftime('%Y-%m-%d', \"date_end\") >= cast(? as text) and strftime('%Y-%m-%d', \"date_end\") <= cast(? as text))) or (strftime('%Y-%m-%d', \"date_start\") <= cast(? as text) and strftime('%Y-%m-%d', \"date_end\") >= cast(? as text)))","bindings":["2024-09-01 00:00:00","2024-09-30 23:59:59","2024-09-01 00:00:00","2024-09-30 23:59:59","2024-09-30 23:59:59","2024-09-01 00:00:00"]} 
+[2024-09-08 14:42:16] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:43:17] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:43:17] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" >= ? and \"date_start\" <= ? or (\"date_end\" >= ? and \"date_end\" <= ?)) or (\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:43:17] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:44:52] local.INFO: Validation successful. {"validated":{"startDate":"2024-09-01","endDate":"2024-09-30"}} 
+[2024-09-08 14:44:52] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" >= ? and \"date_start\" <= ? or (\"date_end\" >= ? and \"date_end\" <= ?)) or (\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:44:52] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:46:48] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" >= ? and \"date_start\" <= ? or (\"date_end\" >= ? and \"date_end\" <= ?)) or (\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:46:48] local.ERROR: No vehicle requests found within the specified date range.  
+[2024-09-08 14:47:52] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" >= ? and \"date_start\" <= ? or (\"date_end\" >= ? and \"date_end\" <= ?)) or (\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-01","2024-09-30","2024-09-01","2024-09-30","2024-09-30","2024-09-01"]} 
+[2024-09-08 14:50:12] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-30","2024-09-01"]} 
+[2024-09-08 14:51:13] local.INFO: Query executed: {"query":"select * from \"vehicle_request\" where ((\"date_start\" <= ? and \"date_end\" >= ?))","bindings":["2024-09-30","2024-09-01"]} 

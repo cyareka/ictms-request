@@ -86,7 +86,8 @@
                     <div class="modal-content">
                         <span class="close">&times;</span>
                         <h2>Select Date Range</h2>
-                        <form id="dateRangeForm">
+                        <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
+                            @csrf
                             <div class="form-group">
                                 <label for="startDate">Start Date:</label>
                                 <input type="date" id="startDate" name="startDate" required>
@@ -209,7 +210,7 @@
         }
 
         window.onclick = function (event) {
-            if (event.target == modal) {
+            if (event.target === modal) {
                 modal.style.display = 'none';
             }
         }
@@ -219,7 +220,7 @@
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
 
-            const url = `/download-pdf?startDate=${startDate}&endDate=${endDate}`;
+            const url = `/vehiclerequest/view-logs?startDate=${startDate}&endDate=${endDate}`;
             window.open(url, '_blank');
             modal.style.display = 'none';
         });

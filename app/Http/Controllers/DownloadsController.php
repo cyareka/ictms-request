@@ -233,30 +233,76 @@ class DownloadsController extends Controller
         }
     }
 
-    public function downloadRangeVRequestPDF(Request $request, $VRequestID)
+    public function downloadRangeVRequestPDF(Request $request)
     {
+        // Validate the input parameters
         $validated = $request->validate([
-            'VRequestID' => 'string|exists:conference_room_requests,CRequestID',
+            'startDate' => 'required|date',
+            'endDate' => 'required|date|after_or_equal:startDate',
         ]);
-        Log::info('Validation successful.', ['validated' => $validated]);
 
-        $vehicleRequest = ConferenceRequest::with('conferenceRoom', 'purposeRequest', 'focalPerson')
-            ->where('CRequestID', $VRequestID)
-            ->firstOrFail();
+        $query = VehicleRequest::query()->where(function ($query) use ($validated) {
+                $query->where(function ($query) use ($validated) {
+                    $query->where('date_start', '<=', $validated['endDate'])
+                        ->where('date_end', '>=', $validated['startDate']);
+                });
+            });
 
-        $pdf = new Fpdi();
-        $pdf->AddPage();
-        $sourceFile = public_path('storage/uploads/templates/croom_forms/CR_req_for_use.pdf');
+        Log::info('Query executed:', [
+            'query' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+        ]);
 
-        if (!file_exists($sourceFile)) {
-            Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
-            return response()->json(['error' => 'Source file does not exist.'], 500);
-        }
+        $vehicleRequests = $query->get();
+        dd($vehicleRequests);
 
-        $pdf->setSourceFile($sourceFile);
-        $tplIdx = $pdf->importPage(1);
-        $pdf->useTemplate($tplIdx, 0, 0, 210);
-
-        $pdf->SetTextColor(0, 0, 0);
+//// Remove this unnecessary query
+//// $vehicleRequests = VehicleRequest::select('date_start', 'date_end')->get();
+//
+//// Instead, use the retrieved data to log the dates
+//        foreach ($vehicleRequests as $request) {
+//            echo "Date Start: " . $request->date_start . "\n";
+//            echo "Date End: " . $request->date_end . "\n";
+//        }
+//
+//        if ($vehicleRequests->isEmpty()) {
+//            Log::error('No vehicle requests found within the specified date range.');
+//            return response()->json(['error' => 'No vehicle requests found within the specified date range.'], 404);
+//        }
+//
+//        $pdf = new Fpdi();
+//        $pdf->AddPage();
+//        $sourceFile = public_path('storage/uploads/templates/vehicle_forms/VR_dailydispatchreport.pdf');
+//
+//        if (!file_exists($sourceFile)) {
+//            Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
+//            return response()->json(['error' => 'Source file does not exist.'], 500);
+//        }
+//
+//        $pdf->setSourceFile($sourceFile);
+//        $tplIdx = $pdf->importPage(1);
+//        $pdf->useTemplate($tplIdx, 0, 0, 210);
+//
+//        $pdf->SetTextColor(0, 0, 0);
+//        $pdf->SetFont('Helvetica', '', 10);
+//
+//        // Example of filling in the PDF with vehicle request data
+//        $yPosition = 50; // Starting Y position for the data
+//        foreach ($vehicleRequests as $request) {
+//            $pdf->SetXY(10, $yPosition);
+//            $pdf->Write(0, $request->VRequestID);
+//            $pdf->SetXY(30, $yPosition);
+//            $pdf->Write(0, $request->date_start);
+//            $pdf->SetXY(60, $yPosition);
+//            $pdf->Write(0, $request->Destination);
+//            $pdf->SetXY(90, $yPosition);
+//            $pdf->Write(0, $request->Purpose);
+//            $pdf->SetXY(120, $yPosition);
+//            $pdf->Write(0, $request->office->OfficeName);
+//            $yPosition += 10; // Move to the next line
+//        }
+//
+//        // Output the PDF to the browser
+//        $pdf->Output('I', 'VR_DailyDispatchReport.pdf');
     }
 }
