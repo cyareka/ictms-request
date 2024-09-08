@@ -114,11 +114,15 @@
                         <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil"
                                                                                                id="actions"></i></a>
                         @if($request->FormStatus === 'For Approval')
-                            <a href="{{ route('downloadCRequestPDF', $request->CRequestID) }}" target="_blank">
-                                <i class="bi bi-download" id="actions"></i>
-                            </a>
+                            <a href="#" onclick="showDownloadModal('{{ route('downloadCRequestPDF', $request->CRequestID) }}', '{{ route('downloadUnavailableCRequestPDF', $request->CRequestID) }}')">
+                                    <i class="bi bi-download" id="actions"></i>
+                                </a>
                         @elseif($request->FormStatus === 'Approved')
                             <a href="{{ route('downloadFinalCRequestPDF', $request->CRequestID) }}" target="_blank">
+                                <i class="bi bi-download" id="actions"></i>
+                            </a>
+                        @elseif($request->FormStatus === 'Pending' && $request->CAvailability === 0)
+                            <a href="{{ route('downloadUnavailableCRequestPDF', $request->CRequestID) }}" target="_blank">
                                 <i class="bi bi-download" id="actions"></i>
                             </a>
                         @endif
@@ -130,8 +134,65 @@
     </div>
 </div>
 <div class="end"></div>
+<style>
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Optional: for a semi-transparent background */
+    }
 
+    .modal-dialog {
+        max-width: 500px; /* Adjust the width as needed */
+        margin: auto;
+    }
+</style>
 <script>
+    function showDownloadModal(requestFormUrl, unavailabilityUrl) {
+        const modalHtml = `
+        <div class="modal" id="downloadModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Download Options</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Which document would you like to download?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="${requestFormUrl}" class="btn btn-primary" target="_blank">Request Form</a>
+                        <a href="${unavailabilityUrl}" class="btn btn-secondary" target="_blank">Certificate of Unavailability</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+            `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        const downloadModal = document.getElementById('downloadModal');
+        downloadModal.style.display = 'flex';
+
+        downloadModal.querySelector('.close').addEventListener('click', function () {
+            downloadModal.style.display = 'none';
+            downloadModal.remove();
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target === downloadModal) {
+                downloadModal.style.display = 'none';
+                downloadModal.remove();
+            }
+        });
+    }
+
     function convertAvailability(availability) {
         return availability > 0 ? 'Available' : 'Not Available';
     }
@@ -223,11 +284,14 @@
                     <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>`;
 
                     if (request.FormStatus === 'For Approval') {
-                        row += `<a href="/conferencerequest/${request.CRequestID}/view-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
+                        row += `<a href="#" onclick="showDownloadModal('/conferencerequest/${request.CRequestID}/view-pdf', '/conferencerequest/${request.CRequestID}/view-unavailable-pdf')">
+                                    <i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i>
+                                </a>`;
+
                     } else if (request.FormStatus === 'Approved') {
                         row += `<a href="/conferencerequest/${request.CRequestID}/view-final-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
-                    }
-
+                    } else if(request.FormStatus === 'Pending' && request.CAvailability === 0)
+                        row += `<a href="/conferencerequest/${request.CRequestID}/view-unavailable-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
                     row += `</td></tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });

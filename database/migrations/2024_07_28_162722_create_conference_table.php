@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('time_start', 9);
             $table->string('time_end', 9);
             $table->integer('npersons');
+            $table->string('AuthRep')->nullable()->default(null);
             $table->string('FocalPID')->nullable()->default(null);
             $table->string('FPOthers')->nullable()->default(null);
             $table->boolean('CAvailability')->default(true)->nullable();
@@ -49,6 +50,7 @@ return new class extends Migration
             $table->foreign('OfficeID')->references('OfficeID')->on('offices')->onDelete('cascade');
             $table->foreign('PurposeID')->references('PurposeID')->on('purpose_requests')->onDelete('cascade');
             $table->foreign('FocalPID')->references('FocalPID')->on('focal_person')->onDelete('cascade');
+            $table->foreign('AuthRep')->references('id')->on('users');
         });
     }
 

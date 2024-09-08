@@ -30,6 +30,7 @@ class ConferenceRequest extends Model
         'FocalPID',
         'FPOthers',
         'CAvailability',
+        'AuthRep',
         'focalPerson',
         'tables',
         'chairs',

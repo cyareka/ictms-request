@@ -53,12 +53,14 @@ class DownloadsController extends Controller
             $tplIdx = $pdf->importPage(1);
             $pdf->useTemplate($tplIdx, 0, 0, 210);
 
-            $pdf->SetFont('Helvetica', '', 10);
             $pdf->SetTextColor(0, 0, 0);
 
             // TOP PART
+            $pdf->SetFont('Helvetica', '', 9);
             $pdf->SetXY(160, 60); // Date Requested
             $pdf->Write(0, $conferenceRequest->created_at);
+
+            $pdf->SetFont('Helvetica', '', 10);
 
             $pdf->SetXY(90, 68); // Requester Name
             $pdf->Write(0, $conferenceRequest->RequesterName);
@@ -69,21 +71,32 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $conferenceRequest->PurposeOthers);
             } else {
                 // Purpose
-                $pdf->Write(0, $conferenceRequest->purposeRequest->PurposeID);
+                $pdf->Write(0, $conferenceRequest->purposeRequest->purpose);
             }
 
-            $pdf->SetXY(90, 85); // Date Needed
+            $pdf->SetXY(90, 85); // Date Start
             $pdf->Write(0, $conferenceRequest->date_start);
 
-            $pdf->SetXY(90, 94); // Time Needed
+            $pdf->SetXY(108, 85); // Date End
+            $pdf->Write(0, ' - ' . $conferenceRequest->date_end);
+
+            $pdf->SetXY(90, 94); // Time Start
             $pdf->Write(0, $conferenceRequest->time_start);
+
+            $pdf->SetXY(101, 94); // Time End
+            $pdf->Write(0, ' - ' . $conferenceRequest->time_end);
 
             $pdf->SetXY(90, 102); // Number of Persons
             $pdf->Write(0, $conferenceRequest->npersons);
 
-            // TODO - focalpid is null when focalperson is fpothers
-//        $pdf->SetXY(90, 110); // Focal Person
-//        $pdf->Write(0, $conferenceRequest->focal_person->FocalPID);
+            $pdf->SetXY(90, 110);
+            if (is_null($conferenceRequest->focalPerson)) {
+                // Focal Person
+                $pdf->Write(0, $conferenceRequest->FPOthers);
+            } else {
+                // Focal Person
+                $pdf->Write(0, $conferenceRequest->focalPerson->FocalPName);
+            }
 
             // Conference Room 1 (Magiting)
             if ($conferenceRequest->conferenceRoom->CRoomName === 'Magiting') {
@@ -94,11 +107,27 @@ class DownloadsController extends Controller
             $pdf->Write(0, 'x');
 
             if (!is_null($conferenceRequest->otherFacilities)) {
-                $pdf->SetXY(90, 147); // Other Facilities
+                $pdf->SetXY(70.4, 148.9); // Other Facilities
                 $pdf->Write(0, 'x');
 
-                $pdf->SetXY(90, 147); // Other Facilities
+                $pdf->SetXY(135, 149); // Other Facilities
                 $pdf->Write(0, $conferenceRequest->otherFacilities);
+            }
+
+            if (!is_null($conferenceRequest->tables)) {
+                $pdf->SetXY(70.4, 158.9); // Tables
+                $pdf->Write(0, 'x');
+
+                $pdf->SetXY(109.9, 159); // Tables
+                $pdf->Write(0, $conferenceRequest->tables);
+            }
+
+            if (!is_null($conferenceRequest->chairs)) {
+                $pdf->SetXY(70.4, 169.9); // Chairs
+                $pdf->Write(0, 'x');
+
+                $pdf->SetXY(109.9, 170); // Chairs
+                $pdf->Write(0, $conferenceRequest->tables);
             }
 
             // I instead of F to output the PDF to the browser
@@ -133,6 +162,74 @@ class DownloadsController extends Controller
         } else {
             Log::error('File not found.', ['filePath' => $certFilePath]);
             return response()->json(['error' => 'File not found'], 404);
+        }
+    }
+
+    public function downloadUnavailableCRequestPDF(Request $request, $CRequestID)
+    {
+        try {
+            Log::info('Starting downloadUnavailableCRequestPDF method.');
+
+            // Validate the CRequestID parameter
+            $validated = $request->validate([
+                'CRequestID' => 'string|exists:conference_room_requests,CRequestID',
+            ]);
+            Log::info('Validation successful.', ['validated' => $validated]);
+
+            $conferenceRequest = ConferenceRequest::with('conferenceRoom', 'purposeRequest', 'focalPerson')
+                ->where('CRequestID', $CRequestID)
+                ->firstOrFail();
+
+            $pdf = new Fpdi();
+            $pdf->AddPage();
+            $sourceFile = public_path('storage/uploads/templates/croom_forms/CR_unavailability.pdf');
+
+            if (!file_exists($sourceFile)) {
+                Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
+                return response()->json(['error' => 'Source file does not exist.'], 500);
+            }
+
+            $pdf->setSourceFile($sourceFile);
+            $tplIdx = $pdf->importPage(1);
+            $pdf->useTemplate($tplIdx, 0, 0, 210);
+            $pdf->SetTextColor(0, 0, 0);
+
+            // TOP PART
+            $pdf->SetFont('Helvetica', '', 9);
+            $pdf->SetXY(95, 112.3); // Date Requested
+            $pdf->Write(0, $conferenceRequest->office->OfficeName);
+
+            $pdf->SetFont('Helvetica', '', 10);
+
+            $pdf->SetXY(95, 120);
+            if (is_null($conferenceRequest->purposeRequest)) {
+                // Purpose
+                $pdf->Write(0, $conferenceRequest->PurposeOthers);
+            } else {
+                // Purpose
+                $pdf->Write(0, $conferenceRequest->purposeRequest->purpose);
+            }
+
+            $pdf->SetXY(95, 127); // Number of Persons
+            $pdf->Write(0, $conferenceRequest->npersons);
+
+            $pdf->SetXY(95, 134); // Date Start
+            $pdf->Write(0, $conferenceRequest->date_start);
+
+            $pdf->SetXY(114, 134); // Date End
+            $pdf->Write(0, ' - ' . $conferenceRequest->date_end);
+
+            // I instead of F to output the PDF to the browser
+            $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Certificate_of_Unavailability.pdf');
+        } catch (Throwable $e) {
+            Log::error('Error in downloadCRequestPDF method.', [
+                'exception' => $e->getMessage(),
+                'stack_trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'error' => 'An error occurred while generating the PDF.',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }

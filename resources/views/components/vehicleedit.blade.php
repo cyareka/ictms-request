@@ -592,7 +592,6 @@
             <form id="adminServiceForm" action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
                   enctype="multipart/form-data">
                 @csrf
-
                 <div class="row-dispatch">
 {{--                    <div class="inline">--}}
 {{--                        <label for="availability">Availability</label>--}}

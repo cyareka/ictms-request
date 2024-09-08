@@ -770,6 +770,7 @@
             <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
             <button class="submit-btn" type="submit">Update</button>
         </div>
+        <input type="text" id="AuthRep" name="AuthRep" value="{{ Auth::user()->name }}" hidden>
     </form>
 </div>
 <script>

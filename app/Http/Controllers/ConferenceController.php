@@ -175,7 +175,17 @@ class ConferenceController extends Controller
                 'certfile-upload' => 'nullable|file|mimes:pdf',
                 'FormStatus' => 'required|string|in:Pending,For Approval,Approved,Not Approved',
                 'EventStatus' => 'required|string|in:-,Ongoing,Finished,Cancelled',
+                'AuthRep' => 'nullable|string|max:50',
             ]);
+
+            if (!empty($validated['AuthRep'])) {
+                $userId = DB::table('users')->where('name', $validated['AuthRep'])->value('id');
+                if (!$userId) {
+                    Log::error('User name does not exist:', ['User' => $validated['AuthRep']]);
+                    return redirect()->back()->withErrors(['User' => 'The selected user is invalid.'])->withInput();
+                }
+                $validated['AuthRep'] = $userId;
+            }
 
             if ($request->hasFile('certfile-upload')) {
                 $CRequestID = $request->input('CRequestID');
@@ -198,6 +208,7 @@ class ConferenceController extends Controller
             $updateData = [
                 'FormStatus' => $validated['FormStatus'],
                 'EventStatus' => $validated['EventStatus'],
+                'AuthRep' => $validated['AuthRep']
             ];
 
             // Add certfile-upload to the update data if a file was uploaded
