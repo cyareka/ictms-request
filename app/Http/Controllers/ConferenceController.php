@@ -378,9 +378,10 @@ class ConferenceController extends Controller
         return response()->json($conferenceRequests);
     }
 
-    // Conference Request Main Filter and Sort
+    // Conference Request Main Filter, Search and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
     {
+        Log::info('Search term: ' . $request->input('search', ''));
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
         $conferenceRoom = $request->input('conference_room');
@@ -389,7 +390,8 @@ class ConferenceController extends Controller
         $perPage = $request->input('per_page', 5);
         $search = $request->input('search', '');
 
-        $query = ConferenceRequest::query()->with('office', 'conferenceRoom')
+        $query = ConferenceRequest::query()
+            ->with('office', 'conferenceRoom')
             ->orderBy($sort, $order);
 
         if ($conferenceRoom) {
@@ -415,11 +417,8 @@ class ConferenceController extends Controller
                     ->orWhereHas('office', function ($q) use ($search) {
                         $q->where('OfficeName', 'like', '%' . $search . '%');
                     })
-                    ->orWhere('date_start', 'like', '%' . $search . '%')
-                    ->orWhere('time_start', 'like', '%' . $search . '%')
                     ->orWhere('EventStatus', 'like', '%' . $search . '%')
                     ->orWhere('FormStatus', 'like', '%' . $search . '%');
-
             });
         }
 
@@ -435,6 +434,7 @@ class ConferenceController extends Controller
             ],
         ]);
     }
+
 
     // Conference Request Logs Filter and Sort
     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
@@ -525,23 +525,49 @@ class ConferenceController extends Controller
 
     public function getConferenceRoomUsage()
     {
+        // Helper function to debug SQL queries
+        $debug = function($query) {
+            $sql = $query->toSql();
+            $bindings = $query->getBindings();
+            return vsprintf(str_replace('?', '%s', $sql), $bindings);
+        };
+    
         // Fetch monthly usage data for MAGITING
-        $magitingUsage = DB::table('conference_rooms')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('count(*) as total'))
-            ->where('CRoomName', 'Magiting')
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->pluck('total', 'month');
-
+        $magitingQuery = DB::table('conference_room_requests')
+            ->select(DB::raw("substr(created_at, 6, 2) as month"), DB::raw('count(*) as total'))
+            ->where('CRoomID', '2024098079')
+            ->groupBy(DB::raw("substr(created_at, 6, 2)"));
+    
+        // Debug output for magiting query
+        $magitingSql = $debug($magitingQuery);
+        logger("MAGITING SQL Query: $magitingSql");
+    
+        $magitingUsage = $magitingQuery
+            ->pluck('total', 'month')
+            ->mapWithKeys(function ($value, $key) {
+                return [(int)$key => $value];
+            });
+    
         // Fetch monthly usage data for MAAGAP
-        $maagapUsage = DB::table('conference_rooms')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('count(*) as total'))
-            ->where('CRoomName', 'Maagap')
-            ->groupBy(DB::raw('MONTH(created_at)'))
-            ->pluck('total', 'month');
-
+        $maagapQuery = DB::table('conference_room_requests')
+            ->select(DB::raw("substr(created_at, 6, 2) as month"), DB::raw('count(*) as total'))
+            ->where('CRoomID', '2024092977')
+            ->groupBy(DB::raw("substr(created_at, 6, 2)"));
+    
+        // Debug output for maagap query
+        $maagapSql = $debug($maagapQuery);
+        logger("MAAGAP SQL Query: $maagapSql");
+    
+        $maagapUsage = $maagapQuery
+            ->pluck('total', 'month')
+            ->mapWithKeys(function ($value, $key) {
+                return [(int)$key => $value];
+            });
+    
         return response()->json([
             'magitingUsage' => $magitingUsage,
             'maagapUsage' => $maagapUsage
         ]);
     }
+    
 }

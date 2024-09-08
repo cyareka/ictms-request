@@ -196,7 +196,9 @@
     function convertAvailability(availability) {
         return availability > 0 ? 'Available' : 'Not Available';
     }
-
+    document.querySelector('.form-input').addEventListener('input', function () {
+        document.getElementById('searchInput').value = this.value;
+    });
     document.addEventListener('DOMContentLoaded', function () {
         let currentPage = 1;
         const itemsPerPage = 5;
@@ -210,6 +212,9 @@
             formData.append('sort', 'created_at');
             formData.append('page', page);
             formData.append('per_page', itemsPerPage);
+
+            const searchInput = document.querySelector('.form-input').value;
+            formData.append('search', searchInput);
 
             const params = new URLSearchParams(formData).toString();
 
@@ -237,6 +242,7 @@
         }
 
         function updateTable(data) {
+            console.log('Received data:', data);
             let tbody = document.querySelector('tbody');
             tbody.innerHTML = '';
 

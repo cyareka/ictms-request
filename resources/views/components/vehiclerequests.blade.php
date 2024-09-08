@@ -107,7 +107,9 @@
                     <td>{{ $request->EventStatus }}</td>
                     <td>
                         <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+                        @if($request->FormStatus !== 'Pending')
                         <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
+                        @endif
                     </td>
                 </tr>
             @endforeach
