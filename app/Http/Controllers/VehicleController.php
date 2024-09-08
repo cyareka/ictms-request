@@ -289,10 +289,12 @@ class VehicleController extends Controller
 
     public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
     {
+        // Retrieve request parameters with default values
         $sort = $request->get('sort', 'created_at');
         $order = $request->get('order', 'desc');
         $formStatuses = $request->get('form_statuses', ['Approved', 'Pending', 'For Approval']);
         $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+        $searchQuery = $request->get('search_query', '');
         $perPage = $request->get('per_page', 5);
         $page = $request->get('page', 1);
 
@@ -301,21 +303,39 @@ class VehicleController extends Controller
             'order' => $order,
             'form_statuses' => $formStatuses,
             'event_statuses' => $eventStatuses,
+            'search_query' => $searchQuery,
         ]);
 
         try {
-            $query = VehicleRequest::with('office')
-                ->orderBy($sort, $order);
+            $query = VehicleRequest::with('office');
 
+            // Apply search query filters
+            if ($searchQuery) {
+                $query->where(function ($q) use ($searchQuery) {
+                    $q->where('VRequestID', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('Destination', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('PurposeID', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('PurposeOthers', 'like', '%' . $searchQuery . '%')
+                        ->orWhereHas('office', function ($q) use ($searchQuery) {
+                            $q->where('OfficeName', 'like', '%' . $searchQuery . '%');
+                        })
+                        ->orWhere('FormStatus', 'like', '%' . $searchQuery . '%');
+                        
+                });
+            }
+
+            // Apply form status filter
             if ($formStatuses) {
                 $query->whereIn('FormStatus', $formStatuses);
             }
 
+            // Apply event status filter
             if ($eventStatuses) {
                 $query->whereIn('EventStatus', $eventStatuses);
             }
 
-            $vehicleRequests = $query->paginate($perPage, ['*'], 'page', $page);
+            // Apply sorting and pagination
+            $vehicleRequests = $query->orderBy($sort, $order)->paginate($perPage, ['*'], 'page', $page);
 
             Log::info('Query results:', $vehicleRequests->toArray());
 
@@ -336,7 +356,6 @@ class VehicleController extends Controller
             return response()->json(['error' => 'Failed to fetch vehicle requests.'], 500);
         }
     }
-
     public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
     {
         $title = $request->get('Purpose');

@@ -203,8 +203,9 @@
         let currentPage = 1;
         const itemsPerPage = 5;
         let lastPage = 1;
+        let searchQuery = '';
 
-        function fetchSortedData(order = 'desc', page = currentPage) {
+        function fetchSortedData(order = 'desc', page = currentPage,search = searchQuery) {
             const form = document.getElementById('filterForm');
             const formData = new FormData(form);
 
@@ -212,6 +213,7 @@
             formData.append('sort', 'created_at');
             formData.append('page', page);
             formData.append('per_page', itemsPerPage);
+            formData.append('search', search)
 
             const searchInput = document.querySelector('.form-input').value;
             formData.append('search', searchInput);
@@ -311,28 +313,34 @@
             let order = this.getAttribute('data-order');
             let newOrder = order === 'asc' ? 'desc' : 'asc';
             this.setAttribute('data-order', newOrder);
-            fetchSortedData(newOrder);
+            fetchSortedData(newOrder, currentPage, searchQuery);
         });
 
         document.getElementById('prev-page').addEventListener('click', function () {
             if (currentPage > 1) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1);
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
             }
         });
 
         document.getElementById('next-page').addEventListener('click', function () {
             if (currentPage < lastPage) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1);
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
             }
         });
 
         document.getElementById('filterForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+            searchQuery = document.getElementById('search').value;
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
         });
 
         document.querySelector('.cancelbtn').addEventListener('click', function () {
             document.getElementById('filterForm').reset();
+            searchQuery = '';
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+        });
+
+        document.querySelector('.form-input').addEventListener('input', function () {
             fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
         });
 

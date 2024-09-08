@@ -124,29 +124,31 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentPage = 1;
     const itemsPerPage = 5;
     let lastPage = 1;
+    let searchQuery = ''; 
 
     function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
+            const form = document.getElementById('filterForm');
+            const formData = new FormData(form);
 
-        formData.append('order', order);
-        formData.append('sort', 'created_at');
-        formData.append('page', page);
-        formData.append('per_page', itemsPerPage);
+            formData.append('order', order);
+            formData.append('sort', 'created_at');
+            formData.append('page', page);
+            formData.append('per_page', itemsPerPage);
+            formData.append('search_query', search);
 
-        const params = new URLSearchParams(formData).toString();
+            const params = new URLSearchParams(formData).toString();
 
-        fetch(`/fetchSortedVRequests?${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data.data, data.pagination);
-                currentPage = data.pagination.current_page;
-                lastPage = data.pagination.last_page;
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
+            fetch(`/fetchSortedVRequests?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.data, data.pagination);
+                    currentPage = data.pagination.current_page;
+                    lastPage = data.pagination.last_page;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
 
     function updateTable(data, pagination) {
         let tbody = document.querySelector('tbody');
@@ -167,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     hour12: true
                 })}</td>
                 <td>${request.Destination}</td>
-                <td>${request.Purpose}</td>
+                <td>${request.PurposeOthers ? request.PurposeOthers : (\App\Models\PurposeRequest::find($request->PurposeID)?->purpose ?? '')}</td>
                 <td>${officeName}</td>
                 <td>${request.date_start}</td>
                 <td>${request.time_start}</td>
@@ -177,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <a href="/vehicledetail/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
                     <i class="bi bi-download" id="actions" data-request-id="${request.VRequestID}"></i>
                 </td>
-            </tr>`;
+            </tr>;
                 tbody.insertAdjacentHTML('beforeend', row);
             });
         } else {
@@ -188,49 +190,50 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updatePagination(pagination) {
-        currentPage = pagination.current_page;
-        lastPage = pagination.last_page;
+            currentPage = pagination.current_page;
+            lastPage = pagination.last_page;
 
-        document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
-        document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
-    }
-
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder, currentPage, searchQuery);
-    });
-
-    document.getElementById('prev-page').addEventListener('click', function () {
-        if (currentPage > 1) {
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+            document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
+            document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
         }
-    });
 
-    document.getElementById('next-page').addEventListener('click', function () {
-        if (currentPage < lastPage) {
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-        }
-    });
+        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+            e.preventDefault();
+            let order = this.getAttribute('data-order');
+            let newOrder = order === 'asc' ? 'desc' : 'asc';
+            this.setAttribute('data-order', newOrder);
+            fetchSortedData(newOrder, currentPage, searchQuery);
+        });
 
-    document.getElementById('filterForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-    });
+        document.getElementById('prev-page').addEventListener('click', function () {
+            if (currentPage > 1) {
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+            }
+        });
 
-    document.querySelector('.cancelbtn').addEventListener('click', function () {
-        document.getElementById('filterForm').reset();
-        let searchQuery = '';
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-    });
+        document.getElementById('next-page').addEventListener('click', function () {
+            if (currentPage < lastPage) {
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+            }
+        });
 
-    document.querySelector('.form-input').addEventListener('input', function () {
-        let searchQuery = this.value;
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-    });
+        document.getElementById('filterForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            searchQuery = document.getElementById('search-input').value; // Update searchQuery from the input field
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+        });
 
-    fetchSortedData();
-});
+        document.querySelector('.cancelbtn').addEventListener('click', function () {
+            document.getElementById('filterForm').reset();
+            searchQuery = ''; // Reset searchQuery
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+        });
+
+        document.querySelector('.form-input').addEventListener('input', function () {
+            searchQuery = this.value; // Update searchQuery on input change
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+        });
+
+        fetchSortedData();
+    });
 </script>
