@@ -17,11 +17,20 @@
             margin-top: 10px;
             text-align: center;
         }
+        .custom-size {
+            font-size: 30px; /* Adjust to any size you want */
+          }
+
+
         @media (max-width: 768px) {
             .chart-container {
                 width: 90%;
                 margin: 10px auto;
             }
+            .custom-size {
+            font-size: 30px; /* Adjust to any size you want */
+          }
+
         }
     </style>
 </head>
@@ -30,21 +39,21 @@
     <main>
         <ul class="box-info">
             <li>
-                <i class='bx bxs-group'></i>
+                <i class="bi bi-building custom-size"></i>
                 <span class="text">
                     <h3 id="pending-requests">0</h3>
                     <p>Pending Requests</p>
                 </span>
             </li>
             <li>
-                <i class='bx bxs-group'></i>
+                <i class="bi bi-building custom-size"></i>
                 <span class="text">
                     <h3 id="daily-requests">0</h3>
-                    <p>Daily Requests</p>
+                    <p>Today's Requests </p>
                 </span>
             </li>
             <li>
-                <i class='bx bxs-group'></i>
+                <i class="bi bi-building custom-size"></i>
                 <span class="text">
                     <h3 id="monthly-requests">0</h3>
                     <p>Monthly Requests</p>
@@ -89,11 +98,11 @@
                 const bar = document.createElement('div');
                 bar.className = 'bar';
                 bar.style.backgroundColor = color;
-                bar.style.height = `${office.total}%`; // Adjust the height based on the total percentage
+                bar.style.height = `${office.total}`; // Adjust the height based on the total percentage
 
                 const value = document.createElement('div');
                 value.className = 'value';
-                value.textContent = `${office.total}%`;
+                value.textContent = `${office.total}`;
 
                 const label = document.createElement('div');
                 label.className = 'label';

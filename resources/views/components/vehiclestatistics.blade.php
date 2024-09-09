@@ -9,12 +9,21 @@
             width: 90%;
             margin: 20px auto;
         }
+        .custom-size {
+            font-size: 30px; /* Adjust to any size you want */
+        }
+
         @media (max-width: 768px) {
             .chart-container {
                 width: 90%;
                 margin: 10px auto;
             }
+            .custom-size {
+            font-size: 30px; /* Adjust to any size you want */
+          }
+
         }
+
     </style>
     <title>Vehicle Statistics</title>
 </head>
@@ -23,21 +32,21 @@
     <main>
         <ul class="box-info">
             <li>
-                <i class='bx bxs-group'></i>
+                <i class="bi bi-truck-front-fill custom-size"></i>
                 <span class="text">
                     <h3 id="pending-requests">0</h3>
                     <p>Pending Requests</p>
                 </span>
             </li>
             <li>
-                <i class='bx bxs-group'></i>
+                <i class="bi bi-truck-front-fill custom-size"></i>
                 <span class="text">
                     <h3 id="daily-requests">0</h3>
-                    <p>Daily Requests</p>
+                    <p>Today's Requests</p>
                 </span>
             </li>
             <li>
-                <i class='bx bxs-group'></i>
+                <i class="bi bi-truck-front-fill custom-size"></i>
                 <span class="text">
                     <h3 id="monthly-requests">0</h3>
                     <p>Monthly Requests</p>
@@ -49,6 +58,11 @@
 <div class="bar-chart-wrapper">
     <h1>Total Requests per Office</h1>
     <div class="simple-bar-chart"></div>
+</div>
+
+<!-- Adjust the size of the pie chart -->
+<div class="chart-container">
+    <div id="chartContainer1" style="height: 500px; width: 100%;"></div> <!-- Increased height -->
 </div>
 
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
@@ -79,7 +93,7 @@
 
                     const value = document.createElement('div');
                     value.className = 'value';
-                    value.textContent = `${office.total}%`;
+                    value.textContent = `${office.total}`;
 
                     item.appendChild(label);
                     item.appendChild(value);
@@ -93,6 +107,32 @@
         const colors = ['#5EB344', '#FCB72A', '#F8821A', '#E0393E', '#963D97', '#069CDB', '#6234CE', '#06934A'];
         return colors[Math.floor(Math.random() * colors.length)];
     }
+
+    window.onload = function() {
+        // First Chart
+        var chart1 = new CanvasJS.Chart("chartContainer1", {
+            backgroundColor: "#F2F2F2",
+            animationEnabled: true,
+            title: {
+                text: "Vehicle Type Usage"
+            },
+            data: [{
+                type: "pie",
+                startAngle: 240,
+                yValueFormatString: "##0.00\"%\"",
+                indexLabel: "{label} {y}",
+                dataPoints: [
+                    {y: 79.45, label: "Toyota Hiace"},
+                    {y: 7.31, label: "Suzuki Mini Van"},
+                    {y: 7.06, label: "Hilux"},
+                    {y: 4.91, label: "L300"},
+                    {y: 1.26, label: "Truck"}
+                ]
+            }]
+        });
+        chart1.render();
+    }
+
 });
 </script>
 </body>
