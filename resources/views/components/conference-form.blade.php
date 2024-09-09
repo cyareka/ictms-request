@@ -511,8 +511,9 @@
      * @param {string} action - The action to be performed ('addRow', 'removeRow', 'previewSignature').
      * @param {Event} event - The event object associated with the action.
      */
+
     function handleFormActions(action, event) {
-        switch (action) {
+        switch(action) {
             case 'addRow':
                 let rowGroupContainer = document.querySelector('.row-group-container');
                 let newRowGroup = document.createElement('div');
@@ -528,7 +529,7 @@
                         <label for="date_end">Date End</label>
                         <input type="date" id="date_end" name="date_end[]" required>
                         <div class="remove-container">
-                            <button class="remove-btn" onclick="handleFormActions('removeRow')">-</button>
+                            <button class="remove-btn" onclick="handleFormActions('removeRow', event)">-</button>
                         </div>
                     </div>
                 </div>
@@ -553,7 +554,7 @@
                 const preview = document.getElementById('signature-preview');
                 const reader = new FileReader();
                 const uploadText = document.querySelector('.e-signature-text');
-                reader.onload = function () {
+                reader.onload = function() {
                     preview.src = reader.result;
                     preview.style.display = 'block';
                     uploadText.style.display = 'none';
@@ -565,10 +566,9 @@
         }
     }
 
-    // event listener for submit
-    document.querySelector('form').addEventListener('submit', function (event) {
+    document.querySelector('form').addEventListener('submit', function(event) {
         let datesValid = true;
-        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
             if (!input.value) {
                 datesValid = false;
             }
