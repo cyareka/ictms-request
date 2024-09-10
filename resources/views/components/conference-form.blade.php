@@ -370,7 +370,7 @@
         <div class="row">
             <div class="inline-field">
                 <label for="officeName">Requesting Office</label>
-                <select id="officeName" name="officeName" required>
+                <select id="officeName" name="officeName" required onchange="updateFocalPersons(this.value)">
                     <option disabled selected>Select Office</option>
                     @foreach(App\Models\Office::all() as $office)
                         <option value="{{ $office->OfficeID }}" {{ old('officeName') == $office->OfficeID ? 'selected' : '' }}>
@@ -413,15 +413,15 @@
                 <label for="focalPerson">Focal Person</label>
                 <select id="focalPersonSelect" name="focalPersonSelect">
                     <option disabled selected>Select Focal Person</option>
-                    @foreach(App\Models\FocalPerson::all() as $fp)
-                        <option value="{{ $fp->FocalPID }}" {{ old('focalPersonSelect') == $fp->FocalPID ? 'selected' : '' }}>
-                            {{ $fp->FPName }}
-                        </option>
-                    @endforeach
-                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
-                    <div class="checkbox">
-                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
-                    </div>
+{{--                    @foreach(App\Models\FocalPerson::all() as $fp)--}}
+{{--                        <option value="{{ $fp->FocalPID }}" {{ old('focalPersonSelect') == $fp->FocalPID ? 'selected' : '' }}>--}}
+{{--                            {{ $fp->FPName }}--}}
+{{--                        </option>--}}
+{{--                    @endforeach--}}
+{{--                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">--}}
+{{--                    <div class="checkbox">--}}
+{{--                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>--}}
+{{--                    </div>--}}
                 </select>
             </div>
         </div>
@@ -505,6 +505,36 @@
     </form>
 </div>
 <script>
+    // Preload focal persons for each office
+    var focalPersonsByOffice = {};
+    @foreach(App\Models\Office::all() as $office)
+        focalPersonsByOffice[{{ $office->OfficeID }}] = [
+            @foreach(App\Models\FocalPerson::where('OfficeID', $office->OfficeID)->get() as $focalPerson)
+        { value: '{{ $focalPerson->FocalPID }}', text: '{{ $focalPerson->FPName }}' },
+        @endforeach
+    ];
+    @endforeach
+
+    function updateFocalPersons(officeId) {
+        var focalPersonSelect = document.getElementById('focalPersonSelect');
+        focalPersonSelect.innerHTML = ''; // Clear existing options
+        var defaultOption = document.createElement('option');
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        defaultOption.text = 'Select Focal Person';
+        focalPersonSelect.appendChild(defaultOption);
+
+        var focalPersons = focalPersonsByOffice[officeId];
+        if (focalPersons) {
+            focalPersons.forEach(function(focalPerson) {
+                var option = document.createElement('option');
+                option.value = focalPerson.value;
+                option.text = focalPerson.text;
+                focalPersonSelect.appendChild(option);
+            });
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(function(input) {
