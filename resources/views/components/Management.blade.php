@@ -284,6 +284,8 @@
                     <button class="submit-btn" type="button" onclick="setCurrentForm('addVehiForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
+
+
         </div>
 
         <div id="vehicle" class="toggle-section">

@@ -685,9 +685,19 @@
             </form>
         </div>
         <div class="form-footer">
-            <a href="path/to/file" download>
-                <button-dl class="dl-btn" type="button">Download</button-dl>
-            </a>
+            @if($requestData->FormStatus === 'For Approval')
+                <a onclick="showDownloadModal('{{ route('downloadVRequestPDF', $requestData->VRequestID) }}', '{{ route('downloadUnavailableVRequestPDF', $requestData->VRequestID) }}')">
+                    <button class="cancel-btn" type="button" onclick="download()">Download</button>
+                </a>
+            @elseif($requestData->FormStatus === 'Approved')
+                <a href="{{ route('downloadFinalCRequestPDF', $requestData->CRequestID) }}" target="_blank">
+                    <button class="dl-btn" type="button">Download</button>
+                </a>
+            @elseif($requestData->FormStatus === 'Pending' && $requestData->CAvailability === 0)
+                <a href="{{ route('downloadUnavailableCRequestPDF', $requestData->CRequestID) }}" target="_blank">
+                    <button class="dl-btn" type="button">Download</button>
+                </a>
+            @endif
             <button class="submit-btn" type="submit">Update</button>
         </div>
         <input type="text" id="AuthRep" name="AuthRep" value="{{ Auth::user()->name }}" hidden>

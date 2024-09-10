@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference Room Request Form</title>
     <style>
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            overflow: hidden;
+        }
+
+        .modal-dialog {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: space-evenly;
+        }
+
         body {
             font-family: 'Poppins';
             font-size: 18px;
@@ -177,7 +201,7 @@
             font-size: 16px;
             width: 11%;
         }
-        .dl-btn{
+        .cancel-btn{
             background-color: #E1C16E;
         }
 
@@ -612,7 +636,7 @@
     </script>
 @endif
 <div class="container">
-    <button class="btn float-right" onclick="history.back()">
+    <button class="btn float-right">
     <i class="fa-duotone fa-solid fa-xmark"></i>
     </button>
     <h1>Update Request for Conference Room</h1>
@@ -630,9 +654,9 @@
             </div>
             <div class="inline-field">
                 <label for="purpose">Purpose</label>
-                <input type="text" id="purpose" name="purpose"
+                `<input type="text" id="purpose" name="purpose"
                        value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}"
-                       placeholder="-" readonly>
+                       placeholder="-" readonly>`
             </div>
         </div>
         <div class="row-group-container">
@@ -762,15 +786,65 @@
             </div>
         </div>
         <div class="form-footer">
-            <a href="path/to/file" download>
-                <button class="dl-btn" type="button">Download</button>
-            </a>
+            @if($requestData->FormStatus === 'For Approval')
+                <a onclick="showDownloadModal('{{ route('downloadCRequestPDF', $requestData->CRequestID) }}', '{{ route('downloadUnavailableCRequestPDF', $requestData->CRequestID) }}')">
+                    <button class="cancel-btn" type="button" onclick="download()">Download</button>
+                </a>
+            @elseif($requestData->FormStatus === 'Approved')
+                <a href="{{ route('downloadFinalCRequestPDF', $requestData->CRequestID) }}" target="_blank">
+                    <button class="dl-btn" type="button">Download</button>
+                </a>
+            @elseif($requestData->FormStatus === 'Pending' && $requestData->CAvailability === 0)
+                <a href="{{ route('downloadUnavailableCRequestPDF', $requestData->CRequestID) }}" target="_blank">
+                    <button class="dl-btn" type="button">Download</button>
+                </a>
+            @endif
             <button class="submit-btn" type="submit">Update</button>
         </div>
         <input type="text" id="AuthRep" name="AuthRep" value="{{ Auth::user()->name }}" hidden>
     </form>
 </div>
 <script>
+function showDownloadModal(requestFormUrl, unavailabilityUrl) {
+    const modalHtml = `
+    <div class="modal" id="downloadModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Download Options</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Which document would you like to download?</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="${requestFormUrl}" class="btn btn-primary" target="_blank">Request Form</a>
+                    <a href="${unavailabilityUrl}" class="btn btn-secondary" target="_blank">Certificate of Unavailability</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    const downloadModal = document.getElementById('downloadModal');
+    downloadModal.style.display = 'flex';
+
+    downloadModal.querySelector('.close').addEventListener('click', function () {
+        downloadModal.style.display = 'none';
+        downloadModal.remove();
+    });
+
+    window.addEventListener('click', function (event) {
+        if (event.target === downloadModal) {
+            downloadModal.style.display = 'none';
+            downloadModal.remove();
+        }
+    });
+}
+
     /**
      * Sets up form change detection and handles the cancel action with a confirmation prompt.
      */
@@ -796,7 +870,7 @@
         }
 
         // Attach the cancelForm function to the cancel button
-        document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
+        document.querySelector('.btn').addEventListener('click', cancelForm);
     }
 
     // Call the setup function to initialize everything

@@ -441,9 +441,19 @@
                     </div>
                 </div>
             </div>
-            <div class="fac">
-                <label for="otherFacilities">Other Facilities</label>
-                <input type="text" id="otherFacilities" name="otherFacilities" placeholder="Specify Others" value="{{ old('otherFacilities') }}">
+            <div class="inline-field">
+                <label for="otherFacilitiesSelect">Other Facilities</label>
+                <select id="otherFacilitiesSelect" name="otherFacilitiesSelect" class="selectpicker">
+                    <option disabled selected>Select Facility</option>
+                    <option value="Projector" {{ old('otherFacilitiesSelect') == 'Projector' ? 'selected' : '' }}>Projector</option>
+                    <option value="Sound System" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>Sound System</option>
+                    <option value="Microphone" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>Sound System</option>
+                    <!-- Add more facilities here -->
+                </select>
+                <input type="text" id="otherFacilitiesInput" name="otherFacilitiesInput" style="display:none;" placeholder="Enter Facility" value="{{ old('otherFacilitiesInput') }}">
+                <div class="checkbox">
+                    <input type="checkbox" id="otherFacilitiesCheckbox" name="otherFacilitiesCheckbox" onclick="toggleInputField('otherFacilities')" {{ old('otherFacilitiesInput') ? 'checked' : '' }}>
+                </div>
             </div>
         </div>
         <div class="row-group-container">
@@ -626,7 +636,7 @@
      *
      * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
      */
-  
+
      document.addEventListener('DOMContentLoaded', function () {
     // Check if there is old input for the focal person and toggle the input field accordingly
     if ("{{ old('focalPersonInput') }}") {

@@ -69,7 +69,8 @@ class ConferenceController extends Controller
                 'focalPersonInput' => 'nullable|string|max:50',
                 'tables' => 'nullable|integer',
                 'chairs' => 'nullable|integer',
-                'otherFacilities' => 'nullable|string|max:50',
+                'otherFacilitiesSelect' => 'nullable|string|max:50',
+                'otherFacilitiesInput' => 'nullable|string|max:50',
                 'conferenceRoom' => 'required|string|exists:conference_rooms,CRoomID',
                 'requesterName' => 'required|string|max:50',
                 'RequesterSignature' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:10240',
@@ -79,8 +80,8 @@ class ConferenceController extends Controller
 
             $purpose = $validated['purposeInput'] ?? null;
             $focalPerson = $validated['focalPersonInput'] ?? null;
-            $otherFacilities = $validated['otherFacilities'] ?? null;
-            // $otherFacilities = $validated['otherFacilitiesInput'] ?: $validated['otherFacilitiesSelect'];
+//          $otherFacilities = $validated['otherFacilities'] ?? null;
+            $otherFacilities = $validated['otherFacilitiesInput'] ?? $validated['otherFacilitiesSelect'];
 
             $dates = $validated['date_start'];
             if (count($dates) !== count(array_unique($dates))) {
@@ -118,7 +119,7 @@ class ConferenceController extends Controller
                         $validated['time_end'][$index] >= $existingRequest->time_start
                     ) {
                         $availability = false;
-                        break;
+                        throw ValidationException::withMessages(['date_start' => 'Sorry, your request cannot be booked because there is an ongoing event.']);
                     }
                 }
 
@@ -133,7 +134,7 @@ class ConferenceController extends Controller
                     'CAvailability' => $availability,
                     'tables' => $validated['tables'],
                     'chairs' => $validated['chairs'],
-                    'otherFacilities' => $validated['otherFacilities'],
+                    'otherFacilities' => $otherFacilities,
                     'CRoomID' => $conferenceRoom->CRoomID,
                     'FormStatus' => 'Pending',
                     'EventStatus' => '-',
@@ -544,43 +545,43 @@ class ConferenceController extends Controller
             $bindings = $query->getBindings();
             return vsprintf(str_replace('?', '%s', $sql), $bindings);
         };
-    
+
         // Fetch monthly usage data for MAGITING
         $magitingQuery = DB::table('conference_room_requests')
             ->select(DB::raw("substr(created_at, 6, 2) as month"), DB::raw('count(*) as total'))
             ->where('CRoomID', '2024098079')
             ->groupBy(DB::raw("substr(created_at, 6, 2)"));
-    
+
         // Debug output for magiting query
         $magitingSql = $debug($magitingQuery);
         logger("MAGITING SQL Query: $magitingSql");
-    
+
         $magitingUsage = $magitingQuery
             ->pluck('total', 'month')
             ->mapWithKeys(function ($value, $key) {
                 return [(int)$key => $value];
             });
-    
+
         // Fetch monthly usage data for MAAGAP
         $maagapQuery = DB::table('conference_room_requests')
             ->select(DB::raw("substr(created_at, 6, 2) as month"), DB::raw('count(*) as total'))
             ->where('CRoomID', '2024092977')
             ->groupBy(DB::raw("substr(created_at, 6, 2)"));
-    
+
         // Debug output for maagap query
         $maagapSql = $debug($maagapQuery);
         logger("MAAGAP SQL Query: $maagapSql");
-    
+
         $maagapUsage = $maagapQuery
             ->pluck('total', 'month')
             ->mapWithKeys(function ($value, $key) {
                 return [(int)$key => $value];
             });
-    
+
         return response()->json([
             'magitingUsage' => $magitingUsage,
             'maagapUsage' => $maagapUsage
         ]);
     }
-    
+
 }

@@ -130,6 +130,8 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $conferenceRequest->tables);
             }
 
+            $pdf->SetXY(70.4, 179.9); // Others
+
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Request.pdf');
         } catch (Throwable $e) {
@@ -232,6 +234,84 @@ class DownloadsController extends Controller
             ], 500);
         }
     }
+
+//    public function downloadVRequestPDF(Request$request, $VRequestID)
+//    {
+//        try {
+//            Log::info('Starting downloadVRequestPDF method.');
+//
+//            // Validate the VRequestID parameter
+//            $validated = $request->validate([
+//                'VRequestID' => 'string|exists:vehicle_requests,VRequestID',
+//            ]);
+//            Log::info('Validation successful.', ['validated' => $validated]);
+//
+//            $vehicleRequest = VehicleRequest::with('office')
+//                ->where('VRequestID', $VRequestID)
+//                ->firstOrFail();
+//
+//            $pdf = new Fpdi();
+//            $pdf->AddPage();
+//            $sourceFile = public_path('storage/uploads/templates/vehicle_forms/VR_dailydispatchreport.pdf');
+//
+//            if (!file_exists($sourceFile)) {
+//                Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
+//                return response()->json(['error' => 'Source file does not exist.'], 500);
+//            }
+//
+//            $pdf->setSourceFile($sourceFile);
+//            $tplIdx = $pdf->importPage(1);
+//            $pdf->useTemplate($tplIdx, 0, 0, 210);
+//
+//            $pdf->SetTextColor(0, 0, 0);
+//            $pdf->SetFont('Helvetica', '', 10);
+//
+//            $pdf->SetXY(10, 50); // VRequestID
+//            $pdf->Write(0, $vehicleRequest->VRequestID);
+//
+//            $pdf->SetXY(30, 50); // Date Start
+//            $pdf->Write(0, $vehicleRequest->date_start);
+//
+//            $pdf->SetXY(60, 50); // Destination
+//            $pdf->Write(0, $vehicleRequest->Destination);
+//
+//            $pdf->SetXY(90, 50); // Purpose
+//            $pdf->Write(0, $vehicleRequest->Purpose);
+//
+//            $pdf->SetXY(120, 50); // Office Name
+//            $pdf->Write(0, $vehicleRequest->office->OfficeName);
+//
+//            // I instead of F to output the PDF to the browser
+//            $pdf->Output('I', $vehicleRequest->VRequestID . '_VR_DailyDispatchReport.pdf');
+//        } catch (Throwable $e) {
+//            Log::error('Error in downloadVRequestPDF method.', [
+//                'exception' => $e->getMessage(),
+//                'stack_trace' => $e->get;
+//            ]);
+//        }
+//    }
+
+    public function downloadFinalVRequestPDF(Request $request, $VRequestID)
+    {
+        $vehicleRequest = VehicleRequest::with('office')
+            ->where('VRequestID', $VRequestID)
+            ->firstOrFail();
+
+        $certFilePath = $vehicleRequest['certfile-upload'];
+
+        if (Storage::disk('public')->exists($certFilePath)) {
+            $fileContents = Storage::disk('public')->get($certFilePath);
+            Log::info('File contents retrieved.', ['fileContents' => $fileContents]);
+
+            return response($fileContents, 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="' . basename($certFilePath) . '"');
+        } else {
+            Log::error('File not found.', ['filePath' => $certFilePath]);
+            return response()->json(['error' => 'File not found'], 404);
+        }
+    }
+
 
     public function downloadRangeVRequestPDF(Request $request)
     {

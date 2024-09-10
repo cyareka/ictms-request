@@ -15,6 +15,7 @@ return array(
     'App\\Actions\\Fortify\\UpdateUserProfileInformation' => $baseDir . '/app/Actions/Fortify/UpdateUserProfileInformation.php',
     'App\\Actions\\Jetstream\\DeleteUser' => $baseDir . '/app/Actions/Jetstream/DeleteUser.php',
     'App\\Commands\\DefaultCommand' => $vendorDir . '/laravel/pint/app/Commands/DefaultCommand.php',
+    'App\\Console\\Commands\\ClearLogs' => $baseDir . '/app/Console/Commands/ClearLogs.php',
     'App\\Console\\Commands\\UpdateConferenceRequestStatus' => $baseDir . '/app/Console/Commands/UpdateConferenceRequestStatus.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Contracts\\PathsRepository' => $vendorDir . '/laravel/pint/app/Contracts/PathsRepository.php',

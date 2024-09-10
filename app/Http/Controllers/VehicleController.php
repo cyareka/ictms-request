@@ -211,69 +211,69 @@ class VehicleController extends Controller
 
             $vehicleRequest->update($validated);
 
-/*            if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
-                $vehicleRequest->VAvailability = true;
-                $vehicleRequest->save();
+            /*            if ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Ongoing') {
+                            $vehicleRequest->VAvailability = true;
+                            $vehicleRequest->save();
 
-                $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
-                    ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
-                    ->where('FormStatus', 'Pending')
-                    ->where('EventStatus', '-')
-                    ->get();
+                            $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
+                                ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
+                                ->where('FormStatus', 'Pending')
+                                ->where('EventStatus', '-')
+                                ->get();
 
-                foreach ($otherRequests as $otherRequest) {
-                    if (
-                        ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
-                        ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
-                    ) {
-                        $otherRequest->update([
-                            'FormStatus' => 'Not Approved',
-                            'EventStatus' => '-',
-                            'VAvailability' => null
-                        ]);
-                    }
-                }
-            } elseif (($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'For Approval' && $validated['EventStatus'] === '-')) {
-                $vehicleRequest->VAvailability = null;
-                $vehicleRequest->save();
+                            foreach ($otherRequests as $otherRequest) {
+                                if (
+                                    ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
+                                    ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
+                                ) {
+                                    $otherRequest->update([
+                                        'FormStatus' => 'Not Approved',
+                                        'EventStatus' => '-',
+                                        'VAvailability' => null
+                                    ]);
+                                }
+                            }
+                        } elseif (($validated['FormStatus'] === 'Pending' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'For Approval' && $validated['EventStatus'] === '-')) {
+                            $vehicleRequest->VAvailability = null;
+                            $vehicleRequest->save();
 
-                $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
-                    ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
-                    ->where('FormStatus', 'Pending')
-                    ->where('EventStatus', '-')
-                    ->get();
+                            $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
+                                ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
+                                ->where('FormStatus', 'Pending')
+                                ->where('EventStatus', '-')
+                                ->get();
 
-                foreach ($otherRequests as $otherRequest) {
-                    if (
-                        ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
-                        ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
-                    ) {
-                        $otherRequest->update(['VAvailability' => true]);
-                    }
-                }
-            } elseif (($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
-                $vehicleRequest->VAvailability = null;
-                $vehicleRequest->save();
+                            foreach ($otherRequests as $otherRequest) {
+                                if (
+                                    ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
+                                    ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
+                                ) {
+                                    $otherRequest->update(['VAvailability' => true]);
+                                }
+                            }
+                        } elseif (($validated['FormStatus'] === 'Not Approved' && $validated['EventStatus'] === '-') || ($validated['FormStatus'] === 'Approved' && $validated['EventStatus'] === 'Finished') || (($validated['FormStatus'] === 'Approved') && $validated['EventStatus'] === 'Cancelled')) {
+                            $vehicleRequest->VAvailability = null;
+                            $vehicleRequest->save();
 
-                $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
-                    ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
-                    ->where('FormStatus', 'Pending')
-                    ->where('EventStatus', '-')
-                    ->get();
+                            $otherRequests = VehicleRequest::where('VehicleID', $vehicleRequest->VehicleID)
+                                ->where('VRequestID', '!=', $vehicleRequest->VRequestID)
+                                ->where('FormStatus', 'Pending')
+                                ->where('EventStatus', '-')
+                                ->get();
 
-                foreach ($otherRequests as $otherRequest) {
-                    if (
-                        ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
-                        ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
-                    ) {
-                        $otherRequest->update([
-                            'FormStatus' => 'Pending',
-                            'EventStatus' => '-',
-                            'VAvailability' => true
-                        ]);
-                    }
-                }
-            }*/
+                            foreach ($otherRequests as $otherRequest) {
+                                if (
+                                    ($otherRequest->date_start <= $vehicleRequest->date_end && $otherRequest->date_end >= $vehicleRequest->date_start) &&
+                                    ($otherRequest->time_start <= $vehicleRequest->time_end && $otherRequest->time_end >= $vehicleRequest->time_start)
+                                ) {
+                                    $otherRequest->update([
+                                        'FormStatus' => 'Pending',
+                                        'EventStatus' => '-',
+                                        'VAvailability' => true
+                                    ]);
+                                }
+                            }
+                        }*/
 
             return redirect()->route('VehicledetailEdit', ['VRequestID' => $VRequestID])->with('success', 'Vehicle request updated successfully.');
         } catch (ValidationException $e) {
@@ -288,89 +288,89 @@ class VehicleController extends Controller
     }
 
     public function fetchSortedVRequests(Request $request): \Illuminate\Http\JsonResponse
-{
-    // Retrieve request parameters with default values
-    $sort = $request->get('sort', 'created_at');
-    $order = $request->get('order', 'desc');
-    $formStatuses = $request->get('form_statuses', ['Approved', 'Pending', 'For Approval']);
-    $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
-    $searchQuery = $request->get('search_query', '');
-    $perPage = $request->get('per_page', 10);
-    $page = $request->get('page', 1);
+    {
+        // Retrieve request parameters with default values
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+        $formStatuses = $request->get('form_statuses', ['Approved', 'Pending', 'For Approval']);
+        $eventStatuses = $request->get('event_statuses', ['Ongoing', '-']);
+        $searchQuery = $request->get('search_query', '');
+        $perPage = $request->get('per_page', 10);
+        $page = $request->get('page', 1);
 
-    Log::info('Filter parameters:', [
-        'sort' => $sort,
-        'order' => $order,
-        'form_statuses' => $formStatuses,
-        'event_statuses' => $eventStatuses,
-        'search_query' => $searchQuery,
-    ]);
-
-    // Define month name-to-numeric mapping
-    $monthNames = [
-        'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
-        'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
-        'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
-    ];
-
-    try {
-        $query = VehicleRequest::with('office');
-
-        // Apply search query filters
-        if ($searchQuery) {
-            $query->where(function ($q) use ($searchQuery, $monthNames) {
-                // Check if the search query is a month name
-                $lowerSearchQuery = strtolower($searchQuery);
-                if (isset($monthNames[$lowerSearchQuery])) {
-                    // Search in the created_at column by the numeric month
-                    $numericMonth = $monthNames[$lowerSearchQuery];
-                    $q->whereMonth('created_at', $numericMonth);
-                } else {
-                    // Standard search query in other fields
-                    $q->where('VRequestID', 'like', '%' . $searchQuery . '%')
-                        ->orWhere('Destination', 'like', '%' . $searchQuery . '%')
-                        ->orWhere('PurposeID', 'like', '%' . $searchQuery . '%')
-                        ->orWhere('PurposeOthers', 'like', '%' . $searchQuery . '%')
-                        ->orWhereHas('office', function ($q) use ($searchQuery) {
-                            $q->where('OfficeName', 'like', '%' . $searchQuery . '%');
-                        })
-                        ->orWhere('FormStatus', 'like', '%' . $searchQuery . '%');
-                }
-            });
-        }
-
-        // Apply form status filter
-        if ($formStatuses) {
-            $query->whereIn('FormStatus', $formStatuses);
-        }
-
-        // Apply event status filter
-        if ($eventStatuses) {
-            $query->whereIn('EventStatus', $eventStatuses);
-        }
-
-        // Apply sorting and pagination
-        $vehicleRequests = $query->orderBy($sort, $order)->paginate($perPage, ['*'], 'page', $page);
-
-        Log::info('Query results:', $vehicleRequests->toArray());
-
-        return response()->json([
-            'data' => $vehicleRequests->items(),
-            'pagination' => [
-                'current_page' => $vehicleRequests->currentPage(),
-                'last_page' => $vehicleRequests->lastPage(),
-                'per_page' => $vehicleRequests->perPage(),
-                'total' => $vehicleRequests->total(),
-            ],
+        Log::info('Filter parameters:', [
+            'sort' => $sort,
+            'order' => $order,
+            'form_statuses' => $formStatuses,
+            'event_statuses' => $eventStatuses,
+            'search_query' => $searchQuery,
         ]);
-    } catch (Throwable $e) {
-        Log::error('An error occurred while fetching sorted vehicle requests:', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ]);
-        return response()->json(['error' => 'Failed to fetch vehicle requests.'], 500);
+
+        // Define month name-to-numeric mapping
+        $monthNames = [
+            'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
+            'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
+            'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
+        ];
+
+        try {
+            $query = VehicleRequest::with('office');
+
+            // Apply search query filters
+            if ($searchQuery) {
+                $query->where(function ($q) use ($searchQuery, $monthNames) {
+                    // Check if the search query is a month name
+                    $lowerSearchQuery = strtolower($searchQuery);
+                    if (isset($monthNames[$lowerSearchQuery])) {
+                        // Search in the created_at column by the numeric month
+                        $numericMonth = $monthNames[$lowerSearchQuery];
+                        $q->whereMonth('created_at', $numericMonth);
+                    } else {
+                        // Standard search query in other fields
+                        $q->where('VRequestID', 'like', '%' . $searchQuery . '%')
+                            ->orWhere('Destination', 'like', '%' . $searchQuery . '%')
+                            ->orWhere('PurposeID', 'like', '%' . $searchQuery . '%')
+                            ->orWhere('PurposeOthers', 'like', '%' . $searchQuery . '%')
+                            ->orWhereHas('office', function ($q) use ($searchQuery) {
+                                $q->where('OfficeName', 'like', '%' . $searchQuery . '%');
+                            })
+                            ->orWhere('FormStatus', 'like', '%' . $searchQuery . '%');
+                    }
+                });
+            }
+
+            // Apply form status filter
+            if ($formStatuses) {
+                $query->whereIn('FormStatus', $formStatuses);
+            }
+
+            // Apply event status filter
+            if ($eventStatuses) {
+                $query->whereIn('EventStatus', $eventStatuses);
+            }
+
+            // Apply sorting and pagination
+            $vehicleRequests = $query->orderBy($sort, $order)->paginate($perPage, ['*'], 'page', $page);
+
+            Log::info('Query results:', $vehicleRequests->toArray());
+
+            return response()->json([
+                'data' => $vehicleRequests->items(),
+                'pagination' => [
+                    'current_page' => $vehicleRequests->currentPage(),
+                    'last_page' => $vehicleRequests->lastPage(),
+                    'per_page' => $vehicleRequests->perPage(),
+                    'total' => $vehicleRequests->total(),
+                ],
+            ]);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching sorted vehicle requests:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch vehicle requests.'], 500);
+        }
     }
-}
 
     public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
     {

@@ -177,7 +177,7 @@
                     <td>
                         <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
                         @if($request->FormStatus !== 'Pending')
-                        <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
+                            <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
                         @endif
                     </td>
                 </tr>
@@ -212,49 +212,49 @@
 <div class="end"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    let currentPage = 1;
-    const itemsPerPage = 10;
-    let lastPage = 1;
-    let searchQuery = ''; 
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let lastPage = 1;
+        let searchQuery = '';
 
-    function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
+        function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
+            const form = document.getElementById('filterForm');
+            const formData = new FormData(form);
 
-        // Append necessary data
-        formData.append('order', order);
-        formData.append('sort', 'created_at');
-        formData.append('page', page);
-        formData.append('per_page', itemsPerPage);
-        formData.append('search_query', search);
+            // Append necessary data
+            formData.append('order', order);
+            formData.append('sort', 'created_at');
+            formData.append('page', page);
+            formData.append('per_page', itemsPerPage);
+            formData.append('search_query', search);
 
-        const params = new URLSearchParams(formData).toString();
+            const params = new URLSearchParams(formData).toString();
 
-        // Fetch data with search and sort applied
-        fetch(`/fetchSortedVRequests?${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data.data, data.pagination);
-                currentPage = data.pagination.current_page;
-                lastPage = data.pagination.last_page;
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    }
+            // Fetch data with search and sort applied
+            fetch(`/fetchSortedVRequests?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.data, data.pagination);
+                    currentPage = data.pagination.current_page;
+                    lastPage = data.pagination.last_page;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
 
-    // Function to update the table with the fetched data
-    function updateTable(data, pagination) {
-        let tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
+        // Function to update the table with the fetched data
+        function updateTable(data, pagination) {
+            let tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
 
-        if (Array.isArray(data) && data.length > 0) {
-            data.forEach(request => {
-                let officeName = request.office ? request.office.OfficeName : 'N/A';
-                let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(request => {
+                    let officeName = request.office ? request.office.OfficeName : 'N/A';
+                    let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
 
-                let row = `<tr>
+                    let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>
                     <td>${new Date(request.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -277,69 +277,69 @@ document.addEventListener('DOMContentLoaded', function () {
                         <i class="bi bi-download" id="actions" data-request-id="${request.VRequestID}"></i>
                     </td>
                 </tr>`;
-                
-                tbody.insertAdjacentHTML('beforeend', row);
-            });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+            }
+
+            updatePagination(pagination);
         }
 
-        updatePagination(pagination);
-    }
+        // Function to handle pagination
+        function updatePagination(pagination) {
+            currentPage = pagination.current_page;
+            lastPage = pagination.last_page;
 
-    // Function to handle pagination
-    function updatePagination(pagination) {
-        currentPage = pagination.current_page;
-        lastPage = pagination.last_page;
-
-        document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
-        document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
-    }
-
-    // Sort by date when clicking on the "Sort" button
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder, currentPage, searchQuery);
-    });
-
-    // Handle pagination (previous and next buttons)
-    document.getElementById('prev-page').addEventListener('click', function () {
-        if (currentPage > 1) {
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+            document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
+            document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
         }
-    });
 
-    document.getElementById('next-page').addEventListener('click', function () {
-        if (currentPage < lastPage) {
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-        }
-    });
+        // Sort by date when clicking on the "Sort" button
+        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+            e.preventDefault();
+            let order = this.getAttribute('data-order');
+            let newOrder = order === 'asc' ? 'desc' : 'asc';
+            this.setAttribute('data-order', newOrder);
+            fetchSortedData(newOrder, currentPage, searchQuery);
+        });
 
-    // Handle form submission and search
-    document.getElementById('filterForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        searchQuery = document.getElementById('search-input').value.trim(); // Update searchQuery from the input field
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-    });
+        // Handle pagination (previous and next buttons)
+        document.getElementById('prev-page').addEventListener('click', function () {
+            if (currentPage > 1) {
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+            }
+        });
 
-    // Handle reset functionality
-    document.querySelector('.cancelbtn').addEventListener('click', function () {
-        document.getElementById('filterForm').reset();
-        searchQuery = ''; // Reset searchQuery
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-    });
+        document.getElementById('next-page').addEventListener('click', function () {
+            if (currentPage < lastPage) {
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+            }
+        });
 
-    // Instant search functionality while typing
-    document.querySelector('.form-input').addEventListener('input', function () {
-        searchQuery = this.value.trim(); // Update searchQuery on input change
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-    });
+        // Handle form submission and search
+        document.getElementById('filterForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            searchQuery = document.getElementById('search-input').value.trim(); // Update searchQuery from the input field
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+        });
 
-    // Initial fetch when page loads
-    fetchSortedData();
-});
+        // Handle reset functionality
+        document.querySelector('.cancelbtn').addEventListener('click', function () {
+            document.getElementById('filterForm').reset();
+            searchQuery = ''; // Reset searchQuery
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+        });
+
+        // Instant search functionality while typing
+        document.querySelector('.form-input').addEventListener('input', function () {
+            searchQuery = this.value.trim(); // Update searchQuery on input change
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+        });
+
+        // Initial fetch when page loads
+        fetchSortedData();
+    });
 
 </script>

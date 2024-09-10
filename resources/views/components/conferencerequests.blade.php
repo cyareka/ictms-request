@@ -197,21 +197,7 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil"
-                                                                                               id="actions"></i></a>
-                        @if($request->FormStatus === 'For Approval')
-                            <a href="#" onclick="showDownloadModal('{{ route('downloadCRequestPDF', $request->CRequestID) }}', '{{ route('downloadUnavailableCRequestPDF', $request->CRequestID) }}')">
-                                    <i class="bi bi-download" id="actions"></i>
-                                </a>
-                        @elseif($request->FormStatus === 'Approved')
-                            <a href="{{ route('downloadFinalCRequestPDF', $request->CRequestID) }}" target="_blank">
-                                <i class="bi bi-download" id="actions"></i>
-                            </a>
-                        @elseif($request->FormStatus === 'Pending' && $request->CAvailability === 0)
-                            <a href="{{ route('downloadUnavailableCRequestPDF', $request->CRequestID) }}" target="_blank">
-                                <i class="bi bi-download" id="actions"></i>
-                            </a>
-                        @endif
+                        <a href="{{ route('ConferencedetailEdit', $request->CRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -244,52 +230,13 @@
 </div>
 <div class="end"></div>
 <script>
-    function showDownloadModal(requestFormUrl, unavailabilityUrl) {
-        const modalHtml = `
-        <div class="modal" id="downloadModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Download Options</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Which document would you like to download?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="${requestFormUrl}" class="btn btn-primary" target="_blank">Request Form</a>
-                        <a href="${unavailabilityUrl}" class="btn btn-secondary" target="_blank">Certificate of Unavailability</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-            `;
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-        const downloadModal = document.getElementById('downloadModal');
-        downloadModal.style.display = 'flex';
-
-        downloadModal.querySelector('.close').addEventListener('click', function () {
-            downloadModal.style.display = 'none';
-            downloadModal.remove();
-        });
-
-        window.addEventListener('click', function (event) {
-            if (event.target === downloadModal) {
-                downloadModal.style.display = 'none';
-                downloadModal.remove();
-            }
-        });
-    }
-
     function convertAvailability(availability) {
         return availability > 0 ? 'Available' : 'Not Available';
     }
     document.querySelector('.form-input').addEventListener('input', function () {
         document.getElementById('searchInput').value = this.value;
     });
+
     document.addEventListener('DOMContentLoaded', function () {
         let currentPage = 1;
         const itemsPerPage = 5;
@@ -381,17 +328,6 @@
                 <td>${request.EventStatus}</td>
                 <td>
                     <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>`;
-
-                    if (request.FormStatus === 'For Approval') {
-                        row += `<a href="#" onclick="showDownloadModal('/conferencerequest/${request.CRequestID}/view-pdf', '/conferencerequest/${request.CRequestID}/view-unavailable-pdf')">
-                                    <i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i>
-                                </a>`;
-
-                    } else if (request.FormStatus === 'Approved') {
-                        row += `<a href="/conferencerequest/${request.CRequestID}/view-final-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
-                    } else if(request.FormStatus === 'Pending' && request.CAvailability === 0)
-                        row += `<a href="/conferencerequest/${request.CRequestID}/view-unavailable-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
-                    row += `</td></tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
             } else {
