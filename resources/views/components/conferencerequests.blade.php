@@ -1,25 +1,8 @@
 <style>
-    .modal {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Optional: for a semi-transparent background */
-    }
-
-    .modal-dialog {
-        max-width: 500px; /* Adjust the width as needed */
-        margin: auto;
-    }
      .pagination_rounded, .pagination_square {
     display: inline-block;
-    margin-left:470px;
-    margin-top: 10px;
-    margin-bottom: 0;
+    margin-left:400px;
+    /* margin-top:284px; */
     }
 
     .pagination_rounded ul {
@@ -58,7 +41,7 @@
 
     .pagination_rounded ul li a {
         float: left;
-        color: #4285f4;
+        color: #000000;
         border-radius: 50%;
         line-height: 30px;
         height: 30px;
@@ -96,10 +79,6 @@
         </div>
         <div class="tableactions">
             <div id="divide">
-                <div id="pagination-links">
-                    <i class="bi bi-arrow-left-short" id="prev-page"></i>
-                    <i class="bi bi-arrow-right-short" id="next-page"></i>
-                </div>
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
@@ -204,7 +183,7 @@
             </tbody>
         </table>
         <div class="pagination_rounded">
-                        <ul>
+                <ul id="pagination-list">
                             <li>
                                 <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
                             </li>
@@ -229,6 +208,24 @@
     </div>
 </div>
 <div class="end"></div>
+<style>
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Optional: for a semi-transparent background */
+    }
+
+    .modal-dialog {
+        max-width: 500px; /* Adjust the width as needed */
+        margin: auto;
+    }
+</style>
 <script>
     function convertAvailability(availability) {
         return availability > 0 ? 'Available' : 'Not Available';
@@ -238,73 +235,121 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        let currentPage = 1;
-        const itemsPerPage = 5;
-        let lastPage = 1;
-        let searchQuery = '';
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    let lastPage = 1;
+    let searchQuery = '';
 
-        function fetchSortedData(order = 'desc', page = currentPage,search = searchQuery) {
-            const form = document.getElementById('filterForm');
-            const formData = new FormData(form);
+    function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
 
-            formData.append('order', order);
-            formData.append('sort', 'created_at');
-            formData.append('page', page);
-            formData.append('per_page', itemsPerPage);
-            formData.append('search', search)
+        formData.append('order', order);
+        formData.append('sort', 'created_at');
+        formData.append('page', page);
+        formData.append('per_page', itemsPerPage);
+        formData.append('search', search);
 
-            const searchInput = document.querySelector('.form-input').value;
-            formData.append('search', searchInput);
+        const searchInput = document.querySelector('.form-input').value;
+        formData.append('search', searchInput);
 
-            const params = new URLSearchParams(formData).toString();
+        const params = new URLSearchParams(formData).toString();
 
-            fetch(`/fetchSortedRequests?${params}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    updateTable(data.data);
-                    updatePagination(data.pagination);
-                    currentPage = data.pagination.current_page;
-                    lastPage = data.pagination.last_page;
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                    alert(`An error occurred while fetching data: ${error.message}`);
-                });
+        fetch(`/fetchSortedRequests?${params}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                updateTable(data.data);
+                updatePagination(data.pagination);
+                currentPage = data.pagination.current_page;
+                lastPage = data.pagination.last_page;
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                alert(`An error occurred while fetching data: ${error.message}`);
+            });
+    }
+
+    function updatePagination(pagination) {
+        currentPage = pagination.current_page;
+        lastPage = pagination.last_page;
+
+        const paginationList = document.getElementById('pagination-list');
+        paginationList.innerHTML = '';
+
+        // Add "Prev" button
+        const prevPageItem = document.createElement('li');
+        const prevPageLink = document.createElement('a');
+        prevPageLink.href = '#';
+        prevPageLink.classList.add('prev');
+        prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
+        prevPageLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+            }
+        });
+        prevPageItem.appendChild(prevPageLink);
+        paginationList.appendChild(prevPageItem);
+
+        // Add numbered page links
+        for (let i = 1; i <= lastPage; i++) {
+            const pageItem = document.createElement('li');
+            const pageLink = document.createElement('a');
+            pageLink.href = '#';
+            pageLink.textContent = i;
+            if (i === currentPage) {
+                pageLink.style.color = 'white';  
+                pageLink.style.backgroundColor = '#4285f4'; 
+            }
+            pageLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), i, searchQuery);
+            });
+            pageItem.appendChild(pageLink);
+            paginationList.appendChild(pageItem);
         }
 
-        function updatePagination(pagination) {
-            currentPage = pagination.current_page;
-            lastPage = pagination.last_page;
+        // Add "Next" button
+        const nextPageItem = document.createElement('li');
+        const nextPageLink = document.createElement('a');
+        nextPageLink.href = '#';
+        nextPageLink.classList.add('next');
+        nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
+        nextPageLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (currentPage < lastPage) {
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+            }
+        });
+        nextPageItem.appendChild(nextPageLink);
+        paginationList.appendChild(nextPageItem);
+    }
 
-            document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
-            document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
-        }
+    function updateTable(data) {
+        console.log('Received data:', data);
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
 
-        function updateTable(data) {
-            console.log('Received data:', data);
-            let tbody = document.querySelector('tbody');
-            tbody.innerHTML = '';
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(request => {
+                console.log("Full request object:", request);
+                console.log("Processing CRequestID:", request.CRequestID);
 
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(request => {
-                    console.log("Full request object:", request);
-                    console.log("Processing CRequestID:", request.CRequestID);
+                let formStatusClass = '';
+                switch (request.FormStatus.toLowerCase()) {
+                    case 'approved':
+                        formStatusClass = 'approved';
+                        break;
+                    case 'for approval':
+                        formStatusClass = 'for-approval';
+                        break;
+                    case 'pending':
+                        formStatusClass = 'pending';
+                        break;
+                }
 
-                    let formStatusClass = '';
-                    switch (request.FormStatus.toLowerCase()) {
-                        case 'approved':
-                            formStatusClass = 'approved';
-                            break;
-                        case 'for approval':
-                            formStatusClass = 'for-approval';
-                            break;
-                        case 'pending':
-                            formStatusClass = 'pending';
-                            break;
-                    }
-
-                    let row = `<tr>
+                let row = `<tr>
                 <th scope="row">${request.CRequestID}</th>
                 <td>
                     ${new Date(request.created_at).toLocaleDateString('en-US', {
@@ -328,6 +373,17 @@
                 <td>${request.EventStatus}</td>
                 <td>
                     <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>`;
+
+                    if (request.FormStatus === 'For Approval') {
+                        row += `<a href="#" onclick="showDownloadModal('/conferencerequest/${request.CRequestID}/view-pdf', '/conferencerequest/${request.CRequestID}/view-unavailable-pdf')">
+                                    <i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i>
+                                </a>`;
+
+                    } else if (request.FormStatus === 'Approved') {
+                        row += `<a href="/conferencerequest/${request.CRequestID}/view-final-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
+                    } else if(request.FormStatus === 'Pending' && request.CAvailability === 0)
+                        row += `<a href="/conferencerequest/${request.CRequestID}/view-unavailable-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
+                    row += `</td></tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
             } else {
@@ -335,42 +391,30 @@
             }
         }
 
-        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-            e.preventDefault();
-            let order = this.getAttribute('data-order');
-            let newOrder = order === 'asc' ? 'desc' : 'asc';
-            this.setAttribute('data-order', newOrder);
-            fetchSortedData(newOrder, currentPage, searchQuery);
-        });
-
-        document.getElementById('prev-page').addEventListener('click', function () {
-            if (currentPage > 1) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
-            }
-        });
-
-        document.getElementById('next-page').addEventListener('click', function () {
-            if (currentPage < lastPage) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-            }
-        });
-
-        document.getElementById('filterForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            searchQuery = document.getElementById('search').value;
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-        });
-
-        document.querySelector('.cancelbtn').addEventListener('click', function () {
-            document.getElementById('filterForm').reset();
-            searchQuery = '';
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-        });
-
-        document.querySelector('.form-input').addEventListener('input', function () {
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-        });
-
-        fetchSortedData();
+    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder, currentPage, searchQuery);
     });
+
+    document.getElementById('filterForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        searchQuery = document.getElementById('search').value;
+        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+    });
+
+    document.querySelector('.cancelbtn').addEventListener('click', function () {
+        document.getElementById('filterForm').reset();
+        searchQuery = '';
+        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+    });
+
+    document.querySelector('.form-input').addEventListener('input', function () {
+        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+    });
+
+    fetchSortedData();
+});
 </script>

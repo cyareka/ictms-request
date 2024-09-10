@@ -1,9 +1,8 @@
 <style> 
-     .pagination_rounded, .pagination_square {
+    .pagination_rounded, .pagination_square {
     display: inline-block;
     margin-left:470px;
     margin-top:15px;
-    margin-bottom: 0;
     }
 
     .pagination_rounded ul {
@@ -42,7 +41,7 @@
 
     .pagination_rounded ul li a {
         float: left;
-        color: #4285f4;
+        color: #000000;
         border-radius: 50%;
         line-height: 30px;
         height: 30px;
@@ -78,11 +77,7 @@
             </div>
         </div>
         <div class="tableactions">
-            <div id="divide">
-                <div id="pagination-links">
-                    <i class="bi bi-arrow-left-short" id="prev-page"></i>
-                    <i class="bi bi-arrow-right-short" id="next-page"></i></div>
-            </div>
+            <div id="divide"> </div>
             <div class="dropdown" style="float:right;">
                 <button class="dropbtn"><i class="bi bi-filter"></i></button>
                 <form id="filterForm" method="GET" action="{{ route('fetchSortedVRequests') }}">
@@ -287,14 +282,63 @@
             updatePagination(pagination);
         }
 
-        // Function to handle pagination
-        function updatePagination(pagination) {
-            currentPage = pagination.current_page;
-            lastPage = pagination.last_page;
+    // Function to handle pagination
+function updatePagination(pagination) {
+    const paginationContainer = document.querySelector('.pagination_rounded ul');
+    paginationContainer.innerHTML = ''; // Clear the current pagination
 
-            document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
-            document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
+    // Previous button
+    let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
+
+    // Page numbers
+    for (let page = 1; page <= pagination.last_page; page++) {
+        let activeClass = page === pagination.current_page ? 'active' : '';
+        
+        // Create the list item element
+        let listItem = document.createElement('li');
+        listItem.className = activeClass;
+
+        // Create the anchor element
+        let pageLink = document.createElement('a');
+        pageLink.href = '#';
+        pageLink.textContent = page;
+
+        // If it's the current page, change the font color
+        if (page === pagination.current_page) {
+            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
         }
+
+
+        // Append the anchor to the list item
+        listItem.appendChild(pageLink);
+
+        // Append the list item to the pagination container
+        paginationContainer.appendChild(listItem);
+    }
+
+    // Next button
+    let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
+}
+
+// Event listeners for pagination links
+document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+        e.preventDefault();
+        let text = e.target.textContent.trim();
+        
+        if (text === 'Prev' && currentPage > 1) {
+            fetchSortedData('desc', currentPage - 1, searchQuery);
+        } else if (text === 'Next' && currentPage < lastPage) {
+            fetchSortedData('desc', currentPage + 1, searchQuery);
+        } else if (!isNaN(text)) {
+            fetchSortedData('desc', parseInt(text), searchQuery);
+        }
+    }
+});
+
 
         // Sort by date when clicking on the "Sort" button
         document.getElementById('sort-date-requested').addEventListener('click', function (e) {
@@ -305,18 +349,18 @@
             fetchSortedData(newOrder, currentPage, searchQuery);
         });
 
-        // Handle pagination (previous and next buttons)
-        document.getElementById('prev-page').addEventListener('click', function () {
-            if (currentPage > 1) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
-            }
-        });
+    // // Handle pagination (previous and next buttons)
+    // document.getElementById('prev-page').addEventListener('click', function () {
+    //     if (currentPage > 1) {
+    //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+    //     }
+    // });
 
-        document.getElementById('next-page').addEventListener('click', function () {
-            if (currentPage < lastPage) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-            }
-        });
+    // document.getElementById('next-page').addEventListener('click', function () {
+    //     if (currentPage < lastPage) {
+    //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+    //     }
+    // });
 
         // Handle form submission and search
         document.getElementById('filterForm').addEventListener('submit', function (event) {
