@@ -42,6 +42,39 @@ class VehicleController extends Controller
         return $generatedID;
     }
 
+    private function generatePurposeID(): string
+    {
+        $idGenerator = new IDGenerator();
+        do {
+            $generatedID = $idGenerator->generateID_3();
+        } while (PurposeRequest::query()->where('PurposeID', $generatedID)->exists());
+
+        return $generatedID;
+    }
+
+    private function insertPurposeInput(array $validated): void
+    {
+        if (!empty($validated['purposeInput'])) {
+            $similarPurpose = DB::table('purpose_requests')
+                ->where('purpose', 'like', '%' . $validated['purposeInput'] . '%')
+                ->exists();
+
+            if ($similarPurpose) {
+                session()->flash('purposeInputError', 'A similar purpose name already exists.');
+                throw ValidationException::withMessages(['purposeInput' => 'A similar purpose name already exists.']);
+            }
+
+            DB::table('purpose_requests')->insert([
+                'PurposeID' => $this->generatePurposeID(),
+                'request_p' => 'Vehicle',
+                'purpose' => $validated['purposeInput'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
+
     /**
      * @throws ValidationException
      */
@@ -65,6 +98,7 @@ class VehicleController extends Controller
                 'RequesterContact' => 'required|string|max:13',
                 'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
             ]);
+            $this->insertPurposeInput($validated);
 
             // Capitalize the first letter of specific fields
             $purpose = ucwords($validated['purposeInput'] ?? '');

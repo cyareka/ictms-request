@@ -95,7 +95,7 @@ class ConferenceController extends Controller
 
             $this->insertPurposeInput($validated);
 
-            $purpose = $validated['purposeInput'] ?? null;
+            $purpose = ucwords($validated['purposeInput'] ?? null);
             $focalPerson = $validated['focalPersonInput'] ?? null;
             $otherFacilities = $validated['otherFacilitiesInput'] ?? $validated['otherFacilitiesSelect'];
 
