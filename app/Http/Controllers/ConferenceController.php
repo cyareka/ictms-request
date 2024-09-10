@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Office;
+use App\Models\PurposeRequest;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -20,14 +21,6 @@ use function Pest\Laravel\get;
 
 class ConferenceController extends Controller
 {
-    /**
-     * Generates a unique ID for a conference request.
-     *
-     * This function uses the IDGenerator class to generate a 10-character unique ID.
-     * It ensures the generated ID does not already exist in the ConferenceRequest table.
-     *
-     * @return string The generated unique ID.
-     */
     private function generateUniqueID(): string
     {
         $idGenerator = new IDGenerator();
@@ -38,16 +31,38 @@ class ConferenceController extends Controller
         return $generatedID;
     }
 
-    /**
-     * Submits the conference room request form.
-     *
-     * This function validates the request data, checks for duplicate dates, and creates conference requests.
-     * It handles file uploads for the requester's signature and stores the data in the database.
-     * If validation or any other error occurs, it logs the error and redirects back with an error message.
-     *
-     * @param \Illuminate\Http\Request $request The HTTP request object containing form data.
-     * @return \Illuminate\Http\RedirectResponse The response object redirecting back to the form with a success or error message.
-     */
+    private function generatePurposeID(): string
+    {
+        $idGenerator = new IDGenerator();
+        do {
+            $generatedID = $idGenerator->generateID_3();
+        } while (PurposeRequest::query()->where('PurposeID', $generatedID)->exists());
+
+        return $generatedID;
+    }
+
+    private function insertPurposeInput(array $validated): void
+    {
+        if (!empty($validated['purposeInput'])) {
+            $similarPurpose = DB::table('purpose_requests')
+                ->where('purpose', 'like', '%' . $validated['purposeInput'] . '%')
+                ->exists();
+
+            if ($similarPurpose) {
+                session()->flash('purposeInputError', 'A similar purpose name already exists.');
+                throw ValidationException::withMessages(['purposeInput' => 'A similar purpose name already exists.']);
+            }
+
+            DB::table('purpose_requests')->insert([
+                'PurposeID' => $this->generatePurposeID(),
+                'request_p' => 'Conference Room',
+                'purpose' => $validated['purposeInput'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+
     public function submitCForm(Request $request): RedirectResponse
     {
         Log::info('Incoming request data:', $request->all());
@@ -77,6 +92,8 @@ class ConferenceController extends Controller
             ]);
 
             Log::info('Validated data:', $validated);
+
+            $this->insertPurposeInput($validated);
 
             $purpose = $validated['purposeInput'] ?? null;
             $focalPerson = $validated['focalPersonInput'] ?? null;

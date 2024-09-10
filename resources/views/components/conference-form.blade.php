@@ -326,6 +326,20 @@
     </style>
 </head>
 <body>
+@if (session('purposeInputError'))
+    <div class="alert alert-warning">
+        {{ session('purposeInputError') }}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('input[name="purposeInput"]').value = '';
+            document.getElementById('purposeCheckbox').checked = false;
+            document.getElementById('purposeInput').style.display = 'none';
+            document.getElementById('purposeSelect').style.display = 'block';
+        });
+    </script>
+@endif
+
 @if ($errors->any())
     <script>
         let errorMessages = [];
