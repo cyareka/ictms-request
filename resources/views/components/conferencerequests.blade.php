@@ -1,8 +1,25 @@
 <style>
+    .modal {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Optional: for a semi-transparent background */
+    }
+
+    .modal-dialog {
+        max-width: 500px; /* Adjust the width as needed */
+        margin: auto;
+    }
      .pagination_rounded, .pagination_square {
     display: inline-block;
-    margin-left:520px;
-    margin-top:284px;
+    margin-left:470px;
+    margin-top: 10px;
+    margin-bottom: 0;
     }
 
     .pagination_rounded ul {
@@ -200,9 +217,7 @@
             @endforeach
             </tbody>
         </table>
-    </div>
-</div>
-<div class="pagination_rounded">
+        <div class="pagination_rounded">
                         <ul>
                             <li>
                                 <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
@@ -225,25 +240,9 @@
                             </li>
                         </ul>
          </div>
+    </div>
+</div>
 <div class="end"></div>
-<style>
-    .modal {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Optional: for a semi-transparent background */
-    }
-
-    .modal-dialog {
-        max-width: 500px; /* Adjust the width as needed */
-        margin: auto;
-    }
-</style>
 <script>
     function showDownloadModal(requestFormUrl, unavailabilityUrl) {
         const modalHtml = `

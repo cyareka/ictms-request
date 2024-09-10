@@ -68,7 +68,8 @@
     .pagination_rounded, .pagination_square {
     display: inline-block;
     margin-left:460px;
-    margin-top:350px;
+    margin-top:10px;
+    margin-bottom: 0;
     }
 
     .pagination_rounded ul {
@@ -259,8 +260,7 @@
             @endforeach
             </tbody>
         </table>
-    </div>
-            <div class="pagination_rounded">
+        <div class="pagination_rounded">
                         <ul>
                             <li>
                                 <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
@@ -283,6 +283,7 @@
                             </li>
                         </ul>
          </div>
+    </div>
 <div class="end"></div>
 <script>
 
