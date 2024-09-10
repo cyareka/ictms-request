@@ -1,3 +1,72 @@
+<style>
+     .pagination_rounded, .pagination_square {
+    display: inline-block;
+    margin-left:520px;
+    margin-top:284px;
+    }
+
+    .pagination_rounded ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .pagination_rounded li:first-child {
+        margin-left: 0px;
+    }
+
+    .pagination_rounded ul li {
+        float: left;
+        margin-left: 20px;
+    }
+
+    .pagination_rounded ul li a:hover {
+        background: #4285f4;
+        color: #fff;
+        border: 1px solid #4285f4;
+    }
+
+    a:link {
+    text-decoration: none;
+    }
+
+    .pagination_rounded .prev {
+        margin-left: 0px;
+        border-radius: 35px;
+        width: 90px;
+        height: 34px;
+        line-height: 34px;
+    }
+
+
+    .pagination_rounded ul li a {
+        float: left;
+        color: #4285f4;
+        border-radius: 50%;
+        line-height: 30px;
+        height: 30px;
+        width: 30px;
+        text-align: center;
+        margin-bottom: 40px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .pagination_rounded .prev i {
+        margin-right: 10px;
+    }
+
+    .pagination_rounded .next {
+        border-radius: 35px;
+        width: 90px;
+        height: 34px;
+        line-height: 34px;
+    }
+
+    .visible-xs {
+        display: none!important;
+    }
+</style>
+
 <div class="requests">
     <div class="filter">
         <div class="row height d-flex justify-content-left align-items-left">
@@ -133,6 +202,29 @@
         </table>
     </div>
 </div>
+<div class="pagination_rounded">
+                        <ul>
+                            <li>
+                                <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
+                            </li>
+                            <li><a href="#">1</a>
+                            </li>
+							<li class="hidden-xs"><a href="#">2</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">3</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">4</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">5</a>
+                            </li>
+							<li class="visible-xs"><a href="#">...</a>
+                            </li>
+							<li><a href="#">6</a>
+                            </li>
+                            <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                            </li>
+                        </ul>
+         </div>
 <div class="end"></div>
 <style>
     .modal {
