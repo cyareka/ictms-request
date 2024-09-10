@@ -154,6 +154,11 @@ class DownloadsController extends Controller
 
         $certFilePath = $conferenceRequest['certfile-upload'];
 
+        if (is_null($certFilePath)) {
+            Log::error('No file uploaded for this request.', ['CRequestID' => $CRequestID]);
+            return response()->json(['error' => 'No file uploaded for this request.'], 400);
+        }
+
         if (Storage::disk('public')->exists($certFilePath)) {
             $fileContents = Storage::disk('public')->get($certFilePath);
             Log::info('File contents retrieved.', ['fileContents' => $fileContents]);

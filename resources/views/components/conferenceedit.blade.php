@@ -201,7 +201,8 @@
             font-size: 16px;
             width: 11%;
         }
-        .cancel-btn{
+
+        .cancel-btn {
             background-color: #E1C16E;
         }
 
@@ -377,7 +378,7 @@
                 justify-content: center;
                 margin-top: 20px;
                 gap: 20px;
-                width:100%;
+                width: 100%;
             }
 
             .submit-btn {
@@ -388,7 +389,7 @@
                 border-radius: 20px;
                 cursor: pointer;
                 font-size: 16px;
-                width:100%;
+                width: 100%;
             }
 
             #signature-preview {
@@ -604,10 +605,12 @@
                 }
             }
         }
+
         .fa-duotone {
             font-size: 1.5em;
         }
-        .btn{
+
+        .btn {
             margin-top: -1.2em;
             margin-right: -1.2em;
         }
@@ -637,7 +640,7 @@
 @endif
 <div class="container">
     <button class="btn float-right">
-    <i class="fa-duotone fa-solid fa-xmark"></i>
+        <i class="fa-duotone fa-solid fa-xmark"></i>
     </button>
     <h1>Update Request for Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
@@ -655,8 +658,8 @@
             <div class="inline-field">
                 <label for="purpose">Purpose</label>
                 `<input type="text" id="purpose" name="purpose"
-                       value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}"
-                       placeholder="-" readonly>`
+                        value="{{ optional(App\Models\PurposeRequest::find($requestData->PurposeID))->purpose ?? $requestData->PurposeOthers }}"
+                        placeholder="-" readonly>`
             </div>
         </div>
         <div class="row-group-container">
@@ -754,13 +757,22 @@
                 <label for="FormStatus">Form Status</label>
                 <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
                     @if ($requestData->CAvailability == '0')
-                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved
+                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
+                            Pending
                         </option>
                     @else
-                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending</option>
-                        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For Approval</option>
-                        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
-                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
+                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
+                            Pending
+                        </option>
+                        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
+                            For Approval
+                        </option>
+                        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
+                            Approved
+                        </option>
+                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+                            Not Approved
+                        </option>
                     @endif
                 </select>
             </div>
@@ -770,18 +782,20 @@
                 <label for="EventStatus">Event Status</label>
                 <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}" readonly>
             </div>
-            <div class="inline-field">
-                <label for="certificate-upload">File Upload</label>
-                <div class="file-upload">
-                    <label for="certfile-upload" id="certificate-preview-label">
-                        <div id="certificate-preview-container">
-                            <div id="default-text">No file uploaded</div>
-                            <div id="certificate-preview"></div>
-                        </div>
-                    </label>
-                    <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf"
-                           onchange="previewCertificate(event)"
-                           style="display: none;">
+            <div id="file-upload-section" style="display: none;">
+                <div class="inline-field">
+                    <label for="certificate-upload">File Upload</label>
+                    <div class="file-upload">
+                        <label for="certfile-upload" id="certificate-preview-label">
+                            <div id="certificate-preview-container">
+                                <div id="default-text">No file uploaded</div>
+                                <div id="certificate-preview"></div>
+                            </div>
+                        </label>
+                        <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf"
+                               onchange="previewCertificate(event)"
+                               style="display: none;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -792,11 +806,11 @@
                 </a>
             @elseif($requestData->FormStatus === 'Approved')
                 <a href="{{ route('downloadFinalCRequestPDF', $requestData->CRequestID) }}" target="_blank">
-                    <button class="dl-btn" type="button">Download</button>
+                    <button class="cancel-btn" type="button">Download</button>
                 </a>
             @elseif($requestData->FormStatus === 'Pending' && $requestData->CAvailability === 0)
                 <a href="{{ route('downloadUnavailableCRequestPDF', $requestData->CRequestID) }}" target="_blank">
-                    <button class="dl-btn" type="button">Download</button>
+                    <button class="cancel-btn" type="button">Download</button>
                 </a>
             @endif
             <button class="submit-btn" type="submit">Update</button>
@@ -805,8 +819,26 @@
     </form>
 </div>
 <script>
-function showDownloadModal(requestFormUrl, unavailabilityUrl) {
-    const modalHtml = `
+    function toggleFileUploadSection() {
+        const formStatus = document.getElementById('FormStatus').value;
+        const fileUploadSection = document.getElementById('file-upload-section');
+
+        if ((formStatus === 'Approved' && {{ $requestData->CAvailability }} == 1) ||
+            (formStatus === 'Pending' && {{ $requestData->CAvailability }} == 0)) {
+            fileUploadSection.style.display = 'block';
+        } else {
+            fileUploadSection.style.display = 'none';
+        }
+    }
+
+    // Attach the function to the change event of the FormStatus dropdown
+    document.getElementById('FormStatus').addEventListener('change', toggleFileUploadSection);
+
+    // Call the function on page load to set the initial state
+    document.addEventListener('DOMContentLoaded', toggleFileUploadSection);
+
+    function showDownloadModal(requestFormUrl, unavailabilityUrl) {
+        const modalHtml = `
     <div class="modal" id="downloadModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -827,23 +859,23 @@ function showDownloadModal(requestFormUrl, unavailabilityUrl) {
         </div>
     </div>
     `;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-    const downloadModal = document.getElementById('downloadModal');
-    downloadModal.style.display = 'flex';
+        const downloadModal = document.getElementById('downloadModal');
+        downloadModal.style.display = 'flex';
 
-    downloadModal.querySelector('.close').addEventListener('click', function () {
-        downloadModal.style.display = 'none';
-        downloadModal.remove();
-    });
-
-    window.addEventListener('click', function (event) {
-        if (event.target === downloadModal) {
+        downloadModal.querySelector('.close').addEventListener('click', function () {
             downloadModal.style.display = 'none';
             downloadModal.remove();
-        }
-    });
-}
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target === downloadModal) {
+                downloadModal.style.display = 'none';
+                downloadModal.remove();
+            }
+        });
+    }
 
     /**
      * Sets up form change detection and handles the cancel action with a confirmation prompt.

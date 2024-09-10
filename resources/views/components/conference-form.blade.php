@@ -443,7 +443,7 @@
             </div>
             <div class="inline-field">
                 <label for="otherFacilitiesSelect">Other Facilities</label>
-                <select id="otherFacilitiesSelect" name="otherFacilitiesSelect" class="selectpicker">
+                <select id="otherFacilitiesSelect" name="otherFacilitiesSelect" class="selectpicker" required>
                     <option disabled selected>Select Facility</option>
                     <option value="Projector" {{ old('otherFacilitiesSelect') == 'Projector' ? 'selected' : '' }}>Projector</option>
                     <option value="Sound System" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>Sound System</option>

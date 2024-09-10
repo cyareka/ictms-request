@@ -80,7 +80,6 @@ class ConferenceController extends Controller
 
             $purpose = $validated['purposeInput'] ?? null;
             $focalPerson = $validated['focalPersonInput'] ?? null;
-//          $otherFacilities = $validated['otherFacilities'] ?? null;
             $otherFacilities = $validated['otherFacilitiesInput'] ?? $validated['otherFacilitiesSelect'];
 
             $dates = $validated['date_start'];
@@ -111,6 +110,8 @@ class ConferenceController extends Controller
 
                 $availability = true;
 
+                $errorMessages = [];
+
                 foreach ($existingRequests as $existingRequest) {
                     if (
                         $validated['date_start'][$index] <= $existingRequest->date_end &&
@@ -119,8 +120,12 @@ class ConferenceController extends Controller
                         $validated['time_end'][$index] >= $existingRequest->time_start
                     ) {
                         $availability = false;
-                        throw ValidationException::withMessages(['date_start' => 'Sorry, your request cannot be booked because there is an ongoing event.']);
+                        $errorMessages[] = 'Sorry, your request cannot be booked because there is an ongoing event on ' . $existingRequest->date_start  . ' to ' . $existingRequest->date_end . ' from ' . $existingRequest->time_start . ' to ' . $existingRequest->time_end;
                     }
+                }
+
+                if (!empty($errorMessages)) {
+                    throw ValidationException::withMessages(['date_start' => $errorMessages]);
                 }
 
                 ConferenceRequest::create([
