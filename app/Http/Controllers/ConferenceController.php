@@ -53,10 +53,12 @@ class ConferenceController extends Controller
                 throw ValidationException::withMessages(['purposeInput' => 'A similar purpose name already exists.']);
             }
 
+            $capitalizedPurpose = ucwords($validated['purposeInput']);
+
             DB::table('purpose_requests')->insert([
                 'PurposeID' => $this->generatePurposeID(),
                 'request_p' => 'Conference Room',
-                'purpose' => $validated['purposeInput'],
+                'purpose' => $capitalizedPurpose,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
