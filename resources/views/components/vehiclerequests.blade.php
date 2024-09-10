@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
                     <td>${request.EventStatus}</td>
                     <td>
-                        <a href="/vehicledetail/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                        <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
                         <i class="bi bi-download" id="actions" data-request-id="${request.VRequestID}"></i>
                     </td>
                 </tr>`;

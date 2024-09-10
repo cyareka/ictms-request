@@ -178,25 +178,8 @@
             margin-top: 20px;
             gap: 20px;
         }
-
-        .submit-btn {
-            background-color: #65558F;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .cancel-btn {
-            background-color: #ff4d4d;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 16px;
+        .dl-btn{
+            background-color: #E1C16E;
         }
 
         #signature-preview {
@@ -293,6 +276,18 @@
                 justify-content: flex-end;
             }
         }
+        .icon{
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -1.5em;
+            margin-right: -1em;
+        }
+        .bi {
+        font-size: 2em;
+        }
+        .bi-dl{
+            font-size: 1.3em;
+        }
 
     </style>
 
@@ -300,6 +295,14 @@
 <body>
 
 <div class="container">
+<div class="icon"> 
+        <button class="btn float-right" type="button" onclick="downloadForm()">
+            <i class="bi-dl bi-download"></i>
+        </button>
+        <button class="btn float-right mb-10" onclick="cancelForm()">
+         <i class="bi bi-x"></i>
+        </button>
+    </div>
     <h1>View Details of Request for Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
 
@@ -404,9 +407,6 @@
                 <label for="EventStatus">Event Status</label>
                 <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestLogData->EventStatus }}" placeholder="-" readonly>
             </div>
-        </div>
-        <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
         </div>
     </form>
 </div>

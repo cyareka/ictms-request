@@ -284,10 +284,30 @@
                 box-sizing: border-box; /* Ensure padding and border are included in the element's total width and height */
             }
         }
+        .icon{
+            display: flex;
+            justify-content: flex-end;
+            margin-top: -1.5em;
+            margin-right: -1em;
+        }
+        .bi {
+        font-size: 2em;
+        }
+        .bi-dl{
+            font-size: 1.3em;
+        }
     </style>
 </head>
 <body>
 <div class="form-container">
+<div class="icon"> 
+        <button class="btn float-right" type="button" onclick="downloadForm()">
+            <i class="bi-dl bi-download"></i>
+        </button>
+        <button class="btn float-right" type="button" onclick="history.back()">
+            <i class="bi bi-x"></i>
+        </button>
+    </div>
     <h1>View Details for Request For Use of Vehicle</h1>
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use. Failure to use the
         vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
@@ -510,7 +530,7 @@
             </form>
         </div>
         <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+            <button class="cancel-btn" type="button" onclick="cancelForm()" hidden>Back</button>
         </div>
     </div>
 </div>
