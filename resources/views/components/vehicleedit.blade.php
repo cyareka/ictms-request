@@ -116,6 +116,22 @@
             width: 100%;
 
         }
+        button-dl {
+            background-color: #65558F;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+        }
+        .form-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 20px;
+        }
 
         .submit-btn {
             background-color: #354e7d;
@@ -125,26 +141,10 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 16px;
-            margin-right: 10px; /* Add margin to the right side of the update button */
-            margin-left: 20px;
+            width: 11%;
         }
-
-        .cancel-btn {
-            background-color: #ff4d4d;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 5px; /* Add margin to the left side of the cancel button */
-
-        }
-
-        .form-footer {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
+        .dl-btn{
+            background-color: #E1C16E;
         }
 
         #signature-preview {
@@ -385,6 +385,13 @@
 
 
         }
+        .fa-duotone {
+            font-size: 1.5em;
+        }
+        .btn{
+            margin-top: -1.2em;
+            margin-right: -1.2em;
+        }
     </style>
 </head>
 <body>
@@ -410,6 +417,11 @@
     </script>
 @endif
 <div class="form-container">
+
+    <button class="btn float-right" onclick="history.back()">
+        <i class="fa-duotone fa-solid fa-xmark"></i>
+    </button>
+
     <h1>Request For Use of Vehicle</h1>
     <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use. Failure to use the
         vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
@@ -673,9 +685,12 @@
             </form>
         </div>
         <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
-            <button class="submit-btn" type="button" onclick="submitAllForms()">Update</button>
+            <a href="path/to/file" download>
+                <button-dl class="dl-btn" type="button">Download</button-dl>
+            </a>
+            <button class="submit-btn" type="submit">Update</button>
         </div>
+        <input type="text" id="AuthRep" name="AuthRep" value="{{ Auth::user()->name }}" hidden>
     </div>
 </div>
 <script>

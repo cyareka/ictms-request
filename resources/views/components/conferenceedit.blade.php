@@ -175,16 +175,10 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 16px;
+            width: 11%;
         }
-
-        .cancel-btn {
-            background-color: #ff4d4d;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 16px;
+        .dl-btn{
+            background-color: #E1C16E;
         }
 
         #signature-preview {
@@ -359,6 +353,7 @@
                 justify-content: center;
                 margin-top: 20px;
                 gap: 20px;
+                width:100%;
             }
 
             .submit-btn {
@@ -369,16 +364,7 @@
                 border-radius: 20px;
                 cursor: pointer;
                 font-size: 16px;
-            }
-
-            .cancel-btn {
-                background-color: #ff4d4d;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 20px;
-                cursor: pointer;
-                font-size: 16px;
+                width:100%;
             }
 
             #signature-preview {
@@ -594,7 +580,13 @@
                 }
             }
         }
-
+        .fa-duotone {
+            font-size: 1.5em;
+        }
+        .btn{
+            margin-top: -1.2em;
+            margin-right: -1.2em;
+        }
     </style>
 </head>
 <body>
@@ -620,6 +612,9 @@
     </script>
 @endif
 <div class="container">
+    <button class="btn float-right" onclick="history.back()">
+    <i class="fa-duotone fa-solid fa-xmark"></i>
+    </button>
     <h1>Update Request for Conference Room</h1>
     <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
 
@@ -767,7 +762,9 @@
             </div>
         </div>
         <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="cancelForm()">Back</button>
+            <a href="path/to/file" download>
+                <button class="dl-btn" type="button">Download</button>
+            </a>
             <button class="submit-btn" type="submit">Update</button>
         </div>
         <input type="text" id="AuthRep" name="AuthRep" value="{{ Auth::user()->name }}" hidden>
