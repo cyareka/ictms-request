@@ -252,12 +252,12 @@
     @endif
     <div id="app">
         <div class="dropdown-row">
-            <button class="dropdown-button" onclick="toggleSection('conference', this)">ADD CONFERENCE ROOM</button>
-            <button class="dropdown-button" onclick="toggleSection('focalP', this)">ADD FOCAL PERSON</button>
-            <button class="dropdown-button" onclick="toggleSection('porpose', this)">ADD PURPOSE</button>
-            <button class="dropdown-button" onclick="toggleSection('addVehi', this)">ADD DRIVER</button>
-            <button class="dropdown-button" onclick="toggleSection('vehicle', this)">ADD VEHICLE</button>
-            <button class="dropdown-button" onclick="toggleSection('employee', this)">ADD EMPLOYEE</button>
+            <button class="dropdown-button" onclick="toggleSection('conference', this)">CONFERENCE ROOM</button>
+            <button class="dropdown-button" onclick="toggleSection('focalP', this)">FOCAL PERSON</button>
+            <button class="dropdown-button" onclick="toggleSection('porpose', this)">PURPOSE</button>
+            <button class="dropdown-button" onclick="toggleSection('addVehi', this)">DRIVER</button>
+            <button class="dropdown-button" onclick="toggleSection('vehicle', this)">VEHICLE</button>
+            <!-- <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button> -->
         </div>
 
         <div id="addVehi" class="toggle-section">
@@ -360,9 +360,36 @@
                     <button class="submit-btn" type="button" onclick="setCurrentForm('RequestPform')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
+                        <br>
+                        <br>
+                        <!-- Added Table with Bootstrap classes -->
+                        <div class="mb-3">
+                <table id="dataTable" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Request Form</th>
+                            <th scope="col">Purpose</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2</td>
+                            <td>Conference Room</td>
+                            <td>Meeting</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                                <button class="btn btn-sm btn-warning">Edit</button>
+                            </td>
+                        </tr>
+                        <!-- More data rows here -->
+                    </tbody>
+                </table> 
+            </div>
         </div>
 
-        <div id="employee" class="toggle-section">
+        <!-- <div id="employee" class="toggle-section">
             <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" id="employeeForm">
                 @csrf
                 <div class="form-row">
@@ -391,7 +418,7 @@
                     <button class="submit-btn" type="button" onclick="setCurrentForm('employeeForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
-        </div>
+        </div> -->
 
         <div id="focalP" class="toggle-section">
             <form class="row-dispatch" method="POST" action="{{ route('focalP.store') }}" id="focalPForm">

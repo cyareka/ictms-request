@@ -154,15 +154,38 @@
             </thead>
             <tbody>
             @php
-                $filteredRequests = App\Models\ConferenceRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
-                    ->whereIn('EventStatus', ['Ongoing', '-'])
-                    ->get();
+    use Carbon\Carbon;
 
-                function convertAvailability($availability): string
-                {
-                    return $availability > 0 ? 'Available' : 'Not Available';
-                }
-            @endphp
+    // Get the current date and time
+    $currentDateTime = Carbon::now();
+
+    // Retrieve conference requests with appropriate filters
+    $filteredRequests = App\Models\ConferenceRequest::where(function ($query) use ($currentDateTime) {
+        // Condition for Approved and Pending/For Approval requests
+        $query->whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
+            ->where(function ($subQuery) use ($currentDateTime) {
+                // Exclude Pending or For Approval requests where date_start and time_start are past current date and time
+                $subQuery->where(function ($pendingQuery) use ($currentDateTime) {
+                    $pendingQuery->whereIn('FormStatus', ['Pending', 'For Approval'])
+                        ->whereRaw('(date_start || " " || time_start) > ?', [$currentDateTime]);
+                });
+
+                // Condition for Approved and Ongoing events
+                $subQuery->orWhere(function ($approvedQuery) use ($currentDateTime) {
+                    $approvedQuery->where('FormStatus', 'Approved')
+                        ->where('EventStatus', 'Ongoing')
+                        ->whereRaw('(date_end || " " || time_end) <= ?', [$currentDateTime])
+                        ->update(['EventStatus' => 'Finished']); // Auto-update EventStatus to Finished
+                });
+            });
+    })->get();
+
+    // Function to convert availability
+    function convertAvailability($availability): string
+    {
+        return $availability > 0 ? 'Available' : 'Not Available';
+    }
+@endphp
 
             @foreach($filteredRequests as $request)
                 <tr>

@@ -10,7 +10,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // Schedule the command to run every hour
-        $schedule->command('conference:update-status')->hourly();
+        $schedule->command('conference:update-status')->everyOneMinutes();
     }
 
     protected function commands(): void
