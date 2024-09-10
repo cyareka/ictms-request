@@ -296,7 +296,7 @@
 
 <div class="container">
 <div class="icon"> 
-        <button class="btn float-right" type="button" onclick="downloadForm()">
+        <button class="btn float-right">
             <i class="bi-dl bi-download"></i>
         </button>
         <button class="btn float-right mb-10" onclick="cancelForm()">
@@ -416,7 +416,7 @@
     }
 
     // Attach the cancelForm function to the cancel button
-    document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
+    document.querySelector('.back-btn').addEventListener('click', cancelForm);
 
     function previewSignature(event) {
         const input = event.target;

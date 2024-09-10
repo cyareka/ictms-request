@@ -301,7 +301,7 @@
 <body>
 <div class="form-container">
 <div class="icon"> 
-        <button class="btn float-right" type="button" onclick="downloadForm()">
+        <button class="dl-btn float-right">
             <i class="bi-dl bi-download"></i>
         </button>
         <button class="btn float-right" type="button" onclick="history.back()">
@@ -542,7 +542,7 @@
     }
 
     // Attach the cancelForm function to the cancel button
-    document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
+    document.querySelector('.btn').addEventListener('click', cancelForm);
 
 
     function showDispatcher() {

@@ -116,22 +116,6 @@
             width: 100%;
 
         }
-        button-dl {
-            background-color: #65558F;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 16px;
-            display: block;
-        }
-        .form-footer {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 20px;
-        }
 
         .submit-btn {
             background-color: #354e7d;
@@ -141,10 +125,26 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 16px;
-            width: 11%;
+            margin-right: 10px; /* Add margin to the right side of the update button */
+            margin-left: 20px;
         }
-        .dl-btn{
+
+        .cancel-btn {
             background-color: #E1C16E;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 5px; /* Add margin to the left side of the cancel button */
+
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
         }
 
         #signature-preview {
@@ -417,9 +417,8 @@
     </script>
 @endif
 <div class="form-container">
-
-    <button class="btn float-right" onclick="history.back()">
-        <i class="fa-duotone fa-solid fa-xmark"></i>
+    <button class="btn float-right">
+     <i class="fa-duotone fa-solid fa-xmark"></i>
     </button>
 
     <h1>Request For Use of Vehicle</h1>
@@ -685,22 +684,9 @@
             </form>
         </div>
         <div class="form-footer">
-            @if($requestData->FormStatus === 'For Approval')
-                <a onclick="showDownloadModal('{{ route('downloadVRequestPDF', $requestData->VRequestID) }}', '{{ route('downloadUnavailableVRequestPDF', $requestData->VRequestID) }}')">
-                    <button class="cancel-btn" type="button" onclick="download()">Download</button>
-                </a>
-            @elseif($requestData->FormStatus === 'Approved')
-                <a href="{{ route('downloadFinalCRequestPDF', $requestData->CRequestID) }}" target="_blank">
-                    <button class="dl-btn" type="button">Download</button>
-                </a>
-            @elseif($requestData->FormStatus === 'Pending' && $requestData->CAvailability === 0)
-                <a href="{{ route('downloadUnavailableCRequestPDF', $requestData->CRequestID) }}" target="_blank">
-                    <button class="dl-btn" type="button">Download</button>
-                </a>
-            @endif
-            <button class="submit-btn" type="submit">Update</button>
+            <button class="cancel-btn" type="button" onclick="Download()">Download</button>
+            <button class="submit-btn" type="button" onclick="submitAllForms()">Update</button>
         </div>
-        <input type="text" id="AuthRep" name="AuthRep" value="{{ Auth::user()->name }}" hidden>
     </div>
 </div>
 <script>
@@ -858,7 +844,7 @@
         }
 
         // Attach the cancelForm function to the cancel button
-        document.querySelector('.cancel-btn').addEventListener('click', cancelForm);
+        document.querySelector('.btn').addEventListener('click', cancelForm);
     }
 
     setupFormChangeDetectionAndCancel();
