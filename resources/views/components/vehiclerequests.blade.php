@@ -145,18 +145,50 @@
             </thead>
             <tbody>
             @php
-                $filteredRequests = App\Models\VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
-                    ->whereIn('EventStatus', ['Ongoing', '-'])
-                    ->get();
+    use Carbon\Carbon;
+    use App\Models\VehicleRequest;
 
-                function convertAvailability($availability): string
-                {
-                    if (is_null($availability)) {
-                        return '-';
-                    }
-                    return $availability > 0 ? 'Available' : 'Not Available';
-                }
-            @endphp
+    // Get the current date and time
+    $now = Carbon::now('Asia/Manila');
+
+    // Fetch requests that need to be updated
+    $filteredRequests = VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
+        ->whereIn('EventStatus', ['Ongoing', '-'])
+        ->get();
+
+    foreach ($filteredRequests as $request) {
+        // Check if the FormStatus is Pending or For Approval and date/time has passed
+        if (in_array($request->FormStatus, ['Pending', 'For Approval'])) {
+            if ($request->date_start < $now->toDateString() || 
+                ($request->date_start == $now->toDateString() && $request->time_start < $now->toTimeString())) {
+                
+                // Update FormStatus to Not Approved if date/time exceeded
+                $request->FormStatus = 'Not Approved';
+                $request->save();
+            }
+        }
+
+        // Check if the FormStatus is Approved and EventStatus is Ongoing, and date/time has passed
+        if ($request->FormStatus == 'Approved') {
+            if ($request->date_end < $now->toDateString() || 
+                ($request->date_end == $now->toDateString() && $request->time_start	 < $now->toTimeString())) {
+                
+                // Update EventStatus to Finished if date/time exceeded
+                $request->EventStatus = 'Finished';
+                $request->save();
+            }
+        }
+    }
+
+    // Function to convert availability
+    function convertAvailability($availability): string
+    {
+        if (is_null($availability)) {
+            return '-';
+        }
+        return $availability > 0 ? 'Available' : 'Not Available';
+    }
+@endphp
 
             @foreach($filteredRequests as $request)
                 <tr>
