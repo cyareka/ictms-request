@@ -58,6 +58,7 @@ Route::middleware([
     // Conference Table View
     Route::get('/conference-requests',
         [ConferenceController::class, 'fetchSortedRequests'])->name('conference.requests');
+    Route::get('/api/conference-room-usage', [ConferenceController::class, 'getConferenceRoomUsage']);
 
     // Conference Edit
     Route::post('/conference-room/update',
@@ -98,9 +99,6 @@ Route::middleware([
     })->name('VehicledetailEdit');
     Route::get('/vehiclerequest/{VRequestID}/edit',
         [VehicleController::class, 'getRequestData'])->name('VehicledetailEdit');
-
-//    Route::get('/fetchSortedVRequests', [VehicleController::class, 'fetchSortedVRequests'])->name('fetchSortedVehicleRequests');
-
     Route::post('/vehicle-request/update/{VRequestID}', [VehicleController::class, 'updateVForm']);
 
     // VEHICLE LOG ROUTES
@@ -133,7 +131,12 @@ Route::middleware([
     Route::get('/conferencerequest/{CRequestID}/view-pdf', [DownloadsController::class, 'downloadCRequestPDF'])->name('downloadCRequestPDF');
     Route::get('/conferencerequest/{CRequestID}/view-final-pdf', [DownloadsController::class, 'downloadFinalCRequestPDF'])->name('downloadFinalCRequestPDF');
     Route::get('/conferencerequest/{CRequestID}/view-unavailable-pdf', [DownloadsController::class, 'downloadUnavailableCRequestPDF'])->name('downloadUnavailableCRequestPDF');
+
+    Route::get('/vehiclerequest/{VRequestID}/view-pdf', [DownloadsController::class, 'downloadVRequestPDF'])->name('downloadVRequestPDF');
+    Route::get('/vehiclerequest/{VRequestID}/view-final-pdf', [DownloadsController::class, 'downloadFinalVRequestPDF'])->name('downloadFinalVRequestPDF');
+
     Route::get('/vehiclerequest/view-logs', [DownloadsController::class, 'downloadRangeVRequestPDF'])->name('downloadRangeVRequestPDF');
+
 });
 
 // USER ROUTES
@@ -206,5 +209,3 @@ Route::post('/login', function (Request $request) {
     ])->onlyInput('email');
 })->middleware(['guest'])->name('login');
 
-    //stats
-    Route::get('/api/conference-room-usage', [ConferenceController::class, 'getConferenceRoomUsage']);

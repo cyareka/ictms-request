@@ -251,61 +251,61 @@ class DownloadsController extends Controller
         }
     }
 
-//    public function downloadVRequestPDF_1 (Request$request, $VRequestID)
-//    {
-//        try {
-//            Log::info('Starting downloadVRequestPDF method.');
-//
-//            // Validate the VRequestID parameter
-//            $validated = $request->validate([
-//                'VRequestID' => 'string|exists:vehicle_requests,VRequestID',
-//            ]);
-//            Log::info('Validation successful.', ['validated' => $validated]);
-//
-//            $vehicleRequest = VehicleRequest::with('office')
-//                ->where('VRequestID', $VRequestID)
-//                ->firstOrFail();
-//
-//            $pdf = new Fpdi();
-//            $pdf->AddPage();
-//            $sourceFile = public_path('storage/uploads/templates/vehicle_forms/VR_dailydispatchreport.pdf');
-//
-//            if (!file_exists($sourceFile)) {
-//                Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
-//                return response()->json(['error' => 'Source file does not exist.'], 500);
-//            }
-//
-//            $pdf->setSourceFile($sourceFile);
-//            $tplIdx = $pdf->importPage(1);
-//            $pdf->useTemplate($tplIdx, 0, 0, 210);
-//
-//            $pdf->SetTextColor(0, 0, 0);
-//            $pdf->SetFont('Helvetica', '', 10);
-//
-//            $pdf->SetXY(10, 50); // VRequestID
-//            $pdf->Write(0, $vehicleRequest->VRequestID);
-//
-//            $pdf->SetXY(30, 50); // Date Start
-//            $pdf->Write(0, $vehicleRequest->date_start);
-//
-//            $pdf->SetXY(60, 50); // Destination
-//            $pdf->Write(0, $vehicleRequest->Destination);
-//
-//            $pdf->SetXY(90, 50); // Purpose
-//            $pdf->Write(0, $vehicleRequest->Purpose);
-//
-//            $pdf->SetXY(120, 50); // Office Name
-//            $pdf->Write(0, $vehicleRequest->office->OfficeName);
-//
-//            // I instead of F to output the PDF to the browser
-//            $pdf->Output('I', $vehicleRequest->VRequestID . '_VR_DailyDispatchReport.pdf');
-//        } catch (Throwable $e) {
-//            Log::error('Error in downloadVRequestPDF method.', [
-//                'exception' => $e->getMessage(),
-//                'stack_trace' => $e->get;
-//            ]);
-//        }
-//    }
+    public function downloadVRequestPDF (Request$request, $VRequestID)
+    {
+        try {
+            Log::info('Starting downloadVRequestPDF method.');
+
+            // Validate the VRequestID parameter
+            $validated = $request->validate([
+                'VRequestID' => 'string|exists:vehicle_requests,VRequestID',
+            ]);
+            Log::info('Validation successful.', ['validated' => $validated]);
+
+            $vehicleRequest = VehicleRequest::with('office')
+                ->where('VRequestID', $VRequestID)
+                ->firstOrFail();
+
+            $pdf = new Fpdi();
+            $pdf->AddPage();
+            $sourceFile = public_path('storage/uploads/templates/vehicle_forms/VR_dailydispatchreport.pdf');
+
+            if (!file_exists($sourceFile)) {
+                Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
+                return response()->json(['error' => 'Source file does not exist.'], 500);
+            }
+
+            $pdf->setSourceFile($sourceFile);
+            $tplIdx = $pdf->importPage(1);
+            $pdf->useTemplate($tplIdx, 0, 0, 210);
+
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->SetFont('Helvetica', '', 10);
+
+            $pdf->SetXY(10, 50); // VRequestID
+            $pdf->Write(0, $vehicleRequest->VRequestID);
+
+            $pdf->SetXY(30, 50); // Date Start
+            $pdf->Write(0, $vehicleRequest->date_start);
+
+            $pdf->SetXY(60, 50); // Destination
+            $pdf->Write(0, $vehicleRequest->Destination);
+
+            $pdf->SetXY(90, 50); // Purpose
+            $pdf->Write(0, $vehicleRequest->Purpose);
+
+            $pdf->SetXY(120, 50); // Office Name
+            $pdf->Write(0, $vehicleRequest->office->OfficeName);
+
+            // I instead of F to output the PDF to the browser
+            $pdf->Output('I', $vehicleRequest->VRequestID . '_VR_DailyDispatchReport.pdf');
+        } catch (Throwable $e) {
+            Log::error('Error in downloadVRequestPDF method.', [
+                'exception' => $e->getMessage(),
+                'stack_trace' => $e->get;
+            ]);
+        }
+    }
 
     public function downloadFinalVRequestPDF(Request $request, $VRequestID)
     {

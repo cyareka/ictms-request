@@ -413,6 +413,10 @@
                 <label for="focalPerson">Focal Person</label>
                 <select id="focalPersonSelect" name="focalPersonSelect">
                     <option disabled selected>Select Focal Person</option>
+                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
+                    <div class="checkbox">
+                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
+                    </div>
                 </select>
             </div>
         </div>
@@ -550,13 +554,6 @@
         }
     }
 
-    /**
-     * Handles various form actions such as adding or removing rows and previewing the signature.
-     *
-     * @param {string} action - The action to be performed ('addRow', 'removeRow', 'previewSignature').
-     * @param {Event} event - The event object associated with the action.
-     */
-
     function handleFormActions(action, event) {
         switch(action) {
             case 'addRow':
@@ -624,15 +621,6 @@
         }
     });
 
-    /**
-     * Validates the conference room request form.
-     *
-     * This function checks for the presence of required fields, ensures all date fields are filled,
-     * and verifies that the uploaded signature file does not exceed the maximum allowed size of 32MB.
-     * If any validation fails, it displays an alert with the corresponding error messages.
-     *
-     * @returns {boolean} True if the form is valid, false otherwise.
-     */
     function validateForm() {
         let isValid = true;
         let errorMessages = [];

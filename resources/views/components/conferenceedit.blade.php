@@ -756,14 +756,14 @@
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
                 <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
+                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
+                        Pending
+                    </option>
                     @if ($requestData->CAvailability == '0')
-                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
-                            Pending
+                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+                            Not Approved
                         </option>
                     @else
-                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
-                            Pending
-                        </option>
                         <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
                             For Approval
                         </option>
@@ -824,7 +824,7 @@
         const fileUploadSection = document.getElementById('file-upload-section');
 
         if ((formStatus === 'Approved' && {{ $requestData->CAvailability }} == 1) ||
-            (formStatus === 'Pending' && {{ $requestData->CAvailability }} == 0)) {
+            (formStatus === 'Not Approved' && {{ $requestData->CAvailability }} == 0)) {
             fileUploadSection.style.display = 'block';
         } else {
             fileUploadSection.style.display = 'none';
@@ -908,29 +908,40 @@
     // Call the setup function to initialize everything
     setupFormChangeDetectionAndCancel();
 
-    /**
-     * Updates the event status based on the selected form status.
-     *
-     * This function is triggered when the form status select element changes.
-     * It sets the event status to 'Ongoing' if the form status is 'Approved'.
-     * Otherwise, it sets the event status to '-'.
-     */
     function updateEventStatus() {
-        const FormStatus = document.getElementById('FormStatus').value;
+        const FormStatus = document.getElementById('FormStatus');
         const EventStatus = document.getElementById('EventStatus');
 
-        if (FormStatus === 'Pending' || FormStatus === 'For Approval' || FormStatus === 'Not Approved') {
+        if (FormStatus.value === 'Approved') {
+            // Hide "For Approval" and "Not Approved" options
+            Array.from(FormStatus.options).forEach(option => {
+                if (option.value === 'For Approval' || option.value === 'Not Approved') {
+                    option.style.display = 'none';
+                }
+            });
+
+            // Update EventStatus dropdown
+            EventStatus.outerHTML = `
+        <select id="EventStatus" name="EventStatus">
+            <option value="Ongoing" ${EventStatus.value === 'Ongoing' ? 'selected' : ''}>Ongoing</option>
+            <option value="Cancelled" ${EventStatus.value === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+        </select>`;
+        } else {
+            // Show all options
+            Array.from(FormStatus.options).forEach(option => {
+                option.style.display = 'block';
+            });
+
+            // Update EventStatus input
             EventStatus.outerHTML = `<input type="text" id="EventStatus" name="EventStatus" value="-" readonly>`;
-        } else if (FormStatus === 'Approved') {
-            if (EventStatus.value !== 'Cancelled') {
-                EventStatus.outerHTML = `
-                <select id="EventStatus" name="EventStatus">
-                    <option value="Ongoing" selected>Ongoing</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>`;
-            }
         }
     }
+
+    // Attach the function to the change event of the FormStatus dropdown
+    document.getElementById('FormStatus').addEventListener('change', updateEventStatus);
+
+    // Call the function on page load to set the initial state
+    document.addEventListener('DOMContentLoaded', updateEventStatus);
 
     /**
      * Updates the event status based on the selected form status.

@@ -153,7 +153,7 @@
             </tr>
             </thead>
             <tbody>
-           
+
             @php
     use Carbon\Carbon;
     use App\Models\ConferenceRequest;
@@ -169,9 +169,9 @@
     foreach ($filteredRequests as $request) {
         // Check if the FormStatus is Pending or For Approval and date/time has passed
         if (in_array($request->FormStatus, ['Pending', 'For Approval'])) {
-            if ($request->date_start < $now->toDateString() || 
+            if ($request->date_start < $now->toDateString() ||
                 ($request->date_start == $now->toDateString() && $request->time_start < $now->toTimeString())) {
-                
+
                 // Update FormStatus to Not Approved if date/time exceeded
                 $request->FormStatus = 'Not Approved';
                 $request->save();
@@ -180,9 +180,9 @@
 
         // Check if the FormStatus is Approved and EventStatus is Ongoing, and date/time has passed
         if ($request->FormStatus == 'Approved' && $request->EventStatus == 'Ongoing') {
-            if ($request->date_end < $now->toDateString() || 
+            if ($request->date_end < $now->toDateString() ||
                 ($request->date_end == $now->toDateString() && $request->time_end < $now->toTimeString())) {
-                
+
                 // Update EventStatus to Finished if date/time exceeded
                 $request->EventStatus = 'Finished';
                 $request->save();
@@ -335,8 +335,8 @@
             pageLink.href = '#';
             pageLink.textContent = i;
             if (i === currentPage) {
-                pageLink.style.color = 'white';  
-                pageLink.style.backgroundColor = '#4285f4'; 
+                pageLink.style.color = 'white';
+                pageLink.style.backgroundColor = '#4285f4';
             }
             pageLink.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -409,17 +409,6 @@
                 <td>${request.EventStatus}</td>
                 <td>
                     <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>`;
-
-                    if (request.FormStatus === 'For Approval') {
-                        row += `<a href="#" onclick="showDownloadModal('/conferencerequest/${request.CRequestID}/view-pdf', '/conferencerequest/${request.CRequestID}/view-unavailable-pdf')">
-                                    <i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i>
-                                </a>`;
-
-                    } else if (request.FormStatus === 'Approved') {
-                        row += `<a href="/conferencerequest/${request.CRequestID}/view-final-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
-                    } else if(request.FormStatus === 'Pending' && request.CAvailability === 0)
-                        row += `<a href="/conferencerequest/${request.CRequestID}/view-unavailable-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
-                    row += `</td></tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
             } else {

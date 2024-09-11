@@ -178,7 +178,6 @@
                     <td>{{ $request->EventStatus }}</td>
                     <td>
                         <a href="{{ route('ConferencelogDetail', $request->CRequestID) }}" target="_blank"><i class="bi bi-person-vcard" id="actions"></i></a>
-                        <a href="{{ route('downloadFinalCRequestPDF', $request->CRequestID) }}" target="_blank"><i class="bi bi-download" id="actions"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -265,7 +264,6 @@
                 <td>${request.EventStatus}</td>
                 <td>
                     <a href="/conferencerequest/${request.CRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
-                    <i class="bi bi-download" id="actions"></i>
                 </td>
             </tr>`;
                 tbody.insertAdjacentHTML('beforeend', row);

@@ -385,10 +385,12 @@
 
 
         }
+
         .fa-duotone {
             font-size: 1.5em;
         }
-        .btn{
+
+        .btn {
             margin-top: -1.2em;
             margin-right: -1.2em;
         }
@@ -418,7 +420,7 @@
 @endif
 <div class="form-container">
     <button class="btn float-right">
-     <i class="fa-duotone fa-solid fa-xmark"></i>
+        <i class="fa-duotone fa-solid fa-xmark"></i>
     </button>
 
     <h1>Request For Use of Vehicle</h1>
@@ -528,22 +530,23 @@
             </button>
         </div>
         <div id="dispatcher-form">
-            <form id="dispatcherForm" action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
+            <form id="dispatcherForm" action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}"
+                  method="POST"
                   enctype="multipart/form-data">
                 @csrf
 
                 <div class="row-dispatch">
                     <div class="inline">
                         <label for="driver">Driver Name</label>
-                            <select id="DriverID" name="DriverID" required>
-                                <option disabled {{ !$requestData->DriverID ? 'selected' : '' }}>Select Driver</option>
-                                @foreach(App\Models\Driver::all() as $driver)
-                                    <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}"
-                                            data-email="{{ $driver->DriverEmail }}" {{ $requestData->DriverID == $driver->DriverID ? 'selected' : '' }}>
-                                        {{ $driver->DriverName }}
-                                    </option>
-                                @endforeach
-                            </select>
+                        <select id="DriverID" name="DriverID" required>
+                            <option disabled {{ !$requestData->DriverID ? 'selected' : '' }}>Select Driver</option>
+                            @foreach(App\Models\Driver::all() as $driver)
+                                <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}"
+                                        data-email="{{ $driver->DriverEmail }}" {{ $requestData->DriverID == $driver->DriverID ? 'selected' : '' }}>
+                                    {{ $driver->DriverName }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="inline">
                         <label for="ContactNo">Contact No.</label>
@@ -560,7 +563,8 @@
                         <select id="VehicleID" name="VehicleID">
                             <option disabled {{ !$requestData->VehicleID ? 'selected' : '' }}>Select Vehicle</option>
                             @foreach(App\Models\Vehicle::all() as $Vehicle)
-                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}" data-capacity="{{ $Vehicle->Capacity }}">
+                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}"
+                                        data-capacity="{{ $Vehicle->Capacity }}">
                                     {{ $Vehicle->VehicleType }} - Capacity: {{ $Vehicle->Capacity }}
                                 </option>
                             @endforeach
@@ -587,7 +591,8 @@
                     </div>
                     <div class="inline">
                         <label for="remark">Remarks</label>
-                        <input type="text" id="remark" name="remark" placeholder="Enter Remark" autocapitalize="sentences">
+                        <input type="text" id="remark" name="remark" placeholder="Enter Remark"
+                               autocapitalize="sentences">
                     </div>
                 </div>
             </form>
@@ -600,26 +605,38 @@
             </button>
         </div>
         <div id="admin-service-form">
-            <form id="adminServiceForm" action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}" method="POST"
+            <form id="adminServiceForm" action="{{ url('/vehicle-request/update/' . $requestData->VRequestID) }}"
+                  method="POST"
                   enctype="multipart/form-data">
                 @csrf
                 <div class="row-dispatch">
-{{--                    <div class="inline">--}}
-{{--                        <label for="availability">Availability</label>--}}
-{{--                        <input type="text" id="availability" name="availability" placeholder="-" value="{{ $requestData->VAvailability === 1 ? 'Available' : ($requestData->VAvailability === 0 ? 'Not Available' : '-') }}" readonly>--}}
-{{--                    </div>--}}
+                    {{--                    <div class="inline">--}}
+                    {{--                        <label for="availability">Availability</label>--}}
+                    {{--                        <input type="text" id="availability" name="availability" placeholder="-" value="{{ $requestData->VAvailability === 1 ? 'Available' : ($requestData->VAvailability === 0 ? 'Not Available' : '-') }}" readonly>--}}
+                    {{--                    </div>--}}
                     <div class="inline">
                         <label for="FormStatus">Form Status</label>
                         <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                            <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending</option>
-                            <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>For Approval</option>
-                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>Not Approved</option>
+                            <option value="Pending"
+                                    {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending
+                            </option>
+                            <option
+                                value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
+                                For Approval
+                            </option>
+                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
+                                Approved
+                            </option>
+                            <option
+                                value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+                                Not Approved
+                            </option>
                         </select>
                     </div>
                     <div class="inline">
                         <label for="EventStatus">Event Status</label>
-                        <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}" readonly>
+                        <input type="text" id="EventStatus" name="EventStatus" value="{{ $requestData->EventStatus }}"
+                               readonly>
                     </div>
                 </div>
                 <div class="row-dispatch">
@@ -665,18 +682,20 @@
                         <label for="ASignatory">Authorized Signatory</label>
                         <input type="text" id="ASignatory" name="ASignatory" value="{{ Auth::user()->name }}" readonly>
                     </div>
-                    <div class="inline">
-                        <label for="certificate-upload">File Upload</label>
-                        <div class="file-upload">
-                            <label for="certfile-upload" id="certificate-preview-label">
-                                <div id="certificate-preview-container">
-                                    <div id="default-text">No file uploaded</div>
-                                    <div id="certificate-preview"></div>
-                                </div>
-                            </label>
-                            <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf"
-                                   onchange="previewCertificate(event)"
-                                   style="display: none;">
+                    <div id="file-upload-section" style="display: none;">
+                        <div class="inline">
+                            <label for="certificate-upload">File Upload</label>
+                            <div class="file-upload">
+                                <label for="certfile-upload" id="certificate-preview-label">
+                                    <div id="certificate-preview-container">
+                                        <div id="default-text">No file uploaded</div>
+                                        <div id="certificate-preview"></div>
+                                    </div>
+                                </label>
+                                <input type="file" id="certfile-upload" name="certfile-upload" accept="application/pdf"
+                                       onchange="previewCertificate(event)"
+                                       style="display: none;">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -684,12 +703,36 @@
             </form>
         </div>
         <div class="form-footer">
-            <button class="cancel-btn" type="button" onclick="Download()">Download</button>
+            @if($requestData->FormStatus === 'For Approval')
+                <a onclick="{{ route('downloadVRequestPDF', $requestData->VRequestID) }}">
+                    <button class="cancel-btn" type="button" onclick="download()">Download</button>
+                </a>
+            @elseif($requestData->FormStatus === 'Approved')
+                <a href="{{ route('downloadFinalVRequestPDF', $requestData->VRequestID) }}" target="_blank">
+                    <button class="cancel-btn" type="button">Download</button>
+                </a>
+            @endif
             <button class="submit-btn" type="button" onclick="submitAllForms()">Update</button>
         </div>
     </div>
 </div>
 <script>
+    function toggleFileUploadSection() {
+        const formStatus = document.getElementById('FormStatus').value;
+        const fileUploadSection = document.getElementById('file-upload-section');
+
+        if ((formStatus === 'Approved') || (formStatus === 'Not Approved')) {
+            fileUploadSection.style.display = 'block';
+        } else {
+            fileUploadSection.style.display = 'none';
+        }
+    }
+
+    document.getElementById('FormStatus').addEventListener('change', toggleFileUploadSection);
+
+    // Call the function on page load to set the initial state
+    document.addEventListener('DOMContentLoaded', toggleFileUploadSection);
+
     document.addEventListener('DOMContentLoaded', function () {
         const vehicleSelect = document.getElementById('VehicleID');
         const passengerCount = {{ $passengers->count() }}; // Assuming you have the passenger count available
@@ -704,47 +747,48 @@
     });
 
     function submitAllForms() {
-    // Get the forms
-    const dispatcherForm = document.getElementById('dispatcherForm');
-    const adminServiceForm = document.getElementById('adminServiceForm');
+        // Get the forms
+        const dispatcherForm = document.getElementById('dispatcherForm');
+        const adminServiceForm = document.getElementById('adminServiceForm');
 
-    // Check if forms are present
-    if (dispatcherForm && adminServiceForm) {
-        // Create a FormData object for both forms
-        const dispatcherFormData = new FormData(dispatcherForm);
-        const adminServiceFormData = new FormData(adminServiceForm);
+        // Check if forms are present
+        if (dispatcherForm && adminServiceForm) {
+            // Create a FormData object for both forms
+            const dispatcherFormData = new FormData(dispatcherForm);
+            const adminServiceFormData = new FormData(adminServiceForm);
 
-        // Submit the Dispatcher Form
-        fetch(dispatcherForm.action, {
-            method: 'POST',
-            body: dispatcherFormData,
-            headers: {
-                'X-CSRF-TOKEN': dispatcherForm.querySelector('input[name="_token"]').value
-            }
-        })
-        .then(response => response.ok ? response.text() : Promise.reject(response))
-        .then(() => {
-            // Submit the Administrative Service Form
-            return fetch(adminServiceForm.action, {
+            // Submit the Dispatcher Form
+            fetch(dispatcherForm.action, {
                 method: 'POST',
-                body: adminServiceFormData,
+                body: dispatcherFormData,
                 headers: {
-                    'X-CSRF-TOKEN': adminServiceForm.querySelector('input[name="_token"]').value
+                    'X-CSRF-TOKEN': dispatcherForm.querySelector('input[name="_token"]').value
                 }
-            });
-        })
-        .then(response => response.ok ? response.text() : Promise.reject(response))
-        .then(() => {
-            alert('Both forms submitted successfully');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while submitting the forms');
-        });
-    } else {
-        alert('Forms not found');
+            })
+                .then(response => response.ok ? response.text() : Promise.reject(response))
+                .then(() => {
+                    // Submit the Administrative Service Form
+                    return fetch(adminServiceForm.action, {
+                        method: 'POST',
+                        body: adminServiceFormData,
+                        headers: {
+                            'X-CSRF-TOKEN': adminServiceForm.querySelector('input[name="_token"]').value
+                        }
+                    });
+                })
+                .then(response => response.ok ? response.text() : Promise.reject(response))
+                .then(() => {
+                    alert('Both forms submitted successfully');
+                    window.location.reload(); // Refresh the page after successful submission
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while submitting the forms');
+                });
+        } else {
+            alert('Forms not found');
+        }
     }
-}
 
     document.addEventListener('DOMContentLoaded', function () {
         const driverSelect = document.getElementById('tables');
@@ -850,21 +894,39 @@
     setupFormChangeDetectionAndCancel();
 
     function updateEventStatus() {
-        const FormStatus = document.getElementById('FormStatus').value;
+        const FormStatus = document.getElementById('FormStatus');
         const EventStatus = document.getElementById('EventStatus');
 
-        if (FormStatus === 'Pending' || FormStatus === 'For Approval' || FormStatus === 'Not Approved') {
+        if (FormStatus.value === 'Approved') {
+            // Hide "For Approval" and "Not Approved" options
+            Array.from(FormStatus.options).forEach(option => {
+                if (option.value === 'For Approval' || option.value === 'Not Approved') {
+                    option.style.display = 'none';
+                }
+            });
+
+            // Update EventStatus dropdown
+            EventStatus.outerHTML = `
+        <select id="EventStatus" name="EventStatus">
+            <option value="Ongoing" ${EventStatus.value === 'Ongoing' ? 'selected' : ''}>Ongoing</option>
+            <option value="Cancelled" ${EventStatus.value === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+        </select>`;
+        } else {
+            // Show all options
+            Array.from(FormStatus.options).forEach(option => {
+                option.style.display = 'block';
+            });
+
+            // Update EventStatus input
             EventStatus.outerHTML = `<input type="text" id="EventStatus" name="EventStatus" value="-" readonly>`;
-        } else if (FormStatus === 'Approved') {
-            if (EventStatus.value !== 'Cancelled') {
-                EventStatus.outerHTML = `
-                <select id="EventStatus" name="EventStatus">
-                    <option value="Ongoing" selected>Ongoing</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>`;
-            }
         }
     }
+
+    // Attach the function to the change event of the FormStatus dropdown
+    document.getElementById('FormStatus').addEventListener('change', updateEventStatus);
+
+    // Call the function on page load to set the initial state
+    document.addEventListener('DOMContentLoaded', updateEventStatus);
 
     document.querySelector('form').addEventListener('submit', function (e) {
         console.log('Form is being submitted');
@@ -944,56 +1006,56 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-    const existingFilePath = '{{ $requestData["certfile-upload"] ?? "" }}';
-    const filePreview = document.getElementById('certificate-preview');
-    const defaultText = document.getElementById('default-text');
-    const filePathInput = document.getElementById('certfile-path');
+        const existingFilePath = '{{ $requestData["certfile-upload"] ?? "" }}';
+        const filePreview = document.getElementById('certificate-preview');
+        const defaultText = document.getElementById('default-text');
+        const filePathInput = document.getElementById('certfile-path');
 
-    // Function to preview the file
-    function previewFile(file) {
-        filePreview.innerHTML = '';
+        // Function to preview the file
+        function previewFile(file) {
+            filePreview.innerHTML = '';
 
-        if (file.type === 'application/pdf') {
+            if (file.type === 'application/pdf') {
+                const fileLink = document.createElement('a');
+                fileLink.textContent = `${file.name}`;
+                fileLink.style.color = 'green';
+                fileLink.href = URL.createObjectURL(file);
+                fileLink.target = '_blank';
+                filePreview.appendChild(fileLink);
+            } else if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '100px';
+                img.style.maxHeight = '100px';
+                filePreview.appendChild(img);
+            } else {
+                filePreview.textContent = 'Please upload a valid PDF or image file.';
+                filePreview.style.color = 'red';
+            }
+
+            filePathInput.value = file.name;
+        }
+
+        // Display existing file if present
+        if (existingFilePath) {
+            defaultText.style.display = 'none';
             const fileLink = document.createElement('a');
-            fileLink.textContent = `${file.name}`;
+            fileLink.textContent = existingFilePath.split('/').pop();
             fileLink.style.color = 'green';
-            fileLink.href = URL.createObjectURL(file);
+            fileLink.href = `{{ asset('storage/' . $requestData['certfile-upload']) }}`;
             fileLink.target = '_blank';
             filePreview.appendChild(fileLink);
-        } else if (file.type.startsWith('image/')) {
-            const img = document.createElement('img');
-            img.src = URL.createObjectURL(file);
-            img.style.maxWidth = '100px';
-            img.style.maxHeight = '100px';
-            filePreview.appendChild(img);
-        } else {
-            filePreview.textContent = 'Please upload a valid PDF or image file.';
-            filePreview.style.color = 'red';
         }
 
-        filePathInput.value = file.name;
-    }
-
-    // Display existing file if present
-    if (existingFilePath) {
-        defaultText.style.display = 'none';
-        const fileLink = document.createElement('a');
-        fileLink.textContent = existingFilePath.split('/').pop();
-        fileLink.style.color = 'green';
-        fileLink.href = `{{ asset('storage/' . $requestData['certfile-upload']) }}`;
-        fileLink.target = '_blank';
-        filePreview.appendChild(fileLink);
-    }
-
-    // Event listener for file upload
-    document.getElementById('certfile-upload').addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        if (file) {
-            defaultText.style.display = 'none';
-            previewFile(file);
-        }
+        // Event listener for file upload
+        document.getElementById('certfile-upload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                defaultText.style.display = 'none';
+                previewFile(file);
+            }
+        });
     });
-});
 
     function toggleDispatcher() {
         var dispatcherForm = document.getElementById("dispatcher-form");
@@ -1021,31 +1083,31 @@
     document.addEventListener('DOMContentLoaded', setInitialFormState);
 
     document.addEventListener('DOMContentLoaded', function () {
-    // Function to update driver contact and email
-    function updateDriverInfo() {
-        var driverSelect = document.getElementById('DriverID');
-        var selectedDriver = driverSelect.options[driverSelect.selectedIndex];
-        document.getElementById('ContactNo').value = selectedDriver.getAttribute('data-contact') || 'N/A';
-        document.getElementById('DriverEmail').value = selectedDriver.getAttribute('data-email') || 'N/A';
-    }
+        // Function to update driver contact and email
+        function updateDriverInfo() {
+            var driverSelect = document.getElementById('DriverID');
+            var selectedDriver = driverSelect.options[driverSelect.selectedIndex];
+            document.getElementById('ContactNo').value = selectedDriver.getAttribute('data-contact') || 'N/A';
+            document.getElementById('DriverEmail').value = selectedDriver.getAttribute('data-email') || 'N/A';
+        }
 
-    // Function to update vehicle plate number
-    function updateVehicleInfo() {
-        var vehicleSelect = document.getElementById('VehicleID');
-        var selectedVehicle = vehicleSelect.options[vehicleSelect.selectedIndex];
-        document.getElementById('PlateNo').value = selectedVehicle.getAttribute('data-plate') || 'N/A';
-    }
+        // Function to update vehicle plate number
+        function updateVehicleInfo() {
+            var vehicleSelect = document.getElementById('VehicleID');
+            var selectedVehicle = vehicleSelect.options[vehicleSelect.selectedIndex];
+            document.getElementById('PlateNo').value = selectedVehicle.getAttribute('data-plate') || 'N/A';
+        }
 
-    // Initial update on page load
-    updateDriverInfo();
-    updateVehicleInfo();
+        // Initial update on page load
+        updateDriverInfo();
+        updateVehicleInfo();
 
-    // Driver select change event
-    document.getElementById('DriverID').addEventListener('change', updateDriverInfo);
+        // Driver select change event
+        document.getElementById('DriverID').addEventListener('change', updateDriverInfo);
 
-    // Vehicle select change event
-    document.getElementById('VehicleID').addEventListener('change', updateVehicleInfo);
-});
+        // Vehicle select change event
+        document.getElementById('VehicleID').addEventListener('change', updateVehicleInfo);
+    });
 </script>
 </body>
 </html>

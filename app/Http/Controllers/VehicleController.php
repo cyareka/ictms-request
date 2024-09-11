@@ -57,6 +57,7 @@ class VehicleController extends Controller
         if (!empty($validated['purposeInput'])) {
             $similarPurpose = DB::table('purpose_requests')
                 ->where('purpose', 'like', '%' . $validated['purposeInput'] . '%')
+                ->where('request_p', 'Vehicle')
                 ->exists();
 
             if ($similarPurpose) {
@@ -103,7 +104,7 @@ class VehicleController extends Controller
             $this->insertPurposeInput($validated);
 
             // Capitalize the first letter of specific fields
-            $purpose = ucwords($validated['purposeInput'] ?? '');
+            $purpose = !empty($validated['purposeInput']) ? ucwords($validated['purposeInput']) : null;
             $validated['Destination'] = ucwords($validated['Destination']);
             $validated['RequesterName'] = ucwords($validated['RequesterName']);
 

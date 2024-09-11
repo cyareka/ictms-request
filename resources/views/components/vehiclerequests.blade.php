@@ -1,8 +1,8 @@
-<style> 
+<style>
     .pagination_rounded, .pagination_square {
-    display: inline-block;
-    margin-left:470px;
-    margin-top:15px;
+        display: inline-block;
+        margin-left: 470px;
+        margin-top: 15px;
     }
 
     .pagination_rounded ul {
@@ -27,7 +27,7 @@
     }
 
     a:link {
-    text-decoration: none;
+        text-decoration: none;
     }
 
     .pagination_rounded .prev {
@@ -63,7 +63,7 @@
     }
 
     .visible-xs {
-        display: none!important;
+        display: none !important;
     }
 </style>
 <div class="requests">
@@ -77,7 +77,7 @@
             </div>
         </div>
         <div class="tableactions">
-            <div id="divide"> </div>
+            <div id="divide"></div>
             <div class="dropdown" style="float:right;">
                 <button class="dropbtn"><i class="bi bi-filter"></i></button>
                 <form id="filterForm" method="GET" action="{{ route('fetchSortedVRequests') }}">
@@ -95,7 +95,8 @@
                         </a>
                         <a>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="form_statuses[]" value="For Approval" id="flexCheckDefault2">
+                                <input class="form-check-input" type="checkbox" name="form_statuses[]"
+                                       value="For Approval" id="flexCheckDefault2">
                                 <label class="form-check-label" for="flexCheckDefault2">
                                     For Approval
                                 </label>
@@ -137,7 +138,6 @@
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date Needed</th>
                 <th scope="col">Time Needed</th>
-                <th scope="col">Availability</th>
                 <th scope="col">Form Status</th>
                 <th scope="col">Event Status</th>
                 <th scope="col"></th>
@@ -145,50 +145,41 @@
             </thead>
             <tbody>
             @php
-    use Carbon\Carbon;
-    use App\Models\VehicleRequest;
+                use Carbon\Carbon;
+                use App\Models\VehicleRequest;
 
-    // Get the current date and time
-    $now = Carbon::now('Asia/Manila');
+                // Get the current date and time
+                $now = Carbon::now('Asia/Manila');
 
-    // Fetch requests that need to be updated
-    $filteredRequests = VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
-        ->whereIn('EventStatus', ['Ongoing', '-'])
-        ->get();
+                // Fetch requests that need to be updated
+                $filteredRequests = VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
+                    ->whereIn('EventStatus', ['Ongoing', '-'])
+                    ->get();
 
-    foreach ($filteredRequests as $request) {
-        // Check if the FormStatus is Pending or For Approval and date/time has passed
-        if (in_array($request->FormStatus, ['Pending', 'For Approval'])) {
-            if ($request->date_start < $now->toDateString() || 
-                ($request->date_start == $now->toDateString() && $request->time_start < $now->toTimeString())) {
-                
-                // Update FormStatus to Not Approved if date/time exceeded
-                $request->FormStatus = 'Not Approved';
-                $request->save();
-            }
-        }
+                foreach ($filteredRequests as $request) {
+                    // Check if the FormStatus is Pending or For Approval and date/time has passed
+                    if (in_array($request->FormStatus, ['Pending', 'For Approval'])) {
+                        if ($request->date_start < $now->toDateString() ||
+                            ($request->date_start == $now->toDateString() && $request->time_start < $now->toTimeString())) {
 
-        // Check if the FormStatus is Approved and EventStatus is Ongoing, and date/time has passed
-        if ($request->FormStatus == 'Approved') {
-            if ($request->date_end < $now->toDateString() || 
-                ($request->date_end == $now->toDateString() && $request->time_start	 < $now->toTimeString())) {
-                
-                // Update EventStatus to Finished if date/time exceeded
-                $request->EventStatus = 'Finished';
-                $request->save();
-            }
-        }
-    }
+                            // Update FormStatus to Not Approved if date/time exceeded
+                            $request->FormStatus = 'Not Approved';
+                            $request->save();
+                        }
+                    }
 
-    // Function to convert availability
-    function convertAvailability($availability): string
-    {
-        if (is_null($availability)) {
-            return '-';
-        }
-        return $availability > 0 ? 'Available' : 'Not Available';
-    }
-@endphp
+                    // Check if the FormStatus is Approved and EventStatus is Ongoing, and date/time has passed
+                    if ($request->FormStatus == 'Approved') {
+                        if ($request->date_end < $now->toDateString() ||
+                            ($request->date_end == $now->toDateString() && $request->time_start	 < $now->toTimeString())) {
+
+                            // Update EventStatus to Finished if date/time exceeded
+                            $request->EventStatus = 'Finished';
+                            $request->save();
+                        }
+                    }
+                }
+            @endphp
 
             @foreach($filteredRequests as $request)
                 <tr>
@@ -202,7 +193,8 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil"
+                                                                                            id="actions"></i></a>
                         @if($request->FormStatus !== 'Pending')
                             <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
                         @endif
@@ -212,28 +204,28 @@
             </tbody>
         </table>
         <div class="pagination_rounded">
-                        <ul>
-                            <li>
-                                <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
-                            </li>
-                            <li><a href="#">1</a>
-                            </li>
-							<li class="hidden-xs"><a href="#">2</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">3</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">4</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">5</a>
-                            </li>
-							<li class="visible-xs"><a href="#">...</a>
-                            </li>
-							<li><a href="#">6</a>
-                            </li>
-                            <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                            </li>
-                        </ul>
-         </div>
+            <ul>
+                <li>
+                    <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
+                </li>
+                <li><a href="#">1</a>
+                </li>
+                <li class="hidden-xs"><a href="#">2</a>
+                </li>
+                <li class="hidden-xs"><a href="#">3</a>
+                </li>
+                <li class="hidden-xs"><a href="#">4</a>
+                </li>
+                <li class="hidden-xs"><a href="#">5</a>
+                </li>
+                <li class="visible-xs"><a href="#">...</a>
+                </li>
+                <li><a href="#">6</a>
+                </li>
+                <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <div class="end"></div>
@@ -279,7 +271,7 @@
             if (Array.isArray(data) && data.length > 0) {
                 data.forEach(request => {
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
-                    let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
+                    let purposeName = request.PurposeOthers || (request.PurposeID ? App/Models/PurposeRequest::find(request.PurposeID).purpose : 'N/A');
 
                     let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>
@@ -301,7 +293,6 @@
                     <td>${request.EventStatus}</td>
                     <td>
                         <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                        <i class="bi bi-download" id="actions" data-request-id="${request.VRequestID}"></i>
                     </td>
                 </tr>`;
 
@@ -314,62 +305,62 @@
             updatePagination(pagination);
         }
 
-    // Function to handle pagination
-function updatePagination(pagination) {
-    const paginationContainer = document.querySelector('.pagination_rounded ul');
-    paginationContainer.innerHTML = ''; // Clear the current pagination
+        // Function to handle pagination
+        function updatePagination(pagination) {
+            const paginationContainer = document.querySelector('.pagination_rounded ul');
+            paginationContainer.innerHTML = ''; // Clear the current pagination
 
-    // Previous button
-    let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
-    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
+            // Previous button
+            let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
+            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
 
-    // Page numbers
-    for (let page = 1; page <= pagination.last_page; page++) {
-        let activeClass = page === pagination.current_page ? 'active' : '';
-        
-        // Create the list item element
-        let listItem = document.createElement('li');
-        listItem.className = activeClass;
+            // Page numbers
+            for (let page = 1; page <= pagination.last_page; page++) {
+                let activeClass = page === pagination.current_page ? 'active' : '';
 
-        // Create the anchor element
-        let pageLink = document.createElement('a');
-        pageLink.href = '#';
-        pageLink.textContent = page;
+                // Create the list item element
+                let listItem = document.createElement('li');
+                listItem.className = activeClass;
 
-        // If it's the current page, change the font color
-        if (page === pagination.current_page) {
-            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
-            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+                // Create the anchor element
+                let pageLink = document.createElement('a');
+                pageLink.href = '#';
+                pageLink.textContent = page;
+
+                // If it's the current page, change the font color
+                if (page === pagination.current_page) {
+                    pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+                    pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+                }
+
+
+                // Append the anchor to the list item
+                listItem.appendChild(pageLink);
+
+                // Append the list item to the pagination container
+                paginationContainer.appendChild(listItem);
+            }
+
+            // Next button
+            let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
         }
-
-
-        // Append the anchor to the list item
-        listItem.appendChild(pageLink);
-
-        // Append the list item to the pagination container
-        paginationContainer.appendChild(listItem);
-    }
-
-    // Next button
-    let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
-    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
-}
 
 // Event listeners for pagination links
-document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') {
-        e.preventDefault();
-        let text = e.target.textContent.trim();
-        
-        if (text === 'Prev' && currentPage > 1) {
-            fetchSortedData('desc', currentPage - 1, searchQuery);
-        } else if (text === 'Next' && currentPage < lastPage) {
-            fetchSortedData('desc', currentPage + 1, searchQuery);
-        } else if (!isNaN(text)) {
-            fetchSortedData('desc', parseInt(text), searchQuery);
-        }
-    }
-});
+        document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                let text = e.target.textContent.trim();
+
+                if (text === 'Prev' && currentPage > 1) {
+                    fetchSortedData('desc', currentPage - 1, searchQuery);
+                } else if (text === 'Next' && currentPage < lastPage) {
+                    fetchSortedData('desc', currentPage + 1, searchQuery);
+                } else if (!isNaN(text)) {
+                    fetchSortedData('desc', parseInt(text), searchQuery);
+                }
+            }
+        });
 
 
         // Sort by date when clicking on the "Sort" button
@@ -381,18 +372,18 @@ document.querySelector('.pagination_rounded').addEventListener('click', function
             fetchSortedData(newOrder, currentPage, searchQuery);
         });
 
-    // // Handle pagination (previous and next buttons)
-    // document.getElementById('prev-page').addEventListener('click', function () {
-    //     if (currentPage > 1) {
-    //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
-    //     }
-    // });
+        // // Handle pagination (previous and next buttons)
+        // document.getElementById('prev-page').addEventListener('click', function () {
+        //     if (currentPage > 1) {
+        //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+        //     }
+        // });
 
-    // document.getElementById('next-page').addEventListener('click', function () {
-    //     if (currentPage < lastPage) {
-    //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-    //     }
-    // });
+        // document.getElementById('next-page').addEventListener('click', function () {
+        //     if (currentPage < lastPage) {
+        //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+        //     }
+        // });
 
         // Handle form submission and search
         document.getElementById('filterForm').addEventListener('submit', function (event) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FocalPerson;
 use App\Models\Office;
 use App\Models\PurposeRequest;
 use Illuminate\Contracts\View\Factory;
@@ -46,6 +47,7 @@ class ConferenceController extends Controller
         if (!empty($validated['purposeInput'])) {
             $similarPurpose = DB::table('purpose_requests')
                 ->where('purpose', 'like', '%' . $validated['purposeInput'] . '%')
+                ->where('request_p', 'Conference Room')
                 ->exists();
 
             if ($similarPurpose) {
@@ -97,7 +99,7 @@ class ConferenceController extends Controller
 
             $this->insertPurposeInput($validated);
 
-            $purpose = ucwords($validated['purposeInput'] ?? null);
+            $purpose = !empty($validated['purposeInput']) ? ucwords($validated['purposeInput']) : null;
             $focalPerson = $validated['focalPersonInput'] ?? null;
             $otherFacilities = $validated['otherFacilitiesInput'] ?? $validated['otherFacilitiesSelect'];
 

@@ -295,10 +295,18 @@
 <body>
 
 <div class="container">
-<div class="icon"> 
-        <button class="btn float-right">
-            <i class="bi-dl bi-download"></i>
-        </button>
+<div class="icon">
+        @if ((in_array($requestLogData->FormStatus, ['Approved', 'Not Approved']) || in_array($requestLogData->EventStatus, ['Finished', 'Cancelled', '-'])) && ($requestLogData->FormStatus !== 'Not Approved' || $requestLogData->cert_file))
+            <button class="btn float-right" id="downloadButton">
+                <i class="bi-dl bi-download"></i>
+            </button>
+
+            <script>
+                document.getElementById('downloadButton').addEventListener('click', function() {
+                    window.location.href = "{{ route('downloadFinalCRequestPDF', $requestLogData->CRequestID) }}";
+                });
+            </script>
+        @endif
         <button class="btn float-right mb-10" onclick="cancelForm()">
          <i class="bi bi-x"></i>
         </button>
