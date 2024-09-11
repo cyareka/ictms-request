@@ -90,13 +90,9 @@ class DownloadsController extends Controller
             $pdf->Write(0, $conferenceRequest->npersons);
 
             $pdf->SetXY(90, 110);
-            if (is_null($conferenceRequest->focalPerson)) {
-                // Focal Person
-                $pdf->Write(0, $conferenceRequest->FPOthers);
-            } else {
-                // Focal Person
-                $pdf->Write(0, $conferenceRequest->focalPerson->FocalPName);
-            }
+            // Focal Person
+            $pdf->Write(0, $conferenceRequest->focalPerson->FPName);
+
 
             // Conference Room 1 (Magiting)
             if ($conferenceRequest->conferenceRoom->CRoomName === 'Magiting') {
@@ -114,7 +110,7 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $conferenceRequest->otherFacilities);
             }
 
-            if (!is_null($conferenceRequest->tables)) {
+            if (!is_null($conferenceRequest->tables) && $conferenceRequest->tables != '0') {
                 $pdf->SetXY(70.4, 158.9); // Tables
                 $pdf->Write(0, 'x');
 
@@ -122,7 +118,7 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $conferenceRequest->tables);
             }
 
-            if (!is_null($conferenceRequest->chairs)) {
+            if (!is_null($conferenceRequest->chairs) && $conferenceRequest->chairs != '0') {
                 $pdf->SetXY(70.4, 169.9); // Chairs
                 $pdf->Write(0, 'x');
 
@@ -130,8 +126,17 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $conferenceRequest->tables);
             }
 
-            $pdf->SetXY(70.4, 179.9); // Others
+            $pdf->SetXY(30.4, 225.9); // RequesterSignature
+            $pdf->Write(0, $conferenceRequest->RequesterName);
 
+            $signaturePath = 'uploads/signatures/' . basename($conferenceRequest->RequesterSignature);
+            if (file_exists($signaturePath) && is_readable($signaturePath)) {
+                $pdf->Image($signaturePath, 10, 10, 30, 30);
+            } else {
+                echo "Error: File not found or not readable";
+            }
+
+            ob_clean();
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Request.pdf');
         } catch (Throwable $e) {
@@ -223,8 +228,14 @@ class DownloadsController extends Controller
             $pdf->SetXY(95, 134); // Date Start
             $pdf->Write(0, $conferenceRequest->date_start);
 
-            $pdf->SetXY(114, 134); // Date End
-            $pdf->Write(0, ' - ' . $conferenceRequest->date_end);
+            $pdf->SetXY(114, 134); // Time Start
+            $pdf->Write(0, $conferenceRequest->time_start);
+
+            $pdf->SetXY(125, 134); // Date End
+            $pdf->Write(0, ' -   ' . $conferenceRequest->date_end);
+
+            $pdf->SetXY(150, 134); // Time End
+            $pdf->Write(0, $conferenceRequest->time_end);
 
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Certificate_of_Unavailability.pdf');
@@ -240,7 +251,7 @@ class DownloadsController extends Controller
         }
     }
 
-//    public function downloadVRequestPDF(Request$request, $VRequestID)
+//    public function downloadVRequestPDF_1 (Request$request, $VRequestID)
 //    {
 //        try {
 //            Log::info('Starting downloadVRequestPDF method.');

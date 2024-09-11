@@ -41,7 +41,7 @@ class UpdateConferenceRequestStatus extends Command
             $request->update(['FormStatus' => 'Not Approved']);
         });
 
-        // Update Ongoing events to Finished if date_end and time_end have passed
+        // Update Ongoing events t  o Finished if date_end and time_end have passed
         $ongoingRequests = ConferenceRequest::where('FormStatus', 'Approved')
             ->where('EventStatus', 'Ongoing')
             ->where(function($query) use ($now) {

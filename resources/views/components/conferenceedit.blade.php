@@ -947,9 +947,6 @@
             case 'Ongoing':
                 FormStatus.value = 'Approved';
                 break;
-            case 'Finished':
-                FormStatus.value = 'Approved';
-                break;
             case 'Cancelled':
                 FormStatus.value = 'Approved';
                 break;

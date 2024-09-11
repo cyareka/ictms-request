@@ -413,15 +413,6 @@
                 <label for="focalPerson">Focal Person</label>
                 <select id="focalPersonSelect" name="focalPersonSelect">
                     <option disabled selected>Select Focal Person</option>
-{{--                    @foreach(App\Models\FocalPerson::all() as $fp)--}}
-{{--                        <option value="{{ $fp->FocalPID }}" {{ old('focalPersonSelect') == $fp->FocalPID ? 'selected' : '' }}>--}}
-{{--                            {{ $fp->FPName }}--}}
-{{--                        </option>--}}
-{{--                    @endforeach--}}
-                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
-                    <div class="checkbox">
-                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
-                    </div>
                 </select>
             </div>
         </div>
@@ -445,7 +436,7 @@
         <div class="row">
             <div class="tb">
                 <label for="persons">No. of Persons</label>
-                <input type="number" id="npersons" name="npersons" min="0" value="{{ old('npersons', 0) }}" step="1">
+                <input type="number" id="npersons" name="npersons" min="1" value="{{ old('npersons', 0) }}" step="1">
                 <div class="tb">
                     <label for="tables">Tables</label>
                     <input type="number" id="tables" name="tables" min="0" value="{{ old('tables', 0) }}" step="1">
