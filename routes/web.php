@@ -106,10 +106,6 @@ Route::middleware([
         return view('VehicleLogs');
     })->name('VehicleLogs');
 
-    Route::get('/VehicleDownload', function () {
-        return view('VehicleDownload');
-    })->name('VehicleDownload');
-
     Route::get('/vehiclerequest/{VRequestID}/log',
         [VehicleController::class, 'getVLogData'])->name('vehiclelogDetail');
 
@@ -134,6 +130,7 @@ Route::middleware([
 
     Route::get('/vehiclerequest/{VRequestID}/view-pdf', [DownloadsController::class, 'downloadVRequestPDF'])->name('downloadVRequestPDF');
     Route::get('/vehiclerequest/{VRequestID}/view-final-pdf', [DownloadsController::class, 'downloadFinalVRequestPDF'])->name('downloadFinalVRequestPDF');
+    Route::get('/vehiclerequest/{VRequestID}/pdf-previews', [DownloadsController::class, 'downloadVRequestPDF'])->name('downloadVRequestPDF');
 
     Route::get('/vehiclerequest/view-logs', [DownloadsController::class, 'downloadRangeVRequestPDF'])->name('downloadRangeVRequestPDF');
 

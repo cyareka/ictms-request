@@ -2,7 +2,7 @@
     <div class="py-12">
         <div>
             <div>
-                <x-vehicledownload/>
+                <x-vehicledownload :pdfs="$pdfs"/>
             </div>
         </div>
     </div>

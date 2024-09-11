@@ -591,8 +591,7 @@
                     </div>
                     <div class="inline">
                         <label for="remark">Remarks</label>
-                        <input type="text" id="remark" name="remark" placeholder="Enter Remark"
-                               autocapitalize="sentences">
+                        <input type="text" id="remark" name="remark" value="{{ $requestData->Remarks }}" placeholder="Enter Remark" autocapitalize="sentences">
                     </div>
                 </div>
             </form>
@@ -704,10 +703,10 @@
         </div>
         <div class="form-footer">
             @if($requestData->FormStatus === 'For Approval')
-                <a onclick="{{ route('downloadVRequestPDF', $requestData->VRequestID) }}">
-                    <button class="cancel-btn" type="button" onclick="download()">Download</button>
+                <a href="{{ route('downloadVRequestPDF', $requestData->VRequestID) }}">
+                    <button class="cancel-btn" type="button">Download</button>
                 </a>
-            @elseif($requestData->FormStatus === 'Approved')
+            @elseif($requestData->FormStatus === 'Approved' || $requestData->FormStatus === 'Not Approved')
                 <a href="{{ route('downloadFinalVRequestPDF', $requestData->VRequestID) }}" target="_blank">
                     <button class="cancel-btn" type="button">Download</button>
                 </a>

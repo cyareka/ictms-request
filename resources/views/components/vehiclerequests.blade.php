@@ -193,11 +193,7 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil"
-                                                                                            id="actions"></i></a>
-                        @if($request->FormStatus !== 'Pending')
-                            <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
-                        @endif
+                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -263,6 +259,7 @@
                 });
         }
 
+
         // Function to update the table with the fetched data
         function updateTable(data, pagination) {
             let tbody = document.querySelector('tbody');
@@ -271,7 +268,7 @@
             if (Array.isArray(data) && data.length > 0) {
                 data.forEach(request => {
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
-                    let purposeName = request.PurposeOthers || (request.PurposeID ? App/Models/PurposeRequest::find(request.PurposeID).purpose : 'N/A');
+                    let purposeName = request.PurposeOthers || request.purpose_name || 'N/A';
 
                     let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>

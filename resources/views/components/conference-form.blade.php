@@ -454,9 +454,8 @@
                 <label for="otherFacilitiesSelect">Other Facilities</label>
                 <select id="otherFacilitiesSelect" name="otherFacilitiesSelect" class="selectpicker" required>
                     <option disabled selected>Select Facility</option>
-                    <option value="Projector" {{ old('otherFacilitiesSelect') == 'Projector' ? 'selected' : '' }}>Projector</option>
-                    <option value="Sound System" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>Sound System</option>
-                    <option value="Microphone" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>Sound System</option>
+                    <option value="Sound System" {{ old('otherFacilitiesSelect') == 'Projector' ? 'selected' : '' }}>Sound System</option>
+                    <option value="AudioVisual Equipment" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>AudioVisual Equipment</option>
                     <!-- Add more facilities here -->
                 </select>
                 <input type="text" id="otherFacilitiesInput" name="otherFacilitiesInput" style="display:none;" placeholder="Enter Facility" value="{{ old('otherFacilitiesInput') }}">

@@ -207,7 +207,7 @@ class VehicleController extends Controller
                 'DriverID' => 'nullable|string|exists:driver,DriverID',
                 'VehicleID' => 'nullable|string|exists:vehicle,VehicleID',
                 'ReceivedBy' => 'nullable|string|max:50',
-                'Remarks' => 'nullable|string|max:255',
+                'remark' => 'nullable|string|max:255',
                 'AAID' => 'nullable|string|exists:a_authorities,AAID',
                 'SOID' => 'nullable|string|exists:so_authorities,SOID',
                 'ASignatory' => 'nullable|string|max:50',  // Allow string initially
@@ -222,6 +222,7 @@ class VehicleController extends Controller
             $validated['VName'] = $request->input('VehicleID');
             $validated['AAID'] = $request->input('AAuth');
             $validated['SOID'] = $request->input('SOAuth');
+            $validated['remark'] = $request->input('Remarks');
 
             // Convert the signatory name to an ID
             if (!empty($validated['ASignatory']) || !empty($validated['ReceivedBy'])) {
@@ -494,13 +495,18 @@ class VehicleController extends Controller
         }
     }
 
+// In `app/Http/Controllers/VehicleController.php`
+
+// In `app/Http/Controllers/VehicleController.php`
+
     public function getPassengersByRequestId($VRequestID)
     {
         try {
-            // Fetch passengers associated with the given VRequestID
+            // Fetch passengers associated with the given VRequestID along with their OfficeName
             $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
                 ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
-                ->select('employees.EmployeeID', 'employees.EmployeeName')
+                ->join('offices', 'employees.OfficeID', '=', 'offices.OfficeID')
+                ->select('employees.EmployeeID', 'employees.EmployeeName', 'offices.OfficeName')
                 ->get();
 
             Log::info('Passengers fetched:', $passengers->toArray());
