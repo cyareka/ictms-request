@@ -153,36 +153,49 @@
             </tr>
             </thead>
             <tbody>
+           
             @php
     use Carbon\Carbon;
+    use App\Models\ConferenceRequest;
 
     // Get the current date and time
-    $currentDateTime = Carbon::now();
+    $now = Carbon::now('Asia/Manila');
 
-    // Retrieve conference requests with appropriate filters
-    $filteredRequests = App\Models\ConferenceRequest::where(function ($query) use ($currentDateTime) {
-        // Condition for Approved and Pending/For Approval requests
-        $query->whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
-            ->where(function ($subQuery) use ($currentDateTime) {
-                // Exclude Pending or For Approval requests where date_start and time_start are past current date and time
-                $subQuery->where(function ($pendingQuery) use ($currentDateTime) {
-                    $pendingQuery->whereIn('FormStatus', ['Pending', 'For Approval'])
-                        ->whereRaw('(date_start || " " || time_start) > ?', [$currentDateTime]);
-                });
+    // Fetch requests that need to be updated
+    $filteredRequests = ConferenceRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
+        ->whereIn('EventStatus', ['Ongoing', '-'])
+        ->get();
 
-                // Condition for Approved and Ongoing events
-                $subQuery->orWhere(function ($approvedQuery) use ($currentDateTime) {
-                    $approvedQuery->where('FormStatus', 'Approved')
-                        ->where('EventStatus', 'Ongoing')
-                        ->whereRaw('(date_end || " " || time_end) <= ?', [$currentDateTime])
-                        ->update(['EventStatus' => 'Finished']); // Auto-update EventStatus to Finished
-                });
-            });
-    })->get();
+    foreach ($filteredRequests as $request) {
+        // Check if the FormStatus is Pending or For Approval and date/time has passed
+        if (in_array($request->FormStatus, ['Pending', 'For Approval'])) {
+            if ($request->date_start < $now->toDateString() || 
+                ($request->date_start == $now->toDateString() && $request->time_start < $now->toTimeString())) {
+                
+                // Update FormStatus to Not Approved if date/time exceeded
+                $request->FormStatus = 'Not Approved';
+                $request->save();
+            }
+        }
+
+        // Check if the FormStatus is Approved and EventStatus is Ongoing, and date/time has passed
+        if ($request->FormStatus == 'Approved' && $request->EventStatus == 'Ongoing') {
+            if ($request->date_end < $now->toDateString() || 
+                ($request->date_end == $now->toDateString() && $request->time_end < $now->toTimeString())) {
+                
+                // Update EventStatus to Finished if date/time exceeded
+                $request->EventStatus = 'Finished';
+                $request->save();
+            }
+        }
+    }
 
     // Function to convert availability
     function convertAvailability($availability): string
     {
+        if (is_null($availability)) {
+            return '-';
+        }
         return $availability > 0 ? 'Available' : 'Not Available';
     }
 @endphp

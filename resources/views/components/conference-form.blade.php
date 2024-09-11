@@ -418,10 +418,10 @@
 {{--                            {{ $fp->FPName }}--}}
 {{--                        </option>--}}
 {{--                    @endforeach--}}
-{{--                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">--}}
-{{--                    <div class="checkbox">--}}
-{{--                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>--}}
-{{--                    </div>--}}
+                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
+                    <div class="checkbox">
+                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
+                    </div>
                 </select>
             </div>
         </div>
