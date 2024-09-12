@@ -630,18 +630,39 @@
         // Initialize passenger options
         updatePassengerOptions();
 
-        // Add event listeners for date fields
+    });
+    document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(function(input) {
             input.setAttribute('min', today);
         });
     });
+    function addPassenger() {
+        const passengerField = document.createElement('div');
+        passengerField.className = 'input-field passenger-field';
+        passengerField.innerHTML = `
+        <select name="passengers[]" required>
+          <option disabled selected>Select a passenger</option>
+            @foreach(App\Models\Employee::all() as $passenger)
+                <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
+            @endforeach
+        </select>
+        <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
+    `;
+        document.getElementById('passenger-container').appendChild(passengerField);
+    }
+
+    function removePassenger(button) {
+        const passengerField = button.parentElement;
+        passengerField.remove();
+    }
 
     function addDateTime() {
         const dateTimeContainer = document.getElementById('date-time-container');
         const defaultDateTimeField = document.querySelector('.datetime-group');
         const newDateTimeField = defaultDateTimeField.cloneNode(true);
         newDateTimeField.querySelectorAll('input').forEach(input => input.value = ''); // reset input values
+
 
         const addButton = newDateTimeField.querySelector('.add-datetime-btn');
         addButton.classList.replace('add-datetime-btn', 'remove-datetime-btn');
@@ -677,6 +698,19 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+     // event listener for submit
+     document.querySelector('form').addEventListener('submit', function (event) {
+        let datesValid = true;
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+            if (!input.value) {
+                datesValid = false;
+            }
+        });
+        if (!datesValid) {
+            event.preventDefault();
+            alert('Please fill in all date fields.');
+        }
+    });
 
     function validateForm() {
         let isValid = true;
@@ -704,14 +738,15 @@
             isValid = false;
             errorMessages.push("Duplicate passengers are not allowed.");
         }
-
         // Check date fields
-        document.querySelectorAll('input[type="date"]').forEach(function(input) {
-            if (!input.value) {
-                isValid = false;
-                errorMessages.push("All date fields must be filled.");
-            }
-        });
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
+                if (!input.value) {
+                    isValid = false;
+                    let errorMessage = "All date fields must be filled.";
+                    errorMessages.push(errorMessage);
+                    console.error(errorMessage);  // Log the error to the console
+                }
+            });
 
         // Check file size
         let signatureFile = document.getElementById('RequesterSignature').files[0];
@@ -720,36 +755,65 @@
             errorMessages.push("Signature file size must be less than 32MB.");
         }
 
-        // Check purpose field
-        const purposeCheckbox = document.getElementById('purposeCheckbox');
-        if (purposeCheckbox.checked) {
-            const purposeInput = document.getElementById('purposeInput');
-            if (!purposeInput.value) {
-                isValid = false;
-                errorMessages.push("Purpose input is required.");
-            }
+         // Check purpose field
+    const purposeCheckbox = document.getElementById('purposeCheckbox');
+    if (purposeCheckbox.checked) {
+        const purposeInput = document.getElementById('purposeInput');
+        if (!purposeInput.value) {
+            isValid = false;
+            let errorMessage = "Purpose input is required.";
+            errorMessages.push(errorMessage);
+            console.error(errorMessage);  // Log the error to the console
         } else {
-            const purposeSelect = document.getElementById('purposeSelect');
-            if (!purposeSelect.value) {
-                isValid = false;
-                errorMessages.push("Purpose select is required.");
-            }
+            console.debug("Purpose input value:", purposeInput.value);
         }
-         // Display error messages if any
+    } else {
+        const purposeSelect = document.getElementById('purposeSelect');
+        if (!purposeSelect.value) {
+            isValid = false;
+            let errorMessage = "Purpose select is required.";
+            errorMessages.push(errorMessage);
+            console.error(errorMessage);  // Log the error to the console
+        } else {
+            console.debug("Purpose select value:", purposeSelect.value);
+        }
+    }
+
     if (!isValid) {
-        const errorContainer = document.getElementById('error-container');
-        errorContainer.innerHTML = errorMessages.join('<br>');
-        errorContainer.style.display = 'block';
+        alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
+        return false;
     }
-
-    return isValid;
-
-    }
+    return true;
+}
 
     document.querySelector('form').addEventListener('submit', function(event) {
         if (!validateForm()) {
             event.preventDefault();
         }
+    });
+
+document.addEventListener('DOMContentLoaded', function () {
+        // Check if there is old input for the purpose and toggle the input field accordingly
+        if ("{{ old('purposeInput') }}") {
+            document.getElementById('purposeInput').style.display = 'block';
+            document.getElementById('purposeSelect').style.display = 'none';
+            document.getElementById('purposeCheckbox').checked = true;
+        }
+
+        // Function to toggle the input field for purpose
+        window.toggleInputField = function (field) {
+            var inputField = document.getElementById(field + 'Input');
+            var selectField = document.getElementById(field + 'Select');
+            var checkbox = document.getElementById(field + 'Checkbox');
+
+            if (checkbox.checked) {
+                inputField.style.display = 'block';
+                selectField.style.display = 'none';
+            } else {
+                inputField.style.display = 'none';
+                selectField.style.display = 'block';
+            }
+        };
     });
 </script>
 </body>
