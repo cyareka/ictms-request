@@ -101,7 +101,7 @@ class ConferenceController extends Controller
 
             $purpose = !empty($validated['purposeInput']) ? ucwords($validated['purposeInput']) : null;
             $focalPerson = $validated['focalPersonInput'] ?? null;
-            $otherFacilities = $validated['otherFacilitiesInput'] ?? $validated['otherFacilitiesSelect'];
+            $otherFacilities = $validated['otherFacilitiesInput'] ?? $validated['otherFacilitiesSelect']?? null;
 
             $dates = $validated['date_start'];
             if (count($dates) !== count(array_unique($dates))) {
