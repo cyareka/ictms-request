@@ -503,15 +503,20 @@
                     <input type="tel" id="ContactNo" name="RequesterContact" placeholder="Enter Contact No." value="{{ old('RequesterContact') }}" required maxlength="10">
                 </div>
                 <div class="input-field">
-                    <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
-                    <div class="file-upload">
-                        <input type="file" id="e-signature" name="RequesterSignature" style="display: none;"
-                               onchange="previewSignature(event)" required>
-                        <div class="e-signature-text" onclick="document.getElementById('e-signature').click();">
-                            Click to upload e-sign.<br>Maximum file size: 31.46MB
+                     <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
+                        <div class="file-upload">
+                            <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;" onchange="previewSignature(event)">
+                            <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
+                                Click to upload e-sign.<br>Maximum file size: 32MB
+                            </div>
+                            <input type="hidden" id="hidden-signature" name="hiddenSignature">
+                            <img id="signature-preview" 
+                                src="" 
+                                style="display: none; cursor: pointer;" 
+                                alt="Signature Preview" 
+                                onclick="document.getElementById('RequesterSignature').click();">
                         </div>
-                        <img id="signature-preview" alt="Signature Preview">
-                    </div>
+                        <div id="error-container" style="color: red; display: none;">E-Signature is required.</div>
                 </div>
             </div>
             <div class="input-group">
@@ -569,7 +574,6 @@
         </form>
     </div>
 </div>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const passengerContainer = document.getElementById('passenger-container');
@@ -602,14 +606,14 @@
             const passengerField = document.createElement('div');
             passengerField.className = 'input-field passenger-field';
             passengerField.innerHTML = `
-            <select name="passengers[]" required>
-                <option disabled selected>Select a passenger</option>
-                @foreach(App\Models\Employee::all() as $passenger)
-            <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
-                @endforeach
-            </select>
-            <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
-        `;
+                <select name="passengers[]" required>
+                    <option disabled selected>Select a passenger</option>
+                    @foreach(App\Models\Employee::all() as $passenger)
+                        <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
+                    @endforeach
+                </select>
+                <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
+            `;
             passengerContainer.appendChild(passengerField);
 
             const newSelect = passengerField.querySelector('select');
@@ -623,43 +627,21 @@
             updatePassengerOptions();
         }
 
+        // Initialize passenger options
         updatePassengerOptions();
-    });
 
-    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners for date fields
         const today = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(function(input) {
             input.setAttribute('min', today);
         });
     });
 
-    function addPassenger() {
-        const passengerField = document.createElement('div');
-        passengerField.className = 'input-field passenger-field';
-        passengerField.innerHTML = `
-        <select name="passengers[]" required>
-          <option disabled selected>Select a passenger</option>
-            @foreach(App\Models\Employee::all() as $passenger)
-                <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
-            @endforeach
-        </select>
-        <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
-    `;
-        document.getElementById('passenger-container').appendChild(passengerField);
-    }
-
-    function removePassenger(button) {
-        const passengerField = button.parentElement;
-        passengerField.remove();
-    }
-
-
     function addDateTime() {
         const dateTimeContainer = document.getElementById('date-time-container');
         const defaultDateTimeField = document.querySelector('.datetime-group');
         const newDateTimeField = defaultDateTimeField.cloneNode(true);
         newDateTimeField.querySelectorAll('input').forEach(input => input.value = ''); // reset input values
-
 
         const addButton = newDateTimeField.querySelector('.add-datetime-btn');
         addButton.classList.replace('add-datetime-btn', 'remove-datetime-btn');
@@ -688,6 +670,7 @@
             preview.src = reader.result;
             preview.style.display = 'block';
             uploadText.style.display = 'none'; // Hide the upload text
+            document.getElementById('signature-error').style.display = 'none'; // Hide the error message
         };
 
         if (input.files && input.files[0]) {
@@ -695,126 +678,79 @@
         }
     }
 
-    // event listener for submit
-    document.querySelector('form').addEventListener('submit', function (event) {
-        let datesValid = true;
-        document.querySelectorAll('input[type="date"]').forEach(function (input) {
-            if (!input.value) {
-                datesValid = false;
+    function validateForm() {
+        let isValid = true;
+        let errorMessages = [];
+
+        // Check required fields
+        document.querySelectorAll('input[required], select[required]').forEach(function(element) {
+            if (!element.value) {
+                isValid = false;
+                errorMessages.push(element.previousElementSibling.textContent + " is required.");
             }
         });
-        if (!datesValid) {
-            event.preventDefault();
-            alert('Please fill in all date fields.');
-        }
-    });
 
+        // Check dynamic passenger fields
+        const passengerSelects = document.querySelectorAll('select[name="passengers[]"]');
+        const passengerValues = Array.from(passengerSelects).map(select => select.value).filter(value => value !== '');
 
-function validateForm() {
-    let isValid = true;
-    let errorMessages = [];
-
-    // Check required fields
-    document.querySelectorAll('input[required], select[required]').forEach(function (element) {
-        if (!element.value) {
+        if (passengerValues.length === 0) {
             isValid = false;
-            let errorMessage = element.previousElementSibling.textContent + " is required.";
-            errorMessages.push(errorMessage);
-            console.error(errorMessage);  // Log the error to the console
+            errorMessages.push("At least one passenger must be selected.");
         }
-    });
 
-    // Check dynamic passenger fields
-    const passengerSelects = document.querySelectorAll('select[name="passengers[]"]');
-    const passengerValues = Array.from(passengerSelects).map(select => select.value).filter(value => value !== '');
-
-    if (passengerValues.length === 0) {
-        isValid = false;
-        errorMessages.push("At least one passenger must be selected.");
-        console.error("At least one passenger must be selected.");
-    }
-
-    // Check if passengers are unique
-    if (new Set(passengerValues).size !== passengerValues.length) {
-        isValid = false;
-        errorMessages.push("Duplicate passengers are not allowed.");
-        console.error("Duplicate passengers are not allowed.");
-    }
-
-    // Check date fields
-    document.querySelectorAll('input[type="date"]').forEach(function (input) {
-        if (!input.value) {
+        // Check if passengers are unique
+        if (new Set(passengerValues).size !== passengerValues.length) {
             isValid = false;
-            let errorMessage = "All date fields must be filled.";
-            errorMessages.push(errorMessage);
-            console.error(errorMessage);  // Log the error to the console
-        }
-    });
-
-    // Check file size
-    let signatureFile = document.getElementById('RequesterSignature').files[0];
-    if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
-        isValid = false;
-        let errorMessage = "Signature file size must be less than 32MB.";
-        errorMessages.push(errorMessage);
-        console.error(errorMessage);  // Log the error to the console
-    }
-
-    // Check purpose field
-    const purposeCheckbox = document.getElementById('purposeCheckbox');
-    if (purposeCheckbox.checked) {
-        const purposeInput = document.getElementById('purposeInput');
-        if (!purposeInput.value) {
-            isValid = false;
-            let errorMessage = "Purpose input is required.";
-            errorMessages.push(errorMessage);
-            console.error(errorMessage);  // Log the error to the console
-        } else {
-            console.debug("Purpose input value:", purposeInput.value);
-        }
-    } else {
-        const purposeSelect = document.getElementById('purposeSelect');
-        if (!purposeSelect.value) {
-            isValid = false;
-            let errorMessage = "Purpose select is required.";
-            errorMessages.push(errorMessage);
-            console.error(errorMessage);  // Log the error to the console
-        } else {
-            console.debug("Purpose select value:", purposeSelect.value);
-        }
-    }
-
-    if (!isValid) {
-        alert("Please correct the following errors:\n\n" + errorMessages.join("\n"));
-        return false;
-    }
-    return true;
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-        // Check if there is old input for the purpose and toggle the input field accordingly
-        if ("{{ old('purposeInput') }}") {
-            document.getElementById('purposeInput').style.display = 'block';
-            document.getElementById('purposeSelect').style.display = 'none';
-            document.getElementById('purposeCheckbox').checked = true;
+            errorMessages.push("Duplicate passengers are not allowed.");
         }
 
-        // Function to toggle the input field for purpose
-        window.toggleInputField = function (field) {
-            var inputField = document.getElementById(field + 'Input');
-            var selectField = document.getElementById(field + 'Select');
-            var checkbox = document.getElementById(field + 'Checkbox');
-
-            if (checkbox.checked) {
-                inputField.style.display = 'block';
-                selectField.style.display = 'none';
-            } else {
-                inputField.style.display = 'none';
-                selectField.style.display = 'block';
+        // Check date fields
+        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+            if (!input.value) {
+                isValid = false;
+                errorMessages.push("All date fields must be filled.");
             }
-        };
-    });
+        });
 
+        // Check file size
+        let signatureFile = document.getElementById('RequesterSignature').files[0];
+        if (signatureFile && signatureFile.size > 32000000) { // 32MB in bytes
+            isValid = false;
+            errorMessages.push("Signature file size must be less than 32MB.");
+        }
+
+        // Check purpose field
+        const purposeCheckbox = document.getElementById('purposeCheckbox');
+        if (purposeCheckbox.checked) {
+            const purposeInput = document.getElementById('purposeInput');
+            if (!purposeInput.value) {
+                isValid = false;
+                errorMessages.push("Purpose input is required.");
+            }
+        } else {
+            const purposeSelect = document.getElementById('purposeSelect');
+            if (!purposeSelect.value) {
+                isValid = false;
+                errorMessages.push("Purpose select is required.");
+            }
+        }
+         // Display error messages if any
+    if (!isValid) {
+        const errorContainer = document.getElementById('error-container');
+        errorContainer.innerHTML = errorMessages.join('<br>');
+        errorContainer.style.display = 'block';
+    }
+
+    return isValid;
+
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault();
+        }
+    });
 </script>
 </body>
 </html>
