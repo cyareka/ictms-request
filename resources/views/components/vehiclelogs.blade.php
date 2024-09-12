@@ -252,9 +252,7 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard"
-                                                                                           id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
+                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -370,7 +368,6 @@
             <td>${request.EventStatus}</td>
             <td>
                 <a href="/vehiclerequest/${request.VRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
-                <i class="bi bi-download" id="actions"></i>
             </td>
         </tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);

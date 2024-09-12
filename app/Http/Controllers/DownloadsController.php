@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ConferenceRequest;
 use App\Models\VehicleRequest;
+use App\Models\VRequestPassenger;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,6 @@ use setasign\Fpdi\PdfParser\Filter\FilterException;
 use setasign\Fpdi\PdfParser\PdfParserException;
 use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 use setasign\Fpdi\PdfReader\PdfReaderException;
-use App\Http\Controllers\VehicleController;
 use Throwable;
 
 class DownloadsController extends Controller
@@ -67,8 +67,6 @@ class DownloadsController extends Controller
             $pdf->SetXY(90, 68); // Requester Name
             $pdf->Write(0, $conferenceRequest->RequesterName);
 
-            $pdf->SetXY(90, 75); // Requester Signature
-
             $pdf->SetXY(90, 77);
             if (is_null($conferenceRequest->purposeRequest)) {
                 // Purpose
@@ -79,19 +77,13 @@ class DownloadsController extends Controller
             }
 
             $pdf->SetXY(90, 85); // Date Start
-            $pdf->Write(0, $conferenceRequest->date_start);
-
-            $pdf->SetXY(108, 85); // Date End
-            $pdf->Write(0, ' - ' . $conferenceRequest->date_end);
+            $pdf->Write(0, $conferenceRequest->date_start . ' - ' . $conferenceRequest->date_end);
 
             $pdf->SetXY(90, 94); // Time Start
-            $pdf->Write(0, $conferenceRequest->time_start);
-
-            $pdf->SetXY(101, 94); // Time End
-            $pdf->Write(0, ' - ' . $conferenceRequest->time_end);
+            $pdf->Write(0, $conferenceRequest->time_start . ' - ' . $conferenceRequest->time_end);
 
             $pdf->SetXY(90, 102); // Number of Persons
-            $pdf->Write(0, $conferenceRequest->npersons);
+            $pdf->Write(0, $conferenceRequest->npersons . ' PAX');
 
             $pdf->SetXY(90, 110); // Focal Person
             if (is_null($conferenceRequest->FPName)) {
@@ -135,14 +127,13 @@ class DownloadsController extends Controller
             $pdf->SetXY(30.4, 225.9); // RequesterSignature
             $pdf->Write(0, $conferenceRequest->RequesterName);
 
-            $signaturePath = 'uploads/signatures/' . basename($conferenceRequest->RequesterSignature);
+            $signaturePath = Storage::disk('public')->path($conferenceRequest->RequesterSignature);
             if (file_exists($signaturePath) && is_readable($signaturePath)) {
-                $pdf->Image($signaturePath, 10, 10, 30, 30);
+                $pdf->Image($signaturePath, 30, 216.9, 30, 10);
             } else {
-                echo "Error: File not found or not readable";
+                Log::error('Signature file not found or not readable.', ['signaturePath' => $signaturePath]);
             }
 
-            ob_clean();
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Request.pdf');
         } catch (Throwable $e) {
@@ -232,16 +223,7 @@ class DownloadsController extends Controller
             $pdf->Write(0, $conferenceRequest->npersons);
 
             $pdf->SetXY(95, 134); // Date Start
-            $pdf->Write(0, $conferenceRequest->date_start);
-
-            $pdf->SetXY(114, 134); // Time Start
-            $pdf->Write(0, $conferenceRequest->time_start);
-
-            $pdf->SetXY(125, 134); // Date End
-            $pdf->Write(0, ' -   ' . $conferenceRequest->date_end);
-
-            $pdf->SetXY(150, 134); // Time End
-            $pdf->Write(0, $conferenceRequest->time_end);
+            $pdf->Write(0, $conferenceRequest->date_start . ' ' . $conferenceRequest->time_start . ' - ' . $conferenceRequest->date_end . ' ' . $conferenceRequest->time_end);
 
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Certificate_of_Unavailability.pdf');
@@ -254,6 +236,30 @@ class DownloadsController extends Controller
                 'error' => 'An error occurred while generating the PDF.',
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function getPassengersByRequestId($VRequestID)
+    {
+        try {
+            // Fetch passengers associated with the given VRequestID along with their OfficeName
+            $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
+                ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
+                ->join('offices', 'employees.OfficeID', '=', 'offices.OfficeID')
+                ->select('employees.EmployeeID', 'employees.EmployeeName', 'offices.OfficeName')
+                ->get();
+
+            // Log the passengers for debugging purposes
+            Log::info('Passengers fetched:', $passengers->toArray());
+
+            return $passengers;
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching passengers:', [
+                'VRequestID' => $VRequestID,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch passengers.'], 500);
         }
     }
 
@@ -399,8 +405,9 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $vehicleRequest->purpose_request->purpose);
             }
 
-            $vehicleController = new VehicleController(); // Passengers
-            $passengers = $vehicleController->getPassengersByRequestId($VRequestID);
+            // Passengers
+
+            $passengers = $this->getPassengersByRequestId($VRequestID);
             $pdf->SetFont('Arial', '', 8);
             $pdf->SetXY(96, 84);
             foreach ($passengers as $passenger) {
@@ -423,6 +430,13 @@ class DownloadsController extends Controller
 
             $pdf->SetXY(40, 140); // Requester Name
             $pdf->Write(0, strtoupper($vehicleRequest->RequesterName));
+
+            $signaturePath = Storage::disk('public')->path($vehicleRequest->RequesterSignature);
+            if (file_exists($signaturePath) && is_readable($signaturePath)) {
+                $pdf->Image($signaturePath, 35, 130, 30, 10);
+            } else {
+                Log::error('Signature file not found or not readable.', ['signaturePath' => $signaturePath]);
+            }
 
             $pdf->SetXY(120, 140); // ReceivedBy
             $pdf->Write(0, strtoupper($vehicleRequest->receivedBy->name));
@@ -531,10 +545,7 @@ class DownloadsController extends Controller
             $pdf->SetFont('Arial', '', 10);
 
             $pdf->SetXY(65, 55.8); // Date Start
-            $pdf->Write(0, $vehicleRequest->date_start);
-
-            $pdf->SetXY(85, 55.8); // Date End
-            $pdf->Write(0, ' -  ' . $vehicleRequest->date_end);
+            $pdf->Write(0, $vehicleRequest->date_start . ' - ' . $vehicleRequest->date_end);
 
             $pdf->SetXY(170, 43.5); // Control Number
             $pdf->Write(0, $vehicleRequest->VRequestID);
@@ -545,8 +556,7 @@ class DownloadsController extends Controller
             $pdf->SetXY(65, 60); // Driver Name
             $pdf->Write(0, strtoupper($vehicleRequest->driver->DriverName));
 
-            $vehicleController = new VehicleController(); // Passengers
-            $passengers = $vehicleController->getPassengersByRequestId($VRequestID);
+            $passengers = $this->getPassengersByRequestId($VRequestID);
             $pdf->SetFont('Arial', '', 8);
             $pdf->SetXY(65, 64);
             foreach ($passengers as $passenger) {
@@ -566,9 +576,9 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $vehicleRequest->purpose_request->purpose);
             }
 
+            $pdf->SetFont('Arial', 'B', 9);
             $pdf->SetXY(20, 83); // ReceivedBy
             $pdf->Write(0, strtoupper($vehicleRequest->receivedBy->name));
-
 
             // Return the PDF content as a string
             return $pdf->Output('S');
@@ -678,11 +688,16 @@ class DownloadsController extends Controller
 
     public function downloadFinalVRequestPDF(Request $request, $VRequestID)
     {
-        $vehicleRequest = VehicleRequest::with('office')
+        $vehicleRequest = VehicleRequest::with('vehicle', 'purpose_request', 'driver')
             ->where('VRequestID', $VRequestID)
             ->firstOrFail();
 
         $certFilePath = $vehicleRequest['certfile-upload'];
+
+        if (is_null($certFilePath)) {
+            Log::error('No file uploaded for this request.', ['VRequestID' => $VRequestID]);
+            return response()->json(['error' => 'No file uploaded for this request.'], 400);
+        }
 
         if (Storage::disk('public')->exists($certFilePath)) {
             $fileContents = Storage::disk('public')->get($certFilePath);
@@ -697,7 +712,6 @@ class DownloadsController extends Controller
         }
     }
 
-
     public function downloadRangeVRequestPDF(Request $request)
     {
         // Validate the input parameters
@@ -710,57 +724,133 @@ class DownloadsController extends Controller
         $validated['startDate'] = Carbon::parse($validated['startDate'])->startOfDay();
         $validated['endDate'] = Carbon::parse($validated['endDate'])->endOfDay();
 
-        // Debugging log for validation
+        // Log validation for debugging purposes
         Log::info('Query parameters:', [
-            'startDate' => $validated['startDate'],
-            'endDate' => $validated['endDate'],
+            'startDate' => $validated['startDate']->toDateTimeString(),
+            'endDate' => $validated['endDate']->toDateTimeString(),
         ]);
 
-        // Query to get vehicle requests within the specified date range using 'created_at'
-        $vehicleRequests = VehicleRequest::whereBetween('created_at', [$validated['startDate'], $validated['endDate']])
-            ->get();
+        try {
+            // Fetch vehicle requests within the specified date range and join with drivers and vehicles tables
+            $vehicleRequests = VehicleRequest::whereBetween('vehicle_request.created_at', [$validated['startDate'], $validated['endDate']])
+                ->join('driver', 'vehicle_request.DriverID', '=', 'driver.DriverID')
+                ->join('vehicle', 'vehicle_request.VehicleID', '=', 'vehicle.VehicleID') // Join with the vehicles table
+                ->select('vehicle_request.*', 'driver.DriverName', 'vehicle.PlateNo') // Select PlateNo from the vehicles table
+                ->get();
 
-        // Check if no results are found
-        if ($vehicleRequests->isEmpty()) {
-            Log::error('No vehicle requests found within the specified date range.');
-            return response()->json(['error' => 'No vehicle requests found within the specified date range.'], 404);
+            // Check if no results are found
+            if ($vehicleRequests->isEmpty()) {
+                Log::error('No vehicle requests found within the specified date range.');
+                return response()->json(['error' => 'No vehicle requests found within the specified date range.'], 404);
+            }
+
+            // Initialize PDF using FPDI
+            $pdf = new FPDI();
+            $pdf->AddPage('L');
+            $sourceFile = public_path('storage/uploads/templates/vehicle_forms/empty/VR_dailydispatchreport.pdf');
+
+            // Check if the source file exists
+            if (!file_exists($sourceFile)) {
+                Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
+                return response()->json(['error' => 'Source file does not exist.'], 500);
+            }
+
+            $pdf->setSourceFile($sourceFile);
+            $tplIdx = $pdf->importPage(1);
+            $pdf->useTemplate($tplIdx, 0, 0, 330); // Adjust the width to fit new table size
+
+            // Set the text color and font for the date
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->SetFont('Helvetica', 'B', 12); // Bold font for the date label
+            $pdf->SetXY(38, 38); // Adjusted spacing
+            $currentDate = Carbon::now()->format('Y-m-d');
+
+            // Regular font for the actual date
+            $pdf->SetFont('Helvetica', '', 11);
+            $pdf->Write(0, $currentDate);
+
+            // Define header and cell widths
+            $headerWidths = [30, 40, 50, 50, 50, 60];
+            $totalWidth = array_sum($headerWidths);
+
+            // Header Setup
+            $pdf->SetXY(10, 50);
+            $pdf->SetFont('Helvetica', 'B', 10);
+            $pdf->SetFillColor(192, 192, 192); // Header background color
+            $headers = ['Driver', 'Plate No.', 'Office', 'Destination', 'Passenger', 'Time and Remarks'];
+
+            foreach ($headers as $i => $header) {
+                $pdf->Cell($headerWidths[$i], 10, $header, 1, 0, 'C', true);
+            }
+            $pdf->Ln(); // Move to the next line
+
+            // Reset fill color for data
+            $pdf->SetFillColor(255, 255, 255); // White background
+
+            $yPosition = 60;
+
+            foreach ($vehicleRequests as $request) {
+                // Fetch passengers by request ID
+                $passengers = $this->getPassengersByRequestId($request->VRequestID);
+                $passengerNames = $passengers->pluck('EmployeeName')->implode(', ');
+
+                // Prepare cell data
+                $cells = [
+                    $request->DriverName ?? 'N/A',
+                    $request->PlateNo,
+                    $request->office->OfficeName,
+                    $request->Destination,
+                    $passengerNames ?? 'N/A',
+                    $request->created_at->format('Y-m-d') . ' ' . ($request->remarks ?? 'N/A')
+                ];
+
+                // Calculate the maximum height of the cells
+                $maxHeight = 0;
+                $lineHeight = 5; // Estimate the height of one line of text
+                $pdf->SetFont('Helvetica', '', 10); // Set the font for consistency
+
+                foreach ($cells as $i => $cell) {
+                    $cellWidth = $headerWidths[$i];
+                    $words = explode(' ', $cell);
+                    $line = '';
+                    $lineCount = 1;
+
+                    foreach ($words as $word) {
+                        $testLine = $line . ($line ? ' ' : '') . $word;
+                        $testWidth = $pdf->GetStringWidth($testLine);
+
+                        if ($testWidth > $cellWidth) {
+                            $lineCount++;
+                            $line = $word;
+                        } else {
+                            $line = $testLine;
+                        }
+                    }
+
+                    $cellHeight = $lineCount * $lineHeight;
+                    $maxHeight = max($maxHeight, $cellHeight);
+                }
+
+                // Draw each cell with the maximum height
+                $xPosition = 10;
+                foreach ($cells as $i => $cell) {
+                    $pdf->SetXY($xPosition, $yPosition);
+                    $pdf->MultiCell($headerWidths[$i], $maxHeight, $cell, 1, 'L', true);
+                    $xPosition += $headerWidths[$i];
+                }
+
+                // Move to the next row
+                $yPosition += $maxHeight;
+            }
+
+            // Output the PDF
+            $pdf->Output('I', 'VR_DailyDispatchReport.pdf');
+        } catch (Exception $e) {
+            Log::error('Error generating PDF:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to generate PDF.'], 500);
         }
-
-        // PDF generation logic
-        $pdf = new FPDI();
-        $pdf->AddPage();
-        $sourceFile = public_path('storage/uploads/templates/vehicle_forms/VR_dailydispatchreport.pdf');
-
-        // Check if the source file exists
-        if (!file_exists($sourceFile)) {
-            Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
-            return response()->json(['error' => 'Source file does not exist.'], 500);
-        }
-
-        $pdf->setSourceFile($sourceFile);
-        $tplIdx = $pdf->importPage(1);
-        $pdf->useTemplate($tplIdx, 0, 0, 210);
-
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->SetFont('Arial', '', 10);
-
-        // Example of filling in the PDF with vehicle request data
-        $yPosition = 50; // Starting Y position for the data
-        foreach ($vehicleRequests as $request) {
-            $pdf->SetXY(10, $yPosition);
-            $pdf->Write(0, $request->VRequestID);
-            $pdf->SetXY(30, $yPosition);
-            $pdf->Write(0, $request->created_at->format('Y-m-d')); // Show only the date part
-            $pdf->SetXY(60, $yPosition);
-            $pdf->Write(0, $request->Destination);
-            $pdf->SetXY(90, $yPosition);
-            $pdf->Write(0, $request->Purpose);
-            $pdf->SetXY(120, $yPosition);
-            $pdf->Write(0, $request->office->OfficeName);
-            $yPosition += 10; // Move to the next line
-        }
-
-        // Output the PDF to the browser
-        $pdf->Output('I', 'VR_DailyDispatchReport.pdf');
     }
 }

@@ -702,12 +702,8 @@
             </form>
         </div>
         <div class="form-footer">
-            @if($requestData->FormStatus === 'For Approval')
+            @if($requestData->FormStatus === 'For Approval' || $requestData->FormStatus === 'Approved' || $requestData->FormStatus === 'Not Approved')
                 <a href="{{ route('downloadVRequestPDF', $requestData->VRequestID) }}">
-                    <button class="cancel-btn" type="button">Download</button>
-                </a>
-            @elseif($requestData->FormStatus === 'Approved' || $requestData->FormStatus === 'Not Approved')
-                <a href="{{ route('downloadFinalVRequestPDF', $requestData->VRequestID) }}" target="_blank">
                     <button class="cancel-btn" type="button">Download</button>
                 </a>
             @endif

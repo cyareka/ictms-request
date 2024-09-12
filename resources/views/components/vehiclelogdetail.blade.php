@@ -300,10 +300,21 @@
 </head>
 <body>
 <div class="form-container">
-<div class="icon"> 
-        <button class="dl-btn float-right">
-            <i class="bi-dl bi-download"></i>
-        </button>
+<div class="icon">
+        @if (
+            (in_array($requestLogData->FormStatus, ['Approved', 'Not Approved']) ||
+            in_array($requestLogData->EventStatus, ['Finished', 'Cancelled', '-']))
+        )
+            <button class="float-right" id="downloadButton">
+                <i class="bi-dl bi-download"></i>
+            </button>
+
+            <script>
+                document.getElementById('downloadButton').addEventListener('click', function() {
+                    window.location.href = "{{ route('downloadFinalVRequestPDF', $requestLogData->VRequestID) }}";
+                });
+            </script>
+       @endif
         <button class="btn float-right" type="button" onclick="history.back()">
             <i class="bi bi-x"></i>
         </button>

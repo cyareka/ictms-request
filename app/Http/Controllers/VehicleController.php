@@ -499,14 +499,13 @@ class VehicleController extends Controller
 
 // In `app/Http/Controllers/VehicleController.php`
 
-    public function getPassengersByRequestId($VRequestID)
+    private function getPassengersByRequestId($VRequestID)
     {
         try {
-            // Fetch passengers associated with the given VRequestID along with their OfficeName
+            // Fetch passengers associated with the given VRequestID
             $passengers = VRequestPassenger::where('VRequestID', $VRequestID)
                 ->join('employees', 'vrequest_passenger.EmployeeID', '=', 'employees.EmployeeID')
-                ->join('offices', 'employees.OfficeID', '=', 'offices.OfficeID')
-                ->select('employees.EmployeeID', 'employees.EmployeeName', 'offices.OfficeName')
+                ->select('employees.EmployeeID', 'employees.EmployeeName')
                 ->get();
 
             Log::info('Passengers fetched:', $passengers->toArray());

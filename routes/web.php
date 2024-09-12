@@ -129,7 +129,9 @@ Route::middleware([
     Route::get('/conferencerequest/{CRequestID}/view-unavailable-pdf', [DownloadsController::class, 'downloadUnavailableCRequestPDF'])->name('downloadUnavailableCRequestPDF');
 
     Route::get('/vehiclerequest/{VRequestID}/view-pdf', [DownloadsController::class, 'downloadVRequestPDF'])->name('downloadVRequestPDF');
+
     Route::get('/vehiclerequest/{VRequestID}/view-final-pdf', [DownloadsController::class, 'downloadFinalVRequestPDF'])->name('downloadFinalVRequestPDF');
+
     Route::get('/vehiclerequest/{VRequestID}/pdf-previews', [DownloadsController::class, 'downloadVRequestPDF'])->name('downloadVRequestPDF');
 
     Route::get('/vehiclerequest/view-logs', [DownloadsController::class, 'downloadRangeVRequestPDF'])->name('downloadRangeVRequestPDF');

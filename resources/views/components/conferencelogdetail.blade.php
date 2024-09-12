@@ -296,7 +296,10 @@
 
 <div class="container">
 <div class="icon">
-        @if ((in_array($requestLogData->FormStatus, ['Approved', 'Not Approved']) || in_array($requestLogData->EventStatus, ['Finished', 'Cancelled', '-'])) && ($requestLogData->FormStatus !== 'Not Approved' || $requestLogData->cert_file))
+        @if (
+            (in_array($requestLogData->FormStatus, ['Approved', 'Not Approved']) ||
+            in_array($requestLogData->EventStatus, ['Finished', 'Cancelled', '-']))
+        )
             <button class="btn float-right" id="downloadButton">
                 <i class="bi-dl bi-download"></i>
             </button>
@@ -362,7 +365,7 @@
             </div>
             <div class="inline-field">
                 <label for="focalPerson">Focal Person</label>
-                <input type="text" id="focalPerson" name="focalPerson" value="{{ $requestLogData->focalPerson }}" placeholder="Enter Focal Person" readonly>
+                <input type="text" id="focalPerson" name="focalPerson" value="{{ $requestLogData->focalPerson->FPName ?? 'N/A' }}" placeholder="Enter Focal Person" readonly>
             </div>
             <div class="row">
             </div>
