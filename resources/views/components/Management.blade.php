@@ -257,6 +257,7 @@
             <button class="dropdown-button" onclick="toggleSection('porpose', this)">PURPOSE</button>
             <button class="dropdown-button" onclick="toggleSection('addVehi', this)">DRIVER</button>
             <button class="dropdown-button" onclick="toggleSection('vehicle', this)">VEHICLE</button>
+            <button class="dropdown-button" onclick="toggleSection('superp', this)">SUPERIOR</button>
             <!-- <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button> -->
         </div>
 
@@ -441,6 +442,25 @@
 
                 <div class="form-footer">
                     <button class="submit-btn" type="button" onclick="setCurrentForm('focalPForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="superp" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('superp.store') }}" id="superiorForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="SName">Name</label>
+                        <input type="text" id="SName" name="SName" placeholder="Enter Name" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="Designation">Designation</label>
+                        <input type="text" id="Designation" name="Designation" placeholder="Enter Designation" required>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('superiorForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
                 </div>
             </form>
         </div>
