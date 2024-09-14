@@ -65,7 +65,35 @@
     .visible-xs {
         display: none !important;
     }
+    /* Add custom styles for the refresh button */
+    #refreshBtn {
+        cursor: pointer;
+        color: #000;
+        font-size: 24px;
+        transition: color 0.3s ease;
+        margin-left:850px;
+        transition: transform 0.5s ease;
+        cursor: pointer;
+    }
+
+    #refreshBtn:hover {
+        transform: rotate(360deg);
+    }
+
+    /* #refreshBtn.disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    } */
 </style>
+<script>
+    let isCooldown = false;
+
+    function refreshPage() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        // Perform refresh action
+        location.reload(); // or any specific refresh logic if needed
+    }
+</script>
 <div class="requests">
     <div class="filter">
         <div class="row height d-flex justify-content-left align-items-left">
@@ -74,6 +102,14 @@
                     <i class="fa fa-search"></i>
                     <input type="text" class="form-control form-input" placeholder="Search">
                 </div>
+            </div>
+        </div>
+        <!-- refresh icon -->
+        <div class="tableactions">
+            <div id="divide"></div>
+            <div style="float:right;">
+                <!-- Refresh button -->
+                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh"></i>
             </div>
         </div>
         <div class="tableactions">
@@ -170,8 +206,7 @@
 
                     // Check if the FormStatus is Approved and EventStatus is Ongoing, and date/time has passed
                     if ($request->FormStatus == 'Approved') {
-                        if ($request->date_end < $now->toDateString() ||
-                            ($request->date_end == $now->toDateString() && $request->time_start	 < $now->toTimeString())) {
+                        if ($request->date_end < $now->toDateString()) {
 
                             // Update EventStatus to Finished if date/time exceeded
                             $request->EventStatus = 'Finished';
@@ -268,7 +303,7 @@
             if (Array.isArray(data) && data.length > 0) {
                 data.forEach(request => {
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
-                    let purposeName = request.PurposeOthers || request.purpose_name || 'N/A';
+                    let purposeName = request.PurposeOthers || (App\Models\PurposeRequest::find($request->PurposeID))->purpose || 'N/A';
 
                     let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>

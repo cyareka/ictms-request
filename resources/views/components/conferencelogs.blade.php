@@ -65,7 +65,35 @@
     .visible-xs {
         display: none!important;
     }
+    /* Add custom styles for the refresh button */
+    #refreshBtn {
+        cursor: pointer;
+        color: #000;
+        font-size: 24px;
+        transition: color 0.3s ease;
+        margin-left:850px;
+        transition: transform 0.5s ease;
+        cursor: pointer;
+    }
+
+    #refreshBtn:hover {
+        transform: rotate(360deg);
+    }
+
+    /* #refreshBtn.disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    } */
 </style>
+<script>
+    let isCooldown = false;
+
+    function refreshPage() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        // Perform refresh action
+        location.reload(); // or any specific refresh logic if needed
+    }
+</script>
 <div class="requests">
     <div class="filter">
         <div class="row height d-flex justify-content-left align-items-left">
@@ -76,10 +104,20 @@
                 </div>
             </div>
         </div>
+
+        <!-- refresh icon -->
+        <div class="tableactions">
+            <div id="divide"></div>
+            <div style="float:right;">
+                <!-- Refresh button -->
+                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh"></i>
+            </div>
+        </div>
+
         <div class="tableactions">
             <div id="divide">
-                <i class="bi bi-arrow-left-short"></i>
-                <i class="bi bi-arrow-right-short" id="iconborder"></i>
+                <!-- <i class="bi bi-arrow-left-short"></i>
+                <i class="bi bi-arrow-right-short" id="iconborder"></i> -->
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <form id="filterForm" method="GET" action="{{ route('fetchSortedLogRequests') }}">
