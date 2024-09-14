@@ -16,6 +16,7 @@ use setasign\Fpdi\PdfParser\Filter\FilterException;
 use setasign\Fpdi\PdfParser\PdfParserException;
 use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 use setasign\Fpdi\PdfReader\PdfReaderException;
+use Carbon\CarbonPeriod;
 use Throwable;
 
 class DownloadsController extends Controller
@@ -713,61 +714,75 @@ class DownloadsController extends Controller
     }
 
     public function downloadRangeVRequestPDF(Request $request)
-    {
-        // Validate the input parameters
-        $validated = $request->validate([
-            'startDate' => 'required|date',
-            'endDate' => 'required|date|after_or_equal:startDate',
-        ]);
+{
+    // Validate the input parameters
+    $validated = $request->validate([
+        'startDate' => 'required|date',
+        'endDate' => 'required|date|after_or_equal:startDate',
+    ]);
 
-        // Use startOfDay and endOfDay to cover the full day range
-        $validated['startDate'] = Carbon::parse($validated['startDate'])->startOfDay();
-        $validated['endDate'] = Carbon::parse($validated['endDate'])->endOfDay();
+    // Use startOfDay and endOfDay to cover the full day range
+    $validated['startDate'] = Carbon::parse($validated['startDate'])->startOfDay();
+    $validated['endDate'] = Carbon::parse($validated['endDate'])->endOfDay();
 
-        // Log validation for debugging purposes
-        Log::info('Query parameters:', [
-            'startDate' => $validated['startDate']->toDateTimeString(),
-            'endDate' => $validated['endDate']->toDateTimeString(),
-        ]);
+    // Log validation for debugging purposes
+    Log::info('Query parameters:', [
+        'startDate' => $validated['startDate']->toDateTimeString(),
+        'endDate' => $validated['endDate']->toDateTimeString(),
+    ]);
 
-        try {
-            // Fetch vehicle requests within the specified date range and join with drivers and vehicles tables
-            $vehicleRequests = VehicleRequest::whereBetween('vehicle_request.created_at', [$validated['startDate'], $validated['endDate']])
-                ->join('driver', 'vehicle_request.DriverID', '=', 'driver.DriverID')
-                ->join('vehicle', 'vehicle_request.VehicleID', '=', 'vehicle.VehicleID') // Join with the vehicles table
-                ->select('vehicle_request.*', 'driver.DriverName', 'vehicle.PlateNo') // Select PlateNo from the vehicles table
-                ->get();
+    try {
+        // Fetch vehicle requests with Approved FormStatus and Finished EventStatus within the specified date range
+        $vehicleRequests = VehicleRequest::whereBetween('vehicle_request.created_at', [$validated['startDate'], $validated['endDate']])
+            ->where('vehicle_request.FormStatus', 'Approved') // Only Approved FormStatus
+            ->where('vehicle_request.EventStatus', 'Finished') // Only Finished EventStatus
+            ->join('driver', 'vehicle_request.DriverID', '=', 'driver.DriverID')
+            ->join('vehicle', 'vehicle_request.VehicleID', '=', 'vehicle.VehicleID') // Join with the vehicles table
+            ->select('vehicle_request.*', 'driver.DriverName', 'vehicle.PlateNo') // Select PlateNo from the vehicles table
+            ->get();
 
-            // Check if no results are found
-            if ($vehicleRequests->isEmpty()) {
-                Log::error('No vehicle requests found within the specified date range.');
-                return response()->json(['error' => 'No vehicle requests found within the specified date range.'], 404);
-            }
+        // Initialize PDF using FPDI
+        $pdf = new FPDI();
+        $sourceFile = public_path('storage/uploads/templates/vehicle_forms/VR_dailydispatchreport.pdf');
 
-            // Initialize PDF using FPDI
-            $pdf = new FPDI();
+        // Check if the source file exists
+        if (!file_exists($sourceFile)) {
+            Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
+            return response()->json(['error' => 'Source file does not exist.'], 500);
+        }
+
+        $pdf->setSourceFile($sourceFile);
+        $tplIdx = $pdf->importPage(1);
+
+        // Group data by date
+        $groupedRequests = $vehicleRequests->groupBy(function ($request) {
+            return $request->created_at->format('Y-m-d');
+        });
+
+        // Check if there is data for each date, and handle cases where no data is available
+        $dateRange = CarbonPeriod::create($validated['startDate'], $validated['endDate']);
+        
+        foreach ($dateRange as $date) {
+            $dateString = $date->format('Y-m-d');
+            $requests = $groupedRequests->get($dateString, collect());
+
+            // Add a new page for the date
             $pdf->AddPage('L');
-            $sourceFile = public_path('storage/uploads/templates/vehicle_forms/empty/VR_dailydispatchreport.pdf');
-
-            // Check if the source file exists
-            if (!file_exists($sourceFile)) {
-                Log::error('Source file does not exist.', ['sourceFile' => $sourceFile]);
-                return response()->json(['error' => 'Source file does not exist.'], 500);
-            }
-
-            $pdf->setSourceFile($sourceFile);
-            $tplIdx = $pdf->importPage(1);
             $pdf->useTemplate($tplIdx, 0, 0, 330); // Adjust the width to fit new table size
 
             // Set the text color and font for the date
             $pdf->SetTextColor(0, 0, 0);
             $pdf->SetFont('Helvetica', 'B', 12); // Bold font for the date label
             $pdf->SetXY(38, 38); // Adjusted spacing
-            $currentDate = Carbon::now()->format('Y-m-d');
+            $pdf->Write(0, $dateString);
 
-            // Regular font for the actual date
-            $pdf->SetFont('Helvetica', '', 11);
-            $pdf->Write(0, $currentDate);
+            if ($requests->isEmpty()) {
+                // If no data is available for this date, print the message
+                $pdf->SetXY(10, 50);
+                $pdf->SetFont('Helvetica', '', 12);
+                $pdf->Write(0, 'No data available on this date.');
+                continue; // Skip to the next date
+            }
 
             // Define header and cell widths
             $headerWidths = [30, 40, 50, 50, 50, 60];
@@ -789,7 +804,7 @@ class DownloadsController extends Controller
 
             $yPosition = 60;
 
-            foreach ($vehicleRequests as $request) {
+            foreach ($requests as $request) {
                 // Fetch passengers by request ID
                 $passengers = $this->getPassengersByRequestId($request->VRequestID);
                 $passengerNames = $passengers->pluck('EmployeeName')->implode(', ');
@@ -842,15 +857,17 @@ class DownloadsController extends Controller
                 // Move to the next row
                 $yPosition += $maxHeight;
             }
-
-            // Output the PDF
-            $pdf->Output('I', 'VR_DailyDispatchReport.pdf');
-        } catch (Exception $e) {
-            Log::error('Error generating PDF:', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return response()->json(['error' => 'Failed to generate PDF.'], 500);
         }
+
+        // Output the PDF
+        $pdf->Output('I', 'VR_DailyDispatchReport.pdf');
+    } catch (Exception $e) {
+        Log::error('Error generating PDF:', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+        return response()->json(['error' => 'Failed to generate PDF.'], 500);
     }
+}
+
 }
