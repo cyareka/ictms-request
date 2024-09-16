@@ -583,6 +583,102 @@ class VehicleController extends Controller
         }
         return view('vehiclelogDetail', ['requestLogData' => $requestLogData, 'passengers' => $passengers]);
     }
+
+    public function fetchSortedVLogRequests(Request $request): \Illuminate\Http\JsonResponse
+{
+    // Fetch parameters from the request with default values
+    $searchQuery = $request->input('search_query', '');
+    $order = $request->input('order', 'desc');
+    $sort = $request->input('sort', 'created_at');
+    $page = $request->input('page', 1);
+    $perPage = $request->input('per_page', 5);
+
+    // Get filters
+    $VehicleRequests = $request->input('vehicle_request');
+    $statusPairs = $request->input('status_pairs', []);
+
+    // Define allowed status pairs for filtering
+    $allowedStatusPairs = [
+        'Approved,Finished',
+        'Approved,Cancelled',
+        'Not Approved,-'
+    ];
+
+    // Ensure that only allowed status pairs are used
+    $filteredStatusPairs = array_filter($statusPairs, function ($pair) use ($allowedStatusPairs) {
+        return in_array($pair, $allowedStatusPairs);
+    });
+
+    // Define month names to numeric conversion
+    $monthNames = [
+        'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
+        'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
+        'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
+    ];
+
+    // Query from VehicleRequest model
+    $query = VehicleRequest::query();
+
+    // Apply search query
+    if (!empty($searchQuery)) {
+        $query->where(function ($q) use ($searchQuery, $monthNames) {
+            $lowerSearchQuery = strtolower($searchQuery);
+
+            if (isset($monthNames[$lowerSearchQuery])) {
+                // Search by month name in the created_at column
+                $q->whereMonth('created_at', $monthNames[$lowerSearchQuery]);
+            } else {
+                // Search by other fields
+                $q->where('VRequestID', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('Destination', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('PurposeID', 'like', '%' . $searchQuery . '%')
+                    ->orWhereHas('office', function ($q) use ($searchQuery) {
+                        $q->where('OfficeName', 'like', '%' . $searchQuery . '%');
+                    })
+                    ->orWhere('FormStatus', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('EventStatus', 'like', '%' . $searchQuery . '%');
+            }
+        });
+    }
+
+    // Apply allowed status pair filtering
+    if (!empty($filteredStatusPairs)) {
+        $query->where(function ($q) use ($filteredStatusPairs) {
+            foreach ($filteredStatusPairs as $pair) {
+                list($formStatus, $eventStatus) = explode(',', $pair);
+                $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                    $q->where('FormStatus', $formStatus)
+                        ->where('EventStatus', $eventStatus);
+                });
+            }
+        });
+    } else {
+        // If no status pairs are provided, default to the allowed ones
+        $query->where(function ($q) use ($allowedStatusPairs) {
+            foreach ($allowedStatusPairs as $pair) {
+                list($formStatus, $eventStatus) = explode(',', $pair);
+                $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                    $q->where('FormStatus', $formStatus)
+                        ->where('EventStatus', $eventStatus);
+                });
+            }
+        });
+    }
+
+    // Sort the results
+    $requests = $query->orderBy($sort, $order)->paginate($perPage, ['*'], 'page', $page);
+
+    // Return paginated and filtered data
+    return response()->json([
+        'data' => $requests->items(), // Paginated results
+        'pagination' => [
+            'current_page' => $requests->currentPage(),
+            'last_page' => $requests->lastPage(),
+            'total' => $requests->total(),
+        ]
+    ]);
+}
+
 }
 
 

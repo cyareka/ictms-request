@@ -1,4 +1,3 @@
-
 <style>
      .modal-container {
         display: flex;
@@ -108,7 +107,7 @@
 
     .pagination_rounded ul li a {
         float: left;
-        color: #4285f4;
+        color: #000000;
         border-radius: 50%;
         line-height: 30px;
         height: 30px;
@@ -132,35 +131,7 @@
     .visible-xs {
         display: none!important;
     }
-    /* Add custom styles for the refresh button */
-    #refreshBtn {
-        cursor: pointer;
-        color: #000;
-        font-size: 24px;
-        transition: color 0.3s ease;
-        margin-left:800px;
-        transition: transform 0.5s ease;
-        cursor: pointer;
-    }
-
-    #refreshBtn:hover {
-        transform: rotate(360deg);
-    }
-
-    /* #refreshBtn.disabled {
-        color: #ccc;
-        cursor: not-allowed;
-    } */
 </style>
-<script>
-    let isCooldown = false;
-
-    function refreshPage() {
-        const refreshBtn = document.getElementById('refreshBtn');
-        // Perform refresh action
-        location.reload(); // or any specific refresh logic if needed
-    }
-</script>
 <div class="requests">
     <div class="filter">
         <div class="row height d-flex justify-content-left align-items-left">
@@ -171,45 +142,33 @@
                 </div>
             </div>
         </div>
-
-        <!-- refresh icon -->
-        <div class="tableactions">
-            <div id="divide"></div>
-            <div style="float:right;">
-                <!-- Refresh button -->
-            </div>
-        </div>
-
         <div class="tableactions">
             <div id="divide">
-                <div class="dropdown" style="float:right;">
-                    <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh" style="font-size: 16px; margin-right: 10px;"></i>
-                    <!-- <i class="bi bi-arrow-left-short"></i>
-                    <i class="bi bi-arrow-right-short" id="iconborder"></i> -->
-                    <a href="javascript:void(0);" id="downloadLink"><i class="bi bi-download"
-                                                                       style="font-size:16px; margin-right:14px;"></i></a>
-                    <div id="dateRangeModal" class="modal" style="display: none;">
-                        <div class="modal-container">
-                            <div class="modal-content">
-                                <span class="close">&times;</span>
-                                <h2>Select Date Range</h2>
-                                <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
-                                    @csrf
-                                    <div class="form-group">
-                                        <label for="startDate">Start Date:</label>
-                                        <input type="date" id="startDate" name="startDate" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="endDate">End Date:</label>
-                                        <input type="date" id="endDate" name="endDate" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-primary">Download</button>
-                                    </div>
-                                </form>
+                <a href="javascript:void(0);" id="downloadLink"><i class="bi bi-download"
+                                                                   style="font-size:16px; margin-right:14px;"></i></a>
+                <div id="dateRangeModal" class="modal" style="display: none;">
+                <div class="modal-container">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Select Date Range</h2>
+                        <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
+                            @csrf
+                            <div class="form-group">
+                                <label for="startDate">Start Date:</label>
+                                <input type="date" id="startDate" name="startDate" required>
                             </div>
-                        </div>
+                            <div class="form-group">
+                                <label for="endDate">End Date:</label>
+                                <input type="date" id="endDate" name="endDate" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Download</button>
+                            </div>
+                        </form>
                     </div>
+                </div>
+                </div>
+                <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <div class="dropdown-content">
                         <p id="filterlabel">Filter By</p>
@@ -273,9 +232,11 @@
             </thead>
             <tbody>
             @php
-                $filteredRequests = App\Models\VehicleRequest::whereIn('FormStatus', ['Approved', 'Not Approved'])
-                    ->whereIn('EventStatus', ['Finished', 'Cancelled', '-'])
-                    ->get();
+            $filteredRequests = App\Models\VehicleRequest::with('office') 
+                ->whereIn('FormStatus', ['Approved', 'Not Approved'])
+                ->whereIn('EventStatus', ['Finished', 'Cancelled', '-'])
+                ->get();
+
             @endphp
 
             @foreach($filteredRequests as $request)
@@ -284,13 +245,15 @@
                     <td>{{ $request->created_at->format('m-d-Y (h:i A)') }}</td>
                     <td>{{ $request->Destination }}</td>
                     <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
-                    <td>{{ $request->office->OfficeName }}</td>
+                    <td>{{ $request->office->OfficeName ?? 'N/A' }}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
+                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard"
+                                                                                           id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>
             @endforeach
@@ -322,75 +285,46 @@
     </div>
 <div class="end"></div>
 <script>
-
     document.addEventListener('DOMContentLoaded', function () {
-        const modal = document.getElementById('dateRangeModal');
-        const downloadLink = document.getElementById('downloadLink');
-        const span = document.querySelector('.close');
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let lastPage = 1;
+    let searchQuery = '';
 
-        downloadLink.onclick = function () {
-            modal.style.display = 'block';
-        }
+    // Fetch sorted and paginated data
+    function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
+        const formData = new FormData();
+        formData.append('order', order);
+        formData.append('sort', 'created_at');
+        formData.append('page', page);
+        formData.append('per_page', itemsPerPage);
+        formData.append('search_query', search); // Attach the search query here
 
-        span.onclick = function () {
-            modal.style.display = 'none';
-        }
+        const params = new URLSearchParams(formData).toString();
 
-        window.onclick = function (event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        }
+        fetch(`/fetchSortedVLogRequests?${params}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data.data, data.pagination);
+                currentPage = data.pagination.current_page;
+                lastPage = data.pagination.last_page;
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
 
-        document.getElementById('dateRangeForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            const startDate = document.getElementById('startDate').value;
-            const endDate = document.getElementById('endDate').value;
+    // Update table data
+    function updateTable(data, pagination) {
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
 
-            const url = `/vehiclerequest/view-logs?startDate=${startDate}&endDate=${endDate}`;
-            window.open(url, '_blank');
-            modal.style.display = 'none';
-        });
-
-        let currentPage = 1;
-        const itemsPerPage = 5;
-        let lastPage = 1;
-
-        function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
-            const form = document.getElementById('filterForm');
-            const formData = new FormData(form);
-
-            formData.append('order', order);
-            formData.append('sort', 'created_at');
-            formData.append('page', page);
-            formData.append('per_page', itemsPerPage);
-
-            const params = new URLSearchParams(formData).toString();
-
-            fetch(`/fetchSortedVRequests?${params}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateTable(data.data, data.pagination);
-                    currentPage = data.pagination.current_page;
-                    lastPage = data.pagination.last_page;
-                })
-                .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
-                });
-        }
-
-        function updateTable(data, pagination) {
-            let tbody = document.querySelector('tbody');
-
-            tbody.innerHTML = '';
-
-            if (Array.isArray(data) && data.length > 0) {
-                data.forEach(request => {
-                    let officeName = request.office ? request.office.OfficeName : 'N/A';
-                    let purposeName = request.PurposeOthers || (App\Models\PurposeRequest::find($request->PurposeID))->purpose || 'N/A';
-                    let row = `<tr>
-            <th scope="row">${request.VRequestID}</th>
-            <td>${new Date(request.created_at).toLocaleDateString('en-US', {
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(request => {
+                let officeName = request.office ? request.office.OfficeName : 'N/A';
+                let row = `<tr>
+                    <th scope="row">${request.VRequestID}</th>
+                    <td>${new Date(request.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit'
@@ -399,70 +333,115 @@
                         minute: '2-digit',
                         hour12: true
                     })}</td>
-            <td>${request.Destination}</td>
-            <td>${purposeName}</td>
-            <td>${officeName}</td>
-            <td>${request.date_start}</td>
-            <td>${request.time_start}</td>
-            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-            <td>${request.EventStatus}</td>
-            <td>
-                <a href="/vehiclerequest/${request.VRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
-            </td>
-        </tr>`;
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
-            }
-
-            updatePagination(pagination);
+                    <td>${request.Destination}</td>
+                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
+                    <td>${request.office?.OfficeName || 'N/A'}</td>
+                    <td>${request.date_start}</td>
+                    <td>${request.time_start}</td>
+                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                    <td>${request.EventStatus}</td>
+                    <td>
+                        <a href="/vehiclerequest/${request.VRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
+                    </td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
         }
 
-        function updatePagination(pagination) {
-            currentPage = pagination.current_page;
-            lastPage = pagination.last_page;
+        updatePagination(pagination);
+    }
 
-            document.getElementById('prev-page').style.visibility = currentPage > 1 ? 'visible' : 'hidden';
-            document.getElementById('next-page').style.visibility = currentPage < lastPage ? 'visible' : 'hidden';
+    // Function to handle pagination
+    function updatePagination(pagination) {
+    const paginationContainer = document.querySelector('.pagination_rounded ul');
+    paginationContainer.innerHTML = ''; // Clear the current pagination
+
+    // Previous button
+    let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `
+        <li>
+            <a href="#" class="prev ${prevDisabled}">
+                <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
+            </a>
+        </li>
+    `);
+
+    // Page numbers
+    for (let page = 1; page <= pagination.last_page; page++) {
+        let activeClass = page === pagination.current_page ? 'active' : '';
+        
+        // Create the list item element
+        let listItem = document.createElement('li');
+        listItem.className = activeClass;
+
+        // Create the anchor element
+        let pageLink = document.createElement('a');
+        pageLink.href = '#';
+        pageLink.textContent = page;
+
+        // If it's the current page, change the font color
+        if (page === pagination.current_page) {
+            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
         }
 
-        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-            e.preventDefault();
-            let order = this.getAttribute('data-order');
-            let newOrder = order === 'asc' ? 'desc' : 'asc';
-            this.setAttribute('data-order', newOrder);
-            fetchSortedData(newOrder, currentPage, searchQuery);
-        });
 
-        document.getElementById('prev-page').addEventListener('click', function () {
-            if (currentPage > 1) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
-            }
-        });
+        // Append the anchor to the list item
+        listItem.appendChild(pageLink);
 
-        document.getElementById('next-page').addEventListener('click', function () {
-            if (currentPage < lastPage) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-            }
-        });
+        // Append the list item to the pagination container
+        paginationContainer.appendChild(listItem);
+    }
 
-        document.getElementById('filterForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-        });
+    // Next button
+    let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `
+        <li>
+            <a href="#" class="next ${nextDisabled}">
+                Next <i class="fa fa-angle-right" aria-hidden="true"></i>
+            </a>
+        </li>
+    `);
+}
 
-        document.querySelector('.cancelbtn').addEventListener('click', function () {
-            document.getElementById('filterForm').reset();
-            let searchQuery = '';
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-        });
+// Event listeners for pagination links
+document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+        e.preventDefault();
+        let text = e.target.textContent.trim();
+        
+        if (text === 'Prev' && currentPage > 1) {
+            fetchSortedData('desc', currentPage - 1, searchQuery);
+        } else if (text === 'Next' && currentPage < lastPage) {
+            fetchSortedData('desc', currentPage + 1, searchQuery);
+        } else if (!isNaN(text)) {
+            fetchSortedData('desc', parseInt(text), searchQuery);
+        }
+    }
+});
 
-        document.querySelector('.form-input').addEventListener('input', function () {
-            let searchQuery = this.value;
-            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-        });
-
-        fetchSortedData();
+    // Sorting event
+    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder, currentPage, searchQuery);
     });
+
+    // Search query
+    document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('input', function () {
+            searchQuery = document.querySelector('.form-input').value;
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+        });
+    });
+
+    // Initial fetch
+    fetchSortedData();
+});
+
 </script>

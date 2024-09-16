@@ -211,3 +211,4 @@ Route::post('/login', function (Request $request) {
     ])->onlyInput('email');
 })->middleware(['guest'])->name('login');
 
+Route::get('/fetchSortedVLogRequests', [VehicleController::class, 'fetchSortedVLogRequests']);

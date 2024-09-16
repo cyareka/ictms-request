@@ -478,69 +478,115 @@ class ConferenceController extends Controller
 }
     // Conference Request Logs Filter and Sort
     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
-    {
-        $sort = $request->get('sort', 'created_at');
-        $order = $request->get('order', 'desc');
-        $conferenceRoom = $request->get('conference_room');
-        $statusPairs = $request->get('status_pairs', []);
+{
+    // Log the search term and parameters for debugging (optional)
+    Log::info('Search term: ' . $request->input('search', ''));
+    Log::info('Sort: ' . $request->input('sort', 'created_at'));
+    Log::info('Order: ' . $request->input('order', 'desc'));
+    Log::info('Per Page: ' . $request->input('per_page', 5));
+    Log::info('Page: ' . $request->input('page', 1));
 
-        // Define allowed status pairs
-        $allowedStatusPairs = [
-            'Approved,Finished',
-            'Approved,Cancelled',
-            'Not Approved,-'
-        ];
+    // Get sorting, ordering, and pagination parameters
+    $sort = $request->input('sort', 'created_at');
+    $order = $request->input('order', 'desc');
+    $perPage = $request->input('per_page', 5); // Default to 5 items per page
+    $currentPage = $request->input('page', 1); // Current page number
 
-        // Filter status pairs to include only allowed ones
-        $filteredStatusPairs = array_filter($statusPairs, function ($pair) use ($allowedStatusPairs) {
-            return in_array($pair, $allowedStatusPairs);
+    // Get filters
+    $conferenceRoom = $request->input('conference_room');
+    $statusPairs = $request->input('status_pairs', []);
+    $search = $request->input('search', '');
+
+    // Define allowed status pairs for filtering
+    $allowedStatusPairs = [
+        'Approved,Finished',
+        'Approved,Cancelled',
+        'Not Approved,-'
+    ];
+
+    // Filter status pairs to only include allowed ones
+    $filteredStatusPairs = array_filter($statusPairs, function ($pair) use ($allowedStatusPairs) {
+        return in_array($pair, $allowedStatusPairs);
+    });
+
+    // Month name to number mapping
+    $monthNames = [
+        'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
+        'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
+        'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
+    ];
+
+    // Build query for ConferenceRequest
+    $query = ConferenceRequest::with('office', 'conferenceRoom')
+        ->orderBy($sort, $order);
+
+    // Apply Conference Room filter
+    if ($conferenceRoom) {
+        $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+            $q->where('CRoomName', $conferenceRoom);
         });
-
-        Log::info('Filter parameters:', [
-            'sort' => $sort,
-            'order' => $order,
-            'conference_room' => $conferenceRoom,
-            'status_pairs' => $filteredStatusPairs,
-        ]);
-
-        $query = ConferenceRequest::with('office', 'conferenceRoom')
-            ->orderBy($sort, $order);
-
-        if ($conferenceRoom) {
-            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
-                $q->where('CRoomName', $conferenceRoom);
-            });
-        }
-
-        if ($filteredStatusPairs) {
-            $query->where(function ($q) use ($filteredStatusPairs) {
-                foreach ($filteredStatusPairs as $pair) {
-                    [$formStatus, $eventStatus] = explode(',', $pair);
-                    $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
-                        $q->where('FormStatus', $formStatus)
-                            ->where('EventStatus', $eventStatus);
-                    });
-                }
-            });
-        } else {
-            // Ensure only allowed status pairs are included if no status pairs are provided
-            $query->where(function ($q) use ($allowedStatusPairs) {
-                foreach ($allowedStatusPairs as $pair) {
-                    [$formStatus, $eventStatus] = explode(',', $pair);
-                    $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
-                        $q->where('FormStatus', $formStatus)
-                            ->where('EventStatus', $eventStatus);
-                    });
-                }
-            });
-        }
-
-        $conferenceRequests = $query->get();
-
-        Log::info('Query results:', $conferenceRequests->toArray());
-
-        return response()->json($conferenceRequests);
     }
+
+    // Apply Status Pair filters
+    if ($filteredStatusPairs) {
+        $query->where(function ($q) use ($filteredStatusPairs) {
+            foreach ($filteredStatusPairs as $pair) {
+                [$formStatus, $eventStatus] = explode(',', $pair);
+                $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                    $q->where('FormStatus', $formStatus)
+                        ->where('EventStatus', $eventStatus);
+                });
+            }
+        });
+    } else {
+        // Default to allowed status pairs if none provided
+        $query->where(function ($q) use ($allowedStatusPairs) {
+            foreach ($allowedStatusPairs as $pair) {
+                [$formStatus, $eventStatus] = explode(',', $pair);
+                $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                    $q->where('FormStatus', $formStatus)
+                        ->where('EventStatus', $eventStatus);
+                });
+            }
+        });
+    }
+
+    // Apply search logic
+    if ($search) {
+        $query->where(function ($q) use ($search, $monthNames) {
+            $lowerSearch = strtolower($search);
+            if (isset($monthNames[$lowerSearch])) {
+                // Search by month if the search term is a month name
+                $q->whereMonth('created_at', $monthNames[$lowerSearch]);
+            } else {
+                // Standard search on various fields
+                $q->where('CRequestID', 'like', '%' . $search . '%')
+                    ->orWhereHas('conferenceRoom', function ($q) use ($search) {
+                        $q->where('CRoomName', 'like', '%' . $search . '%');
+                    })
+                    ->orWhereHas('office', function ($q) use ($search) {
+                        $q->where('OfficeName', 'like', '%' . $search . '%');
+                    })
+                    ->orWhere('FormStatus', 'like', '%' . $search . '%')
+                    ->orWhere('EventStatus', 'like', '%' . $search . '%');
+                
+            }
+        });
+    }
+
+    // Paginate the results
+    $conferenceRequests = $query->paginate($perPage, ['*'], 'page', $currentPage);
+
+    return response()->json([
+        'data' => $conferenceRequests->items(),
+        'pagination' => [
+            'total' => $conferenceRequests->total(),
+            'per_page' => $conferenceRequests->perPage(),
+            'current_page' => $conferenceRequests->currentPage(),
+            'last_page' => $conferenceRequests->lastPage(),
+        ],
+    ]);
+}
 
     public function fetchStatistics(): \Illuminate\Http\JsonResponse
     {

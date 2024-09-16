@@ -1,26 +1,46 @@
 <style>
-    .pagination_rounded, .pagination_square {
-        display: block;
-        margin-top: 15px;
-        text-align: center; /* Center the pagination buttons */
-        width: 100%; /* Ensure the container takes the full width */
+      .pagination_rounded, .pagination_square {
+    display: inline-block;
+    margin-left:470px;
+    margin-top:15px;
     }
 
     .pagination_rounded ul {
         margin: 0;
         padding: 0;
         list-style: none;
-        display: inline-block; /* Make the list inline-block to center it */
+    }
+
+    .pagination_rounded li:first-child {
+        margin-left: 0px;
     }
 
     .pagination_rounded ul li {
-        display: inline; /* Display list items inline */
+        float: left;
         margin-left: 20px;
     }
 
+    .pagination_rounded ul li a:hover {
+        background: #4285f4;
+        color: #fff;
+        border: 1px solid #4285f4;
+    }
+
+    a:link {
+    text-decoration: none;
+    }
+
+    .pagination_rounded .prev {
+        margin-left: 0px;
+        border-radius: 35px;
+        width: 90px;
+        height: 34px;
+        line-height: 34px;
+    }
+
+
     .pagination_rounded ul li a {
-        float: none; /* Remove float */
-        display: inline-block; /* Ensure links are inline-block */
+        float: left;
         color: #000000;
         border-radius: 50%;
         line-height: 30px;
@@ -31,125 +51,89 @@
         border: 1px solid #e0e0e0;
     }
 
-    .pagination_rounded ul li a:hover {
-        background: #4285f4;
-        color: #fff;
-        border: 1px solid #4285f4;
+    .pagination_rounded .prev i {
+        margin-right: 10px;
     }
 
-    .pagination_rounded .prev, .pagination_rounded .next {
+    .pagination_rounded .next {
         border-radius: 35px;
         width: 90px;
         height: 34px;
         line-height: 34px;
     }
 
-    a:link {
-        text-decoration: none;
-    }
-
     .visible-xs {
-        display: none !important;
+        display: none!important;
     }
-    /* Add custom styles for the refresh button */
-    #refreshBtn {
-        cursor: pointer;
-        color: #000;
-        font-size: 24px;
-        transition: color 0.3s ease;
-        margin-left:850px;
-        transition: transform 0.5s ease;
-        cursor: pointer;
-    }
-
-    #refreshBtn:hover {
-        transform: rotate(360deg);
-    }
-
-    /* #refreshBtn.disabled {
-        color: #ccc;
-        cursor: not-allowed;
-    } */
 </style>
-<script>
-    let isCooldown = false;
 
-    function refreshPage() {
-        const refreshBtn = document.getElementById('refreshBtn');
-        // Perform refresh action
-        location.reload(); // or any specific refresh logic if needed
-    }
-</script>
 <div class="requests">
     <div class="filter">
         <div class="row height d-flex justify-content-left align-items-left">
             <div class="col-md-6">
                 <div class="form">
                     <i class="fa fa-search"></i>
-                    <input type="text" class="form-control form-input" placeholder="Search">
+                    <input type="text" id="search-input" class="form-control form-input" placeholder="Search">
                 </div>
             </div>
         </div>
         <div class="tableactions">
             <div id="divide">
-                <!-- <i class="bi bi-arrow-left-short"></i>
-                <i class="bi bi-arrow-right-short" id="iconborder"></i> -->
                 <div class="dropdown" style="float:right;">
-                    <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh" style="font-size: 16px; margin-right: 10px;"></i>
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <form id="filterForm" method="GET" action="{{ route('fetchSortedLogRequests') }}">
-                    <div class="dropdown-content">
-                        <p id="filterlabel">Filter By</p>
-                        <hr>
-                        <p>Conference Room</p>
-                        <a>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="conference_room" value="Maagap" id="flexRadioDefault1">
-                                <label class="form-check-label" for="flexRadioDefault1">
-                                    Maagap
-                                </label>
+                        <div class="dropdown-content">
+                            <p id="filterlabel">Filter By</p>
+                            <hr>
+                            <p>Conference Room</p>
+                            <a>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="conference_room" value="Maagap" id="flexRadioDefault1">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                        Maagap
+                                    </label>
+                                </div>
+                            </a>
+                            <a>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="conference_room" value="Magiting" id="flexRadioDefault2">
+                                    <label class="form-check-label" for="flexRadioDefault2">
+                                        Magiting
+                                    </label>
+                                </div>
+                            </a>
+                            <p>Status</p>
+                            <a>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="status_pairs[]" value="Not Approved,-" id="flexCheckDefault1">
+                                    <label class="form-check-label" for="flexCheckDefault1">
+                                        Not Approved
+                                    </label>
+                                </div>
+                            </a>
+                            <a>
+                                <div class="form-check" id="margincheck">
+                                    <input class="form-check-input" type="checkbox" name="status_pairs[]" value="Approved,Finished" id="flexCheckDefault2">
+                                    <label class="form-check-label" for="flexCheckDefault2">
+                                        Approved and Finished
+                                    </label>
+                                </div>
+                            </a>
+                            <a>
+                                <div class="form-check" id="margincheck">
+                                    <input class="form-check-input" type="checkbox" name="status_pairs[]" value="Approved,Cancelled" id="flexCheckDefault3">
+                                    <label class="form-check-label" for="flexCheckDefault3">
+                                        Approved and Cancelled
+                                    </label>
+                                </div>
+                            </a>
+                            <hr>
+                            <div class="buttons">
+                                <button class="cancelbtn" type="button" onclick="resetFilters()">Remove</button>
+                                <button class="applybtn" type="submit">Filter</button>
                             </div>
-                        </a>
-                        <a>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="conference_room" value="Magiting" id="flexRadioDefault2">
-                                <label class="form-check-label" for="flexRadioDefault2">
-                                    Magiting
-                                </label>
-                            </div>
-                        </a>
-                        <p>Status</p>
-                        <a>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="status_pairs[]" value="Not Approved,-" id="flexCheckDefault1">
-                                <label class="form-check-label" for="flexCheckDefault1">
-                                    Not Approved
-                                </label>
-                            </div>
-                        </a>
-                        <a>
-                            <div class="form-check" id="margincheck">
-                                <input class="form-check-input" type="checkbox" name="status_pairs[]" value="Approved,Finished" id="flexCheckDefault2">
-                                <label class="form-check-label" for="flexCheckDefault2">
-                                    Approved and Finished
-                                </label>
-                            </div>
-                        </a>
-                        <a>
-                            <div class="form-check" id="margincheck">
-                                <input class="form-check-input" type="checkbox" name="status_pairs[]" value="Approved,Cancelled" id="flexCheckDefault2">
-                                <label class="form-check-label" for="flexCheckDefault2">
-                                    Approved and Cancelled
-                                </label>
-                            </div>
-                        </a>
-                        <hr>
-                        <div class="buttons">
-                            <button class="cancelbtn" type="button" onclick="resetFilters()">Remove</button>
-                            <button class="applybtn" type="submit">Filter</button>
                         </div>
-                    </div>
-                </form>
+                    </form>
                 </div>
             </div>
         </div>
@@ -174,147 +158,162 @@
                 <th scope="col"></th>
             </tr>
             </thead>
-            <tbody>
-            @php
-                $filteredRequests = App\Models\ConferenceRequest::whereIn('FormStatus', ['Approved', 'Not Approved'])
-                    ->whereIn('EventStatus', ['Finished', 'Cancelled', '-'])
-                    ->get();
-            @endphp
-
-            @foreach($filteredRequests as $request)
-                <tr>
-                    <th scope="row">{{ $request->CRequestID }}</th>
-                    <td>{{ $request->created_at->format('m/d/Y (h:i A)') }}</td>
-                    <td>{{ $request->conferenceRoom->CRoomName }}</td>
-                    <td>{{ $request->office->OfficeName }}</td>
-                    <td>{{ $request->date_start }}</td>
-                    <td>{{ $request->time_start }}</td>
-                    <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
-                    <td>{{ $request->EventStatus }}</td>
-                    <td>
-                        <a href="{{ route('ConferencelogDetail', $request->CRequestID) }}" target="_blank"><i class="bi bi-person-vcard" id="actions"></i></a>
-                    </td>
-                </tr>
-            @endforeach
+            <tbody id="requests-tbody">
+            <!-- Data will be populated here by JavaScript -->
             </tbody>
         </table>
         <div class="pagination_rounded">
-                        <ul>
-                            <li>
-                                <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
-                            </li>
-                            <li><a href="#">1</a>
-                            </li>
-							<li class="hidden-xs"><a href="#">2</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">3</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">4</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">5</a>
-                            </li>
-							<li class="visible-xs"><a href="#">...</a>
-                            </li>
-							<li><a href="#">6</a>
-                            </li>
-                            <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                            </li>
-                        </ul>
-         </div>
+            <ul id="pagination-list">
+               
+            </ul>
+        </div>
     </div>
 </div>
 <div class="end"></div>
-<script>
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder);
-    });
 
-    function fetchSortedData(order) {
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-        fetch(`/fetchSortedLogRequests?sort=created_at&order=${order}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                alert(`An error occurred while fetching data: ${error.message}`);
-            });
-    }
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 5; // Set items per page to 5
+        let currentOrder = 'desc'; // Default order
+        let searchQuery = ''; // Initialize searchQuery
 
-    function updateTable(data) {
-        let tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchSortedData(currentOrder, currentPage, searchQuery); // Fetch data on page load
+        });
 
-        if (Array.isArray(data) && data.length > 0) {
-            data.forEach(request => {
-                let conferenceRoomName = request.conference_room ? request.conference_room.CRoomName : 'N/A';
-                let officeName = request.office ? request.office.OfficeName : 'N/A';
-                let row = `<tr>
-                <th scope="row">${request.CRequestID}</th>
-                <td>
-                        ${new Date(request.created_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit'
-                        })}
-                        <br>
-                        ${new Date(request.created_at).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                        })}
-                    </td>
-                <td>${conferenceRoomName}</td>
-                <td>${officeName}</td>
-                <td>${request.date_start}</td>
-                <td>${request.time_start}</td>
-                <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                <td>${request.EventStatus}</td>
-                <td>
-                    <a href="/conferencerequest/${request.CRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
-                </td>
-            </tr>`;
-                tbody.insertAdjacentHTML('beforeend', row);
-            });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+        // Sort by Date Requested
+        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+            e.preventDefault();
+            currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+            this.setAttribute('data-order', currentOrder);
+            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1
+        });
+
+        // Fetch sorted, paginated, and filtered data
+        function fetchSortedData(order = 'desc', page = 1, search = '') {
+            const params = new URLSearchParams({
+                sort: 'created_at',
+                order: order,
+                page: page,
+                per_page: itemsPerPage,
+                search: search
+            }).toString();
+
+            fetch(`/fetchSortedLogRequests?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.data);
+                    updatePagination(data.pagination);
+                })
+                .catch(error => console.error('Error fetching sorted data:', error));
         }
-    }
 
-    document.getElementById('filterForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form);
-        const params = new URLSearchParams(formData).toString();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
-        fetch(`/fetchSortedLogRequests?sort=created_at&order=${sortOrder}&${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('Error fetching filtered data:', error);
+        // Update table rows
+        function updateTable(data) {
+            const tbody = document.getElementById('requests-tbody');
+            tbody.innerHTML = '';
+
+            if (data && data.length > 0) {
+                data.forEach(request => {
+                    const row = `
+                        <tr>
+                            <th scope="row">${request.CRequestID || 'N/A'}</th>
+                            <td>${request.created_at ? new Date(request.created_at).toLocaleDateString() + ' ' + new Date(request.created_at).toLocaleTimeString() : 'N/A'}</td>
+                            <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
+                            <td>${request.office?.OfficeName || 'N/A'}</td>
+                            <td>${request.date_start || 'N/A'}</td>
+                            <td>${request.time_start || 'N/A'}</td>
+                            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus || 'N/A'}</span></td>
+                            <td>${request.EventStatus || 'N/A'}</td>
+                            <td>
+                                <a href="/conferencerequest/${request.CRequestID}/log"><i class="bi bi-person-vcard"></i></a>
+                                <a href="/downloadFinalCRequestPDF/${request.CRequestID}"><i class="bi bi-download"></i></a>
+                            </td>
+                        </tr>`;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="9">No requests found.</td></tr>';
+            }
+        }
+
+        function updatePagination(pagination) {
+            const paginationList = document.getElementById('pagination-list');
+            paginationList.innerHTML = '';
+
+            const { total, current_page, last_page } = pagination;
+            currentPage = current_page;
+
+            // Previous button
+            const prevPageItem = document.createElement('li');
+            const prevPageLink = document.createElement('a');
+            prevPageLink.href = '#';
+            prevPageLink.classList.add('prev');
+            prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
+            prevPageLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+                }
             });
-    });
+            prevPageItem.appendChild(prevPageLink);
+            paginationList.appendChild(prevPageItem);
 
-    document.querySelector('.cancelbtn').addEventListener('click', function() {
-        document.getElementById('filterForm').reset();
-        const sortOrder = document.getElementById('sort-date-requested').getAttribute('data-order');
+            // Page numbers
+            for (let i = 1; i <= last_page; i++) {
+                const pageItem = createPaginationItem(i, i);
+                if (i === current_page) {
+                    pageItem.classList.add('active');
+                    const pageLink = pageItem.querySelector('a');
+                    pageLink.style.color = 'white';
+                    pageLink.style.backgroundColor = '#4285f4';
+                }
+                paginationList.appendChild(pageItem);
+            }
 
-        fetch(`/fetchSortedLogRequests?sort=created_at&order=${sortOrder}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data);
-            })
-            .catch(error => {
-                console.error('Error fetching unfiltered data:', error);
+            // Next button
+            const nextPageItem = document.createElement('li');
+            const nextPageLink = document.createElement('a');
+            nextPageLink.href = '#';
+            nextPageLink.classList.add('next');
+            nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
+            nextPageLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (currentPage < last_page) { 
+                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+                }
             });
-    });
-</script>
+            nextPageItem.appendChild(nextPageLink);
+            paginationList.appendChild(nextPageItem);
+        }
+
+
+        // Create pagination item
+        function createPaginationItem(text, page) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = '#';
+            a.textContent = text;  
+
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                fetchSortedData(currentOrder, page, searchQuery);
+            });
+
+            li.appendChild(a);
+            return li;
+        }
+
+
+        // Handle search input
+        document.getElementById('search-input').addEventListener('input', function () {
+            searchQuery = this.value.trim();
+            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1
+        });
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('filterForm').reset();
+            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1
+        }
+        </script>
