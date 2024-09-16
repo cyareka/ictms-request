@@ -654,6 +654,7 @@
                                         if (!confirmed) {
                                             formStatus.value = 'For Approval';
                                             formStatus.dataset.previousValue = 'For Approval';
+                                            document.getElementById('file-upload-section').style.display = 'none';
                                         } else {
                                             formStatus.dataset.previousValue = formStatus.value;
                                         }
