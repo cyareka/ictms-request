@@ -1,14 +1,16 @@
 <style>
     .pagination_rounded, .pagination_square {
         display: inline-block;
-        margin-left: 470px;
         margin-top: 15px;
+        text-align: center; /* Center the pagination buttons */
+        width: 100%; /* Ensure the container takes the full width */
     }
 
     .pagination_rounded ul {
         margin: 0;
         padding: 0;
         list-style: none;
+        display: inline-block; /* Make the list inline-block to center it */
     }
 
     .pagination_rounded li:first-child {
@@ -37,7 +39,6 @@
         height: 34px;
         line-height: 34px;
     }
-
 
     .pagination_rounded ul li a {
         float: left;
@@ -104,17 +105,10 @@
                 </div>
             </div>
         </div>
-        <!-- refresh icon -->
-        <div class="tableactions">
-            <div id="divide"></div>
-            <div style="float:right;">
-                <!-- Refresh button -->
-                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh"></i>
-            </div>
-        </div>
         <div class="tableactions">
             <div id="divide"></div>
             <div class="dropdown" style="float:right;">
+                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh" style="font-size: 16px; margin-right: 10px;"></i>
                 <button class="dropbtn"><i class="bi bi-filter"></i></button>
                 <form id="filterForm" method="GET" action="{{ route('fetchSortedVRequests') }}">
                     <div class="dropdown-content">

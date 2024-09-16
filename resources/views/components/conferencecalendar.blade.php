@@ -15,28 +15,34 @@
             box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
             z-index: 2;
         }
+
         /* Responsive design adjustments for smaller screens */
         @media (max-width: 768px) {
             #calendar {
                 width: 90%;
                 margin-left: 0;
             }
+
             .dropdown {
                 margin-top: 20px;
             }
         }
+
         /* Flex container for dropdown and calendar */
         .cont {
             display: flex;
             align-items: flex-start;
             justify-content: center;
         }
+
         .dropdown {
             margin-top: 20px; /* Align with the calendar top */
         }
+
         .cont i {
             font-size: 20px;
         }
+
         /* Modal styling */
         .modal {
             display: none;
@@ -51,6 +57,7 @@
             background-color: rgba(0, 0, 0, 0.4);
             transition: opacity 0.3s ease;
         }
+
         .modal-content {
             background-color: #ffffff;
             margin: auto;
@@ -64,10 +71,12 @@
             overflow-y: auto;
             max-height: 80vh;
         }
+
         .modal-header {
             font-size: 24px;
             margin-bottom: 20px;
         }
+
         .close {
             color: #aaa;
             float: right;
@@ -78,11 +87,13 @@
             top: 15px;
             right: 15px;
         }
+
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
         }
+
         .event-container {
             margin-bottom: 20px;
             padding: 15px;
@@ -91,9 +102,11 @@
             background-color: #f9f9f9;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .event-container h2 {
             margin-top: 0;
         }
+
         .download-btn {
             background-color: #4CAF50;
             border: none;
@@ -109,7 +122,7 @@
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
@@ -120,12 +133,12 @@
                 },
                 height: 'auto',
                 aspectRatio: 1.35,
-                events: function(fetchInfo, successCallback, failureCallback) {
+                events: function (fetchInfo, successCallback, failureCallback) {
                     $.ajax({
                         url: '/calendar/events',
                         type: 'GET',
                         data: $('#filterForm').serialize(), // Pass filter parameters to the backend
-                        success: function(data) {
+                        success: function (data) {
                             // Group events by date
                             const eventsByDate = {};
                             data.forEach(event => {
@@ -140,17 +153,17 @@
                             const events = Object.keys(eventsByDate).map(date => ({
                                 title: `${eventsByDate[date].length} Event(s)`,
                                 start: date,
-                                extendedProps: { events: eventsByDate[date] } // Store all events for that date
+                                extendedProps: {events: eventsByDate[date]} // Store all events for that date
                             }));
 
                             successCallback(events);
                         },
-                        error: function() {
+                        error: function () {
                             failureCallback();
                         }
                     });
                 },
-                eventClick: function(info) {
+                eventClick: function (info) {
                     const modal = document.getElementById("eventModal");
                     const modalContent = document.getElementById("modalContent");
 
@@ -169,8 +182,7 @@
                                 borderColor = 'gray';
                             } else if (event.EventStatus === 'Approved') {
                                 borderColor = 'blue';
-                            }
-                            else if (event.EventStatus === 'For Approval') {
+                            } else if (event.EventStatus === 'For Approval') {
                                 borderColor = 'yellow';
                             }
 
@@ -180,9 +192,8 @@
                                     <p><strong>Conference Room:</strong> ${event.conferenceRoom || 'N/A'}</p>
                                     <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
                                     <p><strong>End:</strong> ${event.end ? new Date(event.end).toLocaleString() : 'N/A'}</p>
-                                    <p><strong>Status:</strong> ${event.EventStatus || 'N/A'}</p>
-                                    ${event.fileUrl ? `<a href="${event.fileUrl}" class="download-btn" download>Download File</a>` : ''}
-                                </div>`;
+                                    ${event.fileUrl && event.CRequestID ? `<a href="${route('downloadCRequestPDF', event.CRequestID)}" class="download-btn" download>Download File</a>` : ''}
+                                    </div>`;
                         });
                     } else {
                         modalContent.innerHTML += `<p>No events available for this date.</p>`;
@@ -195,7 +206,7 @@
             calendar.render();
 
             // Close modal functionality
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 const modal = document.getElementById("eventModal");
                 const closeBtn = document.querySelector(".close");
 
@@ -205,13 +216,13 @@
             });
 
             // Add event listener for filter form submission
-            $('#filterForm').on('submit', function(event) {
+            $('#filterForm').on('submit', function (event) {
                 event.preventDefault(); // Prevent default form submission
                 calendar.refetchEvents(); // Refresh events with new filters
             });
 
             // Function to reset filters
-            window.resetFilters = function() {
+            window.resetFilters = function () {
                 $('#filterForm')[0].reset(); // Reset form fields
                 calendar.refetchEvents(); // Refresh events with reset filters
             };
@@ -219,61 +230,66 @@
     </script>
 </head>
 <body>
-    <div class="cont">
-        <div id='calendar'></div>
-        <div class="dropdown">
-            <button class="dropbtn"><i class="bi bi-filter"></i></button>
-            <form id="filterForm" method="GET" action="{{ route('fetchCalendarEvents') }}">
-                <div class="dropdown-content">
-                    <p id="filterlabel">Filter By</p>
-                    <hr>
-                    <p>Conference Room</p>
-                    <a>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="conference_room" value="Maagap" id="flexRadioDefault1">
-                            <label class="form-check-label" for="flexRadioDefault1">Maagap</label>
-                        </div>
-                    </a>
-                    <a>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="conference_room" value="Magiting" id="flexRadioDefault2">
-                            <label class="form-check-label" for="flexRadioDefault2">Magiting</label>
-                        </div>
-                    </a>
-                    <p>Status</p>
-                    <a>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="form_statuses[]" value="Pending" id="flexCheckDefault1">
-                            <label class="form-check-label" for="flexCheckDefault1">Pending</label>
-                        </div>
-                    </a>
-                    <a>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="form_statuses[]" value="For Approval" id="flexCheckDefault3">
-                            <label class="form-check-label" for="flexCheckDefault3">For Approval</label>
-                        </div>
-                    </a>
-                    <a>
-                        <div class="form-check" id="margincheck">
-                            <input class="form-check-input" type="checkbox" name="form_statuses[]" value="Approved" id="flexCheckDefault2">
-                            <label class="form-check-label" for="flexCheckDefault2">Approved</label>
-                        </div>
-                    </a>
-                    <div class="buttons">
-                        <button class="cancelbtn" type="button" onclick="resetFilters()">Remove</button>
-                        <button class="applybtn" type="submit">Filter</button>
+<div class="cont">
+    <div id='calendar'></div>
+    <div class="dropdown">
+        <button class="dropbtn"><i class="bi bi-filter"></i></button>
+        <form id="filterForm" method="GET" action="{{ route('fetchCalendarEvents') }}">
+            <div class="dropdown-content">
+                <p id="filterlabel">Filter By</p>
+                <hr>
+                <p>Conference Room</p>
+                <a>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="conference_room" value="Maagap"
+                               id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault1">Maagap</label>
                     </div>
+                </a>
+                <a>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="conference_room" value="Magiting"
+                               id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault2">Magiting</label>
+                    </div>
+                </a>
+                <p>Status</p>
+                <a>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="form_statuses[]" value="Pending"
+                               id="flexCheckDefault1">
+                        <label class="form-check-label" for="flexCheckDefault1">Pending</label>
+                    </div>
+                </a>
+                <a>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="form_statuses[]" value="For Approval"
+                               id="flexCheckDefault3">
+                        <label class="form-check-label" for="flexCheckDefault3">For Approval</label>
+                    </div>
+                </a>
+                <a>
+                    <div class="form-check" id="margincheck">
+                        <input class="form-check-input" type="checkbox" name="form_statuses[]" value="Approved"
+                               id="flexCheckDefault2">
+                        <label class="form-check-label" for="flexCheckDefault2">Approved</label>
+                    </div>
+                </a>
+                <div class="buttons">
+                    <button class="cancelbtn" type="button" onclick="resetFilters()">Remove</button>
+                    <button class="applybtn" type="submit">Filter</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
-    <div class="end"></div>
-    
-    <!-- The Modal -->
-    <div id="eventModal" class="modal">
-        <div class="modal-content" id="modalContent">
-            <!-- Content will be dynamically inserted here -->
-        </div>
+</div>
+<div class="end"></div>
+
+<!-- The Modal -->
+<div id="eventModal" class="modal">
+    <div class="modal-content" id="modalContent">
+        <!-- Content will be dynamically inserted here -->
     </div>
+</div>
 </body>
 </html>

@@ -407,6 +407,10 @@
                             {{ $fp->FPName }}
                         </option>
                     @endforeach
+                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
+                    <div class="checkbox">
+                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
+                    </div>
                 </select>
             </div>
         </div>
@@ -423,10 +427,10 @@
             Click to upload e-sign.<br>Maximum file size: 32MB
         </div>
         <input type="hidden" id="hidden-signature" name="hiddenSignature">
-        <img id="signature-preview" 
-             src="" 
-             style="display: none; cursor: pointer;" 
-             alt="Signature Preview" 
+        <img id="signature-preview"
+             src=""
+             style="display: none; cursor: pointer;"
+             alt="Signature Preview"
              onclick="document.getElementById('RequesterSignature').click();">
     </div>
     <div id="signature-error" style="color: red; display: none;">E-Signature is required.</div>
@@ -507,7 +511,7 @@
         const hiddenSignatureInput = document.getElementById('hidden-signature');
         const preview = document.getElementById('signature-preview');
         const uploadText = document.querySelector('.e-signature-text');
-        
+
         // Clear signature input and preview on load (if there's any error, don't retain signature)
         hiddenSignatureInput.value = '';
         preview.src = '';
@@ -553,7 +557,7 @@
          * @param {string} action - The action to be performed ('addRow', 'removeRow', 'previewSignature').
          * @param {Event} event - The event object associated with the action.
          */
-        
+
     function handleFormActions(action, event) {
         switch(action) {
             case 'addRow':

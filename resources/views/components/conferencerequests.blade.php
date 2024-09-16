@@ -1,46 +1,26 @@
 <style>
-     .pagination_rounded, .pagination_square {
-    display: inline-block;
-    margin-left:400px;
-    /* margin-top:284px; */
+    .pagination_rounded, .pagination_square {
+        display: block;
+        margin-top: 15px;
+        text-align: center; /* Center the pagination buttons */
+        width: 100%; /* Ensure the container takes the full width */
     }
 
     .pagination_rounded ul {
         margin: 0;
         padding: 0;
         list-style: none;
-    }
-
-    .pagination_rounded li:first-child {
-        margin-left: 0px;
+        display: inline-block; /* Make the list inline-block to center it */
     }
 
     .pagination_rounded ul li {
-        float: left;
+        display: inline; /* Display list items inline */
         margin-left: 20px;
     }
 
-    .pagination_rounded ul li a:hover {
-        background: #4285f4;
-        color: #fff;
-        border: 1px solid #4285f4;
-    }
-
-    a:link {
-    text-decoration: none;
-    }
-
-    .pagination_rounded .prev {
-        margin-left: 0px;
-        border-radius: 35px;
-        width: 90px;
-        height: 34px;
-        line-height: 34px;
-    }
-
-
     .pagination_rounded ul li a {
-        float: left;
+        float: none; /* Remove float */
+        display: inline-block; /* Ensure links are inline-block */
         color: #000000;
         border-radius: 50%;
         line-height: 30px;
@@ -51,19 +31,25 @@
         border: 1px solid #e0e0e0;
     }
 
-    .pagination_rounded .prev i {
-        margin-right: 10px;
+    .pagination_rounded ul li a:hover {
+        background: #4285f4;
+        color: #fff;
+        border: 1px solid #4285f4;
     }
 
-    .pagination_rounded .next {
+    .pagination_rounded .prev, .pagination_rounded .next {
         border-radius: 35px;
         width: 90px;
         height: 34px;
         line-height: 34px;
     }
 
+    a:link {
+        text-decoration: none;
+    }
+
     .visible-xs {
-        display: none!important;
+        display: none !important;
     }
     /* Add custom styles for the refresh button */
     #refreshBtn {
@@ -105,19 +91,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- refresh icon -->
-        <div class="tableactions">
-            <div id="divide"></div>
-            <div style="float:right;">
-                <!-- Refresh button -->
-                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh"></i>
-            </div>
-        </div>
-
         <div class="tableactions">
             <div id="divide">
                 <div class="dropdown" style="float:right;">
+                    <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh" style="font-size: 16px; margin-right: 10px;"></i>
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <form id="filterForm" method="GET" action="{{ route('fetchSortedRequests') }}">
                         <div class="dropdown-content">

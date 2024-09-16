@@ -741,6 +741,22 @@
         });
     });
 
+    function validateForm(form) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let allFieldsFilled = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                allFieldsFilled = false;
+                field.style.borderColor = 'red'; // Highlight the empty field
+            } else {
+                field.style.borderColor = ''; // Reset the border color if filled
+            }
+        });
+
+        return allFieldsFilled;
+    }
+
     function submitAllForms() {
         // Get the forms
         const dispatcherForm = document.getElementById('dispatcherForm');
@@ -748,6 +764,15 @@
 
         // Check if forms are present
         if (dispatcherForm && adminServiceForm) {
+            // Validate both forms
+            const isDispatcherFormValid = validateForm(dispatcherForm);
+            const isAdminServiceFormValid = validateForm(adminServiceForm);
+
+            if (!isDispatcherFormValid || !isAdminServiceFormValid) {
+                alert('Please fill out all required fields.');
+                return; // Prevent form submission
+            }
+
             // Create a FormData object for both forms
             const dispatcherFormData = new FormData(dispatcherForm);
             const adminServiceFormData = new FormData(adminServiceForm);
@@ -893,12 +918,12 @@
         const EventStatus = document.getElementById('EventStatus');
 
         if (FormStatus.value === 'Approved') {
-            // Hide "For Approval" and "Not Approved" options
-            Array.from(FormStatus.options).forEach(option => {
-                if (option.value === 'For Approval' || option.value === 'Not Approved') {
-                    option.style.display = 'none';
-                }
-            });
+            // // Hide "For Approval" and "Not Approved" options
+            // Array.from(FormStatus.options).forEach(option => {
+            //     if (option.value === 'For Approval' || option.value === 'Not Approved') {
+            //         option.style.display = 'none';
+            //     }
+            // });
 
             // Update EventStatus dropdown
             EventStatus.outerHTML = `
@@ -1103,6 +1128,8 @@
         // Vehicle select change event
         document.getElementById('VehicleID').addEventListener('change', updateVehicleInfo);
     });
+
+
 </script>
 </body>
 </html>

@@ -755,6 +755,7 @@
             </div>
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
+                <input type="hidden" id="downloadClicked" name="downloadClicked" value="0">
                 <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
                     <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
                         Pending
@@ -802,7 +803,7 @@
         <div class="form-footer">
             @if($requestData->FormStatus === 'For Approval')
                 <a onclick="showDownloadModal('{{ route('downloadCRequestPDF', $requestData->CRequestID) }}', '{{ route('downloadUnavailableCRequestPDF', $requestData->CRequestID) }}')">
-                    <button class="cancel-btn" type="button" onclick="download()">Download</button>
+                    <button class="cancel-btn" type="button" onclick="setDownloadClicked()">Download</button>
                 </a>
             @elseif($requestData->FormStatus === 'Approved')
                 <a href="{{ route('downloadFinalCRequestPDF', $requestData->CRequestID) }}" target="_blank">
@@ -819,6 +820,29 @@
     </form>
 </div>
 <script>
+    function setDownloadClicked() {
+        document.getElementById('downloadClicked').value = '1';
+        showApprovalOptions();
+    }
+
+    function showApprovalOptions() {
+        const formStatus = document.getElementById('FormStatus');
+        const options = formStatus.options;
+
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === 'Approved' || options[i].value === 'Not Approved') {
+                options[i].style.display = 'block';
+            }
+        }
+    }
+
+    // Call showApprovalOptions on page load if downloadClicked is already set
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('downloadClicked').value === '1') {
+            showApprovalOptions();
+        }
+    });
+
     function toggleFileUploadSection() {
         const formStatus = document.getElementById('FormStatus').value;
         const fileUploadSection = document.getElementById('file-upload-section');
@@ -913,12 +937,12 @@
         const EventStatus = document.getElementById('EventStatus');
 
         if (FormStatus.value === 'Approved') {
-            // Hide "For Approval" and "Not Approved" options
-            Array.from(FormStatus.options).forEach(option => {
-                if (option.value === 'For Approval' || option.value === 'Not Approved') {
-                    option.style.display = 'none';
-                }
-            });
+            // // Hide "For Approval" and "Not Approved" options
+            // Array.from(FormStatus.options).forEach(option => {
+            //     if (option.value === 'For Approval' || option.value === 'Not Approved') {
+            //         option.style.display = 'none';
+            //     }
+            // });
 
             // Update EventStatus dropdown
             EventStatus.outerHTML = `

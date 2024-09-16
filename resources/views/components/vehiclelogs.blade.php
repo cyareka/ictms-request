@@ -177,39 +177,39 @@
             <div id="divide"></div>
             <div style="float:right;">
                 <!-- Refresh button -->
-                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh"></i>
             </div>
         </div>
 
         <div class="tableactions">
             <div id="divide">
-                <!-- <i class="bi bi-arrow-left-short"></i>
-                <i class="bi bi-arrow-right-short" id="iconborder"></i> -->
-                <a href="javascript:void(0);" id="downloadLink"><i class="bi bi-download"
-                                                                   style="font-size:16px; margin-right:14px;"></i></a>
-                <div id="dateRangeModal" class="modal" style="display: none;">
-                <div class="modal-container">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <h2>Select Date Range</h2>
-                        <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
-                            @csrf
-                            <div class="form-group">
-                                <label for="startDate">Start Date:</label>
-                                <input type="date" id="startDate" name="startDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="endDate">End Date:</label>
-                                <input type="date" id="endDate" name="endDate" required>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Download</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                </div>
                 <div class="dropdown" style="float:right;">
+                    <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh" style="font-size: 16px; margin-right: 10px;"></i>
+                    <!-- <i class="bi bi-arrow-left-short"></i>
+                    <i class="bi bi-arrow-right-short" id="iconborder"></i> -->
+                    <a href="javascript:void(0);" id="downloadLink"><i class="bi bi-download"
+                                                                       style="font-size:16px; margin-right:14px;"></i></a>
+                    <div id="dateRangeModal" class="modal" style="display: none;">
+                        <div class="modal-container">
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <h2>Select Date Range</h2>
+                                <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="startDate">Start Date:</label>
+                                        <input type="date" id="startDate" name="startDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="endDate">End Date:</label>
+                                        <input type="date" id="endDate" name="endDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary">Download</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
                     <div class="dropdown-content">
                         <p id="filterlabel">Filter By</p>
@@ -381,7 +381,7 @@
 
         function updateTable(data, pagination) {
             let tbody = document.querySelector('tbody');
-            
+
             tbody.innerHTML = '';
 
             if (Array.isArray(data) && data.length > 0) {
