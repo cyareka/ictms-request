@@ -615,22 +615,56 @@
                     {{--                    </div>--}}
                     <div class="inline">
                         <label for="FormStatus">Form Status</label>
-                        <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                            <option value="Pending"
-                                    {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>Pending
-                            </option>
-                            <option
-                                value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
-                                For Approval
-                            </option>
-                            <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
-                                Approved
-                            </option>
-                            <option
-                                value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
-                                Not Approved
-                            </option>
+                        <select id="FormStatus" name="FormStatus">
+                            @if($requestData->FormStatus == 'Pending')
+                                <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
+                                    Pending
+                                </option>
+                                <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
+                                    For Approval
+                                </option>
+                            @elseif ($requestData->CAvailability == '0')
+                                <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+                                    Not Approved
+                                </option>
+                            @elseif ($requestData->FormStatus == 'For Approval')
+                                <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }} hidden>
+                                    For Approval
+                                </option>
+                                <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }} style="display: none;">Approved</option>
+                                <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }} style="display: none;">Not Approved</option>
+                            @elseif($requestData->FormStatus == 'Approved')
+                                <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
+                                    Approved
+                                </option>
+                            @else
+                                <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+                                    Not Approved
+                                </option>
+                            @endif
                         </select>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const formStatus = document.getElementById('FormStatus');
+                                let previousValue = formStatus.value;
+
+                                formStatus.addEventListener('change', function() {
+                                    if (formStatus.value === 'Approved' || formStatus.value === 'Not Approved') {
+                                        const confirmed = confirm('Changing the form status should be final. Do you want to proceed?');
+                                        if (!confirmed) {
+                                            formStatus.value = 'For Approval';
+                                            formStatus.dataset.previousValue = 'For Approval';
+                                        } else {
+                                            formStatus.dataset.previousValue = formStatus.value;
+                                        }
+                                    } else {
+                                        formStatus.dataset.previousValue = formStatus.value;
+                                    }
+                                });
+
+                                updateFormStatusOptions();
+                            });
+                        </script>
                     </div>
                     <div class="inline">
                         <label for="EventStatus">Event Status</label>

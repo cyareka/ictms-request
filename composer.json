@@ -15,7 +15,8 @@
         "livewire/livewire": "^3.0",
         "setasign/fpdf": "*",
         "setasign/fpdi": "*",
-        "snapappointments/bootstrap-select": "*"
+        "snapappointments/bootstrap-select": "*",
+        "ext-zip": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

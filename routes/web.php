@@ -118,8 +118,15 @@ Route::middleware([
         [NVehicleController::class, 'store'])->name('vehicle.store');
     Route::post('/conferences',
         [NConferenceRController::class, 'store'])->name('conferences.store');
+
     Route::post('/porpose',
         [NPurposeController::class, 'store'])->name('porpose.store');
+    Route::get('/purpose-requests',
+        [NPurposeController::class, 'index'])->name('purpose.requests.index');
+    Route::delete('/purpose-requests/{id}', [NPurposeController::class, 'destroy'])->name('purpose.requests.destroy');
+    Route::get('/purpose-requests/{id}/edit', [NPurposeController::class, 'edit'])->name('purpose.requests.edit');
+    Route::post('/purpose-requests/{id}', [NPurposeController::class, 'update'])->name('purpose.requests.update');
+
     Route::post('/employee',
         [EmployeeController::class, 'store'])->name('employee.store');
     Route::post('/focalP',
@@ -139,6 +146,8 @@ Route::middleware([
     Route::get('/vehiclerequest/{VRequestID}/pdf-previews', [DownloadsController::class, 'downloadVRequestPDF'])->name('downloadVRequestPDF');
 
     Route::get('/vehiclerequest/view-logs', [DownloadsController::class, 'downloadRangeVRequestPDF'])->name('downloadRangeVRequestPDF');
+
+    Route::get('/download-all-vrequest-pdfs/{VRequestID}', [DownloadsController::class, 'downloadAllVRequestPDFs'])->name('download.all.vrequest.pdfs');
 
 });
 

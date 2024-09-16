@@ -295,6 +295,35 @@ class DownloadsController extends Controller
         return view('VehicleDownload', ['pdfs' => $pdfs]);
     }
 
+/*    public function downloadAllVRequestPDFs(Request $request, $VRequestID)
+    {
+        $pdf1 = $this->generateAuthoritytoTravelPDF($request, $VRequestID);
+        $pdf2 = $this->generateVRequestPDF($request, $VRequestID);
+        $pdf3 = $this->generateVRequestFormAPDF($request, $VRequestID);
+        $pdf4 = $this->generateTravelOrderPDF($request, $VRequestID);
+
+        $pdfFiles = [
+            'Authority_to_Travel.pdf' => $pdf1,
+            'Vehicle_Request.pdf' => $pdf2,
+            'Vehicle_Request_Form_A.pdf' => $pdf3,
+            'Travel_Order.pdf' => $pdf4,
+        ];
+
+        $zip = new \ZipArchive();
+        $zipFileName = storage_path('app/public/VRequest_PDFs.zip');
+
+        if ($zip->open($zipFileName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+            foreach ($pdfFiles as $fileName => $pdfContent) {
+                $zip->addFromString($fileName, $pdfContent);
+            }
+            $zip->close();
+        } else {
+            return response()->json(['error' => 'Failed to create ZIP file.'], 500);
+        }
+
+        return response()->download($zipFileName)->deleteFileAfterSend(true);
+    }*/
+
     private function generateAuthoritytoTravelPDF(Request $request, $VRequestID)
     {
         try {
@@ -761,7 +790,7 @@ class DownloadsController extends Controller
 
         // Check if there is data for each date, and handle cases where no data is available
         $dateRange = CarbonPeriod::create($validated['startDate'], $validated['endDate']);
-        
+
         foreach ($dateRange as $date) {
             $dateString = $date->format('Y-m-d');
             $requests = $groupedRequests->get($dateString, collect());
@@ -869,5 +898,7 @@ class DownloadsController extends Controller
         return response()->json(['error' => 'Failed to generate PDF.'], 500);
     }
 }
+
+
 
 }

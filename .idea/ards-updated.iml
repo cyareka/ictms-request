@@ -157,5 +157,7 @@
     <orderEntry type="library" name="boxicons" level="application" />
     <orderEntry type="library" name="dataTables.dataTables" level="application" />
     <orderEntry type="library" name="dataTables" level="application" />
+    <orderEntry type="library" name="jquery-3.5.1.slim" level="application" />
+    <orderEntry type="library" name="@popperjs/core" level="application" />
   </component>
 </module>

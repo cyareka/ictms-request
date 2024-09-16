@@ -17,7 +17,40 @@ class NPurposeController extends Controller
         return $generatedID;
     }
 
-    public function store(Request $request)
+    public function index(): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
+    {
+        $purposeRequests = PurposeRequest::all();
+        return view('NPurpose', compact('purposeRequests'));
+    }
+
+    public function destroy($id): \Illuminate\Http\RedirectResponse
+    {
+        $purposeRequest = PurposeRequest::findOrFail($id);
+        $purposeRequest->delete();
+
+        return redirect()->route('purpose.requests.index')->with('success', 'Purpose request deleted successfully.');
+    }
+
+    public function edit($id): \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Foundation\Application
+    {
+        $purposeRequest = PurposeRequest::findOrFail($id);
+        return view('editPurposeRequest', compact('purposeRequest'));
+    }
+
+    public function update(Request $request, $id): \Illuminate\Http\RedirectResponse
+    {
+        $validatedData = $request->validate([
+            'request_p' => 'required|string',
+            'purpose'   => 'required|string',
+        ]);
+
+        $purposeRequest = PurposeRequest::findOrFail($id);
+        $purposeRequest->update($validatedData);
+
+        return redirect()->route('purpose.requests.index')->with('success', 'Purpose request updated successfully.');
+    }
+
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         // Validate the request
         $validatedData = $request->validate([
