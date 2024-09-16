@@ -299,10 +299,6 @@
         formData.append('sort', 'created_at');
         formData.append('page', page);
         formData.append('per_page', itemsPerPage);
-        formData.append('search', search);
-
-        const searchInput = document.querySelector('.form-input').value;
-        formData.append('search', searchInput);
 
         const params = new URLSearchParams(formData).toString();
 

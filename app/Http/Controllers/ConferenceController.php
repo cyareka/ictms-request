@@ -407,75 +407,72 @@ class ConferenceController extends Controller
 
     // Conference Request Main Filter, Search and Sort
     public function fetchSortedRequests(Request $request): \Illuminate\Http\JsonResponse
-{
-    Log::info('Search term: ' . $request->input('search', ''));
-    $sort = $request->input('sort', 'created_at');
-    $order = $request->input('order', 'desc');
-    $conferenceRoom = $request->input('conference_room');
-    $formStatuses = $request->input('form_statuses', ['Approved', 'Pending', 'For Approval']);
-    $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
-    $perPage = $request->input('per_page', 5);
-    $search = $request->input('search', '');
+    {
+        Log::info('Search term: ' . $request->input('search', ''));
+        $sort = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'desc');
+        $conferenceRoom = $request->input('conference_room');
+        $formStatuses = $request->input('form_statuses', ['Approved', 'Pending', 'For Approval']);
+        $eventStatuses = $request->input('event_statuses', ['Ongoing', '-']);
+        $perPage = $request->input('per_page', 5);
+        $search = $request->input('search', '');
 
-    // Month name to number mapping
-    $monthNames = [
-        'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
-        'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
-        'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
-    ];
+        // Month name to number mapping
+        $monthNames = [
+            'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
+            'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
+            'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
+        ];
 
-    $query = ConferenceRequest::query()
-        ->with('office', 'conferenceRoom')
-        ->orderBy($sort, $order);
+        $query = ConferenceRequest::query()
+            ->with('office', 'conferenceRoom')
+            ->orderBy($sort, $order);
 
-    if ($conferenceRoom) {
-        $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
-            $q->where('CRoomName', $conferenceRoom);
-        });
-    }
+        if ($conferenceRoom) {
+            $query->whereHas('conferenceRoom', function ($q) use ($conferenceRoom) {
+                $q->where('CRoomName', $conferenceRoom);
+            });
+        }
 
-    if ($formStatuses) {
-        $query->whereIn('FormStatus', $formStatuses);
-    }
+        if ($formStatuses) {
+            $query->whereIn('FormStatus', $formStatuses);
+        }
 
-    if ($eventStatuses) {
-        $query->whereIn('EventStatus', $eventStatuses);
-    }
+        if ($eventStatuses) {
+            $query->whereIn('EventStatus', $eventStatuses);
+        }
 
-    if ($search) {
-        $query->where(function ($q) use ($search, $monthNames) {
-            // Check if the search query matches a month name
+        if ($search) {
             $lowerSearch = strtolower($search);
             if (isset($monthNames[$lowerSearch])) {
-                // Filter by the numeric month in created_at
-                $q->whereMonth('created_at', $monthNames[$lowerSearch]);
+                $query->whereMonth('created_at', $monthNames[$lowerSearch]);
             } else {
-                // Standard search
-                $q->where('CRequestID', 'like', '%' . $search . '%')
-                    ->orWhereHas('conferenceRoom', function ($q) use ($search) {
-                        $q->where('CRoomName', 'like', '%' . $search . '%');
-                    })
-                    ->orWhereHas('office', function ($q) use ($search) {
-                        $q->where('OfficeName', 'like', '%' . $search . '%');
-                    })
-                    ->orWhere('EventStatus', 'like', '%' . $search . '%')
-                    ->orWhere('FormStatus', 'like', '%' . $search . '%');
+                $query->where(function ($q) use ($search) {
+                    $q->where('CRequestID', 'like', '%' . $search . '%')
+                        ->orWhereHas('conferenceRoom', function ($q) use ($search) {
+                            $q->where('CRoomName', 'like', '%' . $search . '%');
+                        })
+                        ->orWhereHas('office', function ($q) use ($search) {
+                            $q->where('OfficeName', 'like', '%' . $search . '%');
+                        })
+                        ->orWhere('EventStatus', 'like', '%' . $search . '%')
+                        ->orWhere('FormStatus', 'like', '%' . $search . '%');
+                });
             }
-        });
+        }
+
+        $results = $query->paginate($perPage);
+
+        return response()->json([
+            'data' => $results->items(),
+            'pagination' => [
+                'total' => $results->total(),
+                'per_page' => $results->perPage(),
+                'current_page' => $results->currentPage(),
+                'last_page' => $results->lastPage(),
+            ],
+        ]);
     }
-
-    $results = $query->paginate($perPage);
-
-    return response()->json([
-        'data' => $results->items(),
-        'pagination' => [
-            'total' => $results->total(),
-            'per_page' => $results->perPage(),
-            'current_page' => $results->currentPage(),
-            'last_page' => $results->lastPage(),
-        ],
-    ]);
-}
     // Conference Request Logs Filter and Sort
     public function fetchSortedLogRequests(Request $request): \Illuminate\Http\JsonResponse
 {
@@ -569,7 +566,7 @@ class ConferenceController extends Controller
                     })
                     ->orWhere('FormStatus', 'like', '%' . $search . '%')
                     ->orWhere('EventStatus', 'like', '%' . $search . '%');
-                
+
             }
         });
     }
