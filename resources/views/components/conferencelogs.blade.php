@@ -164,7 +164,7 @@
         </table>
         <div class="pagination_rounded">
             <ul id="pagination-list">
-               
+
             </ul>
         </div>
     </div>
@@ -227,7 +227,6 @@
                             <td>${request.EventStatus || 'N/A'}</td>
                             <td>
                                 <a href="/conferencerequest/${request.CRequestID}/log"><i class="bi bi-person-vcard"></i></a>
-                                <a href="/downloadFinalCRequestPDF/${request.CRequestID}"><i class="bi bi-download"></i></a>
                             </td>
                         </tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);
@@ -279,7 +278,7 @@
             nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
             nextPageLink.addEventListener('click', function (e) {
                 e.preventDefault();
-                if (currentPage < last_page) { 
+                if (currentPage < last_page) {
                     fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
                 }
             });
@@ -293,7 +292,7 @@
             const li = document.createElement('li');
             const a = document.createElement('a');
             a.href = '#';
-            a.textContent = text;  
+            a.textContent = text;
 
             a.addEventListener('click', (e) => {
                 e.preventDefault();

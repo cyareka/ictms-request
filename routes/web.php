@@ -106,6 +106,7 @@ Route::middleware([
     Route::get('/VehicleLogs', function () {
         return view('VehicleLogs');
     })->name('VehicleLogs');
+    Route::get('/fetchSortedVLogRequests', [VehicleController::class, 'fetchSortedVLogRequests']);
 
     Route::get('/vehiclerequest/{VRequestID}/log',
         [VehicleController::class, 'getVLogData'])->name('vehiclelogDetail');

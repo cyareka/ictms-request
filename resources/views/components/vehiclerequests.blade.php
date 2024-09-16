@@ -223,9 +223,6 @@
                     <td>{{ $request->EventStatus }}</td>
                     <td>
                         <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
-                        @if($request->FormStatus !== 'Pending')
-                            <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
-                        @endif
                     </td>
                 </tr>
             @endforeach
@@ -321,7 +318,6 @@
                     <td>${request.EventStatus}</td>
                     <td>
                         <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                        <i class="bi bi-download" id="actions" data-request-id="${request.VRequestID}"></i>
                     </td>
                 </tr>`;
 
@@ -346,7 +342,7 @@
     // Page numbers
     for (let page = 1; page <= pagination.last_page; page++) {
         let activeClass = page === pagination.current_page ? 'active' : '';
-        
+
         // Create the list item element
         let listItem = document.createElement('li');
         listItem.className = activeClass;
@@ -380,7 +376,7 @@ document.querySelector('.pagination_rounded').addEventListener('click', function
     if (e.target.tagName === 'A') {
         e.preventDefault();
         let text = e.target.textContent.trim();
-        
+
         if (text === 'Prev' && currentPage > 1) {
             fetchSortedData('desc', currentPage - 1, searchQuery);
         } else if (text === 'Next' && currentPage < lastPage) {

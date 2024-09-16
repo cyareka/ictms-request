@@ -232,7 +232,7 @@
             </thead>
             <tbody>
             @php
-            $filteredRequests = App\Models\VehicleRequest::with('office') 
+            $filteredRequests = App\Models\VehicleRequest::with('office')
                 ->whereIn('FormStatus', ['Approved', 'Not Approved'])
                 ->whereIn('EventStatus', ['Finished', 'Cancelled', '-'])
                 ->get();
@@ -253,7 +253,6 @@
                     <td>
                         <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard"
                                                                                            id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>
             @endforeach
@@ -342,7 +341,6 @@
                     <td>${request.EventStatus}</td>
                     <td>
                         <a href="/vehiclerequest/${request.VRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>`;
                 tbody.insertAdjacentHTML('beforeend', row);
@@ -372,7 +370,7 @@
     // Page numbers
     for (let page = 1; page <= pagination.last_page; page++) {
         let activeClass = page === pagination.current_page ? 'active' : '';
-        
+
         // Create the list item element
         let listItem = document.createElement('li');
         listItem.className = activeClass;
@@ -412,7 +410,7 @@ document.querySelector('.pagination_rounded').addEventListener('click', function
     if (e.target.tagName === 'A') {
         e.preventDefault();
         let text = e.target.textContent.trim();
-        
+
         if (text === 'Prev' && currentPage > 1) {
             fetchSortedData('desc', currentPage - 1, searchQuery);
         } else if (text === 'Next' && currentPage < lastPage) {

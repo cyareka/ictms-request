@@ -756,26 +756,56 @@
             <div class="inline-field">
                 <label for="FormStatus">Form Status</label>
                 <input type="hidden" id="downloadClicked" name="downloadClicked" value="0">
-                <select id="FormStatus" name="FormStatus" onchange="updateEventStatus()">
-                    <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
-                        Pending
-                    </option>
-                    @if ($requestData->CAvailability == '0')
-                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
-                            Not Approved
+                <select id="FormStatus" name="FormStatus">
+                    @if($requestData->FormStatus == 'Pending')
+                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
+                            Pending
                         </option>
-                    @else
                         <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
                             For Approval
                         </option>
+                    @elseif ($requestData->CAvailability == '0')
+                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+                            Not Approved
+                        </option>
+                    @elseif ($requestData->FormStatus == 'For Approval')
+                        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }} hidden>
+                            For Approval
+                        </option>
+                        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }} style="display: none;">Approved</option>
+                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }} style="display: none;">Not Approved</option>
+                    @elseif($requestData->FormStatus == 'Approved')
                         <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
                             Approved
                         </option>
+                    @else
                         <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
                             Not Approved
                         </option>
                     @endif
                 </select>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const formStatus = document.getElementById('FormStatus');
+                        let previousValue = formStatus.value;
+
+                        formStatus.addEventListener('change', function() {
+                            if (formStatus.value === 'Approved' || formStatus.value === 'Not Approved') {
+                                const confirmed = confirm('Changing the form status should be final. Do you want to proceed?');
+                                if (!confirmed) {
+                                    formStatus.value = 'For Approval';
+                                    formStatus.dataset.previousValue = 'For Approval';
+                                } else {
+                                    formStatus.dataset.previousValue = formStatus.value;
+                                }
+                            } else {
+                                formStatus.dataset.previousValue = formStatus.value;
+                            }
+                        });
+
+                        updateFormStatusOptions();
+                    });
+                </script>
             </div>
         </div>
         <div class="row">
@@ -820,6 +850,7 @@
     </form>
 </div>
 <script>
+
     function setDownloadClicked() {
         document.getElementById('downloadClicked').value = '1';
         showApprovalOptions();
@@ -844,13 +875,18 @@
     });
 
     function toggleFileUploadSection() {
-        const formStatus = document.getElementById('FormStatus').value;
+        const formStatus = document.getElementById('FormStatus');
         const fileUploadSection = document.getElementById('file-upload-section');
+        const previousValue = formStatus.dataset.previousValue;
 
-        if ((formStatus === 'Approved' && {{ $requestData->CAvailability }} == 1) ||
-            (formStatus === 'Not Approved' && {{ $requestData->CAvailability }} == 0)) {
-            fileUploadSection.style.display = 'block';
-        } else {
+        if (formStatus.value !== previousValue) {
+            if ((formStatus.value === 'Approved' && {{ $requestData->CAvailability }} == 1) ||
+                (formStatus.value === 'Not Approved' && {{ $requestData->CAvailability }} == 0)) {
+                fileUploadSection.style.display = 'block';
+            } else {
+                fileUploadSection.style.display = 'none';
+            }
+        } else if (previousValue === 'For Approval' && formStatus.value === 'For Approval') {
             fileUploadSection.style.display = 'none';
         }
     }
@@ -937,13 +973,6 @@
         const EventStatus = document.getElementById('EventStatus');
 
         if (FormStatus.value === 'Approved') {
-            // // Hide "For Approval" and "Not Approved" options
-            // Array.from(FormStatus.options).forEach(option => {
-            //     if (option.value === 'For Approval' || option.value === 'Not Approved') {
-            //         option.style.display = 'none';
-            //     }
-            // });
-
             // Update EventStatus dropdown
             EventStatus.outerHTML = `
         <select id="EventStatus" name="EventStatus">
