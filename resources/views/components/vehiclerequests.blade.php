@@ -310,7 +310,7 @@
                         hour12: true
                     })}</td>
                     <td>${request.Destination}</td>
-                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
+                    <td>${purposeName}</td>
                     <td>${request.office?.OfficeName || 'N/A'}</td>
                     <td>${request.date_start}</td>
                     <td>${request.time_start}</td>

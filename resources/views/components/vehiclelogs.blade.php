@@ -245,7 +245,7 @@
                     <td>{{ $request->created_at->format('m-d-Y (h:i A)') }}</td>
                     <td>{{ $request->Destination }}</td>
                     <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
-                    <td>{{ $request->office->OfficeName ?? 'N/A' }}</td>
+                    <td>{{ App\Models\Office::find($request->OfficeID)->OfficeName}}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
@@ -321,7 +321,8 @@
 
         if (Array.isArray(data) && data.length > 0) {
             data.forEach(request => {
-                let officeName = request.office ? request.office.OfficeName : 'N/A';
+                // let officeName = request.office ? request.office.OfficeName : 'N/A';
+                // let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
                 let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>
                     <td>${new Date(request.created_at).toLocaleDateString('en-US', {
@@ -335,7 +336,7 @@
                     })}</td>
                     <td>${request.Destination}</td>
                     <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
-                    <td>${request.office?.OfficeName || 'N/A'}</td>
+                    <td>{{ App\Models\Office::find($request->OfficeID)->OfficeName}}</td>
                     <td>${request.date_start}</td>
                     <td>${request.time_start}</td>
                     <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
