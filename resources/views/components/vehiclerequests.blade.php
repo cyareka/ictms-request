@@ -211,7 +211,7 @@
             @endphp
 
             @foreach($filteredRequests as $request)
-                <tr>
+            <tr>
                     <th scope="row">{{ $request->VRequestID }}</th>
                     <td>{{ $request->created_at->format('m-d-Y (h:i A)') }}</td>
                     <td>{{ $request->Destination }}</td>
@@ -223,34 +223,37 @@
                     <td>{{ $request->EventStatus }}</td>
                     <td>
                         <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+                        @if($request->FormStatus !== 'Pending')
+                            <i class="bi bi-download" id="actions" data-request-id="{{ $request->VRequestID }}"></i>
+                        @endif
                     </td>
                 </tr>
             @endforeach
             </tbody>
         </table>
         <div class="pagination_rounded">
-            <ul>
-                <li>
-                    <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
-                </li>
-                <li><a href="#">1</a>
-                </li>
-                <li class="hidden-xs"><a href="#">2</a>
-                </li>
-                <li class="hidden-xs"><a href="#">3</a>
-                </li>
-                <li class="hidden-xs"><a href="#">4</a>
-                </li>
-                <li class="hidden-xs"><a href="#">5</a>
-                </li>
-                <li class="visible-xs"><a href="#">...</a>
-                </li>
-                <li><a href="#">6</a>
-                </li>
-                <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                </li>
-            </ul>
-        </div>
+                        <ul>
+                            <li>
+                                <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
+                            </li>
+                            <li><a href="#">1</a>
+                            </li>
+							<li class="hidden-xs"><a href="#">2</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">3</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">4</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">5</a>
+                            </li>
+							<li class="visible-xs"><a href="#">...</a>
+                            </li>
+							<li><a href="#">6</a>
+                            </li>
+                            <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                            </li>
+                        </ul>
+         </div>
     </div>
 </div>
 <div class="end"></div>
@@ -288,7 +291,6 @@
                 });
         }
 
-
         // Function to update the table with the fetched data
         function updateTable(data, pagination) {
             let tbody = document.querySelector('tbody');
@@ -297,7 +299,7 @@
             if (Array.isArray(data) && data.length > 0) {
                 data.forEach(request => {
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
-                    let purposeName = request.PurposeOthers || (App\Models\PurposeRequest::find($request->PurposeID))->purpose || 'N/A';
+                    let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
 
                     let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>
@@ -311,14 +313,15 @@
                         hour12: true
                     })}</td>
                     <td>${request.Destination}</td>
-                    <td>${purposeName}</td>
-                    <td>${officeName}</td>
+                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
+                    <td>${request.office?.OfficeName || 'N/A'}</td>
                     <td>${request.date_start}</td>
                     <td>${request.time_start}</td>
                     <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
                     <td>${request.EventStatus}</td>
                     <td>
                         <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions" data-request-id="${request.VRequestID}"></i>
                     </td>
                 </tr>`;
 
@@ -331,63 +334,62 @@
             updatePagination(pagination);
         }
 
-        // Function to handle pagination
-        function updatePagination(pagination) {
-            const paginationContainer = document.querySelector('.pagination_rounded ul');
-            paginationContainer.innerHTML = ''; // Clear the current pagination
+    // Function to handle pagination
+    function updatePagination(pagination) {
+    const paginationContainer = document.querySelector('.pagination_rounded ul');
+    paginationContainer.innerHTML = ''; // Clear the current pagination
 
-            // Previous button
-            let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
-            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
+    // Previous button
+    let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
 
-            // Page numbers
-            for (let page = 1; page <= pagination.last_page; page++) {
-                let activeClass = page === pagination.current_page ? 'active' : '';
+    // Page numbers
+    for (let page = 1; page <= pagination.last_page; page++) {
+        let activeClass = page === pagination.current_page ? 'active' : '';
+        
+        // Create the list item element
+        let listItem = document.createElement('li');
+        listItem.className = activeClass;
 
-                // Create the list item element
-                let listItem = document.createElement('li');
-                listItem.className = activeClass;
+        // Create the anchor element
+        let pageLink = document.createElement('a');
+        pageLink.href = '#';
+        pageLink.textContent = page;
 
-                // Create the anchor element
-                let pageLink = document.createElement('a');
-                pageLink.href = '#';
-                pageLink.textContent = page;
-
-                // If it's the current page, change the font color
-                if (page === pagination.current_page) {
-                    pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
-                    pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
-                }
-
-
-                // Append the anchor to the list item
-                listItem.appendChild(pageLink);
-
-                // Append the list item to the pagination container
-                paginationContainer.appendChild(listItem);
-            }
-
-            // Next button
-            let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
-            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
+        // If it's the current page, change the font color
+        if (page === pagination.current_page) {
+            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
         }
 
+
+        // Append the anchor to the list item
+        listItem.appendChild(pageLink);
+
+        // Append the list item to the pagination container
+        paginationContainer.appendChild(listItem);
+    }
+
+    // Next button
+    let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
+}
+
 // Event listeners for pagination links
-        document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
-            if (e.target.tagName === 'A') {
-                e.preventDefault();
-                let text = e.target.textContent.trim();
-
-                if (text === 'Prev' && currentPage > 1) {
-                    fetchSortedData('desc', currentPage - 1, searchQuery);
-                } else if (text === 'Next' && currentPage < lastPage) {
-                    fetchSortedData('desc', currentPage + 1, searchQuery);
-                } else if (!isNaN(text)) {
-                    fetchSortedData('desc', parseInt(text), searchQuery);
-                }
-            }
-        });
-
+document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+        e.preventDefault();
+        let text = e.target.textContent.trim();
+        
+        if (text === 'Prev' && currentPage > 1) {
+            fetchSortedData('desc', currentPage - 1, searchQuery);
+        } else if (text === 'Next' && currentPage < lastPage) {
+            fetchSortedData('desc', currentPage + 1, searchQuery);
+        } else if (!isNaN(text)) {
+            fetchSortedData('desc', parseInt(text), searchQuery);
+        }
+    }
+});
 
         // Sort by date when clicking on the "Sort" button
         document.getElementById('sort-date-requested').addEventListener('click', function (e) {
@@ -397,19 +399,6 @@
             this.setAttribute('data-order', newOrder);
             fetchSortedData(newOrder, currentPage, searchQuery);
         });
-
-        // // Handle pagination (previous and next buttons)
-        // document.getElementById('prev-page').addEventListener('click', function () {
-        //     if (currentPage > 1) {
-        //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
-        //     }
-        // });
-
-        // document.getElementById('next-page').addEventListener('click', function () {
-        //     if (currentPage < lastPage) {
-        //         fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-        //     }
-        // });
 
         // Handle form submission and search
         document.getElementById('filterForm').addEventListener('submit', function (event) {
