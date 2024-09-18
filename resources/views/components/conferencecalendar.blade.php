@@ -121,113 +121,170 @@
             border-radius: 5px;
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                height: 'auto',
-                aspectRatio: 1.35,
-                events: function (fetchInfo, successCallback, failureCallback) {
-                    $.ajax({
-                        url: '/calendar/events',
-                        type: 'GET',
-                        data: $('#filterForm').serialize(), // Pass filter parameters to the backend
-                        success: function (data) {
-                            // Group events by date
-                            const eventsByDate = {};
-                            data.forEach(event => {
-                                const dateStr = event.start.split('T')[0]; // Extract date part
-                                if (!eventsByDate[dateStr]) {
-                                    eventsByDate[dateStr] = [];
-                                }
-                                eventsByDate[dateStr].push(event);
-                            });
-
-                            // Create calendar events showing the total number of events per day
-                            const events = Object.keys(eventsByDate).map(date => ({
-                                title: `${eventsByDate[date].length} Event(s)`,
-                                start: date,
-                                extendedProps: {events: eventsByDate[date]} // Store all events for that date
-                            }));
-
-                            successCallback(events);
-                        },
-                        error: function () {
-                            failureCallback();
+ <script>
+   document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        height: 'auto',
+        aspectRatio: 1.35,
+        events: function (fetchInfo, successCallback, failureCallback) {
+            $.ajax({
+                url: '/calendar/events',
+                type: 'GET',
+                data: $('#filterForm').serialize(),
+                success: function (data) {
+                    // Group events by date
+                    const eventsByDate = {};
+                    data.forEach(event => {
+                        const dateStr = event.start.split('T')[0];
+                        if (!eventsByDate[dateStr]) {
+                            eventsByDate[dateStr] = [];
                         }
+                        eventsByDate[dateStr].push(event);
                     });
+
+                    // Create calendar events showing the total number of events per day
+                    const events = Object.keys(eventsByDate).map(date => ({
+                        title: `${eventsByDate[date].length} Event(s)`,
+                        start: date,
+                        extendedProps: { events: eventsByDate[date] }
+                    }));
+
+                    successCallback(events);
                 },
-                eventClick: function (info) {
-                    const modal = document.getElementById("eventModal");
-                    const modalContent = document.getElementById("modalContent");
+                error: function () {
+                    failureCallback();
+                }
+            });
+        },
+        eventClick: function (info) {
+            const modal = document.getElementById("eventModal");
+            const modalContent = document.getElementById("modalContent");
 
-                    // Clear previous content
-                    modalContent.innerHTML = `
-                        <span class="close">&times;</span>
-                        <div class="modal-header">${info.event.startStr} Events</div>
-                    `;
+            // Clear previous content
+            modalContent.innerHTML = `
+                <span class="close">&times;</span>
+                <div class="modal-header">${info.event.startStr} Events</div>
+            `;
 
-                    // Display all events for the clicked date
-                    if (info.event.extendedProps.events) {
-                        info.event.extendedProps.events.forEach(event => {
-                            // Determine border color based on event status
-                            let borderColor = '#ddd'; // Default border color
-                            if (event.EventStatus === 'Pending') {
-                                borderColor = 'gray';
-                            } else if (event.EventStatus === 'Approved') {
-                                borderColor = 'blue';
-                            } else if (event.EventStatus === 'For Approval') {
-                                borderColor = 'yellow';
-                            }
-
-                            modalContent.innerHTML += `
-                                <div class="event-container" style="border-left: 5px solid ${borderColor};">
-                                    <h2>${event.title}</h2>
-                                    <p><strong>Conference Room:</strong> ${event.conferenceRoom || 'N/A'}</p>
-                                    <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
-                                    <p><strong>End:</strong> ${event.end ? new Date(event.end).toLocaleString() : 'N/A'}</p>
-                                    ${event.fileUrl && event.CRequestID ? `<a href="${route('downloadCRequestPDF', event.CRequestID)}" class="download-btn" download>Download File</a>` : ''}
-                                    </div>`;
-                        });
-                    } else {
-                        modalContent.innerHTML += `<p>No events available for this date.</p>`;
+            // Display all events for the clicked date
+            if (info.event.extendedProps.events) {
+                info.event.extendedProps.events.forEach(event => {
+                    // Determine border color based on event status
+                    let borderColor = '#ddd';
+                    if (event.EventStatus === 'Pending') {
+                        borderColor = 'gray';
+                    } else if (event.EventStatus === 'Approved') {
+                        borderColor = 'blue';
+                    } else if (event.EventStatus === 'For Approval') {
+                        borderColor = 'yellow';
                     }
 
-                    modal.style.display = "block";
-                }
-            });
+                    // Add event details to the modal
+                    modalContent.innerHTML += `
+                        <div class="event-container" style="border-left: 5px solid ${borderColor};">
+                            <h2>${event.title}</h2>
+                            <p><strong>Conference Room:</strong> ${event.conferenceRoom || 'N/A'}</p>
+                            <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
+                            <p><strong>End:</strong> ${event.end ? new Date(event.end).toLocaleString() : 'N/A'}</p>
+                            ${event.EventStatus === 'For Approval' ? `
+                                <button class="btn btn-primary download-btn"  style="background-color: #354e7d; color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 10px; font-size: 16px;" data-request-form-url="/conferencerequest/${event.CRequestID}/view-pdf" data-unavailability-url="/conferencerequest/${event.CRequestID}/view-unavailable-pdf">Download</button>
+                            ` : ''}
+                            ${event.EventStatus === 'Approved' ? `
+                                <a href="/conferencerequest/${event.CRequestID}/view-final-pdf" class="btn btn-primary" style="background-color: #354e7d; color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 10px; font-size: 16px;" target="_blank">Download</a>
+                            ` : ''}
+                            ${event.EventStatus === 'Pending' && event.CAvailability === 0 ? `
+                                <a href="/conferencerequest/${event.CRequestID}/view-unavailable-pdf" class="btn btn-primary" style="background-color: #354e7d; color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 10px; font-size: 16px;" target="_blank">Download</a>
+                            ` : ''}
+                        </div>`;
+                });
+            } else {
+                modalContent.innerHTML += `<p>No events available for this date.</p>`;
+            }
 
-            calendar.render();
+            modal.style.display = "block";
+        }
+    });
 
-            // Close modal functionality
-            document.addEventListener('click', function (event) {
-                const modal = document.getElementById("eventModal");
-                const closeBtn = document.querySelector(".close");
+    calendar.render();
 
-                if (event.target === closeBtn || event.target === modal) {
-                    modal.style.display = "none";
-                }
-            });
+    // Close modal functionality
+    document.addEventListener('click', function (event) {
+        const modal = document.getElementById("eventModal");
+        if (event.target.classList.contains('close') || event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
 
-            // Add event listener for filter form submission
-            $('#filterForm').on('submit', function (event) {
-                event.preventDefault(); // Prevent default form submission
-                calendar.refetchEvents(); // Refresh events with new filters
-            });
+    // Add event listener for filter form submission
+    $('#filterForm').on('submit', function (event) {
+        event.preventDefault();
+        calendar.refetchEvents();
+    });
 
-            // Function to reset filters
-            window.resetFilters = function () {
-                $('#filterForm')[0].reset(); // Reset form fields
-                calendar.refetchEvents(); // Refresh events with reset filters
-            };
+    // Function to reset filters
+    window.resetFilters = function () {
+        $('#filterForm')[0].reset();
+        calendar.refetchEvents();
+    };
+
+    // Function to show download modal
+    window.showDownloadModal = function (requestFormUrl, unavailabilityUrl) {
+        const modalHtml = `
+        <div class="modal" id="downloadModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document" style="max-width: 1800px; width: 100%; overflow-x: hidden;">
+                <div class="modal-content"  style="overflow-x: hidden;">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Download Options</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Which document would you like to download?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="${requestFormUrl}" class="btn btn-primary" target="_blank">Request Form</a>
+                        <a href="${unavailabilityUrl}" class="btn btn-secondary" target="_blank">Certificate of Unavailability</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        const downloadModal = document.getElementById('downloadModal');
+        downloadModal.style.display = 'flex';
+
+        downloadModal.querySelector('.close').addEventListener('click', function () {
+            downloadModal.style.display = 'none';
+            downloadModal.remove();
         });
-    </script>
+
+        window.addEventListener('click', function (event) {
+            if (event.target === downloadModal) {
+                downloadModal.style.display = 'none';
+                downloadModal.remove();
+            }
+        });
+    };
+
+    // Add event delegation for dynamically created buttons
+    document.body.addEventListener('click', function (event) {
+        if (event.target.classList.contains('download-btn')) {
+            const requestFormUrl = event.target.getAttribute('data-request-form-url');
+            const unavailabilityUrl = event.target.getAttribute('data-unavailability-url');
+            showDownloadModal(requestFormUrl, unavailabilityUrl);
+        }
+    });
+});
+</script>
 </head>
 <body>
 <div class="cont">

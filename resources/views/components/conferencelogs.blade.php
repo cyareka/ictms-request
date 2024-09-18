@@ -164,21 +164,39 @@
         </table>
         <div class="pagination_rounded">
             <ul id="pagination-list">
-
+               
             </ul>
         </div>
     </div>
 </div>
 <div class="end"></div>
 
-    <script>
+
+
+<script>
         let currentPage = 1;
-        const itemsPerPage = 5; // Set items per page to 5
+        const itemsPerPage = 10; // Set items per page to 10
         let currentOrder = 'desc'; // Default order
         let searchQuery = ''; // Initialize searchQuery
 
         document.addEventListener('DOMContentLoaded', function () {
             fetchSortedData(currentOrder, currentPage, searchQuery); // Fetch data on page load
+
+            // Listen to form submission for filtering
+            document.getElementById('filterForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent form from submitting normally
+                searchQuery = document.getElementById('search-input').value.trim();
+
+                // Debugging: Log the search query
+                console.log('Search Query:', searchQuery);
+
+                fetchSortedData(currentOrder, 1, searchQuery); // Fetch data based on search query and reset to page 1
+            });
+
+            // Reset filters when clicking reset button
+            document.querySelector('.cancelbtn').addEventListener('click', function () {
+                resetFilters();
+            });
         });
 
         // Sort by Date Requested
@@ -186,7 +204,11 @@
             e.preventDefault();
             currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
             this.setAttribute('data-order', currentOrder);
-            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1
+            
+            // Debugging: Log the current order
+            console.log('Current Order:', currentOrder);
+
+            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1 after sorting
         });
 
         // Fetch sorted, paginated, and filtered data
@@ -196,12 +218,17 @@
                 order: order,
                 page: page,
                 per_page: itemsPerPage,
-                search: search
+                search: search // Pass search query here
             }).toString();
+
+            // Debugging: Log the fetch URL and params
+            console.log('Fetching with URL:', `/fetchSortedLogRequests?${params}`);
 
             fetch(`/fetchSortedLogRequests?${params}`)
                 .then(response => response.json())
                 .then(data => {
+                    // Debugging: Log the returned data
+                    console.log('Data received:', data);
                     updateTable(data.data);
                     updatePagination(data.pagination);
                 })
@@ -236,6 +263,7 @@
             }
         }
 
+        // Update pagination links
         function updatePagination(pagination) {
             const paginationList = document.getElementById('pagination-list');
             paginationList.innerHTML = '';
@@ -252,7 +280,7 @@
             prevPageLink.addEventListener('click', function (e) {
                 e.preventDefault();
                 if (currentPage > 1) {
-                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
+                    fetchSortedData(currentOrder, currentPage - 1, searchQuery);
                 }
             });
             prevPageItem.appendChild(prevPageLink);
@@ -279,13 +307,12 @@
             nextPageLink.addEventListener('click', function (e) {
                 e.preventDefault();
                 if (currentPage < last_page) {
-                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+                    fetchSortedData(currentOrder, currentPage + 1, searchQuery);
                 }
             });
             nextPageItem.appendChild(nextPageLink);
             paginationList.appendChild(nextPageItem);
         }
-
 
         // Create pagination item
         function createPaginationItem(text, page) {
@@ -303,16 +330,14 @@
             return li;
         }
 
-
-        // Handle search input
-        document.getElementById('search-input').addEventListener('input', function () {
-            searchQuery = this.value.trim();
-            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1
-        });
-
         // Reset filters
         function resetFilters() {
             document.getElementById('filterForm').reset();
-            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1
+            searchQuery = ''; // Clear the search query
+            
+            // Debugging: Log resetting action
+            console.log('Filters reset. Fetching default data.');
+
+            fetchSortedData(currentOrder, 1, searchQuery); // Fetch data with default filters and reset to page 1
         }
-        </script>
+    </script>

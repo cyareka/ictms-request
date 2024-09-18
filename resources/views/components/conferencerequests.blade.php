@@ -281,145 +281,153 @@
     function convertAvailability(availability) {
         return availability > 0 ? 'Available' : 'Not Available';
     }
-    document.querySelector('.form-input').addEventListener('input', function () {
-        document.getElementById('searchInput').value = this.value;
-    });
 
     document.addEventListener('DOMContentLoaded', function () {
-    let currentPage = 1;
-    const itemsPerPage = 5;
-    let lastPage = 1;
-    let searchQuery = '';
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        let lastPage = 1;
+        let searchQuery = '';
 
-    function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
-        const form = document.getElementById('filterForm');
-        const formData = new FormData(form);
+        function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
+            const form = document.getElementById('filterForm');
+            const formData = new FormData(form);
 
-        formData.append('order', order);
-        formData.append('sort', 'created_at');
-        formData.append('page', page);
-        formData.append('per_page', itemsPerPage);
+            // Append ordering and pagination data
+            formData.append('order', order);
+            formData.append('sort', 'created_at');
+            formData.append('page', page);
+            formData.append('per_page', itemsPerPage);
 
-        const params = new URLSearchParams(formData).toString();
+            // Fetch the search query from the input field (this avoids duplication)
+            const searchInput = document.querySelector('.form-input').value;
+            formData.set('search', searchInput); // Use set instead of append to prevent duplicates
 
-        fetch(`/fetchSortedRequests?${params}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                updateTable(data.data);
-                updatePagination(data.pagination);
-                currentPage = data.pagination.current_page;
-                lastPage = data.pagination.last_page;
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-                alert(`An error occurred while fetching data: ${error.message}`);
-            });
-    }
+            const params = new URLSearchParams(formData).toString();
 
-    function updatePagination(pagination) {
-        currentPage = pagination.current_page;
-        lastPage = pagination.last_page;
-
-        const paginationList = document.getElementById('pagination-list');
-        paginationList.innerHTML = '';
-
-        // Add "Prev" button
-        const prevPageItem = document.createElement('li');
-        const prevPageLink = document.createElement('a');
-        prevPageLink.href = '#';
-        prevPageLink.classList.add('prev');
-        prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
-        prevPageLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (currentPage > 1) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
-            }
-        });
-        prevPageItem.appendChild(prevPageLink);
-        paginationList.appendChild(prevPageItem);
-
-        // Add numbered page links
-        for (let i = 1; i <= lastPage; i++) {
-            const pageItem = document.createElement('li');
-            const pageLink = document.createElement('a');
-            pageLink.href = '#';
-            pageLink.textContent = i;
-            if (i === currentPage) {
-                pageLink.style.color = 'white';
-                pageLink.style.backgroundColor = '#4285f4';
-            }
-            pageLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), i, searchQuery);
-            });
-            pageItem.appendChild(pageLink);
-            paginationList.appendChild(pageItem);
+            fetch(`/fetchSortedRequests?${params}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    updateTable(data.data);
+                    updatePagination(data.pagination);
+                    currentPage = data.pagination.current_page;
+                    lastPage = data.pagination.last_page;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                    alert(`An error occurred while fetching data: ${error.message}`);
+                });
         }
 
-        // Add "Next" button
-        const nextPageItem = document.createElement('li');
-        const nextPageLink = document.createElement('a');
-        nextPageLink.href = '#';
-        nextPageLink.classList.add('next');
-        nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
-        nextPageLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (currentPage < lastPage) {
-                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-            }
-        });
-        nextPageItem.appendChild(nextPageLink);
-        paginationList.appendChild(nextPageItem);
-    }
+        function updatePagination(pagination) {
+            currentPage = pagination.current_page;
+            lastPage = pagination.last_page;
 
-    function updateTable(data) {
-        console.log('Received data:', data);
-        let tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
+            const paginationList = document.getElementById('pagination-list');
+            paginationList.innerHTML = '';
 
-        if (Array.isArray(data) && data.length > 0) {
-            data.forEach(request => {
-                console.log("Full request object:", request);
-                console.log("Processing CRequestID:", request.CRequestID);
-
-                let formStatusClass = '';
-                switch (request.FormStatus.toLowerCase()) {
-                    case 'approved':
-                        formStatusClass = 'approved';
-                        break;
-                    case 'for approval':
-                        formStatusClass = 'for-approval';
-                        break;
-                    case 'pending':
-                        formStatusClass = 'pending';
-                        break;
+            // Add "Prev" button
+            const prevPageItem = document.createElement('li');
+            const prevPageLink = document.createElement('a');
+            prevPageLink.href = '#';
+            prevPageLink.classList.add('prev');
+            prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
+            prevPageLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
                 }
+            });
+            prevPageItem.appendChild(prevPageLink);
+            paginationList.appendChild(prevPageItem);
 
-                let row = `<tr>
-                <th scope="row">${request.CRequestID}</th>
-                <td>
-                    ${new Date(request.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                    })}
-                    <br>
-                    ${new Date(request.created_at).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                    })}
-                </td>
-                <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
-                <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
-                <td>${request.date_start}</td>
-                <td>${request.time_start}</td>
-                <td>${convertAvailability(request.CAvailability)}</td>
-                <td><span class="${formStatusClass}">${request.FormStatus}</span></td>
-                <td>${request.EventStatus}</td>
-                <td>
-                    <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>`;
+            // Add numbered page links
+            for (let i = 1; i <= lastPage; i++) {
+                const pageItem = document.createElement('li');
+                const pageLink = document.createElement('a');
+                pageLink.href = '#';
+                pageLink.textContent = i;
+                if (i === currentPage) {
+                    pageLink.style.color = 'white';  
+                    pageLink.style.backgroundColor = '#4285f4'; 
+                }
+                pageLink.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), i, searchQuery);
+                });
+                pageItem.appendChild(pageLink);
+                paginationList.appendChild(pageItem);
+            }
+
+            // Add "Next" button
+            const nextPageItem = document.createElement('li');
+            const nextPageLink = document.createElement('a');
+            nextPageLink.href = '#';
+            nextPageLink.classList.add('next');
+            nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
+            nextPageLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (currentPage < lastPage) { 
+                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+                }
+            });
+            nextPageItem.appendChild(nextPageLink);
+            paginationList.appendChild(nextPageItem);
+        }
+
+        function updateTable(data) {
+            let tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(request => {
+                    let formStatusClass = '';
+                    switch (request.FormStatus.toLowerCase()) {
+                        case 'approved':
+                            formStatusClass = 'approved';
+                            break;
+                        case 'for approval':
+                            formStatusClass = 'for-approval';
+                            break;
+                        case 'pending':
+                            formStatusClass = 'pending';
+                            break;
+                    }
+
+                    let row = `<tr>
+                    <th scope="row">${request.CRequestID}</th>
+                    <td>
+                        ${new Date(request.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                        })}
+                        <br>
+                        ${new Date(request.created_at).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: true
+                        })}
+                    </td>
+                    <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
+                    <td>${request.office ? request.office.OfficeName : 'N/A'}</td>
+                    <td>${request.date_start}</td>
+                    <td>${request.time_start}</td>
+                    <td>${convertAvailability(request.CAvailability)}</td>
+                    <td><span class="${formStatusClass}">${request.FormStatus}</span></td>
+                    <td>${request.EventStatus}</td>
+                    <td>
+                        <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>`;
+                    if (request.FormStatus === 'For Approval') {
+                        row += `<a href="#" onclick="showDownloadModal('/conferencerequest/${request.CRequestID}/view-pdf', '/conferencerequest/${request.CRequestID}/view-unavailable-pdf')">
+                                    <i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i>
+                                </a>`;
+                    } else if (request.FormStatus === 'Approved') {
+                        row += `<a href="/conferencerequest/${request.CRequestID}/view-final-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
+                    } else if(request.FormStatus === 'Pending' && request.CAvailability === 0) {
+                        row += `<a href="/conferencerequest/${request.CRequestID}/view-unavailable-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
+                    }
+                    row += `</td></tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
             } else {
@@ -427,30 +435,35 @@
             }
         }
 
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder, currentPage, searchQuery);
-    });
+        // Sorting event handler
+        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+            e.preventDefault();
+            let order = this.getAttribute('data-order');
+            let newOrder = order === 'asc' ? 'desc' : 'asc';
+            this.setAttribute('data-order', newOrder);
+            fetchSortedData(newOrder, currentPage, searchQuery);
+        });
 
-    document.getElementById('filterForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        searchQuery = document.getElementById('search').value;
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-    });
+        // Form submit event handler for filtering
+        document.getElementById('filterForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            searchQuery = document.querySelector('.form-input').value;
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+        });
 
-    document.querySelector('.cancelbtn').addEventListener('click', function () {
-        document.getElementById('filterForm').reset();
-        searchQuery = '';
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-    });
+        // Reset filters event handler
+        document.querySelector('.cancelbtn').addEventListener('click', function () {
+            document.getElementById('filterForm').reset();
+            searchQuery = '';
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+        });
 
-    document.querySelector('.form-input').addEventListener('input', function () {
-        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
-    });
+        // Search input event handler
+        document.querySelector('.form-input').addEventListener('input', function () {
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+        });
 
-    fetchSortedData();
-});
+        // Initial fetch
+        fetchSortedData();
+    });
 </script>

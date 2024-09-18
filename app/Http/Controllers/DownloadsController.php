@@ -87,7 +87,7 @@ class DownloadsController extends Controller
             $pdf->Write(0, $conferenceRequest->npersons . ' PAX');
 
             $pdf->SetXY(90, 110); // Focal Person
-            if (is_null($conferenceRequest->focalPerson->FPName)) {
+            if (is_null($conferenceRequest->FocalPID)) {
                 $pdf->Write(0, $conferenceRequest->FPOthers);
             } else {
                 $pdf->Write(0, $conferenceRequest->focalPerson->FPName);

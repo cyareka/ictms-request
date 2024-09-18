@@ -273,10 +273,14 @@
             formData.append('per_page', itemsPerPage);
             formData.append('search_query', search);
 
-            const params = new URLSearchParams(formData).toString();
+            // Serialize the form data into query parameters
+            const params = new URLSearchParams();
+            formData.forEach((value, key) => {
+                params.append(key, value);
+            });
 
             // Fetch data with search and sort applied
-            fetch(`/fetchSortedVRequests?${params}`)
+            fetch(`/fetchSortedVRequests?${params.toString()}`)
                 .then(response => response.json())
                 .then(data => {
                     updateTable(data.data, data.pagination);
@@ -298,28 +302,29 @@
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
                     let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
 
-                    let row = `<tr>
-                    <th scope="row">${request.VRequestID}</th>
-                    <td>${new Date(request.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                    })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                    })}</td>
-                    <td>${request.Destination}</td>
-                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
-                    <td>${request.office?.OfficeName || 'N/A'}</td>
-                    <td>${request.date_start}</td>
-                    <td>${request.time_start}</td>
-                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                    <td>${request.EventStatus}</td>
-                    <td>
-                        <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                    </td>
-                </tr>`;
+                    let row = `
+                        <tr>
+                            <th scope="row">${request.VRequestID}</th>
+                            <td>${new Date(request.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                            })}</td>
+                            <td>${request.Destination}</td>
+                            <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
+                            <td>${officeName}</td>
+                            <td>${request.date_start}</td>
+                            <td>${request.time_start}</td>
+                            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                            <td>${request.EventStatus}</td>
+                            <td>
+                                <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                            </td>
+                        </tr>`;
 
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
@@ -330,62 +335,61 @@
             updatePagination(pagination);
         }
 
-    // Function to handle pagination
-    function updatePagination(pagination) {
-    const paginationContainer = document.querySelector('.pagination_rounded ul');
-    paginationContainer.innerHTML = ''; // Clear the current pagination
+        // Function to handle pagination
+        function updatePagination(pagination) {
+            const paginationContainer = document.querySelector('.pagination_rounded ul');
+            paginationContainer.innerHTML = ''; // Clear the current pagination
 
-    // Previous button
-    let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
-    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
+            // Previous button
+            let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
+            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
 
-    // Page numbers
-    for (let page = 1; page <= pagination.last_page; page++) {
-        let activeClass = page === pagination.current_page ? 'active' : '';
+            // Page numbers
+            for (let page = 1; page <= pagination.last_page; page++) {
+                let activeClass = page === pagination.current_page ? 'active' : '';
 
-        // Create the list item element
-        let listItem = document.createElement('li');
-        listItem.className = activeClass;
+                // Create the list item element
+                let listItem = document.createElement('li');
+                listItem.className = activeClass;
 
-        // Create the anchor element
-        let pageLink = document.createElement('a');
-        pageLink.href = '#';
-        pageLink.textContent = page;
+                // Create the anchor element
+                let pageLink = document.createElement('a');
+                pageLink.href = '#';
+                pageLink.textContent = page;
 
-        // If it's the current page, change the font color
-        if (page === pagination.current_page) {
-            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
-            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+                // If it's the current page, change the font color
+                if (page === pagination.current_page) {
+                    pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+                    pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+                }
+
+                // Append the anchor to the list item
+                listItem.appendChild(pageLink);
+
+                // Append the list item to the pagination container
+                paginationContainer.appendChild(listItem);
+            }
+
+            // Next button
+            let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
         }
 
+        // Event listeners for pagination links
+        document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                let text = e.target.textContent.trim();
 
-        // Append the anchor to the list item
-        listItem.appendChild(pageLink);
-
-        // Append the list item to the pagination container
-        paginationContainer.appendChild(listItem);
-    }
-
-    // Next button
-    let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
-    paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
-}
-
-// Event listeners for pagination links
-document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') {
-        e.preventDefault();
-        let text = e.target.textContent.trim();
-
-        if (text === 'Prev' && currentPage > 1) {
-            fetchSortedData('desc', currentPage - 1, searchQuery);
-        } else if (text === 'Next' && currentPage < lastPage) {
-            fetchSortedData('desc', currentPage + 1, searchQuery);
-        } else if (!isNaN(text)) {
-            fetchSortedData('desc', parseInt(text), searchQuery);
-        }
-    }
-});
+                if (text === 'Prev' && currentPage > 1) {
+                    fetchSortedData('desc', currentPage - 1, searchQuery);
+                } else if (text === 'Next' && currentPage < lastPage) {
+                    fetchSortedData('desc', currentPage + 1, searchQuery);
+                } else if (!isNaN(text)) {
+                    fetchSortedData('desc', parseInt(text), searchQuery);
+                }
+            }
+        });
 
         // Sort by date when clicking on the "Sort" button
         document.getElementById('sort-date-requested').addEventListener('click', function (e) {
@@ -399,7 +403,7 @@ document.querySelector('.pagination_rounded').addEventListener('click', function
         // Handle form submission and search
         document.getElementById('filterForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            searchQuery = document.getElementById('search-input').value.trim(); // Update searchQuery from the input field
+            searchQuery = document.querySelector('.form-input').value.trim(); // Update searchQuery from the input field
             fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
         });
 
@@ -419,5 +423,4 @@ document.querySelector('.pagination_rounded').addEventListener('click', function
         // Initial fetch when page loads
         fetchSortedData();
     });
-
 </script>

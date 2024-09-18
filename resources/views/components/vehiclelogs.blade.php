@@ -1,80 +1,16 @@
 <style>
-     .modal-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        top: -10%;
-        left: 73%;
-        width: 20%;
-        height: 100%;
-    }
-
-    .modal-content {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    .close {
-        color: #aaa;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-    }
-
-    .btn {
-        display: inline-block;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        text-align: center;
-        text-decoration: none;
-        outline: none;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        border-radius: 5px;
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-    }
     .pagination_rounded, .pagination_square {
-    display: inline-block;
-    margin-left:460px;
-    margin-top:10px;
-    margin-bottom: 0;
+        display: inline-block;
+        margin-top: 15px;
+        text-align: center; /* Center the pagination buttons */
+        width: 100%; /* Ensure the container takes the full width */
     }
 
     .pagination_rounded ul {
         margin: 0;
         padding: 0;
         list-style: none;
+        display: inline-block; /* Make the list inline-block to center it */
     }
 
     .pagination_rounded li:first-child {
@@ -93,7 +29,7 @@
     }
 
     a:link {
-    text-decoration: none;
+        text-decoration: none;
     }
 
     .pagination_rounded .prev {
@@ -103,7 +39,6 @@
         height: 34px;
         line-height: 34px;
     }
-
 
     .pagination_rounded ul li a {
         float: left;
@@ -129,9 +64,37 @@
     }
 
     .visible-xs {
-        display: none!important;
+        display: none !important;
     }
+    /* Add custom styles for the refresh button */
+    #refreshBtn {
+        cursor: pointer;
+        color: #000;
+        font-size: 24px;
+        transition: color 0.3s ease;
+        margin-left:850px;
+        transition: transform 0.5s ease;
+        cursor: pointer;
+    }
+
+    #refreshBtn:hover {
+        transform: rotate(360deg);
+    }
+
+    /* #refreshBtn.disabled {
+        color: #ccc;
+        cursor: not-allowed;
+    } */
 </style>
+<script>
+    let isCooldown = false;
+
+    function refreshPage() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        // Perform refresh action
+        location.reload(); // or any specific refresh logic if needed
+    }
+</script>
 <div class="requests">
     <div class="filter">
         <div class="row height d-flex justify-content-left align-items-left">
@@ -143,72 +106,53 @@
             </div>
         </div>
         <div class="tableactions">
-            <div id="divide">
-                <a href="javascript:void(0);" id="downloadLink"><i class="bi bi-download"
-                                                                   style="font-size:16px; margin-right:14px;"></i></a>
-                <div id="dateRangeModal" class="modal" style="display: none;">
-                <div class="modal-container">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <h2>Select Date Range</h2>
-                        <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
-                            @csrf
-                            <div class="form-group">
-                                <label for="startDate">Start Date:</label>
-                                <input type="date" id="startDate" name="startDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="endDate">End Date:</label>
-                                <input type="date" id="endDate" name="endDate" required>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Download</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                </div>
-                <div class="dropdown" style="float:right;">
-                    <button class="dropbtn"><i class="bi bi-filter"></i></button>
+            <div id="divide"></div>
+            <div class="dropdown" style="float:right;">
+                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh" style="font-size: 16px; margin-right: 10px;"></i>
+                <button class="dropbtn"><i class="bi bi-filter"></i></button>
+                <form id="filterForm" method="GET" action="{{ route('fetchSortedVRequests') }}">
                     <div class="dropdown-content">
                         <p id="filterlabel">Filter By</p>
                         <hr>
                         <p>Status</p>
                         <a>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <input class="form-check-input" type="checkbox" value="Pending" name="form_statuses[]">
                                 <label class="form-check-label" for="flexCheckDefault">
-                                    Not Approved
+                                    Pending
+                                </label>
+                            </div>
+                        </a>
+                        <a>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="form_statuses[]"
+                                       value="For Approval" id="flexCheckDefault2">
+                                <label class="form-check-label" for="flexCheckDefault2">
+                                    For Approval
                                 </label>
                             </div>
                         </a>
                         <a>
                             <div class="form-check" id="margincheck">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <input class="form-check-input" type="checkbox" value="Approved" name="form_statuses[]">
                                 <label class="form-check-label" for="flexCheckDefault">
-                                    Approved and Cancelled
-                                </label>
-                            </div>
-                        </a>
-                        <a>
-                            <div class="form-check" id="margincheck">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Approved and Finished
+                                    Approved and Ongoing
                                 </label>
                             </div>
                         </a>
                         <hr>
                         <div class="buttons">
-                            <button class="cancelbtn">Remove</button>
-                            <button class="applybtn">Filter</button>
+                            <button type="button" class="cancelbtn" onclick="resetFilters()">Remove</button>
+                            <button type="submit" class="applybtn">Filter</button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
     <br>
+
+    {{-- display the table of vehicle requests --}}
     <div class="tabview">
         <table class="table table-bordered">
             <thead>
@@ -219,12 +163,11 @@
                         Date & Time Requested
                     </a>
                 </th>
-                <th scope="col">Place of Travel</th>
+                <th scope="col">Destination</th>
                 <th scope="col">Purpose</th>
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date Needed</th>
                 <th scope="col">Time Needed</th>
-                <th scope="col">Availability</th>
                 <th scope="col">Form Status</th>
                 <th scope="col">Event Status</th>
                 <th scope="col"></th>
@@ -232,28 +175,54 @@
             </thead>
             <tbody>
             @php
-            $filteredRequests = App\Models\VehicleRequest::with('office')
-                ->whereIn('FormStatus', ['Approved', 'Not Approved'])
-                ->whereIn('EventStatus', ['Finished', 'Cancelled', '-'])
-                ->get();
+                use Carbon\Carbon;
+                use App\Models\VehicleRequest;
 
+                // Get the current date and time
+                $now = Carbon::now('Asia/Manila');
+
+                // Fetch requests that need to be updated
+                $filteredRequests = VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
+                    ->whereIn('EventStatus', ['Ongoing', '-'])
+                    ->get();
+
+                foreach ($filteredRequests as $request) {
+                    // Check if the FormStatus is Pending or For Approval and date/time has passed
+                    if (in_array($request->FormStatus, ['Pending', 'For Approval'])) {
+                        if ($request->date_start < $now->toDateString() ||
+                            ($request->date_start == $now->toDateString() && $request->time_start < $now->toTimeString())) {
+
+                            // Update FormStatus to Not Approved if date/time exceeded
+                            $request->FormStatus = 'Not Approved';
+                            $request->save();
+                        }
+                    }
+
+                    // Check if the FormStatus is Approved and EventStatus is Ongoing, and date/time has passed
+                    if ($request->FormStatus == 'Approved') {
+                        if ($request->date_end < $now->toDateString()) {
+
+                            // Update EventStatus to Finished if date/time exceeded
+                            $request->EventStatus = 'Finished';
+                            $request->save();
+                        }
+                    }
+                }
             @endphp
 
             @foreach($filteredRequests as $request)
-                <tr>
+            <tr>
                     <th scope="row">{{ $request->VRequestID }}</th>
                     <td>{{ $request->created_at->format('m-d-Y (h:i A)') }}</td>
                     <td>{{ $request->Destination }}</td>
                     <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
-                    <td>{{ App\Models\Office::find($request->OfficeID)->OfficeName}}</td>
+                    <td>{{ $request->office->OfficeName }}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard"
-                                                                                           id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
+                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -283,166 +252,175 @@
                         </ul>
          </div>
     </div>
+</div>
 <div class="end"></div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    let currentPage = 1;
-    const itemsPerPage = 10;
-    let lastPage = 1;
-    let searchQuery = '';
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        let lastPage = 1;
+        let searchQuery = '';
 
-    // Fetch sorted and paginated data
-    function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
-        const formData = new FormData();
-        formData.append('order', order);
-        formData.append('sort', 'created_at');
-        formData.append('page', page);
-        formData.append('per_page', itemsPerPage);
-        formData.append('search_query', search); // Attach the search query here
+        function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
+            const form = document.getElementById('filterForm');
+            const formData = new FormData(form);
 
-        const params = new URLSearchParams(formData).toString();
+            // Append necessary data
+            formData.append('order', order);
+            formData.append('sort', 'created_at');
+            formData.append('page', page);
+            formData.append('per_page', itemsPerPage);
+            formData.append('search_query', search);
 
-        fetch(`/fetchSortedVLogRequests?${params}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data.data, data.pagination);
-                currentPage = data.pagination.current_page;
-                lastPage = data.pagination.last_page;
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
+            // Serialize the form data into query parameters
+            const params = new URLSearchParams();
+            formData.forEach((value, key) => {
+                params.append(key, value);
             });
-    }
 
-    // Update table data
-    function updateTable(data, pagination) {
-        let tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
-
-        if (Array.isArray(data) && data.length > 0) {
-            data.forEach(request => {
-                // let officeName = request.office ? request.office.OfficeName : 'N/A';
-                // let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
-                let row = `<tr>
-                    <th scope="row">${request.VRequestID}</th>
-                    <td>${new Date(request.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                    })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true
-                    })}</td>
-                    <td>${request.Destination}</td>
-                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
-                    <td>{{ App\Models\Office::find($request->OfficeID)->OfficeName}}</td>
-                    <td>${request.date_start}</td>
-                    <td>${request.time_start}</td>
-                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                    <td>${request.EventStatus}</td>
-                    <td>
-                        <a href="/vehiclerequest/${request.VRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
-                        <i class="bi bi-download" id="actions"></i>
-                    </td>
-                </tr>`;
-                tbody.insertAdjacentHTML('beforeend', row);
-            });
-        } else {
-            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+            // Fetch data with search and sort applied
+            fetch(`/fetchSortedVRequests?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateTable(data.data, data.pagination);
+                    currentPage = data.pagination.current_page;
+                    lastPage = data.pagination.last_page;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
         }
 
-        updatePagination(pagination);
-    }
+        // Function to update the table with the fetched data
+        function updateTable(data, pagination) {
+            let tbody = document.querySelector('tbody');
+            tbody.innerHTML = '';
 
-    // Function to handle pagination
-    function updatePagination(pagination) {
-    const paginationContainer = document.querySelector('.pagination_rounded ul');
-    paginationContainer.innerHTML = ''; // Clear the current pagination
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(request => {
+                    let officeName = request.office ? request.office.OfficeName : 'N/A';
+                    let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
 
-    // Previous button
-    let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
-    paginationContainer.insertAdjacentHTML('beforeend', `
-        <li>
-            <a href="#" class="prev ${prevDisabled}">
-                <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
-            </a>
-        </li>
-    `);
+                    let row = `
+                        <tr>
+                            <th scope="row">${request.VRequestID}</th>
+                            <td>${new Date(request.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                            })}</td>
+                            <td>${request.Destination}</td>
+                            <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
+                            <td>${officeName}</td>
+                            <td>${request.date_start}</td>
+                            <td>${request.time_start}</td>
+                            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                            <td>${request.EventStatus}</td>
+                            <td>
+                                <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                            </td>
+                        </tr>`;
 
-    // Page numbers
-    for (let page = 1; page <= pagination.last_page; page++) {
-        let activeClass = page === pagination.current_page ? 'active' : '';
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+            }
 
-        // Create the list item element
-        let listItem = document.createElement('li');
-        listItem.className = activeClass;
-
-        // Create the anchor element
-        let pageLink = document.createElement('a');
-        pageLink.href = '#';
-        pageLink.textContent = page;
-
-        // If it's the current page, change the font color
-        if (page === pagination.current_page) {
-            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
-            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+            updatePagination(pagination);
         }
 
+        // Function to handle pagination
+        function updatePagination(pagination) {
+            const paginationContainer = document.querySelector('.pagination_rounded ul');
+            paginationContainer.innerHTML = ''; // Clear the current pagination
 
-        // Append the anchor to the list item
-        listItem.appendChild(pageLink);
+            // Previous button
+            let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
+            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="prev ${prevDisabled}">Prev</a></li>`);
 
-        // Append the list item to the pagination container
-        paginationContainer.appendChild(listItem);
-    }
+            // Page numbers
+            for (let page = 1; page <= pagination.last_page; page++) {
+                let activeClass = page === pagination.current_page ? 'active' : '';
 
-    // Next button
-    let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
-    paginationContainer.insertAdjacentHTML('beforeend', `
-        <li>
-            <a href="#" class="next ${nextDisabled}">
-                Next <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </a>
-        </li>
-    `);
-}
+                // Create the list item element
+                let listItem = document.createElement('li');
+                listItem.className = activeClass;
 
-// Event listeners for pagination links
-document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') {
-        e.preventDefault();
-        let text = e.target.textContent.trim();
+                // Create the anchor element
+                let pageLink = document.createElement('a');
+                pageLink.href = '#';
+                pageLink.textContent = page;
 
-        if (text === 'Prev' && currentPage > 1) {
-            fetchSortedData('desc', currentPage - 1, searchQuery);
-        } else if (text === 'Next' && currentPage < lastPage) {
-            fetchSortedData('desc', currentPage + 1, searchQuery);
-        } else if (!isNaN(text)) {
-            fetchSortedData('desc', parseInt(text), searchQuery);
+                // If it's the current page, change the font color
+                if (page === pagination.current_page) {
+                    pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+                    pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+                }
+
+                // Append the anchor to the list item
+                listItem.appendChild(pageLink);
+
+                // Append the list item to the pagination container
+                paginationContainer.appendChild(listItem);
+            }
+
+            // Next button
+            let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+            paginationContainer.insertAdjacentHTML('beforeend', `<li><a href="#" class="next ${nextDisabled}">Next</a></li>`);
         }
-    }
-});
 
-    // Sorting event
-    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-        e.preventDefault();
-        let order = this.getAttribute('data-order');
-        let newOrder = order === 'asc' ? 'desc' : 'asc';
-        this.setAttribute('data-order', newOrder);
-        fetchSortedData(newOrder, currentPage, searchQuery);
-    });
+        // Event listeners for pagination links
+        document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                let text = e.target.textContent.trim();
 
-    // Search query
-    document.querySelectorAll('.form-input').forEach(input => {
-        input.addEventListener('input', function () {
-            searchQuery = document.querySelector('.form-input').value;
+                if (text === 'Prev' && currentPage > 1) {
+                    fetchSortedData('desc', currentPage - 1, searchQuery);
+                } else if (text === 'Next' && currentPage < lastPage) {
+                    fetchSortedData('desc', currentPage + 1, searchQuery);
+                } else if (!isNaN(text)) {
+                    fetchSortedData('desc', parseInt(text), searchQuery);
+                }
+            }
+        });
+
+        // Sort by date when clicking on the "Sort" button
+        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+            e.preventDefault();
+            let order = this.getAttribute('data-order');
+            let newOrder = order === 'asc' ? 'desc' : 'asc';
+            this.setAttribute('data-order', newOrder);
+            fetchSortedData(newOrder, currentPage, searchQuery);
+        });
+
+        // Handle form submission and search
+        document.getElementById('filterForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            searchQuery = document.querySelector('.form-input').value.trim(); // Update searchQuery from the input field
             fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
         });
+
+        // Handle reset functionality
+        document.querySelector('.cancelbtn').addEventListener('click', function () {
+            document.getElementById('filterForm').reset();
+            searchQuery = ''; // Reset searchQuery
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'));
+        });
+
+        // Instant search functionality while typing
+        document.querySelector('.form-input').addEventListener('input', function () {
+            searchQuery = this.value.trim(); // Update searchQuery on input change
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
+        });
+
+        // Initial fetch when page loads
+        fetchSortedData();
     });
-
-    // Initial fetch
-    fetchSortedData();
-});
-
 </script>

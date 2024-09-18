@@ -179,7 +179,10 @@
                                     <p><strong>Destination:</strong> ${event.Destination || 'N/A'}</p>
                                     <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
                                     <p><strong>Status:</strong> ${event.EventStatus || 'N/A'}</p>
-                                    ${event.fileUrl ? `<a href="${event.fileUrl}" class="download-btn" download>Download File</a>` : ''}
+                                     ${(event.FormStatus === 'For Approval' || event.FormStatus === 'Approved' || event.FormStatus === 'Not Approved') ? 
+            `<a href="/vehiclerequest/${event.VRequestID}/view-pdf">
+                <button class="download-btn" style="background-color: #354e7d; color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 10px; font-size: 16px;" type="button">Download</button>
+            </a>` : ''}
                                 </div>`;
                         });
                     } else {
