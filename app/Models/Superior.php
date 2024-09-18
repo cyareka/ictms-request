@@ -16,6 +16,7 @@ class Superior extends Model
         'SuperiorID',
         'SName',
         'Designation',
+        'status',
     ];
 
 }

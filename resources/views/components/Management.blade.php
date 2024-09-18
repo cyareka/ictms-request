@@ -705,12 +705,14 @@
                         <th scope="col">ID</th>
                         <th scope="col">Name</th>
                         <th scope="col">Designation</th>
+                        <th scope="col">Status</th>   <!--1 is active , 0 is inactive--!>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     @if($super->isEmpty())
                         <tr>
-                            <td colspan="3">Data is not available.</td>
+                            <td colspan="5">Data is not available.</td>
                         </tr>
                     @else
                         @foreach($super as $item)
@@ -718,6 +720,16 @@
                                 <th scope="row">{{ $item->SuperiorID }}</th>
                                 <td>{{ $item->SName }}</td>
                                 <td>{{ $item->Designation }}</td>
+                                <td>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</td> 
+                                <td>
+                                    <form action="{{ route('superior.toggleStatus', $item->SuperiorID) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-sm {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }}">
+                                            {{ $item->status == 1 ? 'Inactivate' : 'Activate' }}
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                     @endif

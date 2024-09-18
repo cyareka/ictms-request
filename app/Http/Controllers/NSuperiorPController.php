@@ -39,4 +39,16 @@ class NSuperiorPController extends Controller
 
         return redirect()->back()->with('success', 'Superior added successfully!');
     }
+
+    public function toggleStatus($id)
+{
+    $superior = Superior::find($id);
+
+    if ($superior) {
+        $superior->status = $superior->status == 1 ? 0 : 1;
+        $superior->save();
+    }
+
+    return redirect()->back()->with('status', 'Status updated successfully!');
+}
 }
