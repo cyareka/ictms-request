@@ -681,4 +681,35 @@ class VehicleController extends Controller
     ]);
 }
 
+public function getVehicleUsage()
+{
+    // Fetch vehicle types and their usage counts
+    $vehicleUsage = \DB::table('vehicle_request')
+        ->leftJoin('vehicle', 'vehicle_request.VehicleID', '=', 'vehicle.VehicleID') // Use LEFT JOIN
+        ->select('vehicle.VehicleType', \DB::raw('COUNT(vehicle_request.VehicleID) as count'))
+        ->groupBy('vehicle.VehicleType')
+        ->get();
+
+    // Prepare data for the chart
+    $dataPoints = [];
+    $totalCount = $vehicleUsage->sum('count');
+
+    if ($totalCount > 0) {
+        foreach ($vehicleUsage as $usage) {
+            // Check if VehicleType is null, and use a fallback label
+            $vehicleType = $usage->VehicleType ?? 'Unknown Vehicle Type';
+            $percentage = ($usage->count / $totalCount) * 100; // Calculate percentage
+            $dataPoints[] = ['y' => round($percentage, 2), 'label' => $vehicleType];
+        }
+    } else {
+        // Optionally, provide a fallback if no data is available
+        $dataPoints[] = ['y' => 100, 'label' => 'No Data Available'];
+    }
+
+    // Log dataPoints for debugging
+    Log::info('dataPoints:', $dataPoints);
+
+    return view('VehicleStatistics', ['dataPoints' => $dataPoints]);
+}
+
 }
