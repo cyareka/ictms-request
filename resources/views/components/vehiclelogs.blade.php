@@ -226,7 +226,6 @@
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date Needed</th>
                 <th scope="col">Time Needed</th>
-                <th scope="col">Availability</th>
                 <th scope="col">Form Status</th>
                 <th scope="col">Event Status</th>
                 <th scope="col"></th>
@@ -253,8 +252,7 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard"
-                                                                                           id="actions"></i></a>
+                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
                     </td>
                 </tr>
             @endforeach
@@ -337,6 +335,7 @@
                         })}</td>
                     <td>${request.Destination}</td>
                     <td>{{ isset($request) ? optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers : '' }}</td>
+                    <td>{{ isset($request) ? App\Models\Office::find($request->OfficeID)->OfficeName : '' }}</td>
                     <td>${request.date_start}</td>
                     <td>${request.time_start}</td>
                     <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
