@@ -348,8 +348,8 @@
                 pageLink.href = '#';
                 pageLink.textContent = i;
                 if (i === currentPage) {
-                    pageLink.style.color = 'white';  
-                    pageLink.style.backgroundColor = '#4285f4'; 
+                    pageLink.style.color = 'white';
+                    pageLink.style.backgroundColor = '#4285f4';
                 }
                 pageLink.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -367,7 +367,7 @@
             nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
             nextPageLink.addEventListener('click', function (e) {
                 e.preventDefault();
-                if (currentPage < lastPage) { 
+                if (currentPage < lastPage) {
                     fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
                 }
             });
@@ -418,15 +418,6 @@
                     <td>${request.EventStatus}</td>
                     <td>
                         <a href="/conferencerequest/${request.CRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>`;
-                    if (request.FormStatus === 'For Approval') {
-                        row += `<a href="#" onclick="showDownloadModal('/conferencerequest/${request.CRequestID}/view-pdf', '/conferencerequest/${request.CRequestID}/view-unavailable-pdf')">
-                                    <i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i>
-                                </a>`;
-                    } else if (request.FormStatus === 'Approved') {
-                        row += `<a href="/conferencerequest/${request.CRequestID}/view-final-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
-                    } else if(request.FormStatus === 'Pending' && request.CAvailability === 0) {
-                        row += `<a href="/conferencerequest/${request.CRequestID}/view-unavailable-pdf" target="_blank"><i class="bi bi-download" id="actions" data-request-id="${request.CRequestID}"></i></a>`;
-                    }
                     row += `</td></tr>`;
                     tbody.insertAdjacentHTML('beforeend', row);
                 });

@@ -66,13 +66,14 @@
     .visible-xs {
         display: none !important;
     }
+
     /* Add custom styles for the refresh button */
     #refreshBtn {
         cursor: pointer;
         color: #000;
         font-size: 24px;
         transition: color 0.3s ease;
-        margin-left:850px;
+        margin-left: 850px;
         transition: transform 0.5s ease;
         cursor: pointer;
     }
@@ -108,7 +109,8 @@
         <div class="tableactions">
             <div id="divide"></div>
             <div class="dropdown" style="float:right;">
-                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh" style="font-size: 16px; margin-right: 10px;"></i>
+                <i id="refreshBtn" class="bi bi-arrow-clockwise" onclick="refreshPage()" title="Refresh"
+                   style="font-size: 16px; margin-right: 10px;"></i>
                 <button class="dropbtn"><i class="bi bi-filter"></i></button>
                 <form id="filterForm" method="GET" action="{{ route('fetchSortedVRequests') }}">
                     <div class="dropdown-content">
@@ -184,6 +186,7 @@
                 // Fetch requests that need to be updated
                 $filteredRequests = VehicleRequest::whereIn('FormStatus', ['Approved', 'Pending', 'For Approval'])
                     ->whereIn('EventStatus', ['Ongoing', '-'])
+                    ->with('purpose_request')
                     ->get();
 
                 foreach ($filteredRequests as $request) {
@@ -211,7 +214,7 @@
             @endphp
 
             @foreach($filteredRequests as $request)
-            <tr>
+                <tr>
                     <th scope="row">{{ $request->VRequestID }}</th>
                     <td>{{ $request->created_at->format('m-d-Y (h:i A)') }}</td>
                     <td>{{ $request->Destination }}</td>
@@ -222,35 +225,36 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil" id="actions"></i></a>
+                        <a href="{{ route('VehicledetailEdit', $request->VRequestID) }}"><i class="bi bi-pencil"
+                                                                                            id="actions"></i></a>
                     </td>
                 </tr>
             @endforeach
             </tbody>
         </table>
         <div class="pagination_rounded">
-                        <ul>
-                            <li>
-                                <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
-                            </li>
-                            <li><a href="#">1</a>
-                            </li>
-							<li class="hidden-xs"><a href="#">2</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">3</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">4</a>
-                            </li>
-                            <li class="hidden-xs"><a href="#">5</a>
-                            </li>
-							<li class="visible-xs"><a href="#">...</a>
-                            </li>
-							<li><a href="#">6</a>
-                            </li>
-                            <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                            </li>
-                        </ul>
-         </div>
+            <ul>
+                <li>
+                    <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
+                </li>
+                <li><a href="#">1</a>
+                </li>
+                <li class="hidden-xs"><a href="#">2</a>
+                </li>
+                <li class="hidden-xs"><a href="#">3</a>
+                </li>
+                <li class="hidden-xs"><a href="#">4</a>
+                </li>
+                <li class="hidden-xs"><a href="#">5</a>
+                </li>
+                <li class="visible-xs"><a href="#">...</a>
+                </li>
+                <li><a href="#">6</a>
+                </li>
+                <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <div class="end"></div>
@@ -294,41 +298,49 @@
 
         // Function to update the table with the fetched data
         function updateTable(data, pagination) {
+            console.log('updateTable called with data:', data);
+            console.log('updateTable called with pagination:', pagination);
+
             let tbody = document.querySelector('tbody');
             tbody.innerHTML = '';
 
             if (Array.isArray(data) && data.length > 0) {
+                console.log('Data is an array with', data.length, 'items');
                 data.forEach(request => {
+                    console.log('Processing request:', request);
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
-                    let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
+                    let purposeName = request.PurposeOthers || request.PurposeID || 'N/A';
 
                     let row = `
-                        <tr>
-                            <th scope="row">${request.VRequestID}</th>
-                            <td>${new Date(request.created_at).toLocaleDateString('en-US', {
-                                year: 'numeric',
-                                month: '2-digit',
-                                day: '2-digit'
-                            })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true
-                            })}</td>
-                            <td>${request.Destination}</td>
-                            <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
-                            <td>${officeName}</td>
-                            <td>${request.date_start}</td>
-                            <td>${request.time_start}</td>
-                            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
-                            <td>${request.EventStatus}</td>
-                            <td>
-                                <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
-                            </td>
-                        </tr>`;
+                    <tr>
+                      <th scope="row">${request.VRequestID}</th>
+                      <td>${new Date(request.created_at).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit'
+                                })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true
+                                })}</td>
+                      <td>${request.Destination}</td>
+
+                    <td>{{ isset($request) ? optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers : '' }}</td>
+
+                      <td>${officeName}</td>
+                      <td>${request.date_start}</td>
+                      <td>${request.time_start}</td>
+                      <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                      <td>${request.EventStatus}</td>
+                      <td>
+                        <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
+                      </td>
+                    </tr>`;
 
                     tbody.insertAdjacentHTML('beforeend', row);
                 });
             } else {
+                console.log('No data found');
                 tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
             }
 

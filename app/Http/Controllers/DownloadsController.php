@@ -125,15 +125,16 @@ class DownloadsController extends Controller
                 $pdf->Write(0, $conferenceRequest->tables);
             }
 
-            $pdf->SetXY(30.4, 225.9); // RequesterSignature
-            $pdf->Write(0, $conferenceRequest->RequesterName);
-
             $signaturePath = Storage::disk('public')->path($conferenceRequest->RequesterSignature);
             if (file_exists($signaturePath) && is_readable($signaturePath)) {
                 $pdf->Image($signaturePath, 30, 216.9, 30, 10);
             } else {
                 Log::error('Signature file not found or not readable.', ['signaturePath' => $signaturePath]);
             }
+
+            $pdf->SetXY(30.4, 225.9); // RequesterSignature
+            $pdf->Write(0, $conferenceRequest->RequesterName);
+
 
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Request.pdf');

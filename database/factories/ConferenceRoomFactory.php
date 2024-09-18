@@ -45,7 +45,7 @@ class ConferenceRoomFactory extends Factory
                 'CRoomID' => $generatedID,
                 'CRoomName' => 'Magiting',
                 'Capacity' => 50,
-                'Location' => 'Diamond Building',
+                'Location' => 'Emerald Building',
             ];
         });
     }
