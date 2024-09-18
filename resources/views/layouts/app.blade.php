@@ -141,16 +141,16 @@
         }
 
         .tabview {
-            font-family: Arial, sans-serif;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             border-collapse: collapse;
             width: 100%;
-            font-size: 15px;
+            font-size: 14px;
             overflow-x: auto;
-            border-radius: 10px;
-            background-color: #FFFFFF;
-            box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            background-color: #FAFAFA;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
-            z-index: 2; /* Ensure the table is on top of the footer */
+            z-index: 2;
         }
 
         .tabview table {
@@ -160,22 +160,29 @@
         }
 
         .tabview th, .tabview td {
-            padding: 15px;
+            padding: 12px 18px;
             text-align: left;
-            border-bottom: 1px solid #E5E5E5;
+            border-bottom: 1px solid #DADADA;
         }
 
         .tabview th {
-            font-weight: bold;
-            color: #333;
+            font-weight: 600;
+            color: #4A4A4A;
+            background-color: #F1F1F1;
+            border-bottom: 2px solid #DADADA;
         }
 
         .tabview td {
-            color: #666;
+            color: #333;
+            background-color: #FFFFFF;
         }
 
-        .tabview tr:hover {
-            background-color: #F7F7F7;
+        .tabview tr:hover td {
+            background-color: #EFEFEF;
+        }
+
+        .tabview tr:last-child td {
+            border-bottom: none;
         }
 
         .approved {
@@ -411,7 +418,7 @@
 </head>
 <body class="font-sans antialiased">
 <x-banner/>
-<div class="min-h-screen bg-gray-100">
+<div class="min-h-screen" style="background-color: #fafafa;">
     @livewire('navigation-menu')
     <!-- Page Heading -->
     @if (isset($header))

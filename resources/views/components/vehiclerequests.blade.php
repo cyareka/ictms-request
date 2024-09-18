@@ -307,7 +307,19 @@
             if (Array.isArray(data) && data.length > 0) {
                 console.log('Data is an array with', data.length, 'items');
                 data.forEach(request => {
-                    console.log('Processing request:', request);
+                    let formStatusClass = '';
+                    switch (request.FormStatus.toLowerCase()) {
+                        case 'approved':
+                            formStatusClass = 'approved';
+                            break;
+                        case 'for approval':
+                            formStatusClass = 'for-approval';
+                            break;
+                        case 'pending':
+                            formStatusClass = 'pending';
+                            break;
+                    }
+
                     let officeName = request.office ? request.office.OfficeName : 'N/A';
                     let purposeName = request.PurposeOthers || request.PurposeID || 'N/A';
 
@@ -330,7 +342,7 @@
                       <td>${officeName}</td>
                       <td>${request.date_start}</td>
                       <td>${request.time_start}</td>
-                      <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
+                      <td><span class="${formStatusClass}">${request.FormStatus}</span></td>
                       <td>${request.EventStatus}</td>
                       <td>
                         <a href="/vehiclerequest/${request.VRequestID}/edit"><i class="bi bi-pencil" id="actions"></i></a>
