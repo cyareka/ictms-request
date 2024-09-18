@@ -108,30 +108,33 @@
         return colors[Math.floor(Math.random() * colors.length)];
     }
 
-    window.onload = function() {
-        // First Chart
-        var chart1 = new CanvasJS.Chart("chartContainer1", {
-            backgroundColor: "#F2F2F2",
-            animationEnabled: true,
-            title: {
-                text: "Vehicle Type Usage"
-            },
-            data: [{
-                type: "pie",
-                startAngle: 240,
-                yValueFormatString: "##0.00\"%\"",
-                indexLabel: "{label} {y}",
-                dataPoints: [
-                    {y: 79.45, label: "Toyota Hiace"},
-                    {y: 7.31, label: "Suzuki Mini Van"},
-                    {y: 7.06, label: "Hilux"},
-                    {y: 4.91, label: "L300"},
-                    {y: 1.26, label: "Truck"}
-                ]
-            }]
-        });
-        chart1.render();
-    }
+ window.onload = function() {
+            // Ensure dataPoints is defined
+            @if(isset($dataPoints))
+                var dataPoints = @json($dataPoints);
+            @else
+                var dataPoints = [];
+            @endif
+
+            // Debugging: Log dataPoints to console
+            console.log("dataPoints:", dataPoints);
+
+            var chart1 = new CanvasJS.Chart("chartContainer1", {
+                backgroundColor: "#F2F2F2",
+                animationEnabled: true,
+                title: {
+                    text: "Vehicle Type Usage"
+                },
+                data: [{
+                    type: "pie",
+                    startAngle: 240,
+                    yValueFormatString: "##0.00\"%\"",
+                    indexLabel: "{label} {y}",
+                    dataPoints: dataPoints
+                }]
+            });
+            chart1.render();
+        }
 
 });
 </script>
