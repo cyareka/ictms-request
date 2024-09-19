@@ -6,15 +6,15 @@
     <title>Management</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        .alert-danger {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            text-align: center;
-        }
+        /*.alert-danger {*/
+        /*    color: #721c24;*/
+        /*    background-color: #f8d7da;*/
+        /*    border-color: #f5c6cb;*/
+        /*    padding: 10px;*/
+        /*    margin-bottom: 20px;*/
+        /*    border-radius: 5px;*/
+        /*    text-align: center;*/
+        /*}*/
 
         a, a:hover {
             text-decoration: none;
@@ -265,6 +265,16 @@
             border-radius: 5px;
             text-align: center;
         }
+
+        .alert-danger{
+            color: #571515;
+            background-color: #edd4d8;
+            border-color: #e6c3c3;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -276,7 +286,7 @@
         </div>
     @endif
     @if (session('error'))
-        <div class="alert alert-error" role="alert">
+        <div class="alert alert-danger" role="alert">
             {{ session('error') }}
         </div>
     @endif
@@ -723,6 +733,13 @@
                 @php
                     $super = App\Models\Superior::all();
                 @endphp
+
+{{--                @if (session('error'))--}}
+{{--                    <div class="alert alert-danger" role="alert">--}}
+{{--                        {{ session('error') }}--}}
+{{--                    </div>--}}
+{{--                @endif--}}
+
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -744,7 +761,7 @@
                                 <th scope="row">{{ $item->SuperiorID }}</th>
                                 <td>{{ $item->SName }}</td>
                                 <td>{{ $item->Designation }}</td>
-                                <td>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</td>
+                                <td><strong>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</strong></td>
                                 <td>
                                     <form action="{{ route('superior.toggleStatus', $item->SuperiorID) }}" method="POST">
                                         @csrf

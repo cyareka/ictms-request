@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('SName')->nullable();
             $table->string('Designation');
             $table->boolean('status')->default(1);
-            $table->string('term_start')->nullable();
-            $table->string('term_end')->nullable();
             $table->timestamps();
         });
     }

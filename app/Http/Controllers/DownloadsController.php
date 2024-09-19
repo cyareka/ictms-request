@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ConferenceRequest;
+use App\Models\Superior;
 use App\Models\VehicleRequest;
 use App\Models\VRequestPassenger;
 use Carbon\Carbon;
@@ -132,8 +133,16 @@ class DownloadsController extends Controller
                 Log::error('Signature file not found or not readable.', ['signaturePath' => $signaturePath]);
             }
 
-            $pdf->SetXY(30.4, 225.9); // RequesterSignature
+            $pdf->SetXY(30.4, 226.9); // RequesterSignature
             $pdf->Write(0, $conferenceRequest->RequesterName);
+
+            // Retrieve the active SuperiorID
+            $activeSuperior = Superior::where('status', '1')->firstOrFail();
+            $superiorID = $activeSuperior->SName;
+
+            $pdf->SetFont('Arial', 'B', 10);
+            $pdf->SetXY(125, 226.9); // SuperiorID
+            $pdf->Write(0, strtoupper($superiorID));
 
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Request.pdf');
@@ -225,6 +234,14 @@ class DownloadsController extends Controller
 
             $pdf->SetXY(95, 134); // Date Start
             $pdf->Write(0, $conferenceRequest->date_start . ' ' . $conferenceRequest->time_start . ' - ' . $conferenceRequest->date_end . ' ' . $conferenceRequest->time_end);
+
+            // Retrieve the active SuperiorID
+            $activeSuperior = Superior::where('status', '1')->firstOrFail();
+            $superiorID = $activeSuperior->SName;
+
+            $pdf->SetFont('Arial', 'B', 11.5);
+            $pdf->SetXY(24.8, 170); // SuperiorID
+            $pdf->Write(0, strtoupper($superiorID));
 
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Certificate_of_Unavailability.pdf');
@@ -530,11 +547,20 @@ class DownloadsController extends Controller
             }
 
             $pdf->SetFont('Arial', '', 10);
-
             $pdf->SetXY(35, 285); // ASignatory
             $pdf->Write(0, strtoupper($vehicleRequest->asignatory->name));
 
+            // Retrieve the active SuperiorID
+            $activeSuperior = Superior::where('status', '1')->firstOrFail();
+            $superiorID = $activeSuperior->SName;
 
+            $pdf->SetXY(120, 290); // SuperiorID
+            $pdf->Write(0, strtoupper($superiorID));
+
+            $pdf->SetFont('Arial', 'B', 8);
+            $superiorDes = $activeSuperior->Designation;
+            $pdf->SetXY(120, 293); // Superior Designation
+            $pdf->Write(0, strtoupper($superiorDes));
 
             return $pdf->Output('S');
         } catch (Throwable $e) {
@@ -611,6 +637,18 @@ class DownloadsController extends Controller
             $pdf->SetFont('Arial', 'B', 9);
             $pdf->SetXY(20, 83); // ReceivedBy
             $pdf->Write(0, strtoupper($vehicleRequest->receivedBy->name));
+
+            // Retrieve the active SuperiorID
+            $activeSuperior = Superior::where('status', '1')->firstOrFail();
+            $superiorID = $activeSuperior->SName;
+
+            $pdf->SetXY(140, 83); // SuperiorID
+            $pdf->Write(0, strtoupper($superiorID));
+
+            $pdf->SetFont('Arial', '', 9);
+            $superiorDes = $activeSuperior->Designation;
+            $pdf->SetXY(140, 87); // Superior Designation
+            $pdf->Write(0, $superiorDes);
 
             // Return the PDF content as a string
             return $pdf->Output('S');
@@ -704,6 +742,17 @@ class DownloadsController extends Controller
             } else {
                 $pdf->Write(0, $vehicleRequest->purpose_request->purpose);
             }
+
+            // Retrieve the active SuperiorID
+            $activeSuperior = Superior::where('status', '1')->firstOrFail();
+            $superiorID = $activeSuperior->SName;
+
+            $pdf->SetXY(122, 130); // SuperiorID
+            $pdf->Write(0, strtoupper($superiorID));
+
+            $superiorDes = $activeSuperior->Designation;
+            $pdf->SetXY(120, 135); // Superior Designation
+            $pdf->Write(0, strtoupper($superiorDes));
 
             return $pdf->Output('S');
         } catch (Throwable $e) {

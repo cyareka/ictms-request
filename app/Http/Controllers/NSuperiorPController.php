@@ -30,25 +30,36 @@ class NSuperiorPController extends Controller
 
         $generatedID = $this->generateUniqueID();
 
+        // Check if there is already an active superior
+        $activeSuperior = Superior::where('status', 1)->first();
+        $status = $activeSuperior ? 0 : 1;
+
         Superior::create([
             'SuperiorID' => $generatedID,
             'SName' => $Sname,
             'Designation' => $request->Designation,
-            
+            'status' => $status,
         ]);
 
         return redirect()->back()->with('success', 'Superior added successfully!');
     }
 
     public function toggleStatus($id)
-{
-    $superior = Superior::find($id);
+    {
+        $superior = Superior::findOrFail($id);
 
-    if ($superior) {
-        $superior->status = $superior->status == 1 ? 0 : 1;
+        if ($superior->status == 0) {
+            // Check if there is already an active superior
+            $activeSuperior = Superior::where('status', 1)->first();
+            if ($activeSuperior) {
+                return redirect()->back()->with('error', 'Only one superior can be active at a time.');
+            }
+        }
+
+        // Toggle the status
+        $superior->status = !$superior->status;
         $superior->save();
-    }
 
-    return redirect()->back()->with('status', 'Status updated successfully!');
-}
+        return redirect()->back()->with('success', 'Superior status updated successfully.');
+    }
 }
