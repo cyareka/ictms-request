@@ -43,8 +43,18 @@ class NDriverController extends Controller
             'DriverName' => $driverName,
             'DriverEmail' => $request->DriverEmail,
             'ContactNo' => $contactNo,
+            'status' => 1,
         ]);
 
         return redirect()->back()->with('success', 'Driver added successfully!');
+    }
+
+    public function toggleStatus($id)
+    {
+        $driver = Driver::findOrFail($id);
+        $driver->status = !$driver->status;
+        $driver->save();
+
+        return redirect()->back()->with('success', 'Driver status updated successfully!');
     }
 }

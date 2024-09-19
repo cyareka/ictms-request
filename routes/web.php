@@ -222,5 +222,6 @@ Route::post('/login', function (Request $request) {
 })->middleware(['guest'])->name('login');
 
 Route::get('/fetchSortedVLogRequests', [VehicleController::class, 'fetchSortedVLogRequests']);
-
+Route::patch('/vehicle/toggleStatus/{id}', [NVehicleController::class, 'toggleStatus'])->name('vehicle.toggleStatus');
 Route::patch('/superior/toggle-status/{id}', [NSuperiorPController::class, 'toggleStatus'])->name('superior.toggleStatus');
+Route::patch('/driver/toggleStatus/{id}', [NDriverController::class, 'toggleStatus'])->name('driver.toggleStatus');

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('SuperiorID', 3)->primary();
             $table->string('SName')->nullable();
             $table->string('Designation');
-            $table->boolean('status')->default(1)->change();
-            $table->string('term_start');
+            $table->boolean('status')->default(1);
+            $table->string('term_start')->nullable();
             $table->string('term_end')->nullable();
             $table->timestamps();
         });

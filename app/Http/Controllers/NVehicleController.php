@@ -34,10 +34,20 @@ class NVehicleController extends Controller
             'VehicleType' => $vehicleType,
             'PlateNo' => $request->PlateNo,
             'Capacity' => $request->Capacity,
+            'status' => 1,
 
         ]);
 
         return redirect()->back()->with('success', 'Vehicle added successfully!');
+    }
+
+    public function toggleStatus($id)
+    {
+        $vehicle = Vehicle::findOrFail($id);
+        $vehicle->status = !$vehicle->status;
+        $vehicle->save();
+
+        return redirect()->back()->with('success', 'Vehicle status updated successfully!');
     }
 }
 

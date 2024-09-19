@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('VehicleType');
             $table->string('PlateNo', 8);
             $table->integer('Capacity');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
 
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->string('DriverName', 50);
             $table->string('DriverEmail', 30);
             $table->string('ContactNo', 13);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
 

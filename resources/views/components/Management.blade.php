@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Edit Form</title>
+    <title>Management</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .alert-danger {
@@ -330,12 +330,14 @@
                         <th scope="col">Driver Name</th>
                         <th scope="col">Driver Email</th>
                         <th scope="col">Contact No.</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     @if($driver->isEmpty())
                         <tr>
-                            <td colspan="4">Data is not available.</td>
+                            <td colspan="6">Data is not available.</td>
                         </tr>
                     @else
                         @foreach($driver as $item)
@@ -344,6 +346,16 @@
                                 <td>{{ $item->DriverName }}</td>
                                 <td>{{ $item->DriverEmail }}</td>
                                 <td>{{ $item->ContactNo }}</td>
+                                <td>{{ $item->status ? 'Active' : 'Inactive' }}</td>
+                                <td>
+                                    <form action="{{ route('driver.toggleStatus', $item->DriverID) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-sm {{ $item->status ? 'btn-danger' : 'btn-success' }}">
+                                            {{ $item->status ? 'Deactivate' : 'Activate' }}
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                     @endif
@@ -391,12 +403,14 @@
                         <th scope="col">Conference Room</th>
                         <th scope="col">Location</th>
                         <th scope="col">Capacity</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     @if($vehicle->isEmpty())
                         <tr>
-                            <td colspan="4">Data is not available.</td>
+                            <td colspan="6">Data is not available.</td>
                         </tr>
                     @else
                         @foreach($vehicle as $item)
@@ -405,6 +419,16 @@
                                 <td>{{ $item->VehicleType }}</td>
                                 <td>{{ $item->PlateNo }}</td>
                                 <td>{{ $item->Capacity }}</td>
+                                <td>{{ $item->status ? 'Active' : 'Inactive' }}</td>
+                                <td>
+                                    <form action="{{ route('vehicle.toggleStatus', $item->VehicleID) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-sm {{ $item->status ? 'btn-danger' : 'btn-success' }}">
+                                            {{ $item->status ? 'Deactivate' : 'Activate' }}
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         @endforeach
                     @endif

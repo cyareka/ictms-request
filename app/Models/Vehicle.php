@@ -18,6 +18,7 @@ class Vehicle extends Model
 //        'Availability',
         'PlateNo',
         'Capacity',
+        'status',
     ];
 
 

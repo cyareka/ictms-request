@@ -17,7 +17,9 @@ class Driver extends Model
         'DriverName',
         'DriverEmail',
         'ContactNo',
+        'status',
 //        'Availability',
+
     ];
 
 }
