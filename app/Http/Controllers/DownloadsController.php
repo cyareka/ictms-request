@@ -135,7 +135,6 @@ class DownloadsController extends Controller
             $pdf->SetXY(30.4, 225.9); // RequesterSignature
             $pdf->Write(0, $conferenceRequest->RequesterName);
 
-
             // I instead of F to output the PDF to the browser
             $pdf->Output('I', $conferenceRequest->CRequestID . '_CR_Request.pdf');
         } catch (Throwable $e) {
@@ -437,7 +436,6 @@ class DownloadsController extends Controller
             }
 
             // Passengers
-
             $passengers = $this->getPassengersByRequestId($VRequestID);
             $pdf->SetFont('Arial', '', 8);
             $pdf->SetXY(96, 84);
@@ -462,6 +460,7 @@ class DownloadsController extends Controller
             $pdf->SetXY(40, 140); // Requester Name
             $pdf->Write(0, strtoupper($vehicleRequest->RequesterName));
 
+            // Requester Signature
             $signaturePath = Storage::disk('public')->path($vehicleRequest->RequesterSignature);
             if (file_exists($signaturePath) && is_readable($signaturePath)) {
                 $pdf->Image($signaturePath, 35, 130, 30, 10);
@@ -534,6 +533,8 @@ class DownloadsController extends Controller
 
             $pdf->SetXY(35, 285); // ASignatory
             $pdf->Write(0, strtoupper($vehicleRequest->asignatory->name));
+
+
 
             return $pdf->Output('S');
         } catch (Throwable $e) {

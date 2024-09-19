@@ -744,13 +744,13 @@
                                 <th scope="row">{{ $item->SuperiorID }}</th>
                                 <td>{{ $item->SName }}</td>
                                 <td>{{ $item->Designation }}</td>
-                                <td>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</td> 
+                                <td>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</td>
                                 <td>
                                     <form action="{{ route('superior.toggleStatus', $item->SuperiorID) }}" method="POST">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="btn btn-sm {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }}">
-                                            {{ $item->status == 1 ? 'Inactivate' : 'Activate' }}
+                                            {{ $item->status == 1 ? 'Deactivate' : 'Activate' }}
                                         </button>
                                     </form>
                                 </td>

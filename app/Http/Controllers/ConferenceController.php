@@ -97,6 +97,11 @@ class ConferenceController extends Controller
 
             Log::info('Validated data:', $validated);
 
+            $conferenceRoom = ConferenceRoom::query()->where('CRoomID', $validated['conferenceRoom'])->firstOrFail();
+            if ($validated['npersons'] > $conferenceRoom->Capacity) {
+                throw ValidationException::withMessages(['npersons' => 'The number of persons exceeds the capacity of the selected conference room.']);
+            }
+
             $this->insertPurposeInput($validated);
 
             $purpose = !empty($validated['purposeInput']) ? ucwords($validated['purposeInput']) : null;

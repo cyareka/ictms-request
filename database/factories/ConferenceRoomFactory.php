@@ -44,7 +44,7 @@ class ConferenceRoomFactory extends Factory
             return [
                 'CRoomID' => $generatedID,
                 'CRoomName' => 'Magiting',
-                'Capacity' => 50,
+                'Capacity' => 20,
                 'Location' => 'Emerald Building',
             ];
         });
@@ -57,7 +57,7 @@ class ConferenceRoomFactory extends Factory
             return [
                 'CRoomID' => $generatedID,
                 'CRoomName' => 'Maagap',
-                'Capacity' => 20,
+                'Capacity' => 15,
                 'Location' => 'Emerald Building',
             ];
         });
