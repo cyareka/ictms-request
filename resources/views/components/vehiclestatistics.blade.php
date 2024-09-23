@@ -20,7 +20,7 @@
             }
             .custom-size {
             font-size: 30px; /* Adjust to any size you want */
-          }
+            }
 
         }
 
@@ -59,6 +59,16 @@
     <h1>Total Requests per Office</h1>
     <div class="simple-bar-chart"></div>
 </div>
+
+<div class="bar-chart-wrapper">
+    <h1>Total Cancelled Requests for Offices</h1>
+    <br>
+    <br>
+    <div class="simple-bar-chart" id="monthly-requests-chart">
+        <!-- Dynamic content will be inserted here -->
+    </div>
+</div>
+
 
 <!-- Adjust the size of the pie chart -->
 <div class="chart-container">
