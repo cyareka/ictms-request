@@ -179,6 +179,8 @@
             @php
                 use Carbon\Carbon;
                 use App\Models\VehicleRequest;
+                use App\Mail\VehicleRequestApprovedMail;
+                use Illuminate\Support\Facades\Mail;
 
                 // Get the current date and time
                 $now = Carbon::now('Asia/Manila');
@@ -209,6 +211,16 @@
                             $request->EventStatus = 'Finished';
                             $request->save();
                         }
+
+                        // Send email to requester if it hasn't been sent yet
+            if (!$request->is_email_sent) {
+                // Send an email to the requester
+                Mail::to($request->RequesterEmail)->send(new VehicleRequestApprovedMail($request));
+
+                // Mark email as sent
+                $request->is_email_sent = true;
+                $request->save();
+            }
                     }
                 }
             @endphp

@@ -57,6 +57,7 @@ return new class extends Migration
             $table->string('RequesterEmail', 20);
             $table->string('RequesterSignature');
             $table->string('IPAddress',45);
+            $table->boolean('is_email_sent')->default(false);
             $table->timestamps();
 
             // To be filled by dispatcher

@@ -833,7 +833,7 @@
                 })
                 .then(response => response.ok ? response.text() : Promise.reject(response))
                 .then(() => {
-                    alert('Both forms submitted successfully');
+                    alert('Form submitted successfully');
                     window.location.reload(); // Refresh the page after successful submission
                 })
                 .catch(error => {
