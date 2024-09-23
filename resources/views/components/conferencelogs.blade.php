@@ -164,7 +164,7 @@
         </table>
         <div class="pagination_rounded">
             <ul id="pagination-list">
-               
+
             </ul>
         </div>
     </div>
@@ -175,7 +175,7 @@
 
 <script>
         let currentPage = 1;
-        const itemsPerPage = 10; // Set items per page to 10
+        const itemsPerPage = 5; // Set items per page to 5
         let currentOrder = 'desc'; // Default order
         let searchQuery = ''; // Initialize searchQuery
 
@@ -204,7 +204,7 @@
             e.preventDefault();
             currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
             this.setAttribute('data-order', currentOrder);
-            
+
             // Debugging: Log the current order
             console.log('Current Order:', currentOrder);
 
@@ -334,7 +334,7 @@
         function resetFilters() {
             document.getElementById('filterForm').reset();
             searchQuery = ''; // Clear the search query
-            
+
             // Debugging: Log resetting action
             console.log('Filters reset. Fetching default data.');
 

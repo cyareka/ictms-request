@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +20,8 @@
                 margin: 10px auto;
             }
             .custom-size {
-            font-size: 30px; /* Adjust to any size you want */
-          }
+                font-size: 30px; /* Adjust to any size you want */
+            }
 
         }
 
@@ -60,6 +61,16 @@
     <div class="simple-bar-chart"></div>
 </div>
 
+<div class="bar-chart-wrapper">
+    <h1>Total Cancelled Requests for Offices</h1>
+    <br>
+    <br>
+    <div class="simple-bar-chart" id="monthly-requests-chart">
+        <!-- Dynamic content will be inserted here -->
+    </div>
+</div>
+
+
 <!-- Adjust the size of the pie chart -->
 <div class="chart-container">
     <div id="chartContainer1" style="height: 500px; width: 100%;"></div> <!-- Increased height -->
@@ -68,75 +79,79 @@
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    fetchStatistics();
+        fetchStatistics();
 
-    function fetchStatistics() {
-        fetch('/api/vehicle-statistics')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('pending-requests').textContent = data.pendingRequests;
-                document.getElementById('daily-requests').textContent = data.dailyRequests;
-                document.getElementById('monthly-requests').textContent = data.monthlyRequests;
+        function fetchStatistics() {
+            fetch('/api/vehicle-statistics')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('pending-requests').textContent = data.pendingRequests;
+                    document.getElementById('daily-requests').textContent = data.dailyRequests;
+                    document.getElementById('monthly-requests').textContent = data.monthlyRequests;
 
-                const requestsPerOfficeContainer = document.querySelector('.simple-bar-chart');
-                requestsPerOfficeContainer.innerHTML = ''; // Clear existing items
+                    const requestsPerOfficeContainer = document.querySelector('.simple-bar-chart');
+                    requestsPerOfficeContainer.innerHTML = ''; // Clear existing items
 
-                data.requestsPerOffice.forEach(office => {
-                    const item = document.createElement('div');
-                    item.className = 'item';
-                    item.style.setProperty('--clr', getRandomColor());
-                    item.style.setProperty('--val', office.total);
+                    data.requestsPerOffice.forEach(office => {
+                        const item = document.createElement('div');
+                        item.className = 'item';
+                        item.style.setProperty('--clr', getRandomColor());
+                        item.style.setProperty('--val', office.total);
 
-                    const label = document.createElement('div');
-                    label.className = 'label';
-                    label.textContent = office.office;
+                        const label = document.createElement('div');
+                        label.className = 'label';
+                        label.textContent = office.office;
 
-                    const value = document.createElement('div');
-                    value.className = 'value';
-                    value.textContent = `${office.total}`;
+                        const value = document.createElement('div');
+                        value.className = 'value';
+                        value.textContent = `${office.total}`;
 
-                    item.appendChild(label);
-                    item.appendChild(value);
-                    requestsPerOfficeContainer.appendChild(item);
-                });
-            })
-            .catch(error => console.error('Error fetching statistics:', error));
-    }
-
-    function getRandomColor() {
-        const colors = ['#5EB344', '#FCB72A', '#F8821A', '#E0393E', '#963D97', '#069CDB', '#6234CE', '#06934A'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
-
- window.onload = function() {
-            // Ensure dataPoints is defined
-            @if(isset($dataPoints))
-                var dataPoints = @json($dataPoints);
-            @else
-                var dataPoints = [];
-            @endif
-
-            // Debugging: Log dataPoints to console
-            console.log("dataPoints:", dataPoints);
-
-            var chart1 = new CanvasJS.Chart("chartContainer1", {
-                backgroundColor: "#F2F2F2",
-                animationEnabled: true,
-                title: {
-                    text: "Vehicle Type Usage"
-                },
-                data: [{
-                    type: "pie",
-                    startAngle: 240,
-                    yValueFormatString: "##0.00\"%\"",
-                    indexLabel: "{label} {y}",
-                    dataPoints: dataPoints
-                }]
-            });
-            chart1.render();
+                        item.appendChild(label);
+                        item.appendChild(value);
+                        requestsPerOfficeContainer.appendChild(item);
+                    });
+                })
+                .catch(error => console.error('Error fetching statistics:', error));
         }
 
-});
+        function getRandomColor() {
+            const colors = ['#5EB344', '#FCB72A', '#F8821A', '#E0393E', '#963D97', '#069CDB', '#6234CE', '#06934A'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        fetchVehicleTypeUsage();
+
+        function fetchVehicleTypeUsage() {
+            fetch('/api/vehicle-usage')
+                .then(response => response.json())
+                .then(data => {
+                    var dataPoints = data.dataPoints;
+                    console.log("dataPoints:", dataPoints);
+
+                    var chart1 = new CanvasJS.Chart("chartContainer1", {
+                        backgroundColor: "#F2F2F2",
+                        animationEnabled: true,
+                        title: {
+                            text: "Vehicle Type Usage"
+                        },
+                        data: [{
+                            type: "pie",
+                            startAngle: 240,
+                            yValueFormatString: "##0.00\"%\"",
+                            indexLabel: "{label} {y}",
+                            dataPoints: dataPoints
+                        }]
+                    });
+
+                    console.log("Chart configuration:", chart1.options);
+                    chart1.render();
+                    console.log("Chart rendered successfully");
+
+                })
+                .catch(error => console.error('Error fetching vehicle usage:', error));
+        }
+    });
 </script>
 </body>
 </html>
+
