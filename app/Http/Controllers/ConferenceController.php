@@ -626,7 +626,7 @@ class ConferenceController extends Controller
         // Fetch monthly usage data for MAGITING
         $magitingQuery = DB::table('conference_room_requests')
             ->select(DB::raw("substr(created_at, 6, 2) as month"), DB::raw('count(*) as total'))
-            ->where('CRoomID', '2024093393')
+            ->where('CRoomID', '2024098897')
             ->groupBy(DB::raw("substr(created_at, 6, 2)"));
 
         // Debug output for magiting query
@@ -642,7 +642,7 @@ class ConferenceController extends Controller
         // Fetch monthly usage data for MAAGAP
         $maagapQuery = DB::table('conference_room_requests')
             ->select(DB::raw("substr(created_at, 6, 2) as month"), DB::raw('count(*) as total'))
-            ->where('CRoomID', '2024098954')
+            ->where('CRoomID', '2024092155')
             ->groupBy(DB::raw("substr(created_at, 6, 2)"));
 
         // Debug output for maagap query
