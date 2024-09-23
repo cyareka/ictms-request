@@ -563,8 +563,8 @@
                         <select id="VehicleID" name="VehicleID">
                             <option disabled {{ !$requestData->VehicleID ? 'selected' : '' }}>Select Vehicle</option>
                             @foreach(App\Models\Vehicle::all() as $Vehicle)
-                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}" data-capacity="{{ $Vehicle->Capacity }}"
-                                    {{ $requestData->VehicleID == $Vehicle->VehicleID ? 'selected' : '' }}>
+                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}"
+                                        data-capacity="{{ $Vehicle->Capacity }}">
                                     {{ $Vehicle->VehicleType }} - Capacity: {{ $Vehicle->Capacity }}
                                 </option>
                             @endforeach

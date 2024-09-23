@@ -108,37 +108,34 @@
         return colors[Math.floor(Math.random() * colors.length)];
     }
 
-    fetchVehicleTypeUsage();
+ window.onload = function() {
+            // Ensure dataPoints is defined
+            @if(isset($dataPoints))
+                var dataPoints = @json($dataPoints);
+            @else
+                var dataPoints = [];
+            @endif
 
-    function fetchVehicleTypeUsage() {
-        fetch('/api/vehicle-usage')
-            .then(response => response.json())
-            .then(data => {
-                var dataPoints = data.dataPoints;
-                console.log("dataPoints:", dataPoints);
+            // Debugging: Log dataPoints to console
+            console.log("dataPoints:", dataPoints);
 
-                    var chart1 = new CanvasJS.Chart("chartContainer1", {
-                        backgroundColor: "#F2F2F2",
-                        animationEnabled: true,
-                        title: {
-                            text: "Vehicle Type Usage"
-                        },
-                        data: [{
-                            type: "pie",
-                            startAngle: 240,
-                            yValueFormatString: "##0.00\"%\"",
-                            indexLabel: "{label} {y}",
-                            dataPoints: dataPoints
-                        }]
-                    });
+            var chart1 = new CanvasJS.Chart("chartContainer1", {
+                backgroundColor: "#F2F2F2",
+                animationEnabled: true,
+                title: {
+                    text: "Vehicle Type Usage"
+                },
+                data: [{
+                    type: "pie",
+                    startAngle: 240,
+                    yValueFormatString: "##0.00\"%\"",
+                    indexLabel: "{label} {y}",
+                    dataPoints: dataPoints
+                }]
+            });
+            chart1.render();
+        }
 
-                    console.log("Chart configuration:", chart1.options);
-                    chart1.render();
-                    console.log("Chart rendered successfully");
-
-            })
-            .catch(error => console.error('Error fetching vehicle usage:', error));
-    }
 });
 </script>
 </body>
