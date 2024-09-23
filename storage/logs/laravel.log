@@ -1,325 +1,119 @@
-[2024-09-19 05:58:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 05:58:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 05:58:40] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 05:58:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 05:58:40] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 05:58:40] local.ERROR: Error in generateAuthoritytoTravelPDF method. {"exception":"No query results for model [App\\Models\\Superior].","stack_trace":"#0 D:\\Shea\\Documents\\GitHub\\ictms-request\\app\\Http\\Controllers\\DownloadsController.php(617): Illuminate\\Database\\Eloquent\\Builder->firstOrFail()
-#1 D:\\Shea\\Documents\\GitHub\\ictms-request\\app\\Http\\Controllers\\DownloadsController.php(274): App\\Http\\Controllers\\DownloadsController->generateVRequestFormAPDF(Object(Illuminate\\Http\\Request), 'VR20248175')
-#2 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\ControllerDispatcher.php(46): App\\Http\\Controllers\\DownloadsController->downloadVRequestPDF(Object(Illuminate\\Http\\Request), 'VR20248175')
-#3 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(262): Illuminate\\Routing\\ControllerDispatcher->dispatch(Object(Illuminate\\Routing\\Route), Object(App\\Http\\Controllers\\DownloadsController), 'downloadVReques...')
-#4 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Route.php(208): Illuminate\\Routing\\Route->runController()
-#5 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(808): Illuminate\\Routing\\Route->run()
-#6 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
-#7 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified.php(41): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#8 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Auth\\Middleware\\EnsureEmailIsVerified->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#9 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Middleware\\SubstituteBindings.php(51): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#10 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#11 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\AuthenticateSession.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#12 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Session\\Middleware\\AuthenticateSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#13 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Auth\\Middleware\\Authenticate.php(64): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#14 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure), 'sanctum')
-#15 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken.php(88): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#16 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#17 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\View\\Middleware\\ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#18 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#19 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#20 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Session\\Middleware\\StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
-#21 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#22 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#23 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#24 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Cookie\\Middleware\\EncryptCookies.php(75): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#25 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#26 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#27 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(807): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
-#28 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
-#29 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(750): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
-#30 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Routing\\Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
-#31 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(201): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
-#32 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
-#33 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\livewire\\livewire\\src\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware.php(19): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#34 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Livewire\\Features\\SupportDisablingBackButtonCache\\DisableBackButtonCacheMiddleware->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#35 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#36 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#37 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#38 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#39 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#40 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#41 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#42 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#43 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance.php(110): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#44 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#45 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#46 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#47 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Http\\Middleware\\TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#48 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
-#49 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Pipeline\\Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
-#50 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(176): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
-#51 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Http\\Kernel.php(145): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
-#52 D:\\Shea\\Documents\\GitHub\\ictms-request\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1188): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
-#53 D:\\Shea\\Documents\\GitHub\\ictms-request\\public\\index.php(17): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
-#54 C:\\Program Files\\Herd\\resources\\app.asar.unpacked\\resources\\valet\\server.php(139): require('D:\\\\Shea\\\\Documen...')
-#55 {main}"} 
-[2024-09-19 05:58:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:03] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:03] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:03] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:02:03] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:03] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:02:03] local.INFO: Active SuperiorID: {"superiorID":726} 
-[2024-09-19 06:02:03] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:29] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:29] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:29] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:02:30] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:30] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:02:30] local.INFO: Active SuperiorID: {"superiorID":"Kim Tam"} 
-[2024-09-19 06:02:30] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:50] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:02:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:02:50] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:02:50] local.INFO: Active SuperiorID: {"superiorID":"Kim Tam"} 
-[2024-09-19 06:02:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:03:10] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:03:10] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:03:10] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:03:10] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:03:10] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:03:10] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:06:35] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:06:35] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:06:35] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:06:35] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:06:35] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:06:35] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:07:34] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:07:34] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:07:34] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:07:34] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:07:34] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:07:34] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:08:02] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:08:02] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:08:02] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:08:02] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:08:02] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:08:02] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:13:33] local.INFO: Search term:   
-[2024-09-19 06:13:34] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
-[2024-09-19 06:13:34] local.INFO: Query results: {"current_page":1,"data":[],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":null,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":null,"total":0} 
-[2024-09-19 06:13:43] local.INFO: Search term:   
-[2024-09-19 06:13:43] local.INFO: Sort: created_at  
-[2024-09-19 06:13:43] local.INFO: Order: desc  
-[2024-09-19 06:13:43] local.INFO: Per Page: 10  
-[2024-09-19 06:13:43] local.INFO: Page: 1  
-[2024-09-19 06:13:46] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
-[2024-09-19 06:15:40] local.DEBUG: Vehicle request created for date start: {"dateStart":"2024-09-20"} 
-[2024-09-19 06:15:40] local.DEBUG: Generated unique VRPassID: {"VRPassID":"2024096548"} 
-[2024-09-19 06:15:40] local.DEBUG: Passenger inserted: {"passenger":"2024097789"} 
-[2024-09-19 06:15:45] local.INFO: Search term:   
-[2024-09-19 06:15:48] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
-[2024-09-19 06:15:48] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20241150","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-20","date_end":"2024-09-20","time_start":"16:00","Destination":"General Santos City","RequesterName":"Bella Swan","RequesterContact":"+639356000504","RequesterEmail":"sheardeeh@gmail.com","RequesterSignature":"uploads/signatures/4d1hfrFhDE234ilZPoOsLSgnVJZ0mTK2yjfsFuGk.png","IPAddress":"127.0.0.1","created_at":"2024-09-19T06:15:40.000000Z","updated_at":"2024-09-19T06:15:40.000000Z","DriverID":null,"VehicleID":null,"ReceivedBy":null,"Remarks":null,"AAID":null,"SOID":null,"ASignatory":null,"certfile-upload":null,"FormStatus":"Pending","EventStatus":"-","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
-[2024-09-19 06:15:52] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
-[2024-09-19 06:16:05] local.INFO: Request Data: {"_token":"ThkhgQEhQL4Emj8yypmtxIWtCTBFAFENHBmpgPhy","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"550","PlateNo":"NNNN0926","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-19"],"time":["14:15"],"remark":null} 
-[2024-09-19 06:16:05] local.INFO: Request Data: {"_token":"ThkhgQEhQL4Emj8yypmtxIWtCTBFAFENHBmpgPhy","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"550","PlateNo":"NNNN0926","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-19"],"time":["14:15"],"remark":null} 
-[2024-09-19 06:16:05] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
-[2024-09-19 06:16:05] local.INFO: Request Data: {"_token":"ThkhgQEhQL4Emj8yypmtxIWtCTBFAFENHBmpgPhy","FormStatus":"For Approval","EventStatus":"-","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
-[2024-09-19 06:16:05] local.INFO: Request Data: {"_token":"ThkhgQEhQL4Emj8yypmtxIWtCTBFAFENHBmpgPhy","FormStatus":"For Approval","EventStatus":"-","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
-[2024-09-19 06:16:05] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
-[2024-09-19 06:16:06] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
-[2024-09-19 06:16:07] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:16:07] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:16:07] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:16:08] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:16:08] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:16:08] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:16:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:16:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:16:40] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:16:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:16:40] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:16:40] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:22:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:22:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:22:31] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:22:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:22:31] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:22:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:23:20] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:23:20] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:23:20] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:23:20] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:23:20] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:23:20] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:25:59] local.INFO: Search term:   
-[2024-09-19 06:26:04] local.INFO: Request Data: {"_token":"ThkhgQEhQL4Emj8yypmtxIWtCTBFAFENHBmpgPhy","CRequestID":"CR20246470","officeName":"Policy and Plans Division","purpose":"Facilitate Donation","dateStart":"2024-09-19","dateEnd":"2024-09-19","timeStart":"15:00","timeEnd":"16:00","conferenceRoom":"Magiting","focalPerson":"Inej Madrid","npersons":"20","tables":"0","chairs":"0","otherFacilities":null,"requesterName":"Inej Madrid","CAvailability":"Available","downloadClicked":"0","FormStatus":"For Approval","EventStatus":"-","AuthRep":"Sheardeeh Fernandez"} 
-[2024-09-19 06:26:08] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:26:08] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:26:11] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:26:11] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:26:51] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:26:51] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:27:05] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:27:05] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:27:22] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:27:22] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:27:33] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:27:33] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:27:45] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:27:45] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:27:52] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:27:52] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:28:00] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:28:00] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:28:05] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:28:05] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:29:27] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:29:27] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:30:09] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:30:09] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:30:12] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:30:12] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:30:19] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:30:19] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:30:33] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:30:33] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:30:49] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:30:49] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:31:05] local.INFO: Starting downloadCRequestPDF method.  
-[2024-09-19 06:31:05] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:32:21] local.INFO: Search term:   
-[2024-09-19 06:32:22] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
-[2024-09-19 06:32:22] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20241150","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-20","date_end":"2024-09-20","time_start":"16:00","Destination":"General Santos City","RequesterName":"Bella Swan","RequesterContact":"+639356000504","RequesterEmail":"sheardeeh@gmail.com","RequesterSignature":"uploads/signatures/4d1hfrFhDE234ilZPoOsLSgnVJZ0mTK2yjfsFuGk.png","IPAddress":"127.0.0.1","created_at":"2024-09-19T06:15:40.000000Z","updated_at":"2024-09-19T06:16:05.000000Z","DriverID":"20249831","VehicleID":"550","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"For Approval","EventStatus":"-","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
-[2024-09-19 06:32:26] local.INFO: Search term:   
-[2024-09-19 06:32:28] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
-[2024-09-19 06:32:28] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20241150","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-20","date_end":"2024-09-20","time_start":"16:00","Destination":"General Santos City","RequesterName":"Bella Swan","RequesterContact":"+639356000504","RequesterEmail":"sheardeeh@gmail.com","RequesterSignature":"uploads/signatures/4d1hfrFhDE234ilZPoOsLSgnVJZ0mTK2yjfsFuGk.png","IPAddress":"127.0.0.1","created_at":"2024-09-19T06:15:40.000000Z","updated_at":"2024-09-19T06:16:05.000000Z","DriverID":"20249831","VehicleID":"550","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"For Approval","EventStatus":"-","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
-[2024-09-19 06:32:35] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
-[2024-09-19 06:32:37] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:32:37] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:32:37] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:32:37] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:32:37] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:32:37] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:33:51] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:33:51] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:34:12] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:34:12] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:34:28] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:34:28] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:34:32] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:34:32] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:34:41] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:34:41] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:34:47] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:34:47] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:34:52] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:34:52] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:34:58] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:34:58] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:35:19] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:35:19] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:35:28] local.INFO: Starting downloadUnavailableCRequestPDF method.  
-[2024-09-19 06:35:28] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:40:53] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:40:53] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:40:53] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:40:53] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:40:53] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:40:53] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:41:30] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:41:30] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:41:30] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:41:30] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:41:30] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:41:30] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:31] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:42:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:31] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:42:31] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:41] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:41] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:41] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:42:41] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:42:41] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:42:41] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:18] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:18] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:18] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:43:18] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:18] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:43:18] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:50] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:43:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:43:50] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:43:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:17] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:17] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:17] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:44:17] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:17] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:44:17] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:38] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:38] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:38] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:44:38] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:38] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:44:38] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:52] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:52] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:52] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:44:52] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:44:52] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:44:52] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:45:05] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:45:05] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:45:05] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:45:05] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:45:05] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:45:05] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:47:27] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:47:27] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:47:27] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:47:27] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:47:27] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:47:27] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:01] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:01] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:01] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:48:01] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:01] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:48:01] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:21] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:21] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:21] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:48:21] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:21] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:48:21] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:47] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:47] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:47] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:48:47] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:48:47] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:48:47] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:22] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:22] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:22] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:49:22] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:22] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:49:22] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:50] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:49:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:49:50] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:49:50] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:50:32] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:50:32] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:50:32] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:50:32] local.INFO: Validation successful. {"validated":[]} 
-[2024-09-19 06:50:32] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
-[2024-09-19 06:50:32] local.INFO: Validation successful. {"validated":[]} 
+[2024-09-23 05:23:02] local.INFO: dataPoints: [{"y":100.0,"label":"Nisan Skyline"}] 
+[2024-09-23 05:24:12] local.DEBUG: Vehicle request created for date start: {"dateStart":"2024-09-23"} 
+[2024-09-23 05:24:12] local.DEBUG: Generated unique VRPassID: {"VRPassID":"2024097608"} 
+[2024-09-23 05:24:12] local.DEBUG: Passenger inserted: {"passenger":"2024095301"} 
+[2024-09-23 05:24:15] local.INFO: Search term:   
+[2024-09-23 05:24:17] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 05:24:17] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20249435","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-23","date_end":"2024-09-23","time_start":"14:00","Destination":"General Santos City","RequesterName":"Kai Cannot","RequesterContact":"+639356000100","RequesterEmail":"kaicannot@gmail.com","RequesterSignature":"uploads/signatures/y315UThbMe3w9QvXTxPworEgJg0HyNYJAnSNWgyn.png","IPAddress":"127.0.0.1","created_at":"2024-09-23T05:24:12.000000Z","updated_at":"2024-09-23T05:24:12.000000Z","DriverID":null,"VehicleID":null,"ReceivedBy":null,"Remarks":null,"AAID":null,"SOID":null,"ASignatory":null,"certfile-upload":null,"FormStatus":"Pending","EventStatus":"-","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
+[2024-09-23 05:24:20] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:24:33] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:24"],"remark":null} 
+[2024-09-23 05:24:33] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:24"],"remark":null} 
+[2024-09-23 05:24:34] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:24:34] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"For Approval","EventStatus":"-","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:24:34] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"For Approval","EventStatus":"-","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:24:34] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:24:35] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:24:41] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"550","PlateNo":"NNNN0926","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:24"],"remark":null} 
+[2024-09-23 05:24:41] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"550","PlateNo":"NNNN0926","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:24"],"remark":null} 
+[2024-09-23 05:24:41] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:24:41] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:24:41] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:24:41] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:24:42] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:24:44] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 05:24:44] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20249435","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-23","date_end":"2024-09-23","time_start":"14:00","Destination":"General Santos City","RequesterName":"Kai Cannot","RequesterContact":"+639356000100","RequesterEmail":"kaicannot@gmail.com","RequesterSignature":"uploads/signatures/y315UThbMe3w9QvXTxPworEgJg0HyNYJAnSNWgyn.png","IPAddress":"127.0.0.1","created_at":"2024-09-23T05:24:12.000000Z","updated_at":"2024-09-23T05:24:41.000000Z","DriverID":"20249831","VehicleID":"550","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"Approved","EventStatus":"Ongoing","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
+[2024-09-23 05:24:45] local.INFO: Search term:   
+[2024-09-23 05:24:45] local.INFO: Sort: created_at  
+[2024-09-23 05:24:45] local.INFO: Order: desc  
+[2024-09-23 05:24:45] local.INFO: Per Page: 5  
+[2024-09-23 05:24:45] local.INFO: Page: 1  
+[2024-09-23 05:24:45] local.DEBUG: MAGITING SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024098897 group by substr(created_at, 6, 2)  
+[2024-09-23 05:24:45] local.DEBUG: MAAGAP SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024092155 group by substr(created_at, 6, 2)  
+[2024-09-23 05:24:48] local.INFO: dataPoints: [{"y":100.0,"label":"Nisan Skyline"}] 
+[2024-09-23 05:24:55] local.INFO: Search term:   
+[2024-09-23 05:24:55] local.INFO: Sort: created_at  
+[2024-09-23 05:24:55] local.INFO: Order: desc  
+[2024-09-23 05:24:55] local.INFO: Per Page: 5  
+[2024-09-23 05:24:55] local.INFO: Page: 1  
+[2024-09-23 05:24:57] local.INFO: Search term:   
+[2024-09-23 05:24:58] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 05:24:58] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20249435","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-23","date_end":"2024-09-23","time_start":"14:00","Destination":"General Santos City","RequesterName":"Kai Cannot","RequesterContact":"+639356000100","RequesterEmail":"kaicannot@gmail.com","RequesterSignature":"uploads/signatures/y315UThbMe3w9QvXTxPworEgJg0HyNYJAnSNWgyn.png","IPAddress":"127.0.0.1","created_at":"2024-09-23T05:24:12.000000Z","updated_at":"2024-09-23T05:24:41.000000Z","DriverID":"20249831","VehicleID":"550","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"Approved","EventStatus":"Ongoing","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
+[2024-09-23 05:24:59] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:25:06] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:24"],"remark":null} 
+[2024-09-23 05:25:06] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:24"],"remark":null} 
+[2024-09-23 05:25:06] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:25:06] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:25:06] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:25:06] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:25:07] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:25:16] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:25"],"remark":null} 
+[2024-09-23 05:25:16] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:25"],"remark":null} 
+[2024-09-23 05:25:16] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:25:16] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:25:16] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:25:16] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:25:17] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:25:22] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 05:25:22] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20249435","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-23","date_end":"2024-09-23","time_start":"14:00","Destination":"General Santos City","RequesterName":"Kai Cannot","RequesterContact":"+639356000100","RequesterEmail":"kaicannot@gmail.com","RequesterSignature":"uploads/signatures/y315UThbMe3w9QvXTxPworEgJg0HyNYJAnSNWgyn.png","IPAddress":"127.0.0.1","created_at":"2024-09-23T05:24:12.000000Z","updated_at":"2024-09-23T05:25:16.000000Z","DriverID":"20249831","VehicleID":"474","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"Approved","EventStatus":"Ongoing","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
+[2024-09-23 05:25:23] local.INFO: Search term:   
+[2024-09-23 05:25:23] local.INFO: Sort: created_at  
+[2024-09-23 05:25:23] local.INFO: Order: desc  
+[2024-09-23 05:25:23] local.INFO: Per Page: 5  
+[2024-09-23 05:25:23] local.INFO: Page: 1  
+[2024-09-23 05:25:24] local.DEBUG: MAGITING SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024098897 group by substr(created_at, 6, 2)  
+[2024-09-23 05:25:24] local.DEBUG: MAAGAP SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024092155 group by substr(created_at, 6, 2)  
+[2024-09-23 05:25:29] local.INFO: Search term:   
+[2024-09-23 05:25:36] local.INFO: Search term:   
+[2024-09-23 05:25:36] local.INFO: Sort: created_at  
+[2024-09-23 05:25:36] local.INFO: Order: desc  
+[2024-09-23 05:25:36] local.INFO: Per Page: 5  
+[2024-09-23 05:25:36] local.INFO: Page: 1  
+[2024-09-23 05:25:39] local.DEBUG: MAGITING SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024098897 group by substr(created_at, 6, 2)  
+[2024-09-23 05:25:39] local.DEBUG: MAAGAP SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024092155 group by substr(created_at, 6, 2)  
+[2024-09-23 05:25:43] local.INFO: dataPoints: [{"y":66.67,"label":"Nisan Skyline"},{"y":33.33,"label":"Van"}] 
+[2024-09-23 05:26:01] local.INFO: Search term:   
+[2024-09-23 05:26:01] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 05:26:01] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20249435","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-23","date_end":"2024-09-23","time_start":"14:00","Destination":"General Santos City","RequesterName":"Kai Cannot","RequesterContact":"+639356000100","RequesterEmail":"kaicannot@gmail.com","RequesterSignature":"uploads/signatures/y315UThbMe3w9QvXTxPworEgJg0HyNYJAnSNWgyn.png","IPAddress":"127.0.0.1","created_at":"2024-09-23T05:24:12.000000Z","updated_at":"2024-09-23T05:25:16.000000Z","DriverID":"20249831","VehicleID":"474","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"Approved","EventStatus":"Ongoing","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
+[2024-09-23 05:26:02] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:26:08] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:26:30] local.INFO: Search term:   
+[2024-09-23 05:26:30] local.INFO: Sort: created_at  
+[2024-09-23 05:26:30] local.INFO: Order: desc  
+[2024-09-23 05:26:30] local.INFO: Per Page: 5  
+[2024-09-23 05:26:30] local.INFO: Page: 1  
+[2024-09-23 05:26:33] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
+[2024-09-23 05:26:37] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin"}] 
+[2024-09-23 05:26:42] local.INFO: Search term:   
+[2024-09-23 05:26:43] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 05:26:43] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20249435","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-23","date_end":"2024-09-23","time_start":"14:00","Destination":"General Santos City","RequesterName":"Kai Cannot","RequesterContact":"+639356000100","RequesterEmail":"kaicannot@gmail.com","RequesterSignature":"uploads/signatures/y315UThbMe3w9QvXTxPworEgJg0HyNYJAnSNWgyn.png","IPAddress":"127.0.0.1","created_at":"2024-09-23T05:24:12.000000Z","updated_at":"2024-09-23T05:25:16.000000Z","DriverID":"20249831","VehicleID":"474","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"Approved","EventStatus":"Ongoing","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
+[2024-09-23 05:26:45] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:27:37] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:27:44] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:27"],"remark":null} 
+[2024-09-23 05:27:44] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"474","PlateNo":"NNN1234","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:27"],"remark":null} 
+[2024-09-23 05:27:44] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:27:44] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:27:44] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:27:44] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:27:45] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:28:25] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:28:26] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:28:29] local.INFO: Search term:   
+[2024-09-23 05:28:30] local.INFO: Search term:   
+[2024-09-23 05:28:30] local.INFO: Sort: created_at  
+[2024-09-23 05:28:30] local.INFO: Order: desc  
+[2024-09-23 05:28:30] local.INFO: Per Page: 5  
+[2024-09-23 05:28:30] local.INFO: Page: 1  
+[2024-09-23 05:28:31] local.INFO: Search term:   
+[2024-09-23 05:28:33] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 05:28:33] local.INFO: Query results: {"current_page":1,"data":[{"VRequestID":"VR20249435","OfficeID":"2024098380","PurposeID":"534","PurposeOthers":null,"date_start":"2024-09-23","date_end":"2024-09-23","time_start":"14:00","Destination":"General Santos City","RequesterName":"Kai Cannot","RequesterContact":"+639356000100","RequesterEmail":"kaicannot@gmail.com","RequesterSignature":"uploads/signatures/y315UThbMe3w9QvXTxPworEgJg0HyNYJAnSNWgyn.png","IPAddress":"127.0.0.1","created_at":"2024-09-23T05:24:12.000000Z","updated_at":"2024-09-23T05:27:44.000000Z","DriverID":"20249831","VehicleID":"474","ReceivedBy":"1","Remarks":null,"AAID":"301","SOID":"223","ASignatory":"1","certfile-upload":null,"FormStatus":"Approved","EventStatus":"Ongoing","office":{"OfficeID":"2024098380","OfficeName":"Policy and Plans Division","OfficeLocation":"Diamond Building","created_at":"2024-09-19T04:25:58.000000Z","updated_at":"2024-09-19T04:25:58.000000Z"}}],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":1,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":1,"total":1} 
+[2024-09-23 05:28:34] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:28:37] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"550","PlateNo":"NNNN0926","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:28"],"remark":null} 
+[2024-09-23 05:28:37] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","DriverID":"20249831","ContactNo":"+639356000500","DriverEmail":"jadedoe@gmail.com","VehicleID":"550","PlateNo":"NNNN0926","ReceivedBy":"Sheardeeh Fernandez","date":["2024-09-23"],"time":["13:28"],"remark":null} 
+[2024-09-23 05:28:37] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:28:37] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:28:37] local.INFO: Request Data: {"_token":"exfkAGbFQKJEZ78mR102vfbUljZT50m9H6svUevC","FormStatus":"Approved","EventStatus":"Ongoing","AAuth":"301","AAPosition":"Carpet Installer","SOAuth":"223","SOPosition":"City Planning Aide","ASignatory":"Sheardeeh Fernandez"} 
+[2024-09-23 05:28:37] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:28:38] local.INFO: Passengers fetched: [{"EmployeeID":"2024095301","EmployeeName":"Mr. Santino McClure MD"}] 
+[2024-09-23 05:28:41] local.DEBUG: MAGITING SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024098897 group by substr(created_at, 6, 2)  
+[2024-09-23 05:28:41] local.DEBUG: MAAGAP SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024092155 group by substr(created_at, 6, 2)  
+[2024-09-23 05:28:43] local.INFO: dataPoints: [{"y":100.0,"label":"Nisan Skyline"}] 

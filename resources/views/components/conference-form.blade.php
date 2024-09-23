@@ -227,6 +227,7 @@
         .fac select {
             width: 60%;
         }
+
         .fac input {
             width: 60%;
         }
@@ -294,6 +295,7 @@
                 justify-content: flex-end;
             }
         }
+
         .checkbox {
             margin-left: 10px;
             width: 30px;
@@ -362,7 +364,8 @@
                 <select id="officeName" name="officeName" onchange="updateFocalPersons(this.value)" required>
                     <option disabled selected>Select Office</option>
                     @foreach(App\Models\Office::all() as $office)
-                        <option value="{{ $office->OfficeID }}" {{ old('officeName') == $office->OfficeID ? 'selected' : '' }}>
+                        <option
+                            value="{{ $office->OfficeID }}" {{ old('officeName') == $office->OfficeID ? 'selected' : '' }}>
                             {{ $office->OfficeName }}
                         </option>
                     @endforeach
@@ -374,14 +377,17 @@
                 <select id="purposeSelect" name="purposeSelect" required>
                     <option disabled selected>Select Purpose</option>
                     @foreach(App\Models\PurposeRequest::where('request_p', 'Conference Room')->get() as $purpose)
-                        <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>
+                        <option
+                            value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>
                             {{ $purpose->purpose }}
                         </option>
                     @endforeach
                 </select>
-                <input type="text" id="purposeInput" name="purposeInput" style="display:none;" placeholder="Enter Purpose" value="{{ old('purposeInput') }}">
+                <input type="text" id="purposeInput" name="purposeInput" style="display:none;"
+                       placeholder="Enter Purpose" value="{{ old('purposeInput') }}">
                 <div class="checkbox">
-                    <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
+                    <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox"
+                           onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
                 </div>
             </div>
         </div>
@@ -391,7 +397,8 @@
                 <select id="conferenceRoom" name="conferenceRoom" required>
                     <option disabled selected>Select Room</option>
                     @foreach(App\Models\ConferenceRoom::all() as $room)
-                        <option value="{{ $room->CRoomID }}" {{ old('conferenceRoom') == $room->CRoomID ? 'selected' : '' }}>
+                        <option
+                            value="{{ $room->CRoomID }}" {{ old('conferenceRoom') == $room->CRoomID ? 'selected' : '' }}>
                             {{ $room->CRoomName }}
                         </option>
                     @endforeach
@@ -403,13 +410,16 @@
                 <select id="focalPersonSelect" name="focalPersonSelect">
                     <option disabled selected>Select Focal Person</option>
                     @foreach(App\Models\FocalPerson::all() as $fp)
-                        <option value="{{ $fp->FocalPID }}" {{ old('focalPersonSelect') == $fp->FocalPID ? 'selected' : '' }}>
+                        <option
+                            value="{{ $fp->FocalPID }}" {{ old('focalPersonSelect') == $fp->FocalPID ? 'selected' : '' }}>
                             {{ $fp->FPName }}
                         </option>
                     @endforeach
-                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
+                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;"
+                           placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
                     <div class="checkbox">
-                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
+                        <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox"
+                               onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
                     </div>
                 </select>
             </div>
@@ -417,24 +427,26 @@
         <div class="row">
             <div class="inline-field">
                 <label for="requesterName">Requester Name</label>
-                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester" value="{{ old('requesterName') }}" required>
+                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester"
+                       value="{{ old('requesterName') }}" required>
             </div>
             <div class="inline-field">
-    <label for="RequesterSignature">E-Signature </label>
-    <div class="file-upload">
-        <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;" onchange="previewSignature(event)">
-        <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
-            Click to upload e-sign.<br>Maximum file size: 32MB
-        </div>
-        <input type="hidden" id="hidden-signature" name="hiddenSignature">
-        <img id="signature-preview"
-             src=""
-             style="display: none; cursor: pointer;"
-             alt="Signature Preview"
-             onclick="document.getElementById('RequesterSignature').click();">
-    </div>
-    <div id="signature-error" style="color: red; display: none;">E-Signature is required.</div>
-</div>
+                <label for="RequesterSignature">E-Signature </label>
+                <div class="file-upload">
+                    <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;"
+                           onchange="previewSignature(event)">
+                    <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
+                        Click to upload e-sign.<br>Maximum file size: 32MB
+                    </div>
+                    <input type="hidden" id="hidden-signature" name="hiddenSignature">
+                    <img id="signature-preview"
+                         src=""
+                         style="display: none; cursor: pointer;"
+                         alt="Signature Preview"
+                         onclick="document.getElementById('RequesterSignature').click();">
+                </div>
+                <div id="signature-error" style="color: red; display: none;">E-Signature is required.</div>
+            </div>
 
         </div>
         <div class="row">
@@ -451,20 +463,28 @@
                 </div>
             </div>
             <div class="fac">
-            <label for="otherFacilitiesSelect">Other Facilities</label>
-            <select id="otherFacilitiesSelect" name="otherFacilitiesSelect" class="selectpicker">
-                <option disabled selected>Select Facility</option>
-                <option value="Projector" {{ old('otherFacilitiesSelect') == 'Projector' ? 'selected' : '' }}>Projector</option>
-                <option value="Sound System" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>Sound System</option>
-                <option value="Microphone" {{ old('otherFacilitiesSelect') == 'Microphone' ? 'selected' : '' }}>Microphone</option>
-                <!-- Add more facilities here -->
-            </select>
-            <input type="text" id="otherFacilitiesInput" name="otherFacilitiesInput" style="display:none;" placeholder="Enter Facility" value="{{ old('otherFacilitiesInput') }}">
-            <div class="checkbox">
-                <input type="checkbox" id="otherFacilitiesCheckbox" name="otherFacilitiesCheckbox" onclick="toggleInputField('otherFacilities')" {{ old('otherFacilitiesInput') ? 'checked' : '' }}>
+                <label for="otherFacilitiesSelect">Other Facilities</label>
+                <select id="otherFacilitiesSelect" name="otherFacilitiesSelect" class="selectpicker">
+                    <option disabled selected>Select Facility</option>
+                    <option value="Projector" {{ old('otherFacilitiesSelect') == 'Projector' ? 'selected' : '' }}>
+                        Projector
+                    </option>
+                    <option value="Sound System" {{ old('otherFacilitiesSelect') == 'Sound System' ? 'selected' : '' }}>
+                        Sound System
+                    </option>
+                    <option value="Microphone" {{ old('otherFacilitiesSelect') == 'Microphone' ? 'selected' : '' }}>
+                        Microphone
+                    </option>
+                    <!-- Add more facilities here -->
+                </select>
+                <input type="text" id="otherFacilitiesInput" name="otherFacilitiesInput" style="display:none;"
+                       placeholder="Enter Facility" value="{{ old('otherFacilitiesInput') }}">
+                <div class="checkbox">
+                    <input type="checkbox" id="otherFacilitiesCheckbox" name="otherFacilitiesCheckbox"
+                           onclick="toggleInputField('otherFacilities')" {{ old('otherFacilitiesInput') ? 'checked' : '' }}>
+                </div>
+                <div id="otherFacilitiesError" class="error-message"></div>
             </div>
-            <div id="otherFacilitiesError" class="error-message"></div>
-        </div>
         </div>
         <div class="row-group-container">
             @foreach (old('date_start', [date('Y-m-d')]) as $index => $date_start)
@@ -472,11 +492,13 @@
                     <div class="row">
                         <div class="inline-field">
                             <label for="date_start">Date Start</label>
-                            <input type="date" id="date_start" name="date_start[]" value="{{ old('date_start.' . $index) }}" required>
+                            <input type="date" id="date_start" name="date_start[]"
+                                   value="{{ old('date_start.' . $index) }}" required>
                         </div>
                         <div class="inline-field">
                             <label for="date_end">Date End</label>
-                            <input type="date" id="date_end" name="date_end[]" value="{{ old('date_end.' . $index) }}" required>
+                            <input type="date" id="date_end" name="date_end[]" value="{{ old('date_end.' . $index) }}"
+                                   required>
                             <div class="button-container">
                                 <button class="add-btn" type="button" onclick="handleFormActions('addRow')">+</button>
                             </div>
@@ -485,11 +507,13 @@
                     <div class="row">
                         <div class="inline-field">
                             <label for="time_start">Time Start</label>
-                            <input type="time" id="time_start" name="time_start[]" value="{{ old('time_start.' . $index) }}" required>
+                            <input type="time" id="time_start" name="time_start[]"
+                                   value="{{ old('time_start.' . $index) }}" required>
                         </div>
                         <div class="inline-field">
                             <label for="time_end">Time End</label>
-                            <input type="time" id="time_end" name="time_end[]" value="{{ old('time_end.' . $index) }}" required>
+                            <input type="time" id="time_end" name="time_end[]" value="{{ old('time_end.' . $index) }}"
+                                   required>
                         </div>
                     </div>
                 </div>
@@ -505,7 +529,9 @@
     @foreach(App\Models\Office::all() as $office)
         focalPersonsByOffice[{{ $office->OfficeID }}] = [
             @foreach(App\Models\FocalPerson::where('OfficeID', $office->OfficeID)->get() as $focalPerson)
-        { value: '{{ $focalPerson->FocalPID }}', text: '{{ $focalPerson->FPName }}' },
+        {
+            value: '{{ $focalPerson->FocalPID }}', text: '{{ $focalPerson->FPName }}'
+        },
         @endforeach
     ];
     @endforeach
@@ -521,7 +547,7 @@
 
         var focalPersons = focalPersonsByOffice[officeId];
         if (focalPersons) {
-            focalPersons.forEach(function(focalPerson) {
+            focalPersons.forEach(function (focalPerson) {
                 var option = document.createElement('option');
                 option.value = focalPerson.value;
                 option.text = focalPerson.text;
@@ -530,13 +556,13 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const today = new Date().toISOString().split('T')[0];
-        document.querySelectorAll('input[type="date"]').forEach(function(input) {
+        document.querySelectorAll('input[type="date"]').forEach(function (input) {
             input.setAttribute('min', today);
         });
     });
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const hiddenSignatureInput = document.getElementById('hidden-signature');
         const preview = document.getElementById('signature-preview');
         const uploadText = document.querySelector('.e-signature-text');
@@ -569,7 +595,7 @@
         }
     }
 
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.querySelector('form').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent form submission by default
         if (!validateForm()) {
             resetSignature(); // Reset the signature input on error
@@ -580,15 +606,15 @@
         }
     });
 
-        /**
-         * Handles various form actions such as adding or removing rows and previewing the signature.
-         *
-         * @param {string} action - The action to be performed ('addRow', 'removeRow', 'previewSignature').
-         * @param {Event} event - The event object associated with the action.
-         */
+    /**
+     * Handles various form actions such as adding or removing rows and previewing the signature.
+     *
+     * @param {string} action - The action to be performed ('addRow', 'removeRow', 'previewSignature').
+     * @param {Event} event - The event object associated with the action.
+     */
 
     function handleFormActions(action, event) {
-        switch(action) {
+        switch (action) {
             case 'addRow':
                 let rowGroupContainer = document.querySelector('.row-group-container');
                 let newRowGroup = document.createElement('div');
@@ -629,12 +655,12 @@
                 const preview = document.getElementById('signature-preview');
                 const reader = new FileReader();
                 const uploadText = document.querySelector('.e-signature-text');
-                reader.onload = function() {
+                reader.onload = function () {
                     preview.src = reader.result;
                     preview.style.display = 'block';
                     uploadText.style.display = 'none';
                 };
-                reader.onerror = function() {
+                reader.onerror = function () {
                     console.error('Error reading file');
                 };
                 if (input.files && input.files[0]) {
@@ -644,21 +670,27 @@
         }
     }
 
-    document.querySelector('form').addEventListener('submit', function(event) {
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', function(event) {
         if (!validateForm()) {
             event.preventDefault();
             console.log('Form submission prevented due to validation errors.');
         } else {
             console.log('Form is valid. Form will be submitted.');
+            submitButton.disabled = true; // Disable the submit button to prevent multiple submissions
         }
     });
+});
 
-    function validateForm() {
+function validateForm() {
     let isValid = true;
     let errorMessages = [];
 
     // Check required fields
-    document.querySelectorAll('input[required], select[required]').forEach(function (element) {
+    document.querySelectorAll('input[required], select[required]').forEach(function(element) {
         if (!element.value) {
             isValid = false;
             errorMessages.push(element.previousElementSibling.textContent + " is required.");
@@ -666,7 +698,7 @@
     });
 
     // Check date fields
-    document.querySelectorAll('.row-group').forEach(function (rowGroup) {
+    document.querySelectorAll('.row-group').forEach(function(rowGroup) {
         let dateStart = rowGroup.querySelector('input[name="date_start[]"]').value;
         let dateEnd = rowGroup.querySelector('input[name="date_end[]"]').value;
         let timeStart = rowGroup.querySelector('input[name="time_start[]"]').value;
@@ -708,28 +740,17 @@
     return isValid;
 }
 
+function displayErrorMessages(messages) {
+    alert("Form submission failed.\n\n" + messages.join("\n"));
+}
+
     /**
-     * Displays error messages on the page instead of using console logs.
+     * Toggles between a select and an input field when a checkbox is clicked.
+     *
+     * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
      */
-    function displayErrorMessages(messages) {
-        const errorContainer = document.getElementById('error-container');
-        errorContainer.innerHTML = ''; // Clear previous error messages
-        messages.forEach(function(message) {
-            const errorElement = document.createElement('div');
-            errorElement.className = 'error-message';
-            errorElement.textContent = message;
-            errorContainer.appendChild(errorElement);
-        });
-        errorContainer.style.display = 'block'; // Show the error container
-    }
 
-     /**
-         * Toggles between a select and an input field when a checkbox is clicked.
-         *
-         * @param {string} fieldName - The base name of the field ('purpose' or 'focalPerson').
-         */
-
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         // Check if there is old input for the focal person and toggle the input field accordingly
         if ("{{ old('focalPersonInput') }}") {
             document.getElementById('focalPersonInput').style.display = 'block';

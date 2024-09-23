@@ -77,7 +77,6 @@ class VehicleController extends Controller
         }
     }
 
-
     /**
      * @throws ValidationException
      */
@@ -411,91 +410,91 @@ class VehicleController extends Controller
     }
 
     public function fetchCalendarEvents(Request $request): \Illuminate\Http\JsonResponse
-{
-    $title = $request->get('Purpose');
-    $destination = $request->get('Destination');
-    $formStatuses = $request->get('form_statuses', []);
-    $startDate = $request->get('date_start');
-    $endDate = $request->get('date_end');
+    {
+        $title = $request->get('Purpose');
+        $destination = $request->get('Destination');
+        $formStatuses = $request->get('form_statuses', []);
+        $startDate = $request->get('date_start');
+        $endDate = $request->get('date_end');
 
-    try {
-        $query = VehicleRequest::query();
+        try {
+            $query = VehicleRequest::query();
 
-        if ($title) {
-            // Check if the title is a PurposeID
-            $purposeName = DB::table('purpose_requests')
-                ->where('PurposeID', $title)
-                ->value('purpose'); // Assume 'purpose' is the column for the purpose name
+            if ($title) {
+                // Check if the title is a PurposeID
+                $purposeName = DB::table('purpose_requests')
+                    ->where('PurposeID', $title)
+                    ->value('purpose'); // Assume 'purpose' is the column for the purpose name
 
-            if ($purposeName) {
-                // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
-                $query->where('PurposeID', $title);
-            } else {
-                // Title is not a PurposeID, so check if it's in PurposeOthers
-                $query->where(function ($q) use ($title) {
-                    $q->where('PurposeOthers', 'like', "%$title%");
-                });
+                if ($purposeName) {
+                    // Title is a PurposeID, so filter by PurposeID and join with purpose_requests to get the name
+                    $query->where('PurposeID', $title);
+                } else {
+                    // Title is not a PurposeID, so check if it's in PurposeOthers
+                    $query->where(function ($q) use ($title) {
+                        $q->where('PurposeOthers', 'like', "%$title%");
+                    });
+                }
             }
-        }
 
-        if ($destination) {
-            $query->where('Destination', 'like', "%$destination%");
-        }
+            if ($destination) {
+                $query->where('Destination', 'like', "%$destination%");
+            }
 
-        if ($formStatuses) {
-            $query->whereIn('FormStatus', $formStatuses);
-        }
+            if ($formStatuses) {
+                $query->whereIn('FormStatus', $formStatuses);
+            }
 
-        if ($startDate && $endDate) {
-            $query->whereBetween('date_start', [$startDate, $endDate])
-                ->orWhereBetween('date_end', [$startDate, $endDate])
-                ->orWhere(function ($q) use ($startDate, $endDate) {
-                    $q->where('date_start', '<=', $startDate)
-                        ->where('date_end', '>=', $endDate);
+            if ($startDate && $endDate) {
+                $query->whereBetween('date_start', [$startDate, $endDate])
+                    ->orWhereBetween('date_end', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('date_start', '<=', $startDate)
+                            ->where('date_end', '>=', $endDate);
+                    });
+            }
+
+            // Exclude specific FormStatus and EventStatus combinations
+            $query->where(function ($q) {
+                $q->whereNot(function ($q) {
+                    $q->where('FormStatus', 'Not Approved')
+                        ->where('EventStatus', '-');
+                })
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Cancelled');
+                    })
+                    ->whereNot(function ($q) {
+                        $q->where('FormStatus', 'Approved')
+                            ->where('EventStatus', 'Finished');
+                    });
+            });
+
+            $vehicleRequests = $query->get()
+                ->map(function ($event) {
+                    // Fetch the purpose name based on PurposeID
+                    $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
+
+                    return [
+                        'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
+                        'start' => $event->date_start . 'T' . $event->time_start,
+                        'end' => $event->date_end . 'T' . $event->time_end,
+                        'EventStatus' => $event->FormStatus,
+                        'Destination' => $event->Destination,
+                        'VRequestID' => $event->VRequestID, // Include VRequestID in the response
+                        'FormStatus' => $event->FormStatus // Include FormStatus in the response
+                    ];
                 });
+
+            return response()->json($vehicleRequests);
+        } catch (Throwable $e) {
+            Log::error('An error occurred while fetching calendar events:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Failed to fetch calendar events.'], 500);
         }
-
-        // Exclude specific FormStatus and EventStatus combinations
-        $query->where(function ($q) {
-            $q->whereNot(function ($q) {
-                $q->where('FormStatus', 'Not Approved')
-                    ->where('EventStatus', '-');
-            })
-            ->whereNot(function ($q) {
-                $q->where('FormStatus', 'Approved')
-                    ->where('EventStatus', 'Cancelled');
-            })
-            ->whereNot(function ($q) {
-                $q->where('FormStatus', 'Approved')
-                    ->where('EventStatus', 'Finished');
-            });
-        });
-
-        $vehicleRequests = $query->get()
-            ->map(function ($event) {
-                // Fetch the purpose name based on PurposeID
-                $purposeName = $event->PurposeID ? DB::table('purpose_requests')->where('PurposeID', $event->PurposeID)->value('purpose') : null;
-
-                return [
-                    'title' => $purposeName ?? $event->PurposeOthers ?? 'N/A',
-                    'start' => $event->date_start . 'T' . $event->time_start,
-                    'end' => $event->date_end . 'T' . $event->time_end,
-                    'EventStatus' => $event->FormStatus,
-                    'Destination' => $event->Destination,
-                    'VRequestID' => $event->VRequestID, // Include VRequestID in the response
-                    'FormStatus' => $event->FormStatus // Include FormStatus in the response
-                ];
-            });
-
-        return response()->json($vehicleRequests);
-    } catch (Throwable $e) {
-        Log::error('An error occurred while fetching calendar events:', [
-            'message' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-        ]);
-        return response()->json(['error' => 'Failed to fetch calendar events.'], 500);
     }
-}
 
 // In `app/Http/Controllers/VehicleController.php`
 
@@ -541,6 +540,7 @@ class VehicleController extends Controller
             return view('VehicledetailEdit')->with('error', 'Failed to fetch request data.');
         }
     }
+
     // Vehicle Stats
     public function fetchVStatistics(): \Illuminate\Http\JsonResponse
     {
@@ -562,6 +562,7 @@ class VehicleController extends Controller
 
         return response()->json($statistics);
     }
+
     //Start Wlay pulos
     public function getVLogData($VRequestID): View|Factory|Application
     {
@@ -585,131 +586,132 @@ class VehicleController extends Controller
         }
         return view('vehiclelogDetail', ['requestLogData' => $requestLogData, 'passengers' => $passengers]);
     }
+
     //end sa wlay pulos
     public function fetchSortedVLogRequests(Request $request): \Illuminate\Http\JsonResponse
-{
-    // Fetch parameters from the request with default values
-    $searchQuery = $request->input('search_query', '');
-    $order = $request->input('order', 'desc');
-    $sort = $request->input('sort', 'created_at');
-    $page = $request->input('page', 1);
-    $perPage = $request->input('per_page', 5);
+    {
+        // Fetch parameters from the request with default values
+        $searchQuery = $request->input('search_query', '');
+        $order = $request->input('order', 'desc');
+        $sort = $request->input('sort', 'created_at');
+        $page = $request->input('page', 1);
+        $perPage = $request->input('per_page', 5);
 
-    // Get filters
-    $VehicleRequests = $request->input('vehicle_request');
-    $statusPairs = $request->input('status_pairs', []);
+        // Get filters
+        $VehicleRequests = $request->input('vehicle_request');
+        $statusPairs = $request->input('status_pairs', []);
 
-    // Define allowed status pairs for filtering
-    $allowedStatusPairs = [
-        'Approved,Finished',
-        'Approved,Cancelled',
-        'Not Approved,-'
-    ];
+        // Define allowed status pairs for filtering
+        $allowedStatusPairs = [
+            'Approved,Finished',
+            'Approved,Cancelled',
+            'Not Approved,-'
+        ];
 
-    // Ensure that only allowed status pairs are used
-    $filteredStatusPairs = array_filter($statusPairs, function ($pair) use ($allowedStatusPairs) {
-        return in_array($pair, $allowedStatusPairs);
-    });
-
-    // Define month names to numeric conversion
-    $monthNames = [
-        'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
-        'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
-        'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
-    ];
-
-    // Query from VehicleRequest model
-    $query = VehicleRequest::query();
-
-    // Apply search query
-    if (!empty($searchQuery)) {
-        $query->where(function ($q) use ($searchQuery, $monthNames) {
-            $lowerSearchQuery = strtolower($searchQuery);
-
-            if (isset($monthNames[$lowerSearchQuery])) {
-                // Search by month name in the created_at column
-                $q->whereMonth('created_at', $monthNames[$lowerSearchQuery]);
-            } else {
-                // Search by other fields
-                $q->where('VRequestID', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('Destination', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('PurposeID', 'like', '%' . $searchQuery . '%')
-                    ->orWhereHas('office', function ($q) use ($searchQuery) {
-                        $q->where('OfficeName', 'like', '%' . $searchQuery . '%');
-                    })
-                    ->orWhere('FormStatus', 'like', '%' . $searchQuery . '%')
-                    ->orWhere('EventStatus', 'like', '%' . $searchQuery . '%');
-            }
+        // Ensure that only allowed status pairs are used
+        $filteredStatusPairs = array_filter($statusPairs, function ($pair) use ($allowedStatusPairs) {
+            return in_array($pair, $allowedStatusPairs);
         });
-    }
 
-    // Apply allowed status pair filtering
-    if (!empty($filteredStatusPairs)) {
-        $query->where(function ($q) use ($filteredStatusPairs) {
-            foreach ($filteredStatusPairs as $pair) {
-                list($formStatus, $eventStatus) = explode(',', $pair);
-                $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
-                    $q->where('FormStatus', $formStatus)
-                        ->where('EventStatus', $eventStatus);
-                });
-            }
-        });
-    } else {
-        // If no status pairs are provided, default to the allowed ones
-        $query->where(function ($q) use ($allowedStatusPairs) {
-            foreach ($allowedStatusPairs as $pair) {
-                list($formStatus, $eventStatus) = explode(',', $pair);
-                $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
-                    $q->where('FormStatus', $formStatus)
-                        ->where('EventStatus', $eventStatus);
-                });
-            }
-        });
-    }
+        // Define month names to numeric conversion
+        $monthNames = [
+            'january' => '01', 'february' => '02', 'march' => '03', 'april' => '04',
+            'may' => '05', 'june' => '06', 'july' => '07', 'august' => '08',
+            'september' => '09', 'october' => '10', 'november' => '11', 'december' => '12'
+        ];
 
-    // Sort the results
-    $requests = $query->orderBy($sort, $order)->paginate($perPage, ['*'], 'page', $page);
+        // Query from VehicleRequest model
+        $query = VehicleRequest::query();
 
-    // Return paginated and filtered data
-    return response()->json([
-        'data' => $requests->items(), // Paginated results
-        'pagination' => [
-            'current_page' => $requests->currentPage(),
-            'last_page' => $requests->lastPage(),
-            'total' => $requests->total(),
-        ]
-    ]);
-}
+        // Apply search query
+        if (!empty($searchQuery)) {
+            $query->where(function ($q) use ($searchQuery, $monthNames) {
+                $lowerSearchQuery = strtolower($searchQuery);
 
-public function getVehicleUsage()
-{
-    // Fetch vehicle types and their usage counts
-    $vehicleUsage = \DB::table('vehicle_request')
-        ->leftJoin('vehicle', 'vehicle_request.VehicleID', '=', 'vehicle.VehicleID') // Use LEFT JOIN
-        ->select('vehicle.VehicleType', \DB::raw('COUNT(vehicle_request.VehicleID) as count'))
-        ->groupBy('vehicle.VehicleType')
-        ->get();
-
-    // Prepare data for the chart
-    $dataPoints = [];
-    $totalCount = $vehicleUsage->sum('count');
-
-    if ($totalCount > 0) {
-        foreach ($vehicleUsage as $usage) {
-            // Check if VehicleType is null, and use a fallback label
-            $vehicleType = $usage->VehicleType ?? 'Unknown Vehicle Type';
-            $percentage = ($usage->count / $totalCount) * 100; // Calculate percentage
-            $dataPoints[] = ['y' => round($percentage, 2), 'label' => $vehicleType];
+                if (isset($monthNames[$lowerSearchQuery])) {
+                    // Search by month name in the created_at column
+                    $q->whereMonth('created_at', $monthNames[$lowerSearchQuery]);
+                } else {
+                    // Search by other fields
+                    $q->where('VRequestID', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('Destination', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('PurposeID', 'like', '%' . $searchQuery . '%')
+                        ->orWhereHas('office', function ($q) use ($searchQuery) {
+                            $q->where('OfficeName', 'like', '%' . $searchQuery . '%');
+                        })
+                        ->orWhere('FormStatus', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('EventStatus', 'like', '%' . $searchQuery . '%');
+                }
+            });
         }
-    } else {
-        // Optionally, provide a fallback if no data is available
-        $dataPoints[] = ['y' => 100, 'label' => 'No Data Available'];
+
+        // Apply allowed status pair filtering
+        if (!empty($filteredStatusPairs)) {
+            $query->where(function ($q) use ($filteredStatusPairs) {
+                foreach ($filteredStatusPairs as $pair) {
+                    list($formStatus, $eventStatus) = explode(',', $pair);
+                    $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                        $q->where('FormStatus', $formStatus)
+                            ->where('EventStatus', $eventStatus);
+                    });
+                }
+            });
+        } else {
+            // If no status pairs are provided, default to the allowed ones
+            $query->where(function ($q) use ($allowedStatusPairs) {
+                foreach ($allowedStatusPairs as $pair) {
+                    list($formStatus, $eventStatus) = explode(',', $pair);
+                    $q->orWhere(function ($q) use ($formStatus, $eventStatus) {
+                        $q->where('FormStatus', $formStatus)
+                            ->where('EventStatus', $eventStatus);
+                    });
+                }
+            });
+        }
+
+        // Sort the results
+        $requests = $query->orderBy($sort, $order)->paginate($perPage, ['*'], 'page', $page);
+
+        // Return paginated and filtered data
+        return response()->json([
+            'data' => $requests->items(), // Paginated results
+            'pagination' => [
+                'current_page' => $requests->currentPage(),
+                'last_page' => $requests->lastPage(),
+                'total' => $requests->total(),
+            ]
+        ]);
     }
 
-    // Log dataPoints for debugging
-    Log::info('dataPoints:', $dataPoints);
+    public function getVehicleUsage(): \Illuminate\Http\JsonResponse
+    {
+        // Fetch vehicle types and their usage counts
+        $vehicleUsage = \DB::table('vehicle_request')
+            ->leftJoin('vehicle', 'vehicle_request.VehicleID', '=', 'vehicle.VehicleID') // Use LEFT JOIN
+            ->select('vehicle.VehicleType', \DB::raw('COUNT(vehicle_request.VehicleID) as count'))
+            ->groupBy('vehicle.VehicleType')
+            ->get();
 
-    return view('VehicleStatistics', ['dataPoints' => $dataPoints]);
-}
+        // Prepare data for the chart
+        $dataPoints = [];
+        $totalCount = $vehicleUsage->sum('count');
 
+        if ($totalCount > 0) {
+            foreach ($vehicleUsage as $usage) {
+                // Check if VehicleType is null, and use a fallback label
+                $vehicleType = $usage->VehicleType ?? 'Unknown Vehicle Type';
+                $percentage = ($usage->count / $totalCount) * 100; // Calculate percentage
+                $dataPoints[] = ['y' => round($percentage, 2), 'label' => $vehicleType];
+            }
+        } else {
+            // Optionally, provide a fallback if no data is available
+            $dataPoints[] = ['y' => 100, 'label' => 'No Data Available'];
+        }
+
+        // Log dataPoints for debugging
+        Log::info('dataPoints:', $dataPoints);
+
+        // Return dataPoints as JSON
+        return response()->json(['dataPoints' => $dataPoints]);
+    }
 }
