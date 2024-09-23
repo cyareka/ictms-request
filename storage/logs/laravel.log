@@ -323,3 +323,23 @@
 [2024-09-19 06:50:32] local.INFO: Validation successful. {"validated":[]} 
 [2024-09-19 06:50:32] local.INFO: Passengers fetched: [{"EmployeeID":"2024097789","EmployeeName":"Cathryn McLaughlin","OfficeName":"Cash Unit"}] 
 [2024-09-19 06:50:32] local.INFO: Validation successful. {"validated":[]} 
+[2024-09-23 06:17:33] local.INFO: Search term:   
+[2024-09-23 06:17:35] local.INFO: Search term:   
+[2024-09-23 06:17:35] local.INFO: Sort: created_at  
+[2024-09-23 06:17:35] local.INFO: Order: desc  
+[2024-09-23 06:17:35] local.INFO: Per Page: 10  
+[2024-09-23 06:17:35] local.INFO: Page: 1  
+[2024-09-23 06:17:36] local.DEBUG: MAGITING SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024098897 group by substr(created_at, 6, 2)  
+[2024-09-23 06:17:36] local.DEBUG: MAAGAP SQL Query: select substr(created_at, 6, 2) as month, count(*) as total from "conference_room_requests" where "CRoomID" = 2024092155 group by substr(created_at, 6, 2)  
+[2024-09-23 06:17:46] local.INFO: Search term:   
+[2024-09-23 06:17:48] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 06:17:48] local.INFO: Query results: {"current_page":1,"data":[],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":null,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":null,"total":0} 
+[2024-09-23 06:17:49] local.INFO: Search term:   
+[2024-09-23 06:17:50] local.INFO: Filter parameters: {"sort":"created_at","order":"desc","form_statuses":["Approved","Pending","For Approval"],"event_statuses":["Ongoing","-"],"search_query":null} 
+[2024-09-23 06:17:50] local.INFO: Query results: {"current_page":1,"data":[],"first_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","from":null,"last_page":1,"last_page_url":"https://ictms-request.test/fetchSortedVRequests?page=1","links":[{"url":null,"label":"&laquo; Previous","active":false},{"url":"https://ictms-request.test/fetchSortedVRequests?page=1","label":"1","active":true},{"url":null,"label":"Next &raquo;","active":false}],"next_page_url":null,"path":"https://ictms-request.test/fetchSortedVRequests","per_page":10,"prev_page_url":null,"to":null,"total":0} 
+[2024-09-23 06:17:51] local.INFO: Search term:   
+[2024-09-23 06:17:51] local.INFO: Sort: created_at  
+[2024-09-23 06:17:51] local.INFO: Order: desc  
+[2024-09-23 06:17:51] local.INFO: Per Page: 10  
+[2024-09-23 06:17:51] local.INFO: Page: 1  
+[2024-09-23 06:20:13] local.INFO: Search term:   
