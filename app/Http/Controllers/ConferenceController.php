@@ -609,6 +609,18 @@ class ConferenceController extends Controller
                         'total' => $item->total,
                     ];
                 }),
+
+               'cancelledPerOffice' => ConferenceRequest::select('OfficeID', \DB::raw('count(*) as total'))
+                    ->where('EventStatus', 'Cancelled')  // Filter by EventStatus "Cancelled"
+                    ->groupBy('OfficeID')
+                    ->with('office')
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'office' => $item->office->OfficeName,
+                            'total' => $item->total,
+                        ];
+                    }),
         ];
 
         return response()->json($statistics);

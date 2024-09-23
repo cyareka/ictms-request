@@ -73,7 +73,7 @@
     <br>
     <br>
     <h1>Total Cancelled Requests for Offices</h1>
-    <div class="simple-bar-chart" id="monthly-requests-chart">
+    <div class="simple-bar-chart" id="cancelled-requests-chart">
         <!-- Dynamic content will be inserted here -->
     </div>
 </div>
@@ -91,6 +91,7 @@
                 document.getElementById('monthly-requests').textContent = data.monthlyRequests;
 
                 const requestsPerOfficeContainer = document.getElementById('requests-per-office');
+                const cancelledPerOfficeContainer = document.getElementById('cancelled-requests-chart');
 
                 // Array of colors
                 const colors = ['#5EB344', '#e1e81a', '#F8821A', '#E0393E', '#963D97', '#fa5f83', '#069CDB', '#014D4E'];
@@ -121,6 +122,34 @@
                     item.appendChild(value);
                     item.appendChild(label);
                     requestsPerOfficeContainer.appendChild(item);
+                });
+
+                data.cancelledPerOffice.forEach((office, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'item';
+
+                    // Set the color dynamically from the colors array
+                    const color = colors[index % colors.length]; // Cycle through colors if needed
+                    item.style.setProperty('--clr', color);
+                    item.style.setProperty('--val', office.total);
+
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    bar.style.backgroundColor = color;
+                    bar.style.height = `${office.total}`; // Adjust the height based on the total percentage
+
+                    const value = document.createElement('div');
+                    value.className = 'value';
+                    value.textContent = `${office.total}`;
+
+                    const label = document.createElement('div');
+                    label.className = 'label';
+                    label.textContent = office.office; // Use the office name as the label
+
+                    item.appendChild(bar);
+                    item.appendChild(value);
+                    item.appendChild(label);
+                    cancelledPerOfficeContainer.appendChild(item);
                 });
             });
     });
