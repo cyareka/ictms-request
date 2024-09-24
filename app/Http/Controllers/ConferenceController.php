@@ -102,7 +102,9 @@ class ConferenceController extends Controller
                 throw ValidationException::withMessages(['npersons' => 'The number of persons exceeds the capacity of the selected conference room.']);
             }
 
-            $this->insertPurposeInput($validated);
+            if (empty($validated['purposeSelect'])) {
+                $this->insertPurposeInput($validated);
+            }
 
             $purpose = !empty($validated['purposeInput']) ? ucwords($validated['purposeInput']) : null;
             $focalPerson = $validated['focalPersonInput'] ?? null;

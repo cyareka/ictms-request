@@ -101,9 +101,11 @@ class VehicleController extends Controller
                 'RequesterContact' => 'required|string|max:13',
                 'RequesterSignature' => 'required|file|mimes:png,jpg,jpeg|max:32256',
             ]);
-            $this->insertPurposeInput($validated);
+            if (empty($validated['purposeSelect'])) {
+                $this->insertPurposeInput($validated);
+            }
 
-            // Capitalize the first letter of specific fields
+// Capitalize the first letter of specific fields
             $purpose = !empty($validated['purposeInput']) ? ucwords($validated['purposeInput']) : null;
             $validated['Destination'] = ucwords($validated['Destination']);
             $validated['RequesterName'] = ucwords($validated['RequesterName']);
