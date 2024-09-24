@@ -166,7 +166,7 @@
                     </a>
                 </th>
                 <th scope="col">Destination</th>
-                <th scope="col">Purpose</th>
+{{--                <th scope="col">Purpose</th>--}}
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date Needed</th>
                 <th scope="col">Time Needed</th>
@@ -230,7 +230,7 @@
                     <th scope="row">{{ $request->VRequestID }}</th>
                     <td>{{ $request->created_at->format('m-d-Y (h:i A)') }}</td>
                     <td>{{ $request->Destination }}</td>
-                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
+{{--                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>--}}
                     <td>{{ $request->office->OfficeName }}</td>
                     <td>{{ $request->date_start }}</td>
                     <td>{{ $request->time_start }}</td>
@@ -349,8 +349,7 @@
                                 })}</td>
                       <td>${request.Destination}</td>
 
-                    <td>{{ isset($request) ? optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers : '' }}</td>
-
+                    {{--<td>{{ isset($request) ? optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers : '' }}</td>--}}
                       <td>${officeName}</td>
                       <td>${request.date_start}</td>
                       <td>${request.time_start}</td>
