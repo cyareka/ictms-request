@@ -25,7 +25,6 @@
             margin: 36px;
             margin-top: 0px;
         }
-
         #content main .box-info li {
             padding: 24px;
             background: white;
@@ -35,7 +34,6 @@
             grid-gap: 24px;
             box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
         }
-
         #content main .box-info li .bx {
             width: 80px;
             height: 80px;
@@ -45,49 +43,40 @@
             justify-content: center;
             align-items: center;
         }
-
         #content main .box-info li .bx {
             background: white;
             color: #354e7d;
         }
-
         #content main .box-info li .text h3 {
             font-size: 24px;
             font-weight: 600;
             color: var(--dark);
         }
-
         #content main .box-info li .text p {
             color: var(--dark);
         }
-
         a:hover {
             text-decoration: none;
         }
-
         .requests {
             padding: 0px 50px;
             position: relative;
             z-index: 2; /* Ensure this content is above the footer */
         }
-
         .filter {
             display: flex;
             justify-content: space-between;
         }
-
         .form {
             position: relative;
             width: 250px;
         }
-
         .form .fa-search {
             position: absolute;
             top: 10px;
             left: 20px;
             color: #747487;
         }
-
         .form span {
             position: absolute;
             right: 17px;
@@ -95,15 +84,12 @@
             padding: 2px;
             border-left: 1px solid #d1d5db;
         }
-
         .left-pan {
             padding-left: 7px;
         }
-
         .left-pan i {
             padding-left: 10px;
         }
-
         .form-input {
             height: 35px;
             text-indent: 33px;
@@ -112,12 +98,10 @@
             border: none;
             color: #6E6E71;
         }
-
         .form-input:focus {
             box-shadow: none;
             border: none;
         }
-
         .tableactions i {
             display: inline-block;
             margin-right: 10px;
@@ -125,21 +109,43 @@
             z-index: 3;
             cursor: pointer;
         }
-
         #iconborder {
             margin-right: 10px;
             border-right: 1px solid #d1d5db;
             padding-right: 20px;
         }
 
+        @media (max-width: 796px) {
+            .fc-toolbar {
+                flex-direction: column;
+                margin-top: 10px;   /* Extra space for small screens */
+                margin-bottom: 100px;
+                margin-left:20px;
+            }
+            .fc-left, .fc-right {
+                justify-content: space-between;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            .fc-center {
+                margin-bottom: 15px;
+            }
+            /* Reduce the button size slightly but keep the padding larger */
+            .fc-toolbar button {
+                font-size: 14px;
+                padding: 12px 20px;  /* Larger padding on small screens */
+            }
+        }
         @media (max-width: 768px) {
             .tableactions i {
                 margin-top: 10px;
                 font-size: 15px;
                 margin-right: 5px;
             }
+            #refreshBtn {
+                margin-left: 200px;
+            }
         }
-
         .tabview {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             border-collapse: collapse;
@@ -152,39 +158,32 @@
             position: relative;
             z-index: 2;
         }
-
         .tabview table {
             width: 100%;
             padding-top: 10px;
             border-spacing: 0;
         }
-
         .tabview th, .tabview td {
             padding: 12px 18px;
             text-align: left;
             border-bottom: 1px solid #DADADA;
         }
-
         .tabview th {
             font-weight: 600;
             color: #4A4A4A;
             background-color: #F1F1F1;
             border-bottom: 2px solid #DADADA;
         }
-
         .tabview td {
             color: #333;
             background-color: #FFFFFF;
         }
-
         .tabview tr:hover td {
             background-color: #EFEFEF;
         }
-
         .tabview tr:last-child td {
             border-bottom: none;
         }
-
         .approved {
             padding: 4px 13px;
             background-color: #CBDCF9;
@@ -193,7 +192,6 @@
             font-weight: bold;
             border-radius: 5px;
         }
-
         .not-approved {
             padding: 4px 13px;
             background-color: #ff6961;
@@ -202,7 +200,6 @@
             font-weight: bold;
             border-radius: 5px;
         }
-
         .pending {
             padding: 4px 13px;
             background-color: #D3D3D3; /* Light gray */
@@ -211,7 +208,6 @@
             font-weight: bold;
             border-radius: 5px;
         }
-
         .for-approval {
             padding: 4px 13px;
             background-color: #FFF3DD; /* Same as previous Pending */
@@ -220,13 +216,11 @@
             font-weight: bold;
             border-radius: 5px;
         }
-
         #actions {
             margin: 2px 8px;
             cursor: pointer;
             color: black;
         }
-
         .end {
             position: fixed;
             bottom: 0;
@@ -236,20 +230,17 @@
             background: #354e7d;
             z-index: 1; /* Ensure the footer is below the table */
         }
-
         .dropbtn {
             color: black;
             font-size: 16px;
             border: none;
             cursor: pointer;
         }
-
         .dropdown {
             position: relative;
             display: inline-block;
             z-index: 1000; /* Ensure dropdown is on top of the table */
         }
-
         .dropdown-content {
             display: none;
             position: absolute;
@@ -259,7 +250,6 @@
             box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
             z-index: 1000; /* Ensure dropdown content is on top */
         }
-
         .dropdown-content p {
             padding-top: 10px;
             padding-left: 10px;
@@ -267,37 +257,30 @@
             font-weight: bold;
             font-size: 18px;
         }
-
         #margincheck {
             margin-bottom: 10px;
         }
-
         #filterlabel {
             margin-bottom: 10px;
         }
-
         .dropdown-content a {
             color: black;
             padding: 10px 16px;
             text-decoration: none;
             display: block;
         }
-
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
-
         .dropdown:hover .dropdown-content {
             display: block;
         }
-
         .buttons {
             display: flex;
             justify-content: right;
             margin-top: 20px;
             margin-bottom: 10px;
         }
-
         .applybtn, .cancelbtn {
             background-color: #354e7d;
             color: white;
@@ -306,20 +289,17 @@
             margin: 0 10px 10px 0;
             width: 90px;
         }
-
         @media screen and (max-width: 484px) {
             .form {
                 width: 160px;
             }
         }
-
         @media (max-width: 768px) {
             .chart-container {
                 width: 90%;
                 margin: 10px auto;
             }
         }
-
         .chart-container {
             width: 90%;
             margin: 20px auto;
@@ -330,20 +310,17 @@
             width: 100%;
             gap: 20px; /* Space between charts */
         }
-
         .chart-container > div {
             flex: 1 1 45%; /* Flex-grow, Flex-shrink, Flex-basis */
             min-width: 300px; /* Minimum width of the charts */
             height: 500px;
         }
-
         @media (max-width: 768px) {
             .chart-container > div {
                 flex: 1 1 100%; /* Stack charts vertically on small screens */
                 height: 400px; /* Adjust height for smaller screens */
             }
         }
-
         .bar-chart-wrapper {
             display: flex;
             flex-direction: column;
@@ -351,13 +328,11 @@
             justify-content: center;
             margin: 50px auto;
         }
-
         .bar-chart-wrapper h1 {
             font-size: 30px;
             font-weight: bold;
             margin-bottom: 10px;
         }
-
         .simple-bar-chart {
             --line-count: 10;
             --line-color: currentcolor;
@@ -376,7 +351,6 @@
             isolation: isolate;
             width: 90%;
         }
-
         .simple-bar-chart::after {
             content: "";
             position: absolute;
@@ -388,29 +362,24 @@
             box-shadow: 0 var(--line-width) 0 var(--line-color);
             opacity: var(--line-opacity);
         }
-
         .simple-bar-chart > .item {
             height: calc(1% * var(--val));
             background-color: var(--clr, var(--item-default-color));
             position: relative;
             animation: item-height 1s ease forwards
         }
-
         @keyframes item-height {
             from {
                 height: 0
             }
         }
-
         .simple-bar-chart > .item > * {
             position: absolute;
             text-align: center
         }
-
         .simple-bar-chart > .item > .label {
             inset: 100% 0 auto 0
         }
-
         .simple-bar-chart > .item > .value {
             inset: auto 0 100% 0
         }

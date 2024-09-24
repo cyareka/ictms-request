@@ -73,7 +73,7 @@
         color: #000;
         font-size: 24px;
         transition: color 0.3s ease;
-        margin-left: 850px;
+        margin-left: -10px;
         transition: transform 0.5s ease;
         cursor: pointer;
     }

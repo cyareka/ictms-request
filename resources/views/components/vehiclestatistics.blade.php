@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,14 +60,15 @@
     <div class="simple-bar-chart"></div>
 </div>
 
+
+<br>
+
 <div class="bar-chart-wrapper">
-    <h1>Total Cancelled Requests for Offices</h1>
-    <br>
-    <br>
-    <div class="simple-bar-chart" id="cancelled-vehicle-requests-chart">
-        <!-- Dynamic content will be inserted here -->
-    </div>
+    <h1 style="text-align: center;">Total Cancelled Requests for Offices</h1>
+    <div class="simple-bar-chart" id="cancelled-vehicle-requests-chart"></div>
 </div>
+
+<br>
 
 
 <!-- Adjust the size of the pie chart -->
@@ -191,4 +191,3 @@
 </script>
 </body>
 </html>
-

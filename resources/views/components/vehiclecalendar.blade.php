@@ -68,6 +68,24 @@
             font-size: 24px;
             margin-bottom: 20px;
         }
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 80%; /* Adjust width for smaller screens */
+                padding: 20px; /* Adjust padding */
+            }
+            .modal-header {
+                font-size: 20px; /* Adjust header font size */
+            }
+        }
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 90%; /* Further adjustment for very small screens */
+                padding: 15px; /* Adjust padding */
+            }
+            .modal-header {
+                font-size: 18px; /* Further adjust header font size */
+            }
+        }
         .close {
             color: #aaa;
             float: right;
@@ -108,6 +126,7 @@
             border-radius: 5px;
         }
     </style>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const calendarEl2 = document.getElementById('calendar2');
@@ -179,7 +198,7 @@
                                     <p><strong>Destination:</strong> ${event.Destination || 'N/A'}</p>
                                     <p><strong>Start:</strong> ${new Date(event.start).toLocaleString()}</p>
                                     <p><strong>Status:</strong> ${event.EventStatus || 'N/A'}</p>
-                                     ${(event.FormStatus === 'For Approval' || event.FormStatus === 'Approved' || event.FormStatus === 'Not Approved') ? 
+                                     ${(event.FormStatus === 'For Approval' || event.FormStatus === 'Approved' || event.FormStatus === 'Not Approved') ?
             `<a href="/vehiclerequest/${event.VRequestID}/view-pdf">
                 <button class="download-btn" style="background-color: #354e7d; color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; border-radius: 10px; font-size: 16px;" type="button">Download</button>
             </a>` : ''}

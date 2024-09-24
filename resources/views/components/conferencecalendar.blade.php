@@ -15,34 +15,28 @@
             box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
             z-index: 2;
         }
-
         /* Responsive design adjustments for smaller screens */
         @media (max-width: 768px) {
             #calendar {
                 width: 90%;
                 margin-left: 0;
             }
-
             .dropdown {
                 margin-top: 20px;
             }
         }
-
         /* Flex container for dropdown and calendar */
         .cont {
             display: flex;
             align-items: flex-start;
             justify-content: center;
         }
-
         .dropdown {
             margin-top: 20px; /* Align with the calendar top */
         }
-
         .cont i {
             font-size: 20px;
         }
-
         /* Modal styling */
         .modal {
             display: none;
@@ -57,7 +51,6 @@
             background-color: rgba(0, 0, 0, 0.4);
             transition: opacity 0.3s ease;
         }
-
         .modal-content {
             background-color: #ffffff;
             margin: auto;
@@ -71,12 +64,28 @@
             overflow-y: auto;
             max-height: 80vh;
         }
-
         .modal-header {
             font-size: 24px;
             margin-bottom: 20px;
         }
-
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 80%; /* Adjust width for smaller screens */
+                padding: 20px; /* Adjust padding */
+            }
+            .modal-header {
+                font-size: 20px; /* Adjust header font size */
+            }
+        }
+        @media (max-width: 480px) {
+            .modal-content {
+                width: 90%; /* Further adjustment for very small screens */
+                padding: 15px; /* Adjust padding */
+            }
+            .modal-header {
+                font-size: 18px; /* Further adjust header font size */
+            }
+        }
         .close {
             color: #aaa;
             float: right;
@@ -87,13 +96,11 @@
             top: 15px;
             right: 15px;
         }
-
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
         }
-
         .event-container {
             margin-bottom: 20px;
             padding: 15px;
@@ -102,11 +109,9 @@
             background-color: #f9f9f9;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         .event-container h2 {
             margin-top: 0;
         }
-
         .download-btn {
             background-color: #4CAF50;
             border: none;
@@ -121,7 +126,8 @@
             border-radius: 5px;
         }
     </style>
- <script>
+
+    <script>
    document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {

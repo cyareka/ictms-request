@@ -6,12 +6,11 @@
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <style>
         .chart-container {
-            width: 90%;
-            margin: 20px auto;
+            width: 90%; /* Maintain a responsive width */
+            margin: 20px auto; /* Center the container */
         }
         .item {
             position: relative;
-
         }
         .label {
             margin-top: 10px;
@@ -20,17 +19,28 @@
         .custom-size {
             font-size: 30px; /* Adjust to any size you want */
         }
-
-
+        #conferenceUsageChart {
+            height: 400px; /* Fixed height */
+            width: 90%; /* Use 100% width to avoid overflow */
+            border: 2px solid black; /* Border styling */
+            margin: 0 auto; /* Center the chart */
+            overflow: hidden; /* Hide overflow */
+        }
+        @media (max-width: 600px) {
+            #conferenceUsageChart {
+                width: 95%; /* Increase width for smaller screens */
+                margin: 0 auto; /* Centering */
+            }
+        }
         @media (max-width: 768px) {
             .chart-container {
                 width: 90%;
-                margin: 10px auto;
+                overflow: hidden; /* Prevent overflow in container */
+                margin-left: 0; /* Centering adjustment */
             }
             .custom-size {
-                font-size: 30px; /* Adjust to any size you want */
+                font-size: 30px; /* Adjust size */
             }
-
         }
     </style>
 </head>
@@ -41,23 +51,23 @@
             <li>
                 <i class="bi bi-building custom-size"></i>
                 <span class="text">
-                    <h3 id="pending-requests">0</h3>
-                    <p>Pending Requests</p>
-                </span>
+                     <h3 id="pending-requests">0</h3>
+                     <p>Pending Requests</p>
+                  </span>
             </li>
             <li>
                 <i class="bi bi-building custom-size"></i>
                 <span class="text">
-                    <h3 id="daily-requests">0</h3>
-                    <p>Today's Requests </p>
-                </span>
+                     <h3 id="daily-requests">0</h3>
+                     <p>Today's Requests </p>
+                  </span>
             </li>
             <li>
                 <i class="bi bi-building custom-size"></i>
                 <span class="text">
-                    <h3 id="monthly-requests">0</h3>
-                    <p>Monthly Requests</p>
-                </span>
+                     <h3 id="monthly-requests">0</h3>
+                     <p>Monthly Requests</p>
+                  </span>
             </li>
         </ul>
     </main>
@@ -68,18 +78,16 @@
         <!-- Dynamic content will be inserted here -->
     </div>
 </div>
-
+<br>
 <div class="bar-chart-wrapper">
-    <br>
-    <br>
-    <h1>Total Cancelled Requests for Offices</h1>
+    <h1 style="text-align: center;">Total Cancelled Requests for Offices</h1>
     <div class="simple-bar-chart" id="cancelled-requests-chart">
         <!-- Dynamic content will be inserted here -->
     </div>
 </div>
+<br>
 <div> </div>
-<div id="conferenceUsageChart" style="height: 400px; width: 91%; border: 2px solid black; margin-left: 80px;"></div>
-
+<div id="conferenceUsageChart"></div>
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
         fetch('/api/conference-statistics')
@@ -242,10 +250,6 @@
     });
 
 </script>
-
-
 <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
-
-<div id="chartContainer" style="height: 500px; width: 100%;"></div>
 </body>
 </html>
