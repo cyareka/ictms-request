@@ -1,5 +1,5 @@
 <style>
-    .modal-container {
+     .modal-container {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -16,7 +16,6 @@
         border-radius: 5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-
     .close {
         color: #aaa;
         position: absolute;
@@ -65,12 +64,11 @@
     .btn:hover {
         background-color: #0056b3;
     }
-
     .pagination_rounded, .pagination_square {
-        display: inline-block;
-        margin-left: 460px;
-        margin-top: 10px;
-        margin-bottom: 0;
+    display: inline-block;
+    margin-left:460px;
+    margin-top:10px;
+    margin-bottom: 0;
     }
 
     .pagination_rounded ul {
@@ -95,7 +93,7 @@
     }
 
     a:link {
-        text-decoration: none;
+    text-decoration: none;
     }
 
     .pagination_rounded .prev {
@@ -131,7 +129,7 @@
     }
 
     .visible-xs {
-        display: none !important;
+        display: none!important;
     }
 </style>
 <div class="requests">
@@ -149,26 +147,26 @@
                 <a href="javascript:void(0);" id="downloadLink"><i class="bi bi-download"
                                                                    style="font-size:16px; margin-right:14px;"></i></a>
                 <div id="dateRangeModal" class="modal" style="display: none;">
-                    <div class="modal-container">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <h2>Select Date Range</h2>
-                            <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="startDate">Start Date:</label>
-                                    <input type="date" id="startDate" name="startDate" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="endDate">End Date:</label>
-                                    <input type="date" id="endDate" name="endDate" required>
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">Download</button>
-                                </div>
-                            </form>
-                        </div>
+                <div class="modal-container">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Select Date Range</h2>
+                        <form id="dateRangeForm" action="{{ route('downloadRangeVRequestPDF') }}">
+                            @csrf
+                            <div class="form-group">
+                                <label for="startDate">Start Date:</label>
+                                <input type="date" id="startDate" name="startDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="endDate">End Date:</label>
+                                <input type="date" id="endDate" name="endDate" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Download</button>
+                            </div>
+                        </form>
                     </div>
+                </div>
                 </div>
                 <div class="dropdown" style="float:right;">
                     <button class="dropbtn"><i class="bi bi-filter"></i></button>
@@ -177,29 +175,23 @@
                         <hr>
                         <p>Status</p>
                         <a>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Not Approved
-                                </label>
-                            </div>
-                        </a>
-                        <a>
-                            <div class="form-check" id="margincheck">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Approved and Cancelled
-                                </label>
-                            </div>
-                        </a>
-                        <a>
-                            <div class="form-check" id="margincheck">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Approved and Finished
-                                </label>
-                            </div>
-                        </a>
+                <div class="form-check">
+                    <input class="form-check-input status-filter" type="checkbox" value="Not Approved,-" id="notApproved">
+                    <label class="form-check-label" for="notApproved">Not Approved</label>
+                </div>
+            </a>
+            <a>
+                <div class="form-check" id="margincheck">
+                    <input class="form-check-input status-filter" type="checkbox" value="Approved,Cancelled" id="approvedCancelled">
+                    <label class="form-check-label" for="approvedCancelled">Approved and Cancelled</label>
+                </div>
+            </a>
+            <a>
+                <div class="form-check" id="margincheck">
+                    <input class="form-check-input status-filter" type="checkbox" value="Approved,Finished" id="approvedFinished">
+                    <label class="form-check-label" for="approvedFinished">Approved and Finished</label>
+                </div>
+            </a>
                         <hr>
                         <div class="buttons">
                             <button class="cancelbtn">Remove</button>
@@ -226,6 +218,7 @@
                 <th scope="col">Requesting Office</th>
                 <th scope="col">Date Needed</th>
                 <th scope="col">Time Needed</th>
+                <th scope="col">Availability</th>
                 <th scope="col">Form Status</th>
                 <th scope="col">Event Status</th>
                 <th scope="col"></th>
@@ -233,10 +226,10 @@
             </thead>
             <tbody>
             @php
-                $filteredRequests = App\Models\VehicleRequest::with('office')
-                    ->whereIn('FormStatus', ['Approved', 'Not Approved'])
-                    ->whereIn('EventStatus', ['Finished', 'Cancelled', '-'])
-                    ->get();
+            $filteredRequests = App\Models\VehicleRequest::with('office')
+                ->whereIn('FormStatus', ['Approved', 'Not Approved'])
+                ->whereIn('EventStatus', ['Finished', 'Cancelled', '-'])
+                ->get();
 
             @endphp
 
@@ -252,115 +245,140 @@
                     <td><span class="{{ strtolower($request->FormStatus) }}">{{ $request->FormStatus }}</span></td>
                     <td>{{ $request->EventStatus }}</td>
                     <td>
-                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard" id="actions"></i></a>
+                        <a href="{{ route('vehiclelogDetail', $request->VRequestID) }}"><i class="bi bi-person-vcard"
+                                                                                           id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>
             @endforeach
             </tbody>
         </table>
         <div class="pagination_rounded">
-            <ul>
-                <li>
-                    <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
-                </li>
-                <li><a href="#">1</a>
-                </li>
-                <li class="hidden-xs"><a href="#">2</a>
-                </li>
-                <li class="hidden-xs"><a href="#">3</a>
-                </li>
-                <li class="hidden-xs"><a href="#">4</a>
-                </li>
-                <li class="hidden-xs"><a href="#">5</a>
-                </li>
-                <li class="visible-xs"><a href="#">...</a>
-                </li>
-                <li><a href="#">6</a>
-                </li>
-                <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
-                </li>
-            </ul>
-        </div>
+                        <ul>
+                            <li>
+                                <a href="#" class="prev"> <i class="fa fa-angle-left" aria-hidden="true"></i> Prev </a>
+                            </li>
+                            <li><a href="#">1</a>
+                            </li>
+							<li class="hidden-xs"><a href="#">2</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">3</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">4</a>
+                            </li>
+                            <li class="hidden-xs"><a href="#">5</a>
+                            </li>
+							<li class="visible-xs"><a href="#">...</a>
+                            </li>
+							<li><a href="#">6</a>
+                            </li>
+                            <li><a href="#" class="next"> Next <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                            </li>
+                        </ul>
+         </div>
     </div>
-    <div class="end"></div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let currentPage = 1;
-            const itemsPerPage = 10;
-            let lastPage = 1;
-            let searchQuery = '';
+<div class="end"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    let currentPage = 1;
+    const itemsPerPage = 10;
+    let lastPage = 1;
+    let searchQuery = '';
+    let selectedStatusPairs = [];
 
-            // Fetch sorted and paginated data
-            function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
-                const formData = new FormData();
-                formData.append('order', order);
-                formData.append('sort', 'created_at');
-                formData.append('page', page);
-                formData.append('per_page', itemsPerPage);
-                formData.append('search_query', search); // Attach the search query here
+    // Function to collect selected status pairs
+    function getStatusFilters() {
+        selectedStatusPairs = [];
+        document.querySelectorAll('.status-filter:checked').forEach((checkbox) => {
+            selectedStatusPairs.push(checkbox.value);
+        });
+    }
 
-                const params = new URLSearchParams(formData).toString();
+    // Function to clear all status checkboxes
+    function clearStatusFilters() {
+        document.querySelectorAll('.status-filter').forEach((checkbox) => {
+            checkbox.checked = false; // Uncheck all checkboxes
+        });
+        selectedStatusPairs = []; // Clear the filters
+    }
 
-                fetch(`/fetchSortedVLogRequests?${params}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        updateTable(data.data, data.pagination);
-                        currentPage = data.pagination.current_page;
-                        lastPage = data.pagination.last_page;
-                    })
-                    .catch(error => {
-                        console.error('There was a problem with the fetch operation:', error);
-                    });
-            }
+    // Fetch sorted and paginated data
+    function fetchSortedData(order = 'desc', page = currentPage, search = searchQuery) {
+        const formData = new FormData();
+        formData.append('order', order);
+        formData.append('sort', 'created_at');
+        formData.append('page', page);
+        formData.append('per_page', itemsPerPage);
+        formData.append('search_query', search); // Attach the search query here
 
-            // Update table data
-            function updateTable(data, pagination) {
-                let tbody = document.querySelector('tbody');
-                tbody.innerHTML = '';
+         // Include selected status pairs in the request
+         selectedStatusPairs.forEach((statusPair, index) => {
+            formData.append(`status_pairs[${index}]`, statusPair);
+        });
 
-                if (Array.isArray(data) && data.length > 0) {
-                    data.forEach(request => {
-                        // let officeName = request.office ? request.office.OfficeName : 'N/A';
-                        // let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
-                        let row = `<tr>
+        const params = new URLSearchParams(formData).toString();
+
+        fetch(`/fetchSortedVLogRequests?${params}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data.data, data.pagination);
+                currentPage = data.pagination.current_page;
+                lastPage = data.pagination.last_page;
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    }
+
+    // Update table data
+    function updateTable(data, pagination) {
+        let tbody = document.querySelector('tbody');
+        tbody.innerHTML = '';
+
+        if (Array.isArray(data) && data.length > 0) {
+            data.forEach(request => {
+                // let officeName = request.office ? request.office.OfficeName : 'N/A';
+                // let purposeName = request.PurposeOthers || request.purpose?.PurposeName || 'N/A';
+                let row = `<tr>
                     <th scope="row">${request.VRequestID}</th>
                     <td>${new Date(request.created_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: '2-digit',
-                            day: '2-digit'
-                        })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                        })}</td>
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    })} ${new Date(request.created_at).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true
+                    })}</td>
                     <td>${request.Destination}</td>
-                    <td>{{ isset($request) ? optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers : '' }}</td>
-                    <td>{{ isset($request) ? App\Models\Office::find($request->OfficeID)->OfficeName : '' }}</td>
+                    <td>{{ optional(App\Models\PurposeRequest::find($request->PurposeID))->purpose ?? $request->PurposeOthers }}</td>
+                    <td>{{ App\Models\Office::find($request->OfficeID)->OfficeName}}</td>
                     <td>${request.date_start}</td>
                     <td>${request.time_start}</td>
                     <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus}</span></td>
                     <td>${request.EventStatus}</td>
                     <td>
                         <a href="/vehiclerequest/${request.VRequestID}/log"><i class="bi bi-person-vcard" id="actions"></i></a>
+                        <i class="bi bi-download" id="actions"></i>
                     </td>
                 </tr>`;
-                        tbody.insertAdjacentHTML('beforeend', row);
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
-                }
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="10">No requests found.</td></tr>';
+        }
 
-                updatePagination(pagination);
-            }
+        updatePagination(pagination);
+    }
 
-            // Function to handle pagination
-            function updatePagination(pagination) {
-                const paginationContainer = document.querySelector('.pagination_rounded ul');
-                paginationContainer.innerHTML = ''; // Clear the current pagination
+    // Function to handle pagination
+    function updatePagination(pagination) {
+    const paginationContainer = document.querySelector('.pagination_rounded ul');
+    paginationContainer.innerHTML = ''; // Clear the current pagination
 
-                // Previous button
-                let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
-                paginationContainer.insertAdjacentHTML('beforeend', `
+    // Previous button
+    let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `
         <li>
             <a href="#" class="prev ${prevDisabled}">
                 <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
@@ -368,108 +386,91 @@
         </li>
     `);
 
-                // Page numbers
-                for (let page = 1; page <= pagination.last_page; page++) {
-                    let activeClass = page === pagination.current_page ? 'active' : '';
+    // Page numbers
+    for (let page = 1; page <= pagination.last_page; page++) {
+        let activeClass = page === pagination.current_page ? 'active' : '';
 
-                    // Create the list item element
-                    let listItem = document.createElement('li');
-                    listItem.className = activeClass;
+        // Create the list item element
+        let listItem = document.createElement('li');
+        listItem.className = activeClass;
 
-                    // Create the anchor element
-                    let pageLink = document.createElement('a');
-                    pageLink.href = '#';
-                    pageLink.textContent = page;
+        // Create the anchor element
+        let pageLink = document.createElement('a');
+        pageLink.href = '#';
+        pageLink.textContent = page;
 
-                    // If it's the current page, change the font color
-                    if (page === pagination.current_page) {
-                        pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
-                        pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
-                    }
+        // If it's the current page, change the font color
+        if (page === pagination.current_page) {
+            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+        }
 
 
-                    // Append the anchor to the list item
-                    listItem.appendChild(pageLink);
+        // Append the anchor to the list item
+        listItem.appendChild(pageLink);
 
-                    // Append the list item to the pagination container
-                    paginationContainer.appendChild(listItem);
-                }
+        // Append the list item to the pagination container
+        paginationContainer.appendChild(listItem);
+    }
 
-                // Next button
-                let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
-                paginationContainer.insertAdjacentHTML('beforeend', `
+    // Next button
+    let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+    paginationContainer.insertAdjacentHTML('beforeend', `
         <li>
             <a href="#" class="next ${nextDisabled}">
                 Next <i class="fa fa-angle-right" aria-hidden="true"></i>
             </a>
         </li>
     `);
-            }
+}
 
 // Event listeners for pagination links
-            document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
-                if (e.target.tagName === 'A') {
-                    e.preventDefault();
-                    let text = e.target.textContent.trim();
+document.querySelector('.pagination_rounded').addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+        e.preventDefault();
+        let text = e.target.textContent.trim();
 
-                    if (text === 'Prev' && currentPage > 1) {
-                        fetchSortedData('desc', currentPage - 1, searchQuery);
-                    } else if (text === 'Next' && currentPage < lastPage) {
-                        fetchSortedData('desc', currentPage + 1, searchQuery);
-                    } else if (!isNaN(text)) {
-                        fetchSortedData('desc', parseInt(text), searchQuery);
-                    }
-                }
-            });
+        if (text === 'Prev' && currentPage > 1) {
+            fetchSortedData('desc', currentPage - 1, searchQuery);
+        } else if (text === 'Next' && currentPage < lastPage) {
+            fetchSortedData('desc', currentPage + 1, searchQuery);
+        } else if (!isNaN(text)) {
+            fetchSortedData('desc', parseInt(text), searchQuery);
+        }
+    }
+});
 
-            // Sorting event
-            document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-                e.preventDefault();
-                let order = this.getAttribute('data-order');
-                let newOrder = order === 'asc' ? 'desc' : 'asc';
-                this.setAttribute('data-order', newOrder);
-                fetchSortedData(newOrder, currentPage, searchQuery);
-            });
+     // Apply filters when "Filter" button is clicked
+    document.querySelector('.applybtn').addEventListener('click', function () {
+        getStatusFilters(); // Collect the filters selected
+        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery); // Fetch data with selected filters
+    });
 
-            // Search query
-            document.querySelectorAll('.form-input').forEach(input => {
-                input.addEventListener('input', function () {
-                    searchQuery = document.querySelector('.form-input').value;
-                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
-                });
-            });
+    // Event listener for Remove button to clear filters
+    document.querySelector('.cancelbtn').addEventListener('click', function () {
+        clearStatusFilters(); // Clear the status checkboxes
+        fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery); // Reload data without filters
+    });
 
-            // Initial fetch
-            fetchSortedData();
+    // Sorting event
+    document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+        e.preventDefault();
+        let order = this.getAttribute('data-order');
+        let newOrder = order === 'asc' ? 'desc' : 'asc';
+        this.setAttribute('data-order', newOrder);
+        fetchSortedData(newOrder, currentPage, searchQuery);    
+    });
+
+    // Search query
+    document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('input', function () {
+            searchQuery = document.querySelector('.form-input').value;
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage, searchQuery);
         });
+    });
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Get the modal
-            const modal = document.getElementById('dateRangeModal');
+    // Initial fetch
+    fetchSortedData();
+});
 
-            // Get the button that opens the modal
-            const btn = document.getElementById('downloadLink');
-
-            // Get the <span> element that closes the modal
-            const span = document.getElementsByClassName('close')[0];
-
-            // When the user clicks the button, open the modal
-            btn.onclick = function () {
-                modal.style.display = 'block';
-            }
-
-            // When the user clicks on <span> (x), close the modal
-            span.onclick = function () {
-                modal.style.display = 'none';
-            }
-
-            // When the user clicks anywhere outside of the modal, close it
-            window.onclick = function (event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
-        });
-
-    </script>
-</div>
+</script>

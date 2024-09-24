@@ -164,180 +164,185 @@
         </table>
         <div class="pagination_rounded">
             <ul id="pagination-list">
-
+               
             </ul>
         </div>
     </div>
 </div>
 <div class="end"></div>
 
-
-
 <script>
-        let currentPage = 1;
-        const itemsPerPage = 5; // Set items per page to 5
-        let currentOrder = 'desc'; // Default order
-        let searchQuery = ''; // Initialize searchQuery
+let currentPage = 1;
+const itemsPerPage = 5; // Set items per page to 5
+let currentOrder = 'desc'; // Default order
+let searchQuery = ''; // Initialize searchQuery
 
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchSortedData(currentOrder, currentPage, searchQuery); // Fetch data on page load
+document.addEventListener('DOMContentLoaded', function () {
+    fetchSortedData(currentOrder, currentPage, searchQuery); // Fetch data on page load
+});
 
-            // Listen to form submission for filtering
-            document.getElementById('filterForm').addEventListener('submit', function (event) {
-                event.preventDefault(); // Prevent form from submitting normally
-                searchQuery = document.getElementById('search-input').value.trim();
+// Sort by Date Requested
+document.getElementById('sort-date-requested').addEventListener('click', function (e) {
+    e.preventDefault();
+    currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+    this.setAttribute('data-order', currentOrder);
+    fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1 when sorting changes
+});
 
-                // Debugging: Log the search query
-                console.log('Search Query:', searchQuery);
+// Fetch sorted, paginated, and filtered data
+function fetchSortedData(order = 'desc', page = 1, search = '', filters = {}) {
+    const params = new URLSearchParams({
+        sort: 'created_at',  // Sorting by 'created_at' column by default
+        order: order,        // Ascending or descending order
+        page: page,          // Current page number
+        per_page: itemsPerPage, // Number of items per page
+        search: search,      // Search term
+        ...filters           // Spread the filters object into URL parameters
+    });
 
-                fetchSortedData(currentOrder, 1, searchQuery); // Fetch data based on search query and reset to page 1
-            });
-
-            // Reset filters when clicking reset button
-            document.querySelector('.cancelbtn').addEventListener('click', function () {
-                resetFilters();
-            });
+    // Handle status_pairs array
+    if (filters.status_pairs) {
+        filters.status_pairs.forEach((pair, index) => {
+            params.append(`status_pairs[${index}]`, pair);
         });
+    }
 
-        // Sort by Date Requested
-        document.getElementById('sort-date-requested').addEventListener('click', function (e) {
-            e.preventDefault();
-            currentOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-            this.setAttribute('data-order', currentOrder);
+    fetch(`/fetchSortedLogRequests?${params.toString()}`)
+        .then(response => response.json())
+        .then(data => {
+            updateTable(data.data);    // Populate the table with returned data
+            updatePagination(data.pagination);  // Handle pagination
+        })
+        .catch(error => console.error('Error fetching sorted data:', error));
+}
 
-            // Debugging: Log the current order
-            console.log('Current Order:', currentOrder);
+// Update table rows
+function updateTable(data) {
+    const tbody = document.getElementById('requests-tbody');
+    tbody.innerHTML = ''; // Clear previous data
 
-            fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1 after sorting
+    if (data && data.length > 0) {
+        data.forEach(request => {
+            const row = `
+                <tr>
+                    <th scope="row">${request.CRequestID || 'N/A'}</th>
+                    <td>${request.created_at ? new Date(request.created_at).toLocaleDateString() + ' ' + new Date(request.created_at).toLocaleTimeString() : 'N/A'}</td>
+                    <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
+                    <td>${request.office?.OfficeName || 'N/A'}</td>
+                    <td>${request.date_start || 'N/A'}</td>
+                    <td>${request.time_start || 'N/A'}</td>
+                    <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus || 'N/A'}</span></td>
+                    <td>${request.EventStatus || 'N/A'}</td>
+                    <td>
+                        <a href="/conferencerequest/${request.CRequestID}/log"><i class="bi bi-person-vcard"></i></a>
+                    </td>
+                </tr>`;
+            tbody.insertAdjacentHTML('beforeend', row); // Add rows dynamically
         });
+    } else {
+        tbody.innerHTML = '<tr><td colspan="9">No requests found.</td></tr>'; // Show if no results found
+    }
+}
 
-        // Fetch sorted, paginated, and filtered data
-        function fetchSortedData(order = 'desc', page = 1, search = '') {
-            const params = new URLSearchParams({
-                sort: 'created_at',
-                order: order,
-                page: page,
-                per_page: itemsPerPage,
-                search: search // Pass search query here
-            }).toString();
+// Update pagination links
+function updatePagination(pagination) {
+    const paginationList = document.getElementById('pagination-list');
+    paginationList.innerHTML = ''; // Clear current pagination
 
-            // Debugging: Log the fetch URL and params
-            console.log('Fetching with URL:', `/fetchSortedLogRequests?${params}`);
+    const { total, current_page, last_page } = pagination;
+    currentPage = current_page;
 
-            fetch(`/fetchSortedLogRequests?${params}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Debugging: Log the returned data
-                    console.log('Data received:', data);
-                    updateTable(data.data);
-                    updatePagination(data.pagination);
-                })
-                .catch(error => console.error('Error fetching sorted data:', error));
+    // Previous button
+    const prevPageItem = document.createElement('li');
+    const prevPageLink = document.createElement('a');
+    prevPageLink.href = '#';
+    prevPageLink.classList.add('prev');
+    prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
+    prevPageLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            fetchSortedData(currentOrder, currentPage - 1, searchQuery);
         }
+    });
+    prevPageItem.appendChild(prevPageLink);
+    paginationList.appendChild(prevPageItem);
 
-        // Update table rows
-        function updateTable(data) {
-            const tbody = document.getElementById('requests-tbody');
-            tbody.innerHTML = '';
-
-            if (data && data.length > 0) {
-                data.forEach(request => {
-                    const row = `
-                        <tr>
-                            <th scope="row">${request.CRequestID || 'N/A'}</th>
-                            <td>${request.created_at ? new Date(request.created_at).toLocaleDateString() + ' ' + new Date(request.created_at).toLocaleTimeString() : 'N/A'}</td>
-                            <td>${request.conference_room ? request.conference_room.CRoomName : 'N/A'}</td>
-                            <td>${request.office?.OfficeName || 'N/A'}</td>
-                            <td>${request.date_start || 'N/A'}</td>
-                            <td>${request.time_start || 'N/A'}</td>
-                            <td><span class="${request.FormStatus.toLowerCase()}">${request.FormStatus || 'N/A'}</span></td>
-                            <td>${request.EventStatus || 'N/A'}</td>
-                            <td>
-                                <a href="/conferencerequest/${request.CRequestID}/log"><i class="bi bi-person-vcard"></i></a>
-                            </td>
-                        </tr>`;
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-            } else {
-                tbody.innerHTML = '<tr><td colspan="9">No requests found.</td></tr>';
-            }
+    // Page numbers
+    for (let i = 1; i <= last_page; i++) {
+        const pageItem = createPaginationItem(i, i);
+        if (i === current_page) {
+            pageItem.classList.add('active');
+            const pageLink = pageItem.querySelector('a');
+            pageLink.style.color = 'white';
+            pageLink.style.backgroundColor = '#4285f4';
         }
+        paginationList.appendChild(pageItem);
+    }
 
-        // Update pagination links
-        function updatePagination(pagination) {
-            const paginationList = document.getElementById('pagination-list');
-            paginationList.innerHTML = '';
-
-            const { total, current_page, last_page } = pagination;
-            currentPage = current_page;
-
-            // Previous button
-            const prevPageItem = document.createElement('li');
-            const prevPageLink = document.createElement('a');
-            prevPageLink.href = '#';
-            prevPageLink.classList.add('prev');
-            prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
-            prevPageLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (currentPage > 1) {
-                    fetchSortedData(currentOrder, currentPage - 1, searchQuery);
-                }
-            });
-            prevPageItem.appendChild(prevPageLink);
-            paginationList.appendChild(prevPageItem);
-
-            // Page numbers
-            for (let i = 1; i <= last_page; i++) {
-                const pageItem = createPaginationItem(i, i);
-                if (i === current_page) {
-                    pageItem.classList.add('active');
-                    const pageLink = pageItem.querySelector('a');
-                    pageLink.style.color = 'white';
-                    pageLink.style.backgroundColor = '#4285f4';
-                }
-                paginationList.appendChild(pageItem);
-            }
-
-            // Next button
-            const nextPageItem = document.createElement('li');
-            const nextPageLink = document.createElement('a');
-            nextPageLink.href = '#';
-            nextPageLink.classList.add('next');
-            nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
-            nextPageLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (currentPage < last_page) {
-                    fetchSortedData(currentOrder, currentPage + 1, searchQuery);
-                }
-            });
-            nextPageItem.appendChild(nextPageLink);
-            paginationList.appendChild(nextPageItem);
+    // Next button
+    const nextPageItem = document.createElement('li');
+    const nextPageLink = document.createElement('a');
+    nextPageLink.href = '#';
+    nextPageLink.classList.add('next');
+    nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
+    nextPageLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage < last_page) {
+            fetchSortedData(currentOrder, currentPage + 1, searchQuery);
         }
+    });
+    nextPageItem.appendChild(nextPageLink);
+    paginationList.appendChild(nextPageItem);
+}
 
-        // Create pagination item
-        function createPaginationItem(text, page) {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = '#';
-            a.textContent = text;
+// Create pagination item
+function createPaginationItem(text, page) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#';
+    a.textContent = text;
 
-            a.addEventListener('click', (e) => {
-                e.preventDefault();
-                fetchSortedData(currentOrder, page, searchQuery);
-            });
+    a.addEventListener('click', (e) => {
+        e.preventDefault();
+        fetchSortedData(currentOrder, page, searchQuery);
+    });
 
-            li.appendChild(a);
-            return li;
-        }
+    li.appendChild(a);
+    return li;
+}
 
-        // Reset filters
-        function resetFilters() {
-            document.getElementById('filterForm').reset();
-            searchQuery = ''; // Clear the search query
+// Handle search input
+document.getElementById('search-input').addEventListener('input', function () {
+    searchQuery = this.value.trim();
+    fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1 when searching
+});
 
-            // Debugging: Log resetting action
-            console.log('Filters reset. Fetching default data.');
+// Handle filter form submission
+document.getElementById('filterForm').addEventListener('submit', function (e) {
+    e.preventDefault();
 
-            fetchSortedData(currentOrder, 1, searchQuery); // Fetch data with default filters and reset to page 1
-        }
-    </script>
+    const filters = {};
+
+    // Get the selected conference room
+    const conferenceRoom = document.querySelector('input[name="conference_room"]:checked');
+    if (conferenceRoom) {
+        filters.conference_room = conferenceRoom.value;
+    }
+
+    // Get the selected status pairs
+    const statusPairs = Array.from(document.querySelectorAll('input[name="status_pairs[]"]:checked')).map(input => input.value);
+    if (statusPairs.length > 0) {
+        filters.status_pairs = statusPairs;
+    }
+
+    // Fetch data with the selected filters
+    fetchSortedData(currentOrder, 1, searchQuery, filters); // Reset to page 1 and fetch filtered data
+});
+
+// Reset filters
+function resetFilters() {
+    document.getElementById('filterForm').reset();
+    fetchSortedData(currentOrder, 1, searchQuery); // Reset to page 1
+}
+
+</script>
