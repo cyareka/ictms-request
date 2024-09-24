@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\IDGenerator;
+use App\Models\ConferenceRequest;
 use App\Models\Driver;
 use App\Models\Employee;
 use App\Models\Office;
@@ -560,8 +561,18 @@ class VehicleController extends Controller
                         'total' => $item->total,
                     ];
                 }),
+            'cancelledPerOffice' => VehicleRequest::select('OfficeID', \DB::raw('count(*) as total'))
+                ->where('EventStatus', 'Cancelled')  // Filter by EventStatus "Cancelled"
+                ->groupBy('OfficeID')
+                ->with('office')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'office' => $item->office->OfficeName,
+                        'total' => $item->total,
+                    ];
+                }),
         ];
-
         return response()->json($statistics);
     }
     //Start Wlay pulos

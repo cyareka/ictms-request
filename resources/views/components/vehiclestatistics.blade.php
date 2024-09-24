@@ -65,7 +65,7 @@
     <h1>Total Cancelled Requests for Offices</h1>
     <br>
     <br>
-    <div class="simple-bar-chart" id="monthly-requests-chart">
+    <div class="simple-bar-chart" id="cancelled-vehicle-requests-chart">
         <!-- Dynamic content will be inserted here -->
     </div>
 </div>
@@ -79,23 +79,30 @@
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetchStatistics();
-
         function fetchStatistics() {
             fetch('/api/vehicle-statistics')
                 .then(response => response.json())
                 .then(data => {
+                    // Update the counts in the UI
                     document.getElementById('pending-requests').textContent = data.pendingRequests;
                     document.getElementById('daily-requests').textContent = data.dailyRequests;
                     document.getElementById('monthly-requests').textContent = data.monthlyRequests;
 
                     const requestsPerOfficeContainer = document.querySelector('.simple-bar-chart');
-                    requestsPerOfficeContainer.innerHTML = ''; // Clear existing items
+                    const cancelledVehicleRequestsContainer = document.getElementById('cancelled-vehicle-requests-chart');
 
-                    data.requestsPerOffice.forEach(office => {
+                    requestsPerOfficeContainer.innerHTML = ''; // Clear existing items
+                    cancelledVehicleRequestsContainer.innerHTML = ''; // Clear cancelled vehicle requests
+
+                    // Array of colors
+                    const colors = ['#5EB344', '#e1e81a', '#F8821A', '#E0393E', '#963D97', '#fa5f83', '#069CDB', '#014D4E'];
+
+                    // Display requests per office
+                    data.requestsPerOffice.forEach((office, index) => {
                         const item = document.createElement('div');
                         item.className = 'item';
-                        item.style.setProperty('--clr', getRandomColor());
+                        const color = colors[index % colors.length];
+                        item.style.setProperty('--clr', color);
                         item.style.setProperty('--val', office.total);
 
                         const label = document.createElement('div');
@@ -110,6 +117,35 @@
                         item.appendChild(value);
                         requestsPerOfficeContainer.appendChild(item);
                     });
+
+                    // Display cancelled requests per office
+                    data.cancelledPerOffice.forEach((office, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'item';
+
+                        // Set the color dynamically from the colors array
+                        const color = colors[index % colors.length]; // Cycle through colors if needed
+                        item.style.setProperty('--clr', color);
+                        item.style.setProperty('--val', office.total);
+
+                        const bar = document.createElement('div');
+                        bar.className = 'bar';
+                        bar.style.backgroundColor = color;
+                        bar.style.height = `${office.total}`; // Adjust the height based on the total percentage
+
+                        const value = document.createElement('div');
+                        value.className = 'value';
+                        value.textContent = `${office.total}`;
+
+                        const label = document.createElement('div');
+                        label.className = 'label';
+                        label.textContent = office.office; // Use the office name as the label
+
+                        item.appendChild(bar);
+                        item.appendChild(value);
+                        item.appendChild(label);
+                        cancelledVehicleRequestsContainer.appendChild(item);
+                    });
                 })
                 .catch(error => console.error('Error fetching statistics:', error));
         }
@@ -118,8 +154,6 @@
             const colors = ['#5EB344', '#FCB72A', '#F8821A', '#E0393E', '#963D97', '#069CDB', '#6234CE', '#06934A'];
             return colors[Math.floor(Math.random() * colors.length)];
         }
-
-        fetchVehicleTypeUsage();
 
         function fetchVehicleTypeUsage() {
             fetch('/api/vehicle-usage')
@@ -150,6 +184,9 @@
                 })
                 .catch(error => console.error('Error fetching vehicle usage:', error));
         }
+
+        fetchStatistics();
+        fetchVehicleTypeUsage();
     });
 </script>
 </body>
