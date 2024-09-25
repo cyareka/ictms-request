@@ -29,16 +29,16 @@ return new class extends Migration
         });
 
         Schema::create('AAuthority', function (Blueprint $table) {
-            $table->string('AAID')->primary();
-            $table->string('AAName');
-            $table->string('AAPosition');
+            $table->string('AAID', 3)->primary();
+            $table->string('AAName', 50);
+            $table->string('AAPosition', 30);
             $table->timestamps();
         });
 
         Schema::create('SOAuthority', function (Blueprint $table) {
-            $table->string('SOID')->primary();
-            $table->string('SOName');
-            $table->string('SOPosition');
+            $table->string('SOID', 3)->primary();
+            $table->string('SOName', 50);
+            $table->string('SOPosition', 30);
             $table->timestamps();
         });
 
@@ -52,7 +52,7 @@ return new class extends Migration
             $table->string('date_end', 10);
             $table->string('time_start', 9);
             $table->string('Destination', 50);
-            $table->string('RequesterName');
+            $table->string('RequesterName', 50);
             $table->string('RequesterContact',13);
             $table->string('RequesterEmail', 20);
             $table->string('RequesterSignature');

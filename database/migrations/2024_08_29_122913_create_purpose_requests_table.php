@@ -15,8 +15,8 @@ class CreatePurposeRequestsTable extends Migration
     {
         Schema::create('purpose_requests', function (Blueprint $table) {
             $table->string('PurposeID', 3)->primary();
-            $table->string('request_p')->nullable();
-            $table->string('purpose')->nullable();
+            $table->string('request_p', 20)->nullable();
+            $table->string('purpose', 40)->nullable();
             $table->timestamps();
         });
     }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('superior', function (Blueprint $table) {
             $table->string('SuperiorID', 3)->primary();
-            $table->string('SName')->nullable();
-            $table->string('Designation');
+            $table->string('SName', 50)->nullable();
+            $table->string('Designation', 30);
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

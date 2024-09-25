@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
     {
         Schema::create('focal_person', function (Blueprint $table) {
             $table->string('FocalPID', 3)->primary();
-            $table->string('FPName')->nullable();
+            $table->string('FPName', 50)->nullable();
             $table->string('OfficeID');
             $table->timestamps();
 
