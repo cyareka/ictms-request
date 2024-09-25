@@ -1,25 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vehicle Request Form</title>
-    <style>
-        body {
-            font-family: 'Poppins';
-            font-size: 18px;
+    <head>
+        <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Vehicle Request Form</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+         <style>
+            * {
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.5s ease;
         }
 
-        .form-container {
-            width: 55em;
-            padding: 35px;
-            border: 1px solid #ddd;
-            border-radius: 15px;
-            margin: 5em auto;
-            margin-bottom: 3em;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            background-color: #f9f9f9;
+        body {
+            background: #dfdfdf;
         }
 
         h1 {
@@ -32,109 +26,116 @@
         p {
             margin-bottom: 15px;
             font-style: italic;
-            margin-bottom: 30px;
+            text-align: center;
         }
 
-        .form-body {
+        .parent-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: center;
+            margin-top: 5em;
+            padding: 0 16px;
+            margin-left: 20px;
+        }
+
+        .top {
             display: flex;
             flex-direction: column;
-        }
-
-        .input-group {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            padding: -10em;
-        }
-
-        .input-field {
-            display: flex;
-            width: 48%;
-            margin-bottom: 20px;;
-        }
-
-        .input-field label {
-            margin-right: 10px;
-            width: 169px;
-        }
-
-        .input-field input,
-        .input-field select,
-        .passenger-field select {
-            height: 35px;
-            padding: 5px;
-            border: 1px solid rgba(60, 54, 51, 0.5);
-            border-radius: 10px;
-            width: calc(100% - 160px);
-            box-sizing: border-box;
-        }
-
-        .button-container {
-            display: flex;
             align-items: center;
-        }
-
-        .add-datetime-btn {
-            background-color: #0056b3;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 5px;
-            margin-bottom: 30px;
-        }
-
-        .remove-datetime-btn {
-            background-color: #ff4d4d;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-left: 5px;
-            margin-bottom: 30px;
-        }
-
-        .inline-group {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        input[type="time"],
-        select {
-            width: 30%;
+            width: 40%; /* Adjusted width for side-by-side layout */
+            margin-right: 2em; /* Space between top and form */
             padding: 10px;
-            margin-bottom: 30px;
+            margin-top: 3.5em;
         }
 
-        #date-time-container {
-            max-height: 130px;
-            overflow-y: auto;
-            padding: 3px;
-            border-radius: 10px;
-
+        .container {
+            width: 60%; /* Adjusted width for side-by-side layout */
+            height: 100%;
+            margin-right: 20px;
+            border: none;
         }
-
-        .datetime-group {
+        form {
             display: flex;
+            flex-flow: column;
             align-items: center;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 8px 6px -6px #555;
+            background-color: #E5E4E2;
+            padding: 40px;
+        }
+
+        form div {
             width: 100%;
+            margin-bottom: 15px;
         }
 
-        .datetime-group .button-container {
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            border-radius: 4px;
+            box-shadow: 0 5px 6px -6px #555;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background: white;
+            box-shadow: none;
+        }
+        .field:focus-within label {
+            color: #000;
+            letter-spacing: 2px;
+            }
+        .passenger-field:focus-within label {
+            color: #000;
+            letter-spacing: 2px;
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        .submit-btn:hover {
+            letter-spacing: 2px;
+            box-shadow: none;
+        }
+
+        .pic {
             display: flex;
-            align-items: center;
-            margin-left: 5px;
+            justify-content: center;
+            margin-bottom: 20px;
         }
-
+        .row , .datetime-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 8px;
+        }
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            border: 2px dashed #A9A9A9 ;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            text-align: center;
+        }
         .form-footer {
             display: flex;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 0;
         }
-
         .submit-btn {
             background-color: #354e7d;
             color: white;
@@ -145,54 +146,63 @@
             font-size: 16px;
         }
 
-        #signature-preview {
-            margin-top: 15px;
-            max-width: 100px;
-            max-height: 100px;
-            display: none;
-        }
-
-        .file-upload {
+        .row1, .input-field {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            justify-content: space-between;
             align-items: center;
-            padding: 16px;
-            border: 2px dashed #5b21b6;
-            border-radius: 6px;
+            margin-top: -25px;
+        }
+        .field, .date-field {
+            margin-right: 10px; /* Adjust spacing as needed */
+        }
+        .passenger-container {
+            display: flex;
+            flex-direction: column; /* Align items vertically */
+        }
+        .passenger-field select{
+            width: 90%;
+        }
+        #passenger-container{
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 15px;
+            width: 100%;
+        }
+        .row2 {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: -25px;
+        }
+    
+        .button-container {
+            display: flex;
+            align-items: center;
+            padding: 3px;
+            margin-top: 0;
+        }
+        .add-datetime-btn {
+            background-color: #0056b3;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
             cursor: pointer;
-            margin-bottom: 16px;
+            font-size: 14px;
+            margin-top: 33px;
         }
 
-        .date-field {
-            display: flex;
-            flex-direction: column;
-            width: 45%;
-            align-items: center;
-            margin-right: auto;
-            margin-left: 1em;
+        .remove-datetime-btn {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 1px;
+            margin-top: 33px;
         }
-
-        .date-field input {
-            width: 68%;
-            margin-left: -20px;
-        }
-
-        #date_start {
-            margin-left: 130px;
-        }
-
-        .below-label1 {
-            display: block;
-            margin-top: 5px;
-            margin-left: 12em;
-        }
-
-        .below-label2 {
-            display: block;
-            margin-top: 5px;
-            margin-left: 4em;
-        }
-
         .add-passenger-btn,
         .remove-passenger-btn {
             padding: 3px 8px;
@@ -201,19 +211,17 @@
             cursor: pointer;
             font-size: 14px;
         }
-
+        
         .add-passenger-btn {
             background-color: #0056b3;
             color: white;
-            margin-bottom: 45px;
-            align-self: flex-start;
+            align-self: flex-end;
             margin-top: 5px;
         }
 
         .remove-passenger-btn {
             background-color: #ff4d4d;
             color: white;
-            margin-bottom: 30px;
         }
 
         .add-passenger-btn:hover {
@@ -223,200 +231,145 @@
         .remove-passenger-btn:hover {
             background-color: #cc0000;
         }
-
-        #passenger-container {
-            display: flex;
-            flex-direction: column;
-            max-height: 80px;
+        #date-time-container {
+            margin-top: -15px;
+            max-height: 130px;
             overflow-y: auto;
-            margin-left: 615px;
+            padding: 20px 0 0 0; /* Add padding to create space around the content */   
         }
-
-        #passenger-container .passenger-field {
-            display: flex;
-            align-items: center;
-            flex-direction: row;
-            gap: 10px;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-
-        #passenger-container select {
-            flex-grow: 1;
-        }
-
-        .passenger-field {
-            display: flex;
-            margin-bottom: 16px;
-            width: 48%;
-            align-items: center;
-        }
-
-        .passenger-field label {
-            margin-left: 30px;
-            width: 160px;
-        }
-
-        .passenger-field select {
-            height: 35px;
-            padding: 5px;
-            border: 1px solid rgba(60, 54, 51, 0.5);
-            border-radius: 10px;
-            width: calc(100% - 160px);
-            box-sizing: border-box;
-            margin-left: 23px;
-        }
-
-        .required {
-            color: red;
-            top: 0;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 8px;
-        }
-
-        @media (max-width: 768px) {
-            .form-container {
-                width: 90%;
-                padding: 20px;
-                margin: 2em auto;
-                margin-top: 5em;
-            }
-
-            .input-group,
-            .input-field {
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .input-field input,
-            .input-field select {
-                width: 100%;
-            }
-            .row {
-                grid-template-columns: 1fr; /* Change to single column layout */
-            }
-            .passenger-field {
-                flex-direction: column; /* Change to column layout */
-                align-items: flex-start;
-                margin-bottom: -10px;
-
-            }
-            .passenger-field label{
-                margin-left: 0;
-                align-items: flex-start;
-                flex-direction: row;
-            }
-            .passenger-field select {
-                width: 190%; /* Full width on smaller screens */
-                margin-left:0;
-                margin-top: 10px; /* Add margin to separate elements */
-            }
-            #passenger-container {
-                display: flex;
-                flex-direction: column;
-                max-height: 100px; /* Increase max height if needed */
-                overflow-y: auto;
-                margin-left: 0; /* Reset the margin-left for smaller screens */
-                margin-top: 0; /* Add some margin for spacing */
-                width: 100%; /* Ensure it takes the full width in responsive view */
-            }
-            .button-container {
-                display: flex;
-                flex-direction: row;
-                width: 100%;
-                justify-content: flex-end; /* Align the button to the right */
-                margin-top: -55px; /* Adjust to align with select field */
-            }
-            #date-time-container {
-                max-height: 200px; /* Set the desired max-height for scrolling */
-                overflow-y: auto; /* Enable scrolling */
-            }
-
-            .datetime-group {
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-bottom: 0;
-            }
-
-            .date-field {
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-bottom: 5px;
-                margin-left: 0px;
-            }
-            #date_start {
-                margin-left: 0;
-            }
-
-            .date-field input,
-            .time-field input {
-                width: 50%;
-                margin-left: 0;
-            }
-
-            .below-label1,
-            .below-label2 {
-                margin-left: 0;
-            }
-
-            input[type="time"] {
-                width: 50%;
-                margin-left: 0;
-                margin-bottom: 0;
-            }
-            .time-button-container{
-                display: flex;
-                flex-direction: row;
-                width: 60%;
-                justify-content: flex-end; /* Align the button to the right */
-                margin-top: -31px; /* Adjust to align with select field */
-            }
-
+        
+        #signature-preview {
+            margin-top: 15px;
+            max-width: 150px;
+            max-height: 150px;
+            display: none;
         }
         .checkbox {
+            margin-left: 0;
+            width: 30px;
+            margin-bottom: 10px;
             position: relative;
+            float: right;
+           
         }
-
-        .checkbox:hover::after {
-            content: " Please Specify";
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background-color: #65558F;
-            color: white;
-            padding: 3px 6px;
-            border-radius: 5px;
+        .checkbox input[type="checkbox"]{
+            border: 1px solid #478CCF;
+        }
+        .message{
             font-size: 12px;
-            /* white-space: nowrap; */
-        }
-
-        #purposeCheckbox {
-            width: 100%;
-            height: 19px;
-            padding: 5px;
-            border: 1px solid rgba(60, 54, 51, 0.5);
-            border-radius: 1px;
-            box-sizing: border-box;
+            color: red;
+            font-style: italic;
             margin-left: 5px;
         }
 
         .checkbox input[type="checkbox"]:checked + #purposeTextBox {
             display: block;
         }
+        .required::after {
+            content: " *";
+            color: red;
+        }   
+        #passenger-container {
+                display: flex;
+                flex-direction: column;
+                max-height: 100px; /* Increase max height if needed */
+                overflow-y: auto;
+                margin-bottom: 10px;
+                margin-top: 8px; /* Add some margin for spacing */
+                width: 100%; /* Ensure it takes the full width in responsive view */
+            }
+        .iti__flag-container{
+            margin-top: 20px;
+            padding: 5px;
+        }
+        @media (max-width: 768px) {
+            .parent-container {
+        flex-direction: column;
+        align-items: center;
+    }
 
-    </style>
-</head>
-<body>
-@if (session('purposeInputError'))
+    .top, .container {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    /* Ensure that each form field is displayed in a single column */
+    .row, .row1, .datetime-group {
+        display: flex;
+        flex-direction: column;
+    }
+    .row2{
+        display: flex;
+        flex-direction: column;
+        width: 80%  
+    }
+
+    .field{
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .input-field {
+        flex-direction: column;
+        width: 80%;
+    }
+    #date-time-container{
+        overflow-y: visible;
+        max-height: none;
+    }
+    /* .submit-btn{
+        margin-top: 9em;
+    } */
+
+    /* Adjust input fields, select fields, and textarea */
+    .field input[type="text"],
+    .field input[type="number"],
+    .field input[type="file"],
+    .input-field input[type="date"],
+    .field select,
+    .field textarea {
+        width: 100%;
+        max-width: 100%; /* Ensure no overflow */
+        box-sizing: border-box;
+    }
+
+    /* Checkbox containers and messages */
+    .checkbox-container {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .checkbox {
+        margin-top: 0.5rem;
+        font-size: 9px;
+    }
+    
+    .button-container {
+        flex-direction: row; /* Ensure buttons remain in a row */
+        align-items: center;
+        justify-content: flex-start;
+    }
+   
+    .add-datetime-btn, .remove-datetime-btn {
+        margin-top: -6em;
+        margin-left: 17em;
+    }
+    .remove-passenger-btn{
+        display: flex;
+        margin-top: -2.5em;
+        margin-left: 18em;
+    }
+    #passenger-container{
+        overflow-y: vissible;
+        max-height: none;
+        width: 100%;
+    }
+            
+        }   
+            
+        </style>
+    </head>
+    <body>
+    @if (session('purposeInputError'))
     <div class="alert alert-warning">
         {{ session('purposeInputError') }}
     </div>
@@ -428,83 +381,92 @@
             document.getElementById('purposeSelect').style.display = 'block';
         });
     </script>
-@endif
+        @endif
 
-@if ($errors->any())
-    <script>
-        let errorMessages = [];
-        @foreach ($errors->all() as $error)
-        errorMessages.push("{{ $error }}");
-        @endforeach
-        alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
-    </script>
-@endif
+        @if ($errors->any())
+            <script>
+                let errorMessages = [];
+                @foreach ($errors->all() as $error)
+                errorMessages.push("{{ $error }}");
+                @endforeach
+                alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
+            </script>
+        @endif
 
-@if(session('error'))
-    <script>
-        alert(" {{ session('error') }}");
-    </script>
-@endif
+        @if(session('error'))
+            <script>
+                alert(" {{ session('error') }}");
+            </script>
+        @endif
 
-@if(session('success'))
-    <script>
-        alert(" {{ session('success') }}");
-    </script>
-@endif
-<div class="form-container">
-    <h1>Request For Use of Vehicle</h1>
-    <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
-        Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)</p>
-    <div class="form-body">
-        <form action="/vehicle/request" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+        @if(session('success'))
+            <script>
+                alert(" {{ session('success') }}");
+            </script>
+        @endif
+
+    <div class= "parent-container">
+            <div class="top">
+                <div class="pic">
+                    <img width="250" src="{{asset('/logo/travel.png')}}" alt="logo">
+                </div>
+                <h1>Request For Use of Vehicle</h1>
+                <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
+                 Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)
+                </p>
+            </div>
+        <div class="container">
+            <form action="/vehicle/request" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
             @csrf
-            <div class="input-group">
-                <div class="input-field">
-                    <label>Requesting Office<span class="required">*</span></label>
-                    <select id="officeName" name="officeName" placeholder="Enter Purpose" required>
-                        <option disabled selected>Select Office</option>
-                        @foreach(App\Models\Office::all() as $office)
-                            <option value="{{ $office->OfficeID }}" {{ old('officeName') == $office->OfficeID ? 'selected' : '' }}>
-                                {{ $office->OfficeName }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="row">
+                    <div class="field">
+                        <label class="required" > Requesting Office</label>
+                            <select id="officeName" name="officeName" placeholder="Enter Purpose" required>
+                                <option disabled selected>Select Office</option>
+                                @foreach(App\Models\Office::all() as $office)
+                                    <option value="{{ $office->OfficeID }}" {{ old('officeName') == $office->OfficeID ? 'selected' : '' }}>
+                                        {{ $office->OfficeName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                    </div>
+                    <div class="field">
+                        <label for="purpose" class="required">Purpose </label>
+                            <select id="purposeSelect" name="purposeSelect" required>
+                                <option disabled selected>Select Purpose</option>
+                                @foreach(App\Models\PurposeRequest::where('request_p', 'Vehicle')->get() as $purpose)
+                                    <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>{{ $purpose->purpose }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="checkbox-container">
+                                <span class="message">Please check this box if you want to specify</span>
+                                <input type="text" id="purposeInput" name="purposeInput" value="{{ old('purposeInput') }}" style="display:none;" placeholder="Enter Purpose">
+                                <div class="checkbox">
+                                <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
+                                </div>
+                            </div>
+                    </div>
                 </div>
-                <div class="input-field">
-                <label for="purpose">Purpose <span class="required">*</span></label>
-                <select id="purposeSelect" name="purposeSelect" required>
-                    <option disabled selected>Select Purpose</option>
-                    @foreach(App\Models\PurposeRequest::where('request_p', 'Vehicle')->get() as $purpose)
-                        <option value="{{ $purpose->PurposeID }}" {{ old('purposeSelect') == $purpose->PurposeID ? 'selected' : '' }}>{{ $purpose->purpose }}
-                        </option>
-                    @endforeach
-                </select>
-                <input type="text" id="purposeInput" name="purposeInput" value="{{ old('purposeInput') }}" style="display:none;" placeholder="Enter Purpose">
-                <div class="checkbox">
-                    <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
+                <div class= "row">
+                    <div class="field">
+                        <label class="required"> Requester Name</label>
+                        <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" autocapitalize="words" required/>
+                        </div>
+                    <div class="field">
+                        <label class="required" >Requester Email</label>
+                        <input type="text" name="RequesterEmail" placeholder="Enter Email" value="{{ old('RequesterEmail') }}"  required/>
+                    </div>
                 </div>
-            </div>
-            </div>
-            <div class="input-group">
-                <div class="input-field">
-                    <label>Requester Name<span class="required">*</span></label>
-                    <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" autocapitalize="words" required/>
-                </div>
-                <div class="input-field">
-                    <label>Requester Email <span class="required">*</span></label>
-                    <input type="text" name="RequesterEmail" placeholder="Enter Email" value="{{ old('RequesterEmail') }}"  required/>
-                </div>
-            </div>
+                <div class= "row">
+                    <div class="field">
+                    <label for="ContactNo" class="required" >Contact No.</label>
+                    <input type="tel" id="ContactNo" name="RequesterContact" placeholder="956 566 5678" value="{{ old('RequesterContact') }}" required maxlength="10">
+                    </div>
 
-            <div class="input-group">
-                <div class="input-field">
-                    <label for="ContactNo">Contact No.<span class="required">*</span></label>
-                    <span class="phone-prefix">+63</span>
-                    <input type="tel" id="ContactNo" name="RequesterContact" placeholder="Enter Contact No." value="{{ old('RequesterContact') }}" required maxlength="10">
-                </div>
-                <div class="input-field">
-                     <label for="RequesterSignature">E-Signature <span class="required">*</span></label>
-                        <div class="file-upload">
+                    <div class="field">
+                        <label for="RequesterSignature" class="required"> E-Signature </label>
+                        <div class=" file-upload">
                             <input type="file" id="RequesterSignature" name="RequesterSignature" style="display: none;" onchange="previewSignature(event)">
                             <div class="e-signature-text" onclick="document.getElementById('RequesterSignature').click();">
                                 Click to upload e-sign.<br>Maximum file size: 32MB
@@ -516,66 +478,142 @@
                                 alt="Signature Preview" 
                                 onclick="document.getElementById('RequesterSignature').click();">
                         </div>
-                        <div id="error-container" style="color: red; display: none;">E-Signature is required.</div>
+                            <div id="signature-error" style="color: red; display: none;">E-Signature is required.</div>
+                    </div>
                 </div>
-            </div>
-            <div class="input-group">
-                <div class="input-field">
-                    <label>Destination<span class="required">*</span></label>
-                    <input type="text" name="Destination" placeholder="Enter Place" value="{{ old('Destination') }}" autocapitalize="words" required/>
-                </div>
-                <div class="passenger-field">
-                    <label>Passenger Name/s<span class="required">*</span></label>
-                    <select name="passengers[]" required>
-                        <option disabled selected>Select a passenger</option>
-                        @php
-                            $employees = App\Models\Employee::all()->sortBy('EmployeeName');
-                        @endphp
+                <div class= "row">
+                    <div class="field">
+                        <label class="required" >Destination </label>
+                        <input type="text" name="Destination" placeholder="Enter Place" value="{{ old('Destination') }}" autocapitalize="words" required/>
+                    </div>
+                    <div class="passenger-field">
+                        <label class="required">Passenger Name/s </label>
+                            <select name="passengers[]" required>
+                                <option disabled selected>Select a passenger</option>
+                                @php
+                                    $employees = App\Models\Employee::all()->sortBy('EmployeeName');
+                                @endphp
 
-                        @foreach($employees as $passenger)
-                            <option value="{{ $passenger->EmployeeID }}" {{ in_array($passenger->EmployeeID, old('passengers', [])) ? 'selected' : '' }}>
-                                {{ $passenger->EmployeeName }}
-                            </option>
+                                @foreach($employees as $passenger)
+                                    <option value="{{ $passenger->EmployeeID }}" {{ in_array($passenger->EmployeeID, old('passengers', [])) ? 'selected' : '' }}>
+                                        {{ $passenger->EmployeeName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <button class="add-passenger-btn" type="button" onclick="addPassenger()">+</button>
+                                <div id="passenger-container">
+                                <!-- New passenger fields will be appended here -->
+                                @if(old('passengers'))
+                                @foreach(old('passengers') as $index => $passengerID)
+                                    @if($index > 0) <!-- Skip the first passenger as it is already rendered above -->
+                                        <div class="passenger-field">
+                                            <select name="passengers[]" required>
+                                                <option disabled selected>Select a passenger</option>
+                                                @foreach($employees as $passenger)
+                                                    <option value="{{ $passenger->EmployeeID }}" {{ $passenger->EmployeeID == $passengerID ? 'selected' : '' }}>
+                                                        {{ $passenger->EmployeeName }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                                <button class="remove-passenger-btn" type="button" onclick="removePassenger(this)">-</button>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endif
+                            </div>
+                    </div>
+                            
+                </div>
+                <div id="date-time-container">
+                    <div class="input-group datetime-group">
+                        <div class="input-field">
+                            <div class="date-field">
+                            <label class="required" for="date_start"> Date Start</label>
+                                <input type="date" id="date_start" name="date_start[]" value="{{ old('date_start.0') }}" required/>
+                            </div>
+                            <div class="date-field">
+                            <label class="required" for="date_end">Date End</label>
+                                <input type="date" id="date_end" name="date_end[]" value="{{ old('date_end.0') }}" required/>
+                            </div>
+                        </div>
+                        <div class="input-field">
+                            <div class="date-field">
+                                <label class="required" >Time </label>
+                                <input type="time" name="time_start[]" value="{{ old('time_start.0') }}" required/>
+                            </div>
+                            <div class="button-container">
+                                    <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
+                            </div>
+                            </div>  
+                    </div>
+                    @if(old('date_start'))
+                        @foreach(old('date_start') as $index => $dateStart)
+                            @if($index > 0) <!-- Skip the first date/time as it is already rendered above -->
+                                <div class="input-group datetime-group">
+                                    <div class="input-field">
+                                        <div class="date-field">
+                                            <label class="required" for="date_start_{{ $index }}">Date Start</label>
+                                            <input type="date" id="date_start_{{ $index }}" name="date_start[]" value="{{ old('date_start.' . $index) }}" required/>
+                                        </div>
+                                        <div class="date-field">
+                                            <label class="required" for="date_end_{{ $index }}">Date End</label>
+                                            <input type="date" id="date_end_{{ $index }}" name="date_end[]" value="{{ old('date_end.' . $index) }}" required/>
+                                        </div>
+                                    </div>
+                                    <div class="input-field">
+                                        <div class="date-field">
+                                            <label class="required">Time</label>
+                                            <input type="time" name="time_start[]" value="{{ old('time_start.' . $index) }}" required/>
+                                        </div>
+                                        <div class="button-container">
+                                            <button class="remove-datetime-btn" type="button" onclick="removeDateTime(this)">-</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                         @endforeach
-                    </select>
+                    @endif
                 </div>
-                <div class="button-container">
-                    <button class="add-passenger-btn" type="button" onclick="addPassenger()">+</button>
-                </div>
+                    <div class="form-footer">
+                        <button class="submit-btn" type="submit">Submit</button>
+                    </div> 
             </div>
-            <div id="passenger-container">
-                <!-- New passenger fields will be appended here -->
-            </div>
-            <div id="date-time-container">
-                <div class="input-group datetime-group">
-                    <div class="input-field">
-                        <label>Date</label>
-                        <div class="date-field">
-                            <input type="date" id="date_start" name="date_start[]" value="{{ old('date_start.0') }}" required/>
-                            <label for="date_start" class="below-label1">Start <span class="required">*</span></label>
-                        </div>
-                        <div class="date-field">
-                            <input type="date" id="date_end" name="date_end[]" value="{{ old('date_end.0') }}" required/>
-                            <label for="date_end" class="below-label2">End <span class="required">*</span></label>
-                        </div>
-                    </div>
-                    <div class="input-field">
-                        <label>Time<span class="required">*</span></label>
-                        <input type="time" name="time_start[]" value="{{ old('time_start.0') }}" required/>
-                        <div class="time-button-container">
-                            <button class="add-datetime-btn" type="button" onclick="addDateTime()">+</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-footer">
-                <button class="submit-btn" type="submit">Submit</button>
-            </div>
-        </form>
-    </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+            </form>    
+        </div>       
+    </div>    
+
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ContactInputField = document.querySelector("#ContactNo");
+            if (ContactInputField) {
+                const phoneInput = window.intlTelInput(ContactInputField, {
+                    onlyCountries: ['ph'], // Restrict to Philippines
+                    initialCountry: 'ph',
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                });
+
+                // Update the placeholder with a custom format
+                const updatePlaceholder = () => {
+                    let exampleNumber = phoneInput.getExampleNumber(phoneInput.getSelectedCountryData().iso2, true, intlTelInputUtils.numberFormat.INTERNATIONAL);
+                    if (exampleNumber.startsWith("+63 0")) {
+                        exampleNumber = exampleNumber.replace("+63 0", "+63 9");
+                    }
+                    ContactInputField.placeholder = exampleNumber;
+                };
+
+                // Initial placeholder update
+                updatePlaceholder();
+
+                // Update placeholder on country change
+                ContactInputField.addEventListener("countrychange", updatePlaceholder);
+            } else {
+                console.error("Element with ID 'ContactNo' not found.");
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
         const passengerContainer = document.getElementById('passenger-container');
         const passengerSelects = document.querySelectorAll('select[name="passengers[]"]');
 
@@ -603,23 +641,20 @@
         });
 
         function addPassenger() {
-            const passengerField = document.createElement('div');
-            passengerField.className = 'input-field passenger-field';
-            passengerField.innerHTML = `
-                <select name="passengers[]" required>
-                    <option disabled selected>Select a passenger</option>
-                    @foreach(App\Models\Employee::all() as $passenger)
-                        <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
-                    @endforeach
-                </select>
-                <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
-            `;
-            passengerContainer.appendChild(passengerField);
-
-            const newSelect = passengerField.querySelector('select');
-            newSelect.addEventListener('change', updatePassengerOptions);
-            updatePassengerOptions();
-        }
+        let passengerContainer = document.getElementById('passenger-container');
+        let newPassengerField = document.createElement('div');
+        newPassengerField.className = 'passenger-field';
+        newPassengerField.innerHTML = `
+            <select name="passengers[]" required>
+                <option disabled selected>Select a passenger</option>
+                @foreach($employees as $passenger)
+                    <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
+                @endforeach
+            </select>
+            <button class="remove-passenger-btn" type="button" onclick="removePassenger(this)">-</button>
+        `;
+        passengerContainer.appendChild(newPassengerField);
+    }
 
         function removePassenger(button) {
             const passengerField = button.parentElement;
@@ -631,31 +666,34 @@
         updatePassengerOptions();
 
     });
+
     document.addEventListener('DOMContentLoaded', function() {
         const today = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(function(input) {
             input.setAttribute('min', today);
         });
     });
-    function addPassenger() {
-        const passengerField = document.createElement('div');
-        passengerField.className = 'input-field passenger-field';
-        passengerField.innerHTML = `
-        <select name="passengers[]" required>
-          <option disabled selected>Select a passenger</option>
-            @foreach(App\Models\Employee::all() as $passenger)
-                <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
-            @endforeach
-        </select>
-        <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
-    `;
-        document.getElementById('passenger-container').appendChild(passengerField);
-    }
 
-    function removePassenger(button) {
-        const passengerField = button.parentElement;
-        passengerField.remove();
-    }
+    function addPassenger() {
+            const passengerContainer = document.getElementById('passenger-container');
+            const newPassengerField = document.createElement('div');
+            newPassengerField.className = 'passenger-field';
+            newPassengerField.innerHTML = `
+                <select name="passengers[]" required>
+                    <option disabled selected>Select a passenger</option>
+                    @foreach($employees as $passenger)
+                        <option value="{{ $passenger->EmployeeID }}">{{ $passenger->EmployeeName }}</option>
+                    @endforeach
+                </select>
+                <button type="button" class="remove-passenger-btn" onclick="removePassenger(this)">-</button>
+            `;
+            passengerContainer.appendChild(newPassengerField);
+        }
+
+        function removePassenger(button) {
+            const passengerField = button.parentElement;
+            passengerField.remove();
+        }
 
     function addDateTime() {
         const dateTimeContainer = document.getElementById('date-time-container');
@@ -815,6 +853,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
     });
-</script>
-</body>
+        </script>
+    </body>
 </html>

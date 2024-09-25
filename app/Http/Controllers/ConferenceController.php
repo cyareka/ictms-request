@@ -74,7 +74,7 @@ class ConferenceController extends Controller
         try {
             $validated = $request->validate([
                 'officeName' => 'required|string|exists:offices,OfficeID',
-                'purposeSelect' => 'nullable|string|exists:purpose_requests,PurposeID',
+                'purposeSelect' => 'nullable|string|max:255|required_without:purposeInput|exists:purpose_requests,PurposeID',
                 'purposeInput' => 'nullable|string|max:50',
                 'date_start.*' => 'required|date_format:Y-m-d',
                 'date_end' => 'required|array|min:1',
@@ -84,7 +84,7 @@ class ConferenceController extends Controller
                 'time_end' => 'required|array|min:1',
                 'time_end.*' => 'required|date_format:H:i|after:time_start.*',
                 'npersons' => 'required|integer',
-                'focalPersonSelect' => 'nullable|string|exists:focal_person,FocalPID',
+                'focalPersonSelect' => 'nullable|string|required_without:focalPersonInput|exists:focal_person,FocalPID',
                 'focalPersonInput' => 'nullable|string|max:50',
                 'tables' => 'nullable|integer',
                 'chairs' => 'nullable|integer',

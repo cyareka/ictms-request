@@ -161,19 +161,20 @@ class VehicleController extends Controller
                     'EventStatus' => '-',
                 ]);
                 Log::debug('Vehicle request created for date start:', ['dateStart' => $dateStart]);
+
+                foreach ($passengers as $passenger) {
+                    $VRPassID = $this->generateUniqueVRPassID();
+                    Log::debug('Generated unique VRPassID:', ['VRPassID' => $VRPassID]);
+
+                    DB::table('vrequest_passenger')->insert([
+                        'VRPassID' => $VRPassID,
+                        'VRequestID' => $generatedID,
+                        'EmployeeID' => $passenger,
+                    ]);
+                    Log::debug('Passenger inserted:', ['passenger' => $passenger]);
+                }
             }
 
-            foreach ($passengers as $passenger) {
-                $VRPassID = $this->generateUniqueVRPassID();
-                Log::debug('Generated unique VRPassID:', ['VRPassID' => $VRPassID]);
-
-                DB::table('vrequest_passenger')->insert([
-                    'VRPassID' => $VRPassID,
-                    'VRequestID' => $generatedID,
-                    'EmployeeID' => $passenger,
-                ]);
-                Log::debug('Passenger inserted:', ['passenger' => $passenger]);
-            }
 
             return redirect()->back()->with('success', 'Vehicle request submitted successfully.');
         } catch (ValidationException $e) {
@@ -195,7 +196,7 @@ class VehicleController extends Controller
             return redirect()->back()->with('error', $errorMessage . ' Error details: ' . $detailedErrorMessage);
         }
     }
-
+    
     public function updateVForm(Request $request, $VRequestID): RedirectResponse
     {
         try {
