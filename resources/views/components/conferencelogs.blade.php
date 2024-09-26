@@ -189,11 +189,10 @@
         });
 
         // Handle status_pairs array
-        if (filters.status_pairs) {
-            filters.status_pairs.forEach((pair, index) => {
-                params.append(`status_pairs[${index}]`, pair);
-            });
-        }
+        const statusPairs = ['Approved,Cancelled', 'Approved,Finished', 'Not Approved,-'];
+        statusPairs.forEach((pair, index) => {
+            params.append(`status_pairs[${index}]`, pair);
+        });
 
         fetch(`/fetchSortedLogRequests?${params.toString()}`)
             .then(response => response.json())
@@ -203,7 +202,7 @@
             })
             .catch(error => console.error('Error fetching sorted data:', error));
     }
-
+    
     // Update table rows
     function updateTable(data) {
         const tbody = document.getElementById('requests-tbody');
