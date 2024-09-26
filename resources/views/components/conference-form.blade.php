@@ -402,7 +402,7 @@
                     @endforeach
                 </select>
                 <div class= "checkbox-container">
-                    <input type="text" id="purposeInput" name="purposeInput" style="display:none;" placeholder="Enter Purpose" value="{{ old('purposeInput') }}">
+                    <input type="text" id="purposeInput" name="purposeInput" style="display:none;" placeholder="Enter Purpose" value="{{ old('purposeInput') }}" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the purpose.">
                     <span class="message">Please check this box if you want to specify</span>
                     <div class="checkbox">
                         <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
@@ -440,7 +440,7 @@
                 </select>
                 <div class="checkbox-container">
                     <span class="message">Please check this box if you want to specify </span>
-                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}">
+                    <input type="text" id="focalPersonInput" name="focalPersonInput" style="display:none;" placeholder="Enter Focal Person" value="{{ old('focalPersonInput') }}" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the purpose.">
                     <div class="checkbox">
                         <input type="checkbox" id="focalPersonCheckbox" name="focalPersonCheckbox" onclick="toggleInputField('focalPerson')" {{ old('focalPersonInput') ? 'checked' : '' }}>
                     </div>
@@ -453,7 +453,7 @@
                 <label class="required" for="requesterName">
                     Requester Name
                 </label>
-                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester" value="{{ old('requesterName') }}" required>
+                <input type="text" id="requesterName" name="requesterName" placeholder="Enter Name of Requester" value="{{ old('requesterName') }}" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the purpose." required>
             </div>
 
             <div class="field">

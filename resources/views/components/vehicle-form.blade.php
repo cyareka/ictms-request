@@ -441,7 +441,7 @@
                             </select>
                             <div class="checkbox-container">
                                 <span class="message">Please check this box if you want to specify</span>
-                                <input type="text" id="purposeInput" name="purposeInput" value="{{ old('purposeInput') }}" style="display:none;" placeholder="Enter Purpose">
+                                <input type="text" id="purposeInput" name="purposeInput" value="{{ old('purposeInput') }}" style="display:none;" placeholder="Enter Purpose" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the purpose.">
                                 <div class="checkbox">
                                 <input type="checkbox" id="purposeCheckbox" name="purposeCheckbox" onclick="toggleInputField('purpose')" {{ old('purposeInput') ? 'checked' : '' }}>
                                 </div>
@@ -451,7 +451,7 @@
                 <div class= "row">
                     <div class="field">
                         <label class="required"> Requester Name</label>
-                        <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" autocapitalize="words" required/>
+                        <input type="text" name="RequesterName" placeholder="Enter Name" value="{{ old('RequesterName') }}" autocapitalize="words" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the purpose." required/>
                         </div>
                     <div class="field">
                         <label class="required" >Requester Email</label>
@@ -461,7 +461,7 @@
                 <div class= "row">
                     <div class="field">
                     <label for="ContactNo" class="required" >Contact No.</label>
-                    <input type="tel" id="ContactNo" name="RequesterContact" placeholder="956 566 5678" value="{{ old('RequesterContact') }}" required maxlength="10">
+                    <input type="tel" id="ContactNo" name="RequesterContact" placeholder="956 566 5678" value="{{ old('RequesterContact') }}" required maxlength="10" pattern="\d{10}" title="Please enter a valid 10-digit phone number." inputmode="numeric">
                     </div>
 
                     <div class="field">
