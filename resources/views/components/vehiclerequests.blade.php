@@ -178,6 +178,7 @@
             <tbody>
             @php
                 use Carbon\Carbon;
+                use App\Models\Driver;
                 use App\Models\VehicleRequest;
                 use App\Mail\VehicleRequestApprovedMail;
                 use Illuminate\Support\Facades\Mail;
@@ -212,15 +213,25 @@
                             $request->save();
                         }
 
-                        // Send email to requester if it hasn't been sent yet
-            if (!$request->is_email_sent) {
-                // Send an email to the requester
-                Mail::to($request->RequesterEmail)->send(new VehicleRequestApprovedMail($request));
+                     // Send email to requester if it hasn't been sent yet
+                        if (!$request->is_email_sent) {
+                            // Retrieve the driver's email using the DriverID from the request
+                            $driver = Driver::where('DriverID', $request->DriverID)->first();
 
-                // Mark email as sent
-                $request->is_email_sent = true;
-                $request->save();
-            }
+                            if ($driver) {
+                                $driverEmail = $driver->DriverEmail;
+
+                                // Send email to both the requester and the driver
+                                Mail::to([$request->RequesterEmail, $driverEmail])->send(new VehicleRequestApprovedMail($request));
+                            } else {
+                                // Send email only to the requester if the driver is not found
+                                Mail::to($request->RequesterEmail)->send(new VehicleRequestApprovedMail($request));
+                            }
+
+                            // Mark email as sent
+                            $request->is_email_sent = true;
+                            $request->save();
+                        }
                     }
                 }
             @endphp
