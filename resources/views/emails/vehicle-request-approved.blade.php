@@ -4,13 +4,9 @@
     <title>Vehicle Request Approved</title>
 </head>
 <body>
-    <h1>Your Vehicle Request Has Been Approved</h1>
+    <h1>We’re pleased to inform you that the vehicle request has been approved!</h1>
     <p>Dear {{ $vehicleRequest->RequesterName }},</p>
-    <p>Your vehicle request has been approved.</p>
-    <br>
-    <p>Event Date: {{ $vehicleRequest->date_start }} - {{ $vehicleRequest->date_end }}</p>
-    <p>Destination: {{ $vehicleRequest->Destination }}</p>
-    <p>Call Time: {{ $vehicleRequest->time_start }}</p>
+    <p>You have an upcoming trip to {{ $vehicleRequest->Destination }} that will occur on {{ $vehicleRequest->date_start }} at {{ $vehicleRequest->time_start }}.</p>
     <br>
     <p>Thank you.</p>
 </body>
