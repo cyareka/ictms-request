@@ -44,8 +44,8 @@ class NFocalPController extends Controller
             return redirect()->back()->with('success', 'Focal Person added successfully!');
         } catch (Exception $e) {
             // Log the error
-            Log::error('Error adding employee: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to add employee.');
+            Log::error('Error adding Focal Person: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to add Focal Person.');
         }
     }
 }

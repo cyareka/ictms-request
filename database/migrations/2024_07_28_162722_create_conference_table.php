@@ -29,13 +29,13 @@ return new class extends Migration
             $table->string('date_end', 6);
             $table->string('time_start', 4);
             $table->string('time_end', 4);
-            $table->integer('npersons', 3);
+            $table->integer('npersons');
             $table->string('AuthRep')->nullable()->default(null);
             $table->string('FocalPID')->nullable()->default(null);
             $table->string('FPOthers')->nullable()->default(null);
             $table->boolean('CAvailability')->default(true)->nullable();
-            $table->integer('tables', 3)->nullable();
-            $table->integer('chairs', 3)->nullable();
+            $table->integer('tables')->nullable();
+            $table->integer('chairs')->nullable();
             $table->string('otherFacilities', 50)->nullable();
             $table->string('CRoomID');
             $table->string('RequesterName', 50);
