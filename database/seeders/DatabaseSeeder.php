@@ -17,5 +17,9 @@ class DatabaseSeeder extends Seeder
         $this->call(EmployeeSeeder::class);
         $this->call(AAuthoritySeeder::class);
         $this->call(SOAuthoritySeeder::class);
+        $this->call(
+            VehicleRequestSeeder::class,);  
+        $this->call(
+            ConferenceRequestSeeder::class,);
     }
 }
