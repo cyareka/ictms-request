@@ -161,7 +161,7 @@
 
 <script>
     let currentPage = 1;
-    const itemsPerPage = 5; // Set items per page to 5
+    const itemsPerPage = 10; // Set items per page to 5
     let currentOrder = 'desc'; // Default order
     let searchQuery = ''; // Initialize searchQuery
 
@@ -233,29 +233,35 @@
 
     // Update pagination links
     function updatePagination(pagination) {
-        const paginationList = document.getElementById('pagination-list');
-        paginationList.innerHTML = ''; // Clear current pagination
+    const paginationList = document.getElementById('pagination-list');
+    paginationList.innerHTML = ''; // Clear current pagination
 
-        const { total, current_page, last_page } = pagination;
-        currentPage = current_page;
+    const { total, current_page, last_page } = pagination;
+    currentPage = current_page;
 
-        // Previous button
-        const prevPageItem = document.createElement('li');
-        const prevPageLink = document.createElement('a');
-        prevPageLink.href = '#';
-        prevPageLink.classList.add('prev');
-        prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
-        prevPageLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (currentPage > 1) {
-                fetchSortedData(currentOrder, currentPage - 1, searchQuery);
-            }
-        });
-        prevPageItem.appendChild(prevPageLink);
-        paginationList.appendChild(prevPageItem);
+    // Previous button
+    const prevPageItem = document.createElement('li');
+    const prevPageLink = document.createElement('a');
+    prevPageLink.href = '#';
+    prevPageLink.classList.add('prev');
+    prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
+    prevPageLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            fetchSortedData(currentOrder, currentPage - 1, searchQuery);
+        }
+    });
+    prevPageItem.appendChild(prevPageLink);
+    paginationList.appendChild(prevPageItem);
 
-        // Page numbers
-        for (let i = 1; i <= last_page; i++) {
+    // Page numbers
+    for (let i = 1; i <= last_page; i++) {
+        if (i === current_page || 
+            i === current_page - 1 || 
+            i === current_page - 2 || 
+            i === current_page + 1 || 
+            i === current_page + 2) {
+            
             const pageItem = createPaginationItem(i, i);
             if (i === current_page) {
                 pageItem.classList.add('active');
@@ -265,22 +271,23 @@
             }
             paginationList.appendChild(pageItem);
         }
-
-        // Next button
-        const nextPageItem = document.createElement('li');
-        const nextPageLink = document.createElement('a');
-        nextPageLink.href = '#';
-        nextPageLink.classList.add('next');
-        nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
-        nextPageLink.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (currentPage < last_page) {
-                fetchSortedData(currentOrder, currentPage + 1, searchQuery);
-            }
-        });
-        nextPageItem.appendChild(nextPageLink);
-        paginationList.appendChild(nextPageItem);
     }
+
+    // Next button
+    const nextPageItem = document.createElement('li');
+    const nextPageLink = document.createElement('a');
+    nextPageLink.href = '#';
+    nextPageLink.classList.add('next');
+    nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
+    nextPageLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage < last_page) {
+            fetchSortedData(currentOrder, currentPage + 1, searchQuery);
+        }
+    });
+    nextPageItem.appendChild(nextPageLink);
+    paginationList.appendChild(nextPageItem);
+}
 
     // Create pagination item
     function createPaginationItem(text, page) {

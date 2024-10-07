@@ -349,52 +349,57 @@
                 const paginationContainer = document.querySelector('.pagination_rounded ul');
                 paginationContainer.innerHTML = ''; // Clear the current pagination
 
-                // Previous button
                 let prevDisabled = pagination.current_page <= 1 ? 'disabled' : '';
-                paginationContainer.insertAdjacentHTML('beforeend', `
-        <li>
-            <a href="#" class="prev ${prevDisabled}">
-                <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
-            </a>
-        </li>
-    `);
+paginationContainer.insertAdjacentHTML('beforeend', `
+    <li>
+        <a href="#" class="prev ${prevDisabled}">
+            <i class="fa fa-angle-left" aria-hidden="true"></i> Prev
+        </a>
+    </li>
+`);
 
-                // Page numbers
-                for (let page = 1; page <= pagination.last_page; page++) {
-                    let activeClass = page === pagination.current_page ? 'active' : '';
+// Page numbers
+for (let page = 1; page <= pagination.last_page; page++) {
+    if (page === pagination.current_page || 
+        page === pagination.current_page - 1 || 
+        page === pagination.current_page - 2 || 
+        page === pagination.current_page + 1 || 
+        page === pagination.current_page + 2) {
+        
+        let activeClass = page === pagination.current_page ? 'active' : '';
 
-                    // Create the list item element
-                    let listItem = document.createElement('li');
-                    listItem.className = activeClass;
+        // Create the list item element
+        let listItem = document.createElement('li');
+        listItem.className = activeClass;
 
-                    // Create the anchor element
-                    let pageLink = document.createElement('a');
-                    pageLink.href = '#';
-                    pageLink.textContent = page;
+        // Create the anchor element
+        let pageLink = document.createElement('a');
+        pageLink.href = '#';
+        pageLink.textContent = page;
 
-                    // If it's the current page, change the font color
-                    if (page === pagination.current_page) {
-                        pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
-                        pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
-                    }
+        // If it's the current page, change the font color
+        if (page === pagination.current_page) {
+            pageLink.style.color = 'white';  // Change font color to white (or any color you prefer)
+            pageLink.style.backgroundColor = '#4285f4'; // Change background color to the desired active color
+        }
 
+        // Append the anchor to the list item
+        listItem.appendChild(pageLink);
 
-                    // Append the anchor to the list item
-                    listItem.appendChild(pageLink);
+        // Append the list item to the pagination container
+        paginationContainer.appendChild(listItem);
+    }
+}
 
-                    // Append the list item to the pagination container
-                    paginationContainer.appendChild(listItem);
-                }
-
-                // Next button
-                let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
-                paginationContainer.insertAdjacentHTML('beforeend', `
-        <li>
-            <a href="#" class="next ${nextDisabled}">
-                Next <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </a>
-        </li>
-    `);
+// Next button
+let nextDisabled = pagination.current_page >= pagination.last_page ? 'disabled' : '';
+paginationContainer.insertAdjacentHTML('beforeend', `
+    <li>
+        <a href="#" class="next ${nextDisabled}">
+            Next <i class="fa fa-angle-right" aria-hidden="true"></i>
+        </a>
+    </li>
+`);
             }
 
 // Event listeners for pagination links
