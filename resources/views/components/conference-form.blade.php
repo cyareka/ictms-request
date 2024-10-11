@@ -367,7 +367,7 @@
             <img width="250" src="{{asset('/logo/board.png')}}" alt="logo">
         </div>
         <h1>Request For Use of Conference Room</h1>
-        <p>(Note: Request should be made at least two (2) days before the date of actual use)</p>
+        <p>(Note: Please check the calendar for available dates before submitting a request.)</p>
     </div>
 
     <div class="container">

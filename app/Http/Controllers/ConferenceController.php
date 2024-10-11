@@ -102,6 +102,14 @@ class ConferenceController extends Controller
                 throw ValidationException::withMessages(['npersons' => 'The number of persons exceeds the capacity of the selected conference room.']);
             }
 
+            if ($validated['tables'] > $conferenceRoom->Capacity) {
+                throw ValidationException::withMessages(['tables' => 'The number of tables exceeds the capacity of the selected conference room.']);
+            }
+
+            if ($validated['chairs'] > $conferenceRoom->Capacity) {
+                throw ValidationException::withMessages(['chairs' => 'The number of chairs exceeds the capacity of the selected conference room.']);
+            }
+
             if (empty($validated['purposeSelect'])) {
                 $this->insertPurposeInput($validated);
             }
@@ -148,7 +156,7 @@ class ConferenceController extends Controller
                         $validated['time_end'][$index] >= $existingRequest->time_start
                     ) {
                         $availability = false;
-                        $errorMessages[] = 'Sorry, your request cannot be booked because there is an ongoing event on ' . $existingRequest->date_start . ' to ' . $existingRequest->date_end . ' from ' . $existingRequest->time_start . ' to ' . $existingRequest->time_end;
+                        $errorMessages[] = 'Sorry, your request cannot be booked because there is an upcoming event on ' . $existingRequest->date_start . ' to ' . $existingRequest->date_end . ' from ' . $existingRequest->time_start . ' to ' . $existingRequest->time_end;
                     }
                 }
 

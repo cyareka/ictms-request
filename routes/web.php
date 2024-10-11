@@ -11,6 +11,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\NPurposeController;
 use App\Http\Controllers\NFocalPController;
 use App\Http\Controllers\NSuperiorPController;
+use App\Http\Controllers\NOfficeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -134,6 +135,8 @@ Route::middleware([
         [NFocalPController::class, 'store'])->name('focalP.store');
     Route::post('/superp',
         [NSuperiorPController::class, 'store'])->name('superp.store');
+    Route::post('/office',
+        [NOfficeController::class, 'store'])->name('office.store');
 
     // Downloads
     Route::get('/conferencerequest/{CRequestID}/view-pdf', [DownloadsController::class, 'downloadCRequestPDF'])->name('downloadCRequestPDF');

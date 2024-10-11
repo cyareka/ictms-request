@@ -298,6 +298,7 @@
             <button class="dropdown-button" onclick="toggleSection('addVehi', this)">DRIVER</button>
             <button class="dropdown-button" onclick="toggleSection('vehicle', this)">VEHICLE</button>
             <button class="dropdown-button" onclick="toggleSection('superp', this)">SUPERIOR</button>
+            <button class="dropdown-button" onclick="toggleSection('office', this)">OFFICE</button>
             <!-- <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button> -->
         </div>
 
@@ -510,6 +511,11 @@
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
+                        <label for="purpose">Purpose</label>
+                        <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" required>
+                    </div>
+
+                    <div class="inline-field">
                         <label for="request_p">Request Form</label>
                         <select id="request_p" name="request_p" required>
                             <option disabled selected>Select Form</option>
@@ -517,10 +523,7 @@
                             <option value="Conference Room">Conference Room</option>
                         </select>
                     </div>
-                    <div class="inline-field">
-                        <label for="purpose">Purpose</label>
-                        <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" required>
-                    </div>
+                  
                 </div>
 
                 <div class="form-footer">
@@ -701,6 +704,57 @@
                                 <th scope="row">{{ $item->FocalPID }}</th>
                                 <td>{{ $item->FPName }}</td>
                                 <td>{{ $item->office->OfficeName }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="office" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('office.store') }}" id="officeForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="OfficeName">Office</label>
+                        <input type="text" id="OfficeName" name="OfficeName" placeholder="Enter Office Name" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="OfficeLocation">Location</label>
+                        <input type="text" id="OfficeLocation" name="OfficeLocation" placeholder="Enter Location" required>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('officeForm')"
+                            data-toggle="modal" data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+            <div class="container mt-5">
+                @php
+                    $office = App\Models\Office::all();
+                @endphp
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Office</th>
+                        <th scope="col">Location</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if($office->isEmpty())
+                        <tr>
+                            <td colspan="4">Data is not available.</td>
+                        </tr>
+                    @else
+                        @foreach($office as $item)
+                            <tr>
+                                <th scope="row">{{ $item->OfficeID }}</th>
+                                <td>{{ $item->OfficeName }}</td>
+                                <td>{{ $item->OfficeLocation }}</td>
                             </tr>
                         @endforeach
                     @endif
