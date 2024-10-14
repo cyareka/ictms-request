@@ -713,7 +713,11 @@ class VehicleController extends Controller
                 // Check if VehicleType is null, and use a fallback label
                 if ($usage->VehicleType !== null) { // Exclude unknown vehicle types
                     $percentage = ($usage->count / $totalCount) * 100;
-                    $dataPoints[] = ['y' => round($percentage, 2), 'label' => $usage->VehicleType];
+                    $dataPoints[] = [
+                        'y' => round($percentage, 2),
+                        'label' => $usage->VehicleType,
+                        'count' => $usage->count // Add this line
+                    ];
                 }
             }
         } else {

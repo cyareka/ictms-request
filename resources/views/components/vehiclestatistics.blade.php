@@ -173,6 +173,7 @@
                             startAngle: 240,
                             yValueFormatString: "##0.00\"%\"",
                             indexLabel: "{label} {y}",
+                            toolTipContent: "{label}: {count}",
                             dataPoints: dataPoints
                         }]
                     });

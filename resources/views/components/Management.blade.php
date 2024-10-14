@@ -308,7 +308,7 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="DriverName">Driver Name</label>
-                        <input type="text" id="DriverName" name="DriverName" placeholder="Enter Driver Name" required>
+                        <input type="text" id="DriverName" name="DriverName" placeholder="Enter Driver Name" required pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Drivers Email.">
                     </div>
                     <div class="inline-field">
                         <label for="DriverEmail">Driver Email</label>
@@ -321,7 +321,7 @@
                         <label for="ContactNo">Contact No.</label>
                         <span class="phone-prefix">+63</span>
                         <input type="tel" id="ContactNo" name="ContactNo" placeholder="Enter Contact No." required
-                               maxlength="10">
+                               maxlength="10" pattern="\d{10}" title="Please enter a valid 10-digit phone number." inputmode="numeric">
                     </div>
                 </div>
                 <div class="form-footer">
@@ -411,8 +411,8 @@
                     <thead>
                     <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">Conference Room</th>
-                        <th scope="col">Location</th>
+                        <th scope="col">Vehicle Type</th>
+                        <th scope="col">Plate No.</th>
                         <th scope="col">Capacity</th>
                         <th scope="col">Status</th>
                         <th scope="col"></th>
@@ -629,7 +629,7 @@
         <div class="form-row">
             <div class="inline-field">
                 <label for="EmployeeName">Name</label>
-                <input type="text" id="EmployeeName" name="EmployeeName" placeholder="Enter Name" required>
+                <input type="text" id="EmployeeName" name="EmployeeName" placeholder="Enter Name" required pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field.">
             </div>
             <div class="inline-field">
                 <label for="EmployeeEmail">Email</label>
@@ -661,7 +661,7 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="FPName">Name</label>
-                        <input type="text" id="FPName" name="FPName" placeholder="Enter Name" required>
+                        <input type="text" id="FPName" name="FPName" placeholder="Enter Name" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field." required>
                     </div>
                     <div class="inline-field">
                         <label for="officeName">Assigned Office</label>
@@ -769,7 +769,7 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="SName">Name</label>
-                        <input type="text" id="SName" name="SName" placeholder="Enter Name" required>
+                        <input type="text" id="SName" name="SName" placeholder="Enter Name" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field." required>
                     </div>
                     <div class="inline-field">
                         <label for="Designation">Designation</label>
