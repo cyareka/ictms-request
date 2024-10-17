@@ -11,6 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('focal_person', function (Blueprint $table) {
+            $table->string('FocalPID', 3)->primary();
+            $table->string('FPName', 50)->nullable();
+            $table->string('OfficeID');
+            $table->timestamps();
+
+            $table->foreign('OfficeID')->references('OfficeID')->on('offices');
+        });
+
+        Schema::create('superior', function (Blueprint $table) {
+            $table->string('SuperiorID', 3)->primary();
+            $table->string('SName', 50)->nullable();
+            $table->string('Designation', 30);
+            $table->boolean('status')->default(1);
+            $table->timestamps();
+        });
+
         Schema::create('conference_rooms', function (Blueprint $table) {
             $table->string('CRoomID', 10)->primary();
             $table->string('CRoomName', 50);
@@ -25,12 +42,12 @@ return new class extends Migration
             $table->string('OfficeID');
             $table->string('PurposeID')->nullable()->default(null);
             $table->string('PurposeOthers')->nullable()->default(null);
-            $table->string('date_start', 6);
-            $table->string('date_end', 6);
-            $table->string('time_start', 4);
-            $table->string('time_end', 4);
+            $table->string('date_start', 50);
+            $table->string('date_end', 50);
+            $table->string('time_start', 50);
+            $table->string('time_end', 50);
             $table->integer('npersons');
-            $table->string('AuthRep')->nullable()->default(null);
+            $table->unsignedBigInteger('AuthRep')->nullable()->default(null);
             $table->string('FocalPID')->nullable()->default(null);
             $table->string('FPOthers')->nullable()->default(null);
             $table->boolean('CAvailability')->default(true)->nullable();
