@@ -320,60 +320,67 @@
         }
 
         function updatePagination(pagination) {
-            currentPage = pagination.current_page;
-            lastPage = pagination.last_page;
+    currentPage = pagination.current_page;
+    lastPage = pagination.last_page;
 
-            const paginationList = document.getElementById('pagination-list');
-            paginationList.innerHTML = '';
+    const paginationList = document.getElementById('pagination-list');
+    paginationList.innerHTML = '';
 
-            // Add "Prev" button
-            const prevPageItem = document.createElement('li');
-            const prevPageLink = document.createElement('a');
-            prevPageLink.href = '#';
-            prevPageLink.classList.add('prev');
-            prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
-            prevPageLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (currentPage > 1) {
-                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
-                }
-            });
-            prevPageItem.appendChild(prevPageLink);
-            paginationList.appendChild(prevPageItem);
-
-            // Add numbered page links
-            for (let i = 1; i <= lastPage; i++) {
-                const pageItem = document.createElement('li');
-                const pageLink = document.createElement('a');
-                pageLink.href = '#';
-                pageLink.textContent = i;
-                if (i === currentPage) {
-                    pageLink.style.color = 'white';
-                    pageLink.style.backgroundColor = '#4285f4';
-                }
-                pageLink.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), i, searchQuery);
-                });
-                pageItem.appendChild(pageLink);
-                paginationList.appendChild(pageItem);
-            }
-
-            // Add "Next" button
-            const nextPageItem = document.createElement('li');
-            const nextPageLink = document.createElement('a');
-            nextPageLink.href = '#';
-            nextPageLink.classList.add('next');
-            nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
-            nextPageLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (currentPage < lastPage) {
-                    fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
-                }
-            });
-            nextPageItem.appendChild(nextPageLink);
-            paginationList.appendChild(nextPageItem);
+    // Add "Prev" button
+    const prevPageItem = document.createElement('li');
+    const prevPageLink = document.createElement('a');
+    prevPageLink.href = '#';
+    prevPageLink.classList.add('prev');
+    prevPageLink.innerHTML = `<i class="fa fa-angle-left" aria-hidden="true"></i> Prev`;
+    prevPageLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage > 1) {
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage - 1, searchQuery);
         }
+    });
+    prevPageItem.appendChild(prevPageLink);
+    paginationList.appendChild(prevPageItem);
+
+    // Add numbered page links
+    for (let i = 1; i <= lastPage; i++) {
+        if (i === currentPage || 
+            i === currentPage - 1 || 
+            i === currentPage - 2 || 
+            i === currentPage + 1 || 
+            i === currentPage + 2) {
+            
+            const pageItem = document.createElement('li');
+            const pageLink = document.createElement('a');
+            pageLink.href = '#';
+            pageLink.textContent = i;
+            if (i === currentPage) {
+                pageLink.style.color = 'white';
+                pageLink.style.backgroundColor = '#4285f4';
+            }
+            pageLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), i, searchQuery);
+            });
+            pageItem.appendChild(pageLink);
+            paginationList.appendChild(pageItem);
+        }
+    }
+
+    // Add "Next" button
+    const nextPageItem = document.createElement('li');
+    const nextPageLink = document.createElement('a');
+    nextPageLink.href = '#';
+    nextPageLink.classList.add('next');
+    nextPageLink.innerHTML = `Next <i class="fa fa-angle-right" aria-hidden="true"></i>`;
+    nextPageLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage < lastPage) {
+            fetchSortedData(document.getElementById('sort-date-requested').getAttribute('data-order'), currentPage + 1, searchQuery);
+        }
+    });
+    nextPageItem.appendChild(nextPageLink);
+    paginationList.appendChild(nextPageItem);
+}
 
         function updateTable(data) {
             let tbody = document.querySelector('tbody');
