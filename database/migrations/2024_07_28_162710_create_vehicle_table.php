@@ -10,6 +10,49 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('offices', function (Blueprint $table) {
+            $table->string('OfficeID', 10)->primary();
+            $table->string('OfficeName', 50);
+            $table->string('OfficeLocation', 30);
+            $table->timestamps();
+        });
+
+        Schema::create('employees', function (Blueprint $table) {
+            $table->string('EmployeeID', 10)->primary();
+            $table->string('EmployeeName', 50);
+            $table->string('EmployeeEmail', 20);
+            $table->string('OfficeID');
+            $table->timestamps();
+
+            // FK
+            $table->foreign('OfficeID')->references('OfficeID')->on('offices');
+        });
+
+        Schema::create('focal_person', function (Blueprint $table) {
+            $table->string('FocalPID', 3)->primary();
+            $table->string('FPName', 50)->nullable();
+            $table->string('OfficeID');
+            $table->timestamps();
+
+            $table->foreign('OfficeID')->references('OfficeID')->on('offices');
+        });
+
+        Schema::create('purpose_requests', function (Blueprint $table) {
+            $table->string('PurposeID', 3)->primary();
+            $table->string('request_p', 20)->nullable();
+            $table->string('purpose', 40)->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('superior', function (Blueprint $table) {
+            $table->string('SuperiorID', 3)->primary();
+            $table->string('SName', 50)->nullable();
+            $table->string('Designation', 30);
+            $table->boolean('status')->default(1);
+            $table->timestamps();
+        });
+
+
         Schema::create('vehicle', function (Blueprint $table) {
             $table->string('VehicleID', 3)->primary();
             $table->string('VehicleType');
