@@ -757,33 +757,43 @@
                 <label for="FormStatus">Form Status</label>
                 <input type="hidden" id="downloadClicked" name="downloadClicked" value="0">
                 <select id="FormStatus" name="FormStatus">
-                    @if($requestData->FormStatus == 'Pending')
-                        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
-                            Pending
-                        </option>
-                        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }}>
-                            For Approval
-                        </option>
-                    @elseif ($requestData->CAvailability == '0')
-                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
-                            Not Approved
-                        </option>
-                    @elseif ($requestData->FormStatus == 'For Approval')
-                        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }} hidden>
-                            For Approval
-                        </option>
-                        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }} style="display: none;">Approved</option>
-                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }} style="display: none;">Not Approved</option>
-                    @elseif($requestData->FormStatus == 'Approved')
-                        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
-                            Approved
-                        </option>
-                    @else
-                        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
-                            Not Approved
-                        </option>
-                    @endif
-                </select>
+    @if($requestData->FormStatus == 'Pending')
+        <option value="Pending" {{ $requestData->FormStatus == 'Pending' ? 'selected' : '' }} hidden>
+            Pending
+        </option>
+        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }} 
+            {{ $requestData->CAvailability == '0' ? 'hidden' : '' }}>
+            For Approval
+        </option>
+        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }} 
+            {{ $requestData->CAvailability == '1' ? 'hidden' : '' }}>
+            Not Approved
+        </option>
+    @elseif ($requestData->CAvailability == '0')
+        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+            Not Approved
+        </option>
+    @elseif ($requestData->FormStatus == 'For Approval')
+        <option value="For Approval" {{ $requestData->FormStatus == 'For Approval' ? 'selected' : '' }} hidden>
+            For Approval
+        </option>
+        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }} style="display: none;">
+            Approved
+        </option>
+        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }} style="display: none;">
+            Not Approved
+        </option>
+    @elseif($requestData->FormStatus == 'Approved')
+        <option value="Approved" {{ $requestData->FormStatus == 'Approved' ? 'selected' : '' }}>
+            Approved
+        </option>
+    @else
+        <option value="Not Approved" {{ $requestData->FormStatus == 'Not Approved' ? 'selected' : '' }}>
+            Not Approved
+        </option>
+    @endif
+</select>
+
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const formStatus = document.getElementById('FormStatus');
