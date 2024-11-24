@@ -16,5 +16,6 @@ class SOAuthority extends Model
         'SOID',
         'SOName',
         'SOPosition',
+        'status',
     ];
 }

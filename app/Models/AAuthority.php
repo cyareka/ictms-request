@@ -16,5 +16,6 @@ class AAuthority extends Model
         'AAID',
         'AAName',
         'AAPosition',
+        'status',
     ];
 }

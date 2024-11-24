@@ -60,6 +60,7 @@ return new class extends Migration
             $table->string('AAID', 3)->primary();
             $table->string('AAName', 50);
             $table->string('AAPosition', 50);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
 
@@ -67,6 +68,7 @@ return new class extends Migration
             $table->string('SOID', 3)->primary();
             $table->string('SOName', 50);
             $table->string('SOPosition', 50);
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
 

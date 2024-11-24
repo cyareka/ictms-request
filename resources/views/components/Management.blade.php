@@ -299,6 +299,8 @@
             <button class="dropdown-button" onclick="toggleSection('vehicle', this)">VEHICLE</button>
             <button class="dropdown-button" onclick="toggleSection('superp', this)">SUPERIOR</button>
             <button class="dropdown-button" onclick="toggleSection('office', this)">OFFICE</button>
+            <button class="dropdown-button" onclick="toggleSection('aaut', this)">APPROVING AUTHORITY</button>
+            <button class="dropdown-button" onclick="toggleSection('sout', this)">SO AUTHORITY</button>
             <!-- <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button> -->
         </div>
 
@@ -788,12 +790,6 @@
                     $super = App\Models\Superior::all();
                 @endphp
 
-{{--                @if (session('error'))--}}
-{{--                    <div class="alert alert-danger" role="alert">--}}
-{{--                        {{ session('error') }}--}}
-{{--                    </div>--}}
-{{--                @endif--}}
-
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -832,8 +828,144 @@
                 </table>
             </div>
         </div>
+
+
+        <div id="aaut" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('authority.store') }}" id="authorityForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="AAName">Name</label>
+                        <input type="text" id="AAName" name="AAName" placeholder="Enter Name" pattern="[A-Za-z\s]+" 
+                            title="Numbers are not allowed in the Name field." required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="AAPosition">Position</label>
+                        <input type="text" id="AAPosition" name="AAPosition" placeholder="Enter Position" required>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('authorityForm')" 
+                            data-toggle="modal" data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+
+            <div class="container mt-5">
+                @php
+                    $authorities = App\Models\AAuthority::all();
+                @endphp
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Position</th>
+                            <th scope="col">Status</th> <!-- 1 is active, 0 is inactive -->
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if($authorities->isEmpty())
+                            <tr>
+                                <td colspan="5">Data is not available.</td>
+                            </tr>
+                        @else
+                            @foreach($authorities as $item)
+                                <tr>
+                                    <th scope="row">{{ $item->AAID }}</th>
+                                    <td>{{ $item->AAName }}</td>
+                                    <td>{{ $item->AAPosition }}</td>
+                                    <td><strong>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</strong></td>
+                                    <td>
+                                        <form action="{{ route('authority.toggleStatus', $item->AAID) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-sm {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }}">
+                                                {{ $item->status == 1 ? 'Deactivate' : 'Activate' }}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="sout" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('soauthority.store') }}" id="soAuthorityForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="SOName">Name</label>
+                        <input type="text" id="SOName" name="SOName" placeholder="Enter Name" pattern="[A-Za-z\s]+" 
+                            title="Numbers are not allowed in the Name field." required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="SOPosition">Position</label>
+                        <input type="text" id="SOPosition" name="SOPosition" placeholder="Enter Position" required>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('soAuthorityForm')" 
+                            data-toggle="modal" data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+
+            <div class="container mt-5">
+                @php
+                    $soAuthorities = App\Models\SOAuthority::all();
+                @endphp
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Position</th>
+                            <th scope="col">Status</th> <!-- 1 is active, 0 is inactive -->
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if($soAuthorities->isEmpty())
+                            <tr>
+                                <td colspan="5">Data is not available.</td>
+                            </tr>
+                        @else
+                            @foreach($soAuthorities as $item)
+                                <tr>
+                                    <th scope="row">{{ $item->SOID }}</th>
+                                    <td>{{ $item->SOName }}</td>
+                                    <td>{{ $item->SOPosition }}</td>
+                                    <td><strong>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</strong></td>
+                                    <td>
+                                        <form action="{{ route('soauthority.toggleStatus', $item->SOID) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="btn btn-sm {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }}">
+                                                {{ $item->status == 1 ? 'Deactivate' : 'Activate' }}
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- END -->
+
     </div>
 </div>
+
+
+
 
 <!-- Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalTitle"

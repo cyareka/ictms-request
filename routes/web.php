@@ -229,3 +229,16 @@ Route::get('/fetchSortedVLogRequests', [VehicleController::class, 'fetchSortedVL
 Route::patch('/vehicle/toggleStatus/{id}', [NVehicleController::class, 'toggleStatus'])->name('vehicle.toggleStatus');
 Route::patch('/superior/toggle-status/{id}', [NSuperiorPController::class, 'toggleStatus'])->name('superior.toggleStatus');
 Route::patch('/driver/toggleStatus/{id}', [NDriverController::class, 'toggleStatus'])->name('driver.toggleStatus');
+
+
+use App\Http\Controllers\AAuthorityController;
+
+Route::resource('authority', AAuthorityController::class)->only(['index', 'store', 'destroy']);
+Route::patch('authority/{id}/toggle-status', [AAuthorityController::class, 'toggleStatus'])->name('authority.toggleStatus');
+
+
+use App\Http\Controllers\SOAuthorityController;
+
+Route::resource('soauthority', SOAuthorityController::class)->only(['store']);
+Route::patch('soauthority/{id}/toggle-status', [SOAuthorityController::class, 'toggleStatus'])->name('soauthority.toggleStatus');
+
