@@ -42,10 +42,10 @@ return new class extends Migration
             $table->string('OfficeID');
             $table->string('PurposeID')->nullable()->default(null);
             $table->string('PurposeOthers')->nullable()->default(null);
-            $table->string('date_start', 50);
-            $table->string('date_end', 50);
-            $table->string('time_start', 50);
-            $table->string('time_end', 50);
+            $table->string('date_start');
+            $table->string('date_end');
+            $table->string('time_start');
+            $table->string('time_end');
             $table->integer('npersons');
             $table->unsignedBigInteger('AuthRep')->nullable()->default(null);
             $table->string('FocalPID')->nullable()->default(null);
@@ -65,9 +65,7 @@ return new class extends Migration
             // Foreign keys
             $table->foreign('CRoomID')->references('CRoomID')->on('conference_rooms')->onDelete('cascade');
             $table->foreign('OfficeID')->references('OfficeID')->on('offices')->onDelete('cascade');
-            $table->foreign('PurposeID')->references('PurposeID')->on('purpose_requests')->onDelete('cascade');
-            $table->foreign('FocalPID')->references('FocalPID')->on('focal_person')->onDelete('cascade');
-            $table->foreign('AuthRep')->references('id')->on('users');
+
         });
     }
 
