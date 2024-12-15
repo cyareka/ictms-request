@@ -400,19 +400,26 @@
         @endif
 
         @if(session('success'))
-            <script>
-                alert(" {{ session('success') }}");
-            </script>
-        @endif
-
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (confirm("Form submitted successfully! Would you like to go to the calendar?")) {
+                window.location.href = "{{ url('UservehiCalendar') }}"; 
+            } else {
+                window.location.href = "{{ route ('welcome') }}"; 
+            }
+        });
+    </script>
+@endif
     <div class= "parent-container">
             <div class="top">
                 <div class="pic">
                     <img width="250" src="{{asset('/logo/travel.png')}}" alt="logo">
                 </div>
                 <h1>Request For Use of Vehicle</h1>
-                <p>(Note: Request for use of vehicle shall be made at least (2) days from the intended date use.
-                 Failure to use the vehicle at the given date/time forfeits one’s right to use the vehicle assigned.)
+                <p>(Note: Please check the calendar for available dates before submitting a request.)
                 </p>
             </div>
         <div class="container">

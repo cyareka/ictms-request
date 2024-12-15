@@ -235,6 +235,14 @@
             content: " *";
             color: red;
         }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            position: absolute;
+            margin-top: 4px; /* Adds a small gap between input and error message */
+            white-space: nowrap; /* Prevents text from wrapping */
+            display: none; /* Initially hidden */
+        }
 
         @media (max-width: 768px) {
     .parent-container {
@@ -339,26 +347,34 @@
         });
     </script>
 @endif
+    @if ($errors->any())
+                <script>
+                    let errorMessages = [];
+                    @foreach ($errors->all() as $error)
+                    errorMessages.push("{{ $error }}");
+                    @endforeach
+                    alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
+                </script>
+            @endif
 
-@if ($errors->any())
-    <script>
-        let errorMessages = [];
-        @foreach ($errors->all() as $error)
-        errorMessages.push("{{ $error }}");
-        @endforeach
-        alert("Form submission failed. Please correct the following errors:\n\n" + errorMessages.join("\n"));
-    </script>
-@endif
+            @if(session('error'))
+                <script>
+                    alert(" {{ session('error') }}");
+                </script>
+            @endif
 
-@if(session('error'))
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
     <script>
-        alert(" {{ session('error') }}");
-    </script>
-@endif
-
-@if(session('success'))
-    <script>
-        alert(" {{ session('success') }}");
+        document.addEventListener('DOMContentLoaded', function() {
+            if (confirm("Form submitted successfully! Would you like to go to the calendar?")) {
+                window.location.href = "{{ url('UserconCalendar') }}"; 
+            } else {
+                window.location.href = "{{ route ('welcome') }}"; 
+            }
+        });
     </script>
 @endif
 <div class="parent-container">
@@ -416,10 +432,10 @@
                 <label class="required" for="conferenceRoom">
                     Conference Room
                 </label>
-                <select id="conferenceRoom" name="conferenceRoom" required>
+                <select id="conferenceRoom" name="conferenceRoom" required onchange="validateCapacity()">
                     <option disabled selected>Select Room</option>
                     @foreach(App\Models\ConferenceRoom::all() as $room)
-                        <option value="{{ $room->CRoomID }}" {{ old('conferenceRoom') == $room->CRoomID ? 'selected' : '' }}>
+                        <option value="{{ $room->CRoomID }}" data-capacity="{{ $room->Capacity }}" {{ old('conferenceRoom') == $room->CRoomID ? 'selected' : '' }}>
                             {{ $room->CRoomName }}
                         </option>
                     @endforeach
@@ -476,22 +492,30 @@
         <div class="row">
             <div class="row1">
                 <div class="field">
-                    <label class="required" for="persons">
-                        No. of Person
-                    </label>
+                    <label for="npersons">No. of Persons</label>
                     <input type="number" id="npersons" name="npersons" min="1" value="{{ old('npersons', 0) }}" step="1" required>
+                    <div id="capacityError" class="error-message" >
+                        Exceeds the capacity of the selected room.
+                    </div>
                 </div>
+
                 <div class="field">
                     <label for="persons">
                         Tables
                     </label>
                     <input type="number" id="tables" name="tables" min="0" value="{{ old('tables', 0) }}" step="1">
+                    @if ($errors->has('tables'))
+                        <span class="error-message">{{ $errors->first('tables') }}</span>
+                    @endif
                 </div>
                 <div class="field">
                     <label for="persons">
                         Chairs
                     </label>
                     <input type="number" id="chairs" name="chairs" min="0" value="{{ old('chairs', 0) }}" step="1"></div>
+                    @if ($errors->has('chairs'))
+                        <span class="error-message">{{ $errors->first('chairs') }}</span>
+                    @endif
             </div>
             <div class="field">
                     <label  for="otherFacilitiesSelect">
@@ -542,8 +566,8 @@
                         <label class="required" for="time_end">
                             Time End
                         </label>
-                        <input type="time" id="time_end" name="time_end[]" value="{{ old('time_end.' . $index) }}" required>                
-                    </div>
+                        <input type="time" id="time_end" name="time_end[]" value="{{ old('time_end.' . $index) }}" required>              
+                    </div>  
                             <div class="button-container">
                                 <button class="add-btn" type="button" onclick="handleFormActions('addRow')">+</button>
                             </div>  
@@ -558,6 +582,37 @@
     </div>
 </div>
 <script>
+    
+    function validateCapacity() {
+    const roomSelect = document.getElementById('conferenceRoom');
+    const personsInput = document.getElementById('npersons');
+    const capacityError = document.getElementById('capacityError');
+    
+    const selectedRoom = roomSelect.options[roomSelect.selectedIndex];
+    const capacity = parseInt(selectedRoom.getAttribute('data-capacity'), 10);
+    const enteredPersons = parseInt(personsInput.value, 10);
+
+    if (enteredPersons > capacity) {
+        capacityError.style.display = 'block'; // Show the error message
+        personsInput.setCustomValidity('Exceeds the capacity of the selected room.');
+    } else {
+        capacityError.style.display = 'none'; // Hide the error message
+        personsInput.setCustomValidity(''); // Reset validity
+    }
+}
+
+// Attach event listeners for dynamic validation
+document.getElementById('npersons').addEventListener('input', validateCapacity);
+document.getElementById('conferenceRoom').addEventListener('change', function () {
+    const roomSelect = document.getElementById('conferenceRoom');
+    const selectedRoom = roomSelect.options[roomSelect.selectedIndex];
+    const capacity = selectedRoom.getAttribute('data-capacity');
+
+    // Dynamically set data-capacity for JavaScript validation
+    roomSelect.setAttribute('data-capacity', capacity);
+    validateCapacity(); // Revalidate after changing the room
+});
+
     // Preload focal persons for each office
     var focalPersonsByOffice = {};
     @foreach(App\Models\Office::all() as $office)
@@ -726,7 +781,13 @@
             event.preventDefault();
             console.log('Form submission prevented due to validation errors.');
         } else {
-            console.log('Form is valid. Form will be submitted.');
+            validateCapacity(); // Call validateCapacity on form submission
+            if (document.getElementById('capacityError').style.display === 'inline') {
+                event.preventDefault();
+                console.log('Form submission prevented due to capacity validation errors.');
+            } else {
+                console.log('Form is valid. Form will be submitted.');
+            }
         }
     });
 

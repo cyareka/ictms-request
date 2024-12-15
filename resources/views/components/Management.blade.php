@@ -29,7 +29,7 @@
         }
 
         .form-container {
-            width: 55em;
+            width: 67em;
             padding: 35px;
             border: 1px solid #ddd;
             border-radius: 15px;
@@ -61,10 +61,14 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            box-shadow: 0 1px 0 0 #ccc;
+            box-shadow: 0 5px 0 0 #ccc;
             flex: 1;
             margin: 10px 5px;
             text-align: center;
+        }
+        .dropdown-button:hover {
+            background-color: #e0e0e0; /* Change background color on hover */
+            box-shadow: 0 7px 5px 0 #bbb; /* Slightly increase shadow on hover */
         }
 
         .dropdown-button.active {
