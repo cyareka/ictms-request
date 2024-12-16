@@ -830,7 +830,7 @@
                     <div class="file-upload">
                         <label for="certfile-upload" id="certificate-preview-label">
                             <div id="certificate-preview-container">
-                                <div id="default-text">No file uploaded</div>
+                                <div id="default-text">Uploaded the need file for Certificate of Non-Avalabilty/Request for Use</div>
                                 <div id="certificate-preview"></div>
                             </div>
                         </label>
