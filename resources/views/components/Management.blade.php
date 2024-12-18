@@ -282,8 +282,6 @@
     </style>
 </head>
 <body>
-<div class="form-container">
-    <h1>MANAGEMENT</h1>
     @if (session('success'))
         <div class="alert alert-success" role="alert">
             {{ session('success') }}
@@ -294,15 +292,466 @@
             {{ session('error') }}
         </div>
     @endif
+<div class="form-container">
+    <h1>GENERAL MANAGEMENT</h1>
+    <div id="app">
+        <div class="dropdown-row">
+            <button class="dropdown-button" onclick="toggleSection('porpose', this)">PURPOSE</button>
+            <button class="dropdown-button" onclick="toggleSection('superp', this)">SUPERIOR</button>
+            <button class="dropdown-button" onclick="toggleSection('office', this)">OFFICE</button>
+        </div>
+
+
+        <div id="porpose" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('porpose.store') }}" id="RequestPform">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="purpose">Purpose</label>
+                        <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" required>
+                    </div>
+
+                    <div class="inline-field">
+                        <label for="request_p">Request Form</label>
+                        <select id="request_p" name="request_p" required>
+                            <option disabled selected>Select Form</option>
+                            <option value="Vehicle">Vehicle</option>
+                            <option value="Conference Room">Conference Room</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('RequestPform')"
+                            data-toggle="modal" data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+            <br>
+            <br>
+            <!-- Added Table with Bootstrap classes -->
+            <div class="mb-3">
+                @php
+                    $purposeRequests = App\Models\PurposeRequest::all();
+                @endphp
+
+                <table id="dataTable" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Request Form</th>
+                        <th scope="col">Purpose</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if($purposeRequests->isEmpty())
+                        <tr>
+                            <td colspan="3">Data is not available.</td>
+                        </tr>
+                    @else
+                        @foreach($purposeRequests as $request)
+                            <tr>
+                                <th scope="row">{{ $request->PurposeID }}</th>
+                                <td>{{ $request->request_p }}</td>
+                                <td>{{ $request->purpose }}</td>
+{{--                            <td>--}}
+{{--                                <form action="{{ route('purpose.requests.destroy', $request->PurposeID) }}" method="POST" style="display:inline;">--}}
+{{--                                    @csrf--}}
+{{--                                    @method('DELETE')--}}
+{{--                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>--}}
+{{--                                </form>--}}
+{{--                                <a href="#" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editModal" data-id="{{ $request->PurposeID }}" data-request_p="{{ $request->request_p }}" data-purpose="{{ $request->purpose }}">Edit</a>--}}
+{{--                            </td>--}}
+                        </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+{{--                    <script>--}}
+{{--                        $('#editModal').on('show.bs.modal', function (event) {--}}
+{{--                            var button = $(event.relatedTarget);--}}
+{{--                            var id = button.data('id');--}}
+{{--                            var request_p = button.data('request_p');--}}
+{{--                            var purpose = button.data('purpose');--}}
+
+{{--                            var modal = $(this);--}}
+{{--                            modal.find('.modal-body #editRequestForm').val(request_p);--}}
+{{--                            modal.find('.modal-body #editPurpose').val(purpose);--}}
+{{--                            modal.find('#editForm').attr('action', '/purpose-requests/' + id);--}}
+{{--                        });--}}
+{{--                    </script>--}}
+                </table>
+                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                    <input type="hidden" id="editPurposeID" name="PurposeID">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editModalLabel">Edit Purpose Request</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <form id="editForm" method="POST" action="">
+                                @csrf
+                                @method('POST')
+                                <div class="modal-body">
+                                    <input type="hidden" id="editPurposeID" name="PurposeID">
+                                    <div class="form-group">
+                                        <label for="editRequestForm">Request Form</label>
+                                        <select id="editRequestForm" name="request_p" class="form-control" required>
+                                            <option value="Vehicle">Vehicle</option>
+                                            <option value="Conference Room">Conference Room</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="editPurpose">Purpose</label>
+                                        <input type="text" id="editPurpose" name="purpose" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div id="employee" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" id="employeeForm">
+                @csrf
+        <div class="form-row">
+            <div class="inline-field">
+                <label for="EmployeeName">Name</label>
+                <input type="text" id="EmployeeName" name="EmployeeName" placeholder="Enter Name" required pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field.">
+            </div>
+            <div class="inline-field">
+                <label for="EmployeeEmail">Email</label>
+                <input type="text" id="EmployeeEmail" name="EmployeeEmail" placeholder="Enter Email" required oninput="validateEmail()">
+                <div id="emailError" class="error-message"></div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="inline-field">
+                <label for="officeName">Assigned Office</label>
+                <select id="officeName" name="officeName" required>
+                    <option disabled selected>Select Office</option>
+@foreach(App\Models\Office::all() as $office)
+            <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
+
+        @endforeach
+        </select>
+    </div>
+</div>
+<div class="form-footer">
+    <button class="submit-btn" type="button" onclick="setCurrentForm('employeeForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
+</div>
+</form>
+</div> -->
+
+
+        <div id="office" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('office.store') }}" id="officeForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="OfficeName">Office</label>
+                        <input type="text" id="OfficeName" name="OfficeName" placeholder="Enter Office Name" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="OfficeLocation">Location</label>
+                        <input type="text" id="OfficeLocation" name="OfficeLocation" placeholder="Enter Location" required>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('officeForm')"
+                            data-toggle="modal" data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+            <div class="container mt-5">
+                @php
+                    $office = App\Models\Office::all();
+                @endphp
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Office</th>
+                        <th scope="col">Location</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if($office->isEmpty())
+                        <tr>
+                            <td colspan="4">Data is not available.</td>
+                        </tr>
+                    @else
+                        @foreach($office as $item)
+                            <tr>
+                                <th scope="row">{{ $item->OfficeID }}</th>
+                                <td>{{ $item->OfficeName }}</td>
+                                <td>{{ $item->OfficeLocation }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="superp" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('superp.store') }}" id="superiorForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="SName">Name</label>
+                        <input type="text" id="SName" name="SName" placeholder="Enter Name" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field." required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="Designation">Designation</label>
+                        <input type="text" id="Designation" name="Designation" placeholder="Enter Designation" required>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('superiorForm')"
+                            data-toggle="modal" data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+
+            <div class="container mt-5">
+                @php
+                    $super = App\Models\Superior::all();
+                @endphp
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Designation</th>
+                        <th scope="col">Status</th>   <!--1 is active , 0 is inactive--!>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if($super->isEmpty())
+                        <tr>
+                            <td colspan="5">Data is not available.</td>
+                        </tr>
+                    @else
+                        @foreach($super as $item)
+                            <tr>
+                                <th scope="row">{{ $item->SuperiorID }}</th>
+                                <td>{{ $item->SName }}</td>
+                                <td>{{ $item->Designation }}</td>
+                                <td><strong>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</strong></td>
+                                <td>
+                                    <form action="{{ route('superior.toggleStatus', $item->SuperiorID) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-sm {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }}">
+                                            {{ $item->status == 1 ? 'Deactivate' : 'Activate' }}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-modal-size" role="document">
+        <div class="modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="confirmationModalTitle">Confirm Submission</h5>
+                <button type="button" class="close custom-close-button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to submit this form?
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn custom-cancel-button" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn custom-submit-button" onclick="submitForm()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-container">
+    <h1>CONFERENCE MANAGEMENT</h1>
     <div id="app">
         <div class="dropdown-row">
             <button class="dropdown-button" onclick="toggleSection('conference', this)">CONFERENCE ROOM</button>
             <button class="dropdown-button" onclick="toggleSection('focalP', this)">FOCAL PERSON</button>
-            <button class="dropdown-button" onclick="toggleSection('porpose', this)">PURPOSE</button>
+        </div>
+
+        <div id="conference" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" id="conferenceForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="CRoomName">Name</label>
+                        <input type="text" id="CRoomName" name="CRoomName" placeholder="Enter Name" required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="Location">Location</label>
+                        <input type="text" id="Location" name="Location" placeholder="Enter Location" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="Capacity">Capacity</label>
+                        <input type="number" id="Capacity" name="Capacity" min="1" value="1" required>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('conferenceForm')"
+                            data-toggle="modal" data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+            <div class="container mt-5">
+                @php
+                    $conferenceRoom = App\Models\ConferenceRoom::all();
+                @endphp
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Conference Room</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Capacity</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if($conferenceRoom->isEmpty())
+                        <tr>
+                            <td colspan="4">Data is not available.</td>
+                        </tr>
+                    @else
+                        @foreach($conferenceRoom as $item)
+                            <tr>
+                                <th scope="row">{{ $item->CRoomID }}</th>
+                                <td>{{ $item->CRoomName }}</td>
+                                <td>{{ $item->Location }}</td>
+                                <td>{{ $item->Capacity }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="focalP" class="toggle-section">
+            <form class="row-dispatch" method="POST" action="{{ route('focalP.store') }}" id="focalPForm">
+                @csrf
+                <div class="form-row">
+                    <div class="inline-field">
+                        <label for="FPName">Name</label>
+                        <input type="text" id="FPName" name="FPName" placeholder="Enter Name" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field." required>
+                    </div>
+                    <div class="inline-field">
+                        <label for="officeName">Assigned Office</label>
+                        <select id="officeName" name="officeName" required>
+                            <option disabled selected>Select Office</option>
+                            @foreach(App\Models\Office::all() as $office)
+                                <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('focalPForm')" data-toggle="modal"
+                            data-target="#confirmationModal">Submit
+                    </button>
+                </div>
+            </form>
+
+            <div class="container mt-5">
+                @php
+                    $focalPerson = App\Models\FocalPerson::all();
+                @endphp
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Office</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if($focalPerson->isEmpty())
+                        <tr>
+                            <td colspan="3">Data is not available.</td>
+                        </tr>
+                    @else
+                        @foreach($focalPerson as $item)
+                            <tr>
+                                <th scope="row">{{ $item->FocalPID }}</th>
+                                <td>{{ $item->FPName }}</td>
+                                <td>{{ $item->office->OfficeName }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-modal-size" role="document">
+        <div class="modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title" id="confirmationModalTitle">Confirm Submission</h5>
+                <button type="button" class="close custom-close-button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to submit this form?
+            </div>
+            <div class="modal-footer custom-modal-footer">
+                <button type="button" class="btn custom-cancel-button" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn custom-submit-button" onclick="submitForm()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-container">
+    <h1>VEHICLE MANAGEMENT</h1>
+
+    <div id="app">
+        <div class="dropdown-row">
             <button class="dropdown-button" onclick="toggleSection('addVehi', this)">DRIVER</button>
             <button class="dropdown-button" onclick="toggleSection('vehicle', this)">VEHICLE</button>
-            <button class="dropdown-button" onclick="toggleSection('superp', this)">SUPERIOR</button>
-            <button class="dropdown-button" onclick="toggleSection('office', this)">OFFICE</button>
             <button class="dropdown-button" onclick="toggleSection('aaut', this)">APPROVING AUTHORITY</button>
             <button class="dropdown-button" onclick="toggleSection('sout', this)">SO AUTHORITY</button>
             <!-- <button class="dropdown-button" onclick="toggleSection('employee', this)">EMPLOYEE</button> -->
@@ -454,393 +903,13 @@
             </div>
         </div>
 
-        <div id="conference" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('conferences.store') }}" id="conferenceForm">
-                @csrf
-                <div class="form-row">
-                    <div class="inline-field">
-                        <label for="CRoomName">Name</label>
-                        <input type="text" id="CRoomName" name="CRoomName" placeholder="Enter Name" required>
-                    </div>
-                    <div class="inline-field">
-                        <label for="Location">Location</label>
-                        <input type="text" id="Location" name="Location" placeholder="Enter Location" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="inline-field">
-                        <label for="Capacity">Capacity</label>
-                        <input type="number" id="Capacity" name="Capacity" min="1" value="1" required>
-                    </div>
-                </div>
-                <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('conferenceForm')"
-                            data-toggle="modal" data-target="#confirmationModal">Submit
-                    </button>
-                </div>
-            </form>
-            <div class="container mt-5">
-                @php
-                    $conferenceRoom = App\Models\ConferenceRoom::all();
-                @endphp
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Conference Room</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Capacity</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @if($conferenceRoom->isEmpty())
-                        <tr>
-                            <td colspan="4">Data is not available.</td>
-                        </tr>
-                    @else
-                        @foreach($conferenceRoom as $item)
-                            <tr>
-                                <th scope="row">{{ $item->CRoomID }}</th>
-                                <td>{{ $item->CRoomName }}</td>
-                                <td>{{ $item->Location }}</td>
-                                <td>{{ $item->Capacity }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="porpose" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('porpose.store') }}" id="RequestPform">
-                @csrf
-                <div class="form-row">
-                    <div class="inline-field">
-                        <label for="purpose">Purpose</label>
-                        <input type="text" id="purpose" name="purpose" placeholder="Enter Purpose" required>
-                    </div>
-
-                    <div class="inline-field">
-                        <label for="request_p">Request Form</label>
-                        <select id="request_p" name="request_p" required>
-                            <option disabled selected>Select Form</option>
-                            <option value="Vehicle">Vehicle</option>
-                            <option value="Conference Room">Conference Room</option>
-                        </select>
-                    </div>
-                  
-                </div>
-
-                <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('RequestPform')"
-                            data-toggle="modal" data-target="#confirmationModal">Submit
-                    </button>
-                </div>
-            </form>
-            <br>
-            <br>
-            <!-- Added Table with Bootstrap classes -->
-            <div class="mb-3">
-                @php
-                    $purposeRequests = App\Models\PurposeRequest::all();
-                @endphp
-
-                <table id="dataTable" class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Request Form</th>
-                        <th scope="col">Purpose</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @if($purposeRequests->isEmpty())
-                        <tr>
-                            <td colspan="3">Data is not available.</td>
-                        </tr>
-                    @else
-                        @foreach($purposeRequests as $request)
-                            <tr>
-                                <th scope="row">{{ $request->PurposeID }}</th>
-                                <td>{{ $request->request_p }}</td>
-                                <td>{{ $request->purpose }}</td>
-{{--                            <td>--}}
-{{--                                <form action="{{ route('purpose.requests.destroy', $request->PurposeID) }}" method="POST" style="display:inline;">--}}
-{{--                                    @csrf--}}
-{{--                                    @method('DELETE')--}}
-{{--                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>--}}
-{{--                                </form>--}}
-{{--                                <a href="#" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editModal" data-id="{{ $request->PurposeID }}" data-request_p="{{ $request->request_p }}" data-purpose="{{ $request->purpose }}">Edit</a>--}}
-{{--                            </td>--}}
-                        </tr>
-                        @endforeach
-                    @endif
-                    </tbody>
-{{--                    <script>--}}
-{{--                        $('#editModal').on('show.bs.modal', function (event) {--}}
-{{--                            var button = $(event.relatedTarget);--}}
-{{--                            var id = button.data('id');--}}
-{{--                            var request_p = button.data('request_p');--}}
-{{--                            var purpose = button.data('purpose');--}}
-
-{{--                            var modal = $(this);--}}
-{{--                            modal.find('.modal-body #editRequestForm').val(request_p);--}}
-{{--                            modal.find('.modal-body #editPurpose').val(purpose);--}}
-{{--                            modal.find('#editForm').attr('action', '/purpose-requests/' + id);--}}
-{{--                        });--}}
-{{--                    </script>--}}
-                </table>
-                <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                    <input type="hidden" id="editPurposeID" name="PurposeID">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editModalLabel">Edit Purpose Request</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <form id="editForm" method="POST" action="">
-                                @csrf
-                                @method('POST')
-                                <div class="modal-body">
-                                    <input type="hidden" id="editPurposeID" name="PurposeID">
-                                    <div class="form-group">
-                                        <label for="editRequestForm">Request Form</label>
-                                        <select id="editRequestForm" name="request_p" class="form-control" required>
-                                            <option value="Vehicle">Vehicle</option>
-                                            <option value="Conference Room">Conference Room</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="editPurpose">Purpose</label>
-                                        <input type="text" id="editPurpose" name="purpose" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- <div id="employee" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('employee.store') }}" id="employeeForm">
-                @csrf
-        <div class="form-row">
-            <div class="inline-field">
-                <label for="EmployeeName">Name</label>
-                <input type="text" id="EmployeeName" name="EmployeeName" placeholder="Enter Name" required pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field.">
-            </div>
-            <div class="inline-field">
-                <label for="EmployeeEmail">Email</label>
-                <input type="text" id="EmployeeEmail" name="EmployeeEmail" placeholder="Enter Email" required oninput="validateEmail()">
-                <div id="emailError" class="error-message"></div>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="inline-field">
-                <label for="officeName">Assigned Office</label>
-                <select id="officeName" name="officeName" required>
-                    <option disabled selected>Select Office</option>
-@foreach(App\Models\Office::all() as $office)
-            <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
-
-        @endforeach
-        </select>
-    </div>
-</div>
-<div class="form-footer">
-    <button class="submit-btn" type="button" onclick="setCurrentForm('employeeForm')" data-toggle="modal" data-target="#confirmationModal">Submit</button>
-</div>
-</form>
-</div> -->
-
-        <div id="focalP" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('focalP.store') }}" id="focalPForm">
-                @csrf
-                <div class="form-row">
-                    <div class="inline-field">
-                        <label for="FPName">Name</label>
-                        <input type="text" id="FPName" name="FPName" placeholder="Enter Name" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field." required>
-                    </div>
-                    <div class="inline-field">
-                        <label for="officeName">Assigned Office</label>
-                        <select id="officeName" name="officeName" required>
-                            <option disabled selected>Select Office</option>
-                            @foreach(App\Models\Office::all() as $office)
-                                <option value="{{ $office->OfficeID }}">{{ $office->OfficeName }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('focalPForm')" data-toggle="modal"
-                            data-target="#confirmationModal">Submit
-                    </button>
-                </div>
-            </form>
-
-            <div class="container mt-5">
-                @php
-                    $focalPerson = App\Models\FocalPerson::all();
-                @endphp
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Office</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @if($focalPerson->isEmpty())
-                        <tr>
-                            <td colspan="3">Data is not available.</td>
-                        </tr>
-                    @else
-                        @foreach($focalPerson as $item)
-                            <tr>
-                                <th scope="row">{{ $item->FocalPID }}</th>
-                                <td>{{ $item->FPName }}</td>
-                                <td>{{ $item->office->OfficeName }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="office" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('office.store') }}" id="officeForm">
-                @csrf
-                <div class="form-row">
-                    <div class="inline-field">
-                        <label for="OfficeName">Office</label>
-                        <input type="text" id="OfficeName" name="OfficeName" placeholder="Enter Office Name" required>
-                    </div>
-                    <div class="inline-field">
-                        <label for="OfficeLocation">Location</label>
-                        <input type="text" id="OfficeLocation" name="OfficeLocation" placeholder="Enter Location" required>
-                    </div>
-                </div>
-
-                <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('officeForm')"
-                            data-toggle="modal" data-target="#confirmationModal">Submit
-                    </button>
-                </div>
-            </form>
-            <div class="container mt-5">
-                @php
-                    $office = App\Models\Office::all();
-                @endphp
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Office</th>
-                        <th scope="col">Location</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @if($office->isEmpty())
-                        <tr>
-                            <td colspan="4">Data is not available.</td>
-                        </tr>
-                    @else
-                        @foreach($office as $item)
-                            <tr>
-                                <th scope="row">{{ $item->OfficeID }}</th>
-                                <td>{{ $item->OfficeName }}</td>
-                                <td>{{ $item->OfficeLocation }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="superp" class="toggle-section">
-            <form class="row-dispatch" method="POST" action="{{ route('superp.store') }}" id="superiorForm">
-                @csrf
-                <div class="form-row">
-                    <div class="inline-field">
-                        <label for="SName">Name</label>
-                        <input type="text" id="SName" name="SName" placeholder="Enter Name" pattern="[A-Za-z\s]+" title="Numbers are not allowed in the Name field." required>
-                    </div>
-                    <div class="inline-field">
-                        <label for="Designation">Designation</label>
-                        <input type="text" id="Designation" name="Designation" placeholder="Enter Designation" required>
-                    </div>
-                </div>
-                <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('superiorForm')"
-                            data-toggle="modal" data-target="#confirmationModal">Submit
-                    </button>
-                </div>
-            </form>
-
-            <div class="container mt-5">
-                @php
-                    $super = App\Models\Superior::all();
-                @endphp
-
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Designation</th>
-                        <th scope="col">Status</th>   <!--1 is active , 0 is inactive--!>
-                        <th scope="col"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @if($super->isEmpty())
-                        <tr>
-                            <td colspan="5">Data is not available.</td>
-                        </tr>
-                    @else
-                        @foreach($super as $item)
-                            <tr>
-                                <th scope="row">{{ $item->SuperiorID }}</th>
-                                <td>{{ $item->SName }}</td>
-                                <td>{{ $item->Designation }}</td>
-                                <td><strong>{{ $item->status == 1 ? 'Active' : 'Inactive' }}</strong></td>
-                                <td>
-                                    <form action="{{ route('superior.toggleStatus', $item->SuperiorID) }}" method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-sm {{ $item->status == 1 ? 'btn-danger' : 'btn-success' }}">
-                                            {{ $item->status == 1 ? 'Deactivate' : 'Activate' }}
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-
         <div id="aaut" class="toggle-section">
             <form class="row-dispatch" method="POST" action="{{ route('authority.store') }}" id="authorityForm">
                 @csrf
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="AAName">Name</label>
-                        <input type="text" id="AAName" name="AAName" placeholder="Enter Name" pattern="[A-Za-z\s]+" 
+                        <input type="text" id="AAName" name="AAName" placeholder="Enter Name" pattern="[A-Za-z\s]+"
                             title="Numbers are not allowed in the Name field." required>
                     </div>
                     <div class="inline-field">
@@ -849,7 +918,7 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('authorityForm')" 
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('authorityForm')"
                             data-toggle="modal" data-target="#confirmationModal">Submit
                     </button>
                 </div>
@@ -905,7 +974,7 @@
                 <div class="form-row">
                     <div class="inline-field">
                         <label for="SOName">Name</label>
-                        <input type="text" id="SOName" name="SOName" placeholder="Enter Name" pattern="[A-Za-z\s]+" 
+                        <input type="text" id="SOName" name="SOName" placeholder="Enter Name" pattern="[A-Za-z\s]+"
                             title="Numbers are not allowed in the Name field." required>
                     </div>
                     <div class="inline-field">
@@ -914,7 +983,7 @@
                     </div>
                 </div>
                 <div class="form-footer">
-                    <button class="submit-btn" type="button" onclick="setCurrentForm('soAuthorityForm')" 
+                    <button class="submit-btn" type="button" onclick="setCurrentForm('soAuthorityForm')"
                             data-toggle="modal" data-target="#confirmationModal">Submit
                     </button>
                 </div>

@@ -539,13 +539,12 @@
                     <div class="inline">
                         <label for="driver">Driver Name</label>
                         <select id="DriverID" name="DriverID" required>
-                            <option disabled {{ !$requestData->DriverID ? 'selected' : '' }}>Select Driver</option>
-                            @foreach(App\Models\Driver::all() as $driver)
-                                <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}"
-                                        data-email="{{ $driver->DriverEmail }}" {{ $requestData->DriverID == $driver->DriverID ? 'selected' : '' }}>
+                        <option disabled {{ !$requestData->DriverID ? 'selected' : '' }}>Select Driver</option>
+                        @foreach($availableDrivers as $driver)
+                                <option value="{{ $driver->DriverID }}" data-contact="{{ $driver->ContactNo }}" data-email="{{ $driver->Email }}">
                                     {{ $driver->DriverName }}
                                 </option>
-                            @endforeach
+                        @endforeach
                         </select>
                     </div>
                     <div class="inline">
@@ -561,14 +560,13 @@
                     <div class="inline">
                         <label for="vehicle">Vehicle Type</label>
                         <select id="VehicleID" name="VehicleID">
-                            <option disabled {{ !$requestData->VehicleID ? 'selected' : '' }}>Select Vehicle</option>
-                            @foreach(App\Models\Vehicle::all() as $Vehicle)
-                                <option value="{{ $Vehicle->VehicleID }}" data-plate="{{ $Vehicle->PlateNo }}"
-                                        data-capacity="{{ $Vehicle->Capacity }}">
-                                    {{ $Vehicle->VehicleType }} - Capacity: {{ $Vehicle->Capacity }}
-                                </option>
-                            @endforeach
-                        </select>
+    <option disabled {{ !$requestData->VehicleID ? 'selected' : '' }}>Select Vehicle</option>
+    @foreach($availableVehicles as $vehicle)
+        <option value="{{ $vehicle->VehicleID }}" data-plate="{{ $vehicle->PlateNo }}" data-capacity="{{ $vehicle->Capacity }}">
+            {{ $vehicle->VehicleType }} - Capacity: {{ $vehicle->Capacity }}
+        </option>
+    @endforeach
+</select>
                     </div>
                     <div class="inline">
                         <label for="PlateNo">Plate No.</label>

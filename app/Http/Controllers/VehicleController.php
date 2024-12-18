@@ -527,24 +527,68 @@ class VehicleController extends Controller
         }
     }
 
-    public function getRequestData($VRequestID): View|Factory|Application
-    {
-        try {
-            // Fetch the vehicle request data
-            $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
-            $passengers = $this->getPassengersByRequestId($VRequestID);
+    public function getAvailableVehicles()
+{
+    // Fetch vehicles not associated with approved and ongoing vehicle requests
+    $approvedRequests = VehicleRequest::where('FormStatus', 'Approved')
+                                      ->where('EventStatus', 'Ongoing')
+                                      ->pluck('VehicleID');
+    Log::info('Approved and Ongoing Requests Vehicle IDs:', ['approvedRequests' => $approvedRequests]);
 
-            // Pass the request data and passengers to the view
-            return view('VehicledetailEdit', ['requestData' => $requestData, 'passengers' => $passengers]);
-        } catch (Throwable $e) {
-            Log::error('An error occurred while fetching request data:', [
-                'VRequestID' => $VRequestID,
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return view('VehicledetailEdit')->with('error', 'Failed to fetch request data.');
+    $availableVehicles = Vehicle::whereNotIn('VehicleID', $approvedRequests)->get();
+    Log::info('Available Vehicles:', ['availableVehicles' => $availableVehicles]);
+
+    return $availableVehicles;
+}
+
+public function getAvailableDrivers()
+{
+    // Fetch drivers not associated with approved and ongoing vehicle requests
+    $approvedRequests = VehicleRequest::where('FormStatus', 'Approved')
+                                     ->where('EventStatus', 'Ongoing')
+                                      ->pluck('DriverID');
+    Log::info('Approved and Ongoing Requests Driver IDs:', ['approvedRequests' => $approvedRequests]);
+
+    $availableDrivers = Driver::whereNotIn('DriverID', $approvedRequests)->get();
+    Log::info('Available Drivers:', ['availableDrivers' => $availableDrivers]);
+
+    return $availableDrivers;
+}
+
+public function getRequestData($VRequestID): View|Factory|Application
+{
+    try {
+        // Fetch the vehicle request data
+        $requestData = VehicleRequest::with('office')->findOrFail($VRequestID);
+        $passengers = $this->getPassengersByRequestId($VRequestID);
+
+        // Check if the request is approved and ongoing
+        if ($requestData->FormStatus === 'Approved' && $requestData->EventStatus === 'Ongoing') {
+            $availableDrivers = Driver::where('DriverID', $requestData->DriverID)->get();
+            $availableVehicles = Vehicle::where('VehicleID', $requestData->VehicleID)->get();
+        } else {
+            $availableDrivers = $this->getAvailableDrivers(); // Fetch available drivers
+            $availableVehicles = $this->getAvailableVehicles(); // Fetch available vehicles
         }
+
+        // Pass the request data, passengers, available drivers, and available vehicles to the view
+        return view('VehicledetailEdit', [
+            'requestData' => $requestData,
+            'passengers' => $passengers,
+            'availableDrivers' => $availableDrivers,
+            'availableVehicles' => $availableVehicles
+        ]);
+    } catch (Throwable $e) {
+        Log::error('An error occurred while fetching request data:', [
+            'VRequestID' => $VRequestID,
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+        return view('VehicledetailEdit')->with('error', 'Failed to fetch request data.');
     }
+}
+
+
     // Vehicle Stats
     public function fetchVStatistics(): \Illuminate\Http\JsonResponse
     {

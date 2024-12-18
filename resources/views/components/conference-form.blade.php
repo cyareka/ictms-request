@@ -494,29 +494,25 @@
                 <div class="field">
                     <label for="npersons">No. of Persons</label>
                     <input type="number" id="npersons" name="npersons" min="1" value="{{ old('npersons', 0) }}" step="1" required>
-                    <div id="capacityError" class="error-message" >
+                    <div id="capacityError" class="error-message">
                         Exceeds the capacity of the selected room.
                     </div>
                 </div>
 
                 <div class="field">
-                    <label for="persons">
-                        Tables
-                    </label>
+                    <label for="persons">Tables</label>
                     <input type="number" id="tables" name="tables" min="0" value="{{ old('tables', 0) }}" step="1">
                     @if ($errors->has('tables'))
                         <span class="error-message">{{ $errors->first('tables') }}</span>
                     @endif
                 </div>
                 <div class="field">
-                    <label for="persons">
-                        Chairs
-                    </label>
-                    <input type="number" id="chairs" name="chairs" min="0" value="{{ old('chairs', 0) }}" step="1"></div>
+                    <label for="persons">Chairs</label>
+                    <input type="number" id="chairs" name="chairs" min="0" value="{{ old('chairs', 0) }}" step="1">
                     @if ($errors->has('chairs'))
                         <span class="error-message">{{ $errors->first('chairs') }}</span>
                     @endif
-            </div>
+                </div>
             <div class="field">
                     <label  for="otherFacilitiesSelect">
                         Other Facilities
